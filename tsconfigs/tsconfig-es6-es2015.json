@@ -11,6 +11,18 @@
       "dom.iterable"
     ],
     "paths": {
+      "@parser/*": [
+        "src/parser/*"
+      ],
+      "@models/*": [
+        "src/models/*"
+      ],
+      "@transform/*": [
+        "src/transform/*"
+      ],
+      "@r2-shared-js/*": [
+        "src/*"
+      ],
       "@opds/*": [
         "node_modules/r2-opds-js/dist/es6-es2015/src/opds/*"
       ],

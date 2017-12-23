@@ -17,20 +17,6 @@
       "../test/"
     ],
     "baseUrl": "..",
-    "paths": {
-      "@parser/*": [
-        "src/parser/*"
-      ],
-      "@models/*": [
-        "src/models/*"
-      ],
-      "@transform/*": [
-        "src/transform/*"
-      ],
-      "@r2-shared-js/*": [
-        "src/*"
-      ]
-    },
     "noImplicitAny": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
