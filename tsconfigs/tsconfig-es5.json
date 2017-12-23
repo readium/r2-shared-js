@@ -9,6 +9,20 @@
       "dom",
       "es2015",
       "dom.iterable"
-    ]
+    ],
+    "paths": {
+      "@opds/*": [
+        "node_modules/r2-opds-js/dist/es5/src/opds/*"
+      ],
+      "@r2-opds-js/*": [
+        "node_modules/r2-opds-js/dist/es5/src/*"
+      ],
+      "@utils/*": [
+        "node_modules/r2-utils-js/dist/es5/src/_utils/*"
+      ],
+      "@r2-utils-js/*": [
+        "node_modules/r2-utils-js/dist/es5/src/*"
+      ]
+    }
   }
 }

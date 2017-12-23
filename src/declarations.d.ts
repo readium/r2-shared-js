@@ -2,10 +2,6 @@
 
 declare module "slugify";
 declare module "css2json";
-declare module "node-stream-zip";
-declare module "unzipper";
-declare module "yazl";
-declare module "yauzl";
 declare module "bindings";
 
 // See test/ava.ts
