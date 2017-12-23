@@ -1,0 +1,45 @@
+{
+  "version": "0.1.0",
+  "command": "npm",
+  "args": [],
+  "isShellCommand": true,
+  "showOutput": "always",
+  "suppressTaskName": true,
+  "echoCommand": true,
+  "isBackground": false,
+  "env": {
+    "DEBUG": "*",
+    "NODE_DEBUG": "1",
+    "NODE_ENV": "development"
+  },
+  "tasks": [
+    {
+      "taskName": "build",
+      "args": [
+        "run",
+        "transpile:typescript:es8-es2017+afterdist"
+      ],
+      "isBuildCommand": true,
+      "problemMatcher": [
+        "$tsc",
+        "$jshint"
+      ]
+    },
+    {
+      "taskName": "lintbuild",
+      "args": [
+        "run",
+        "build:es8-es2017"
+      ]
+    },
+    {
+      "taskName": "typescript",
+      "args": [
+        "run",
+        "transpile:typescript:single",
+        "es8-es2017",
+        "${file}"
+      ]
+    }
+  ]
+}

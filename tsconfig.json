@@ -1,0 +1,3 @@
+{
+  "extends": "./tsconfigs/tsconfig-es8-es2017-all"
+}

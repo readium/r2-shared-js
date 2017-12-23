@@ -1,0 +1,90 @@
+{
+  "languageServiceEnabled": true,
+  "compileOnSave": false,
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "tslint-language-service",
+        "alwaysShowRuleFailuresAsWarnings": false,
+        "ignoreDefinitionFiles": true,
+        "configFile": "./tslint.json",
+        "disableNoUnusedVariableRule": true
+      }
+    ],
+    "rootDir": "../",
+    "rootDirs": [
+      "../src/",
+      "../test/"
+    ],
+    "baseUrl": "..",
+    "paths": {
+      "@utils/*": [
+        "src/_utils/*"
+      ],
+      "@parser/*": [
+        "src/parser/*"
+      ],
+      "@models/*": [
+        "src/models/*"
+      ],
+      "@transform/*": [
+        "src/transform/*"
+      ],
+      "@opds/*": [
+        "src/opds/*"
+      ],
+      "@r2-shared-js/*": [
+        "src/*"
+      ]
+    },
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitUseStrict": false,
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "declaration": true,
+    "noEmit": false,
+    "noEmitHelpers": true,
+    "importHelpers": true,
+    "noEmitOnError": false,
+    "noLib": false,
+    "noResolve": false,
+    "forceConsistentCasingInFileNames": false,
+    "inlineSources": true,
+    "inlineSourceMap": false,
+    "isolatedModules": false,
+    "allowJs": false,
+    "maxNodeModuleJsDepth": 0,
+    "checkJs": false,
+    "stripInternal": false,
+    "suppressExcessPropertyErrors": false,
+    "suppressImplicitAnyIndexErrors": false,
+    "charset": "utf8",
+    "downlevelIteration": false,
+    "emitBOM": false,
+    "allowSyntheticDefaultImports": false,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "pretty": true,
+    "diagnostics": false,
+    "listFiles": false,
+    "listEmittedFiles": false,
+    "traceResolution": false,
+    "disableSizeLimit": false,
+    "preserveConstEnums": false,
+    "removeComments": true,
+    "skipLibCheck": false,
+    "locale": "en-US"
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
