@@ -33,7 +33,10 @@
         "node_modules/r2-utils-js/dist/es7-es2016/src/_utils/*"
       ],
       "@r2-utils-js/*": [
-        "node_modules/r2-utils-js/dist/es7-es2016/src/*"
+        "node_modules/r2-utils-js/dist/es6-es2015/src/*"
+      ],
+      "@r2-lcp-js/*": [
+        "node_modules/r2-lcp-js/dist/es6-es2015/src/*"
       ]
     }
   }

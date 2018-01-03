@@ -34,6 +34,9 @@
       ],
       "@r2-utils-js/*": [
         "node_modules/r2-utils-js/dist/es5/src/*"
+      ],
+      "@r2-lcp-js/*": [
+        "node_modules/r2-lcp-js/dist/es5/src/*"
       ]
     }
   }

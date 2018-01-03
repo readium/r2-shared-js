@@ -2,7 +2,6 @@
 
 declare module "slugify";
 declare module "css2json";
-declare module "bindings";
 
 // See test/ava.ts
 // Also see .vscode/launch.json

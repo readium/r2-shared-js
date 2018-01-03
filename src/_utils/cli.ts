@@ -4,8 +4,8 @@ import * as util from "util";
 
 import { Publication } from "@models/publication";
 import { PublicationParsePromise } from "@parser/publication-parser";
+import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
 
-import { setLcpNativePluginPath } from "@parser/epub/lcp";
 import { initGlobals } from "../init-globals";
 
 initGlobals();

@@ -5,7 +5,7 @@ import { Contributor } from "@models/metadata-contributor";
 import { test } from "ava";
 import { JSON as TAJSON } from "ta-json";
 
-import { setLcpNativePluginPath } from "@parser/epub/lcp";
+import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
 import { initGlobals } from "../src/init-globals";
 import {
     checkType,

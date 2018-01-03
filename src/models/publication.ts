@@ -1,4 +1,4 @@
-import { LCP } from "@parser/epub/lcp";
+import { LCP } from "@r2-lcp-js/parser/epub/lcp";
 import { JsonStringConverter } from "@utils/ta-json-string-converter";
 import { IZip } from "@utils/zip/zip";
 // https://github.com/edcarroll/ta-json

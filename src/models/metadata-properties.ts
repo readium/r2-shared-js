@@ -5,7 +5,7 @@ import {
     JsonProperty,
 } from "ta-json";
 
-import { Encrypted } from "./metadata-encrypted";
+import { Encrypted } from "@r2-lcp-js/models/metadata-encrypted";
 
 @JsonObject()
 export class Properties {

@@ -7,7 +7,7 @@ import { test } from "ava";
 import { JSON as TAJSON } from "ta-json";
 import * as xmldom from "xmldom";
 
-import { setLcpNativePluginPath } from "@parser/epub/lcp";
+import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
 import { initGlobals } from "../src/init-globals";
 import {
     checkDate,
