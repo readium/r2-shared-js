@@ -133,7 +133,6 @@
 
   'clean': '
     rimraf ./dist &&
-    rimraf ./now &&
     mkdirp ./dist
   '
 
