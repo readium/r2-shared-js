@@ -63,7 +63,7 @@
     "@types/debug": "^0.0.30",
     "@types/image-size": "^0.0.29",
     "@types/mime-types": "^2.1.0",
-    "@types/node": "^8.5.2",
+    "@types/node": "^9.3.0",
     "@types/xmldom": "^0.1.29",
     "ava": "^0.24.0",
     "cpy-cli": "^1.0.1",
