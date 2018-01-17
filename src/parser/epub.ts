@@ -157,8 +157,12 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
         // console.log(util.inspect(this.LCP,
         //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
 
-        publication.AddLink("application/vnd.readium.lcp.license-1.0+json", ["license"],
-            lcpl.ZipPath, false);
+        // https://github.com/readium/readium-lcp-specs/issues/15#issuecomment-358247286
+        // application/vnd.readium.lcp.license-1.0+json (LEGACY)
+        // application/vnd.readium.lcp.license.v1.0+json (NEW)
+        // application/vnd.readium.license.status.v1.0+json (LSD)
+        const mime = "application/vnd.readium.lcp.license.v1.0+json";
+        publication.AddLink(mime, ["license"], lcpl.ZipPath, false);
     }
 
     let encryption: Encryption | undefined;
