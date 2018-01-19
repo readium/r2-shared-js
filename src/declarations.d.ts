@@ -1,7 +1,6 @@
 // declare module "*";
 
 declare module "slugify";
-declare module "css2json";
 
 // See test/ava.ts
 // Also see .vscode/launch.json
