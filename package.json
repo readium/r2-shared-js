@@ -55,7 +55,7 @@
     "r2-utils-js": "github:edrlab/r2-utils-js-dist#master",
     "slugify": "^1.2.9",
     "ta-json": "github:danielweck/ta-json#dist",
-    "tslib": "^1.8.1",
+    "tslib": "^1.9.0",
     "xmldom": "^0.1.27",
     "xpath": "^0.0.27"
   },
