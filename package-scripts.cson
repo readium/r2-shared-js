@@ -13,9 +13,9 @@
 
   'gitdist': '
     cd ../r2-shared-js-dist/ &&
-    git checkout -B master &&
-    git pull &&
-    (git status || echo status) &&
+    git checkout -B develop &&
+    (git pull || echo "pull") &&
+    (git --no-pager status || echo status) &&
     ((rimraf "*" && echo rimrafOK) || echo rimrafNOK) &&
     cpy ../r2-shared-js/package.json . &&
     cpy ../r2-shared-js/package-lock.json . &&
@@ -25,8 +25,8 @@
     cpy "dist/**/*.*" ../r2-shared-js-dist/ --cwd=../r2-shared-js/ --parents &&
     (git add * || echo add) &&
     (git commit -a -m "add new dist" || echo commit) &&
-    (git push --set-upstream origin master || echo push) &&
-    (git status || echo status) &&
+    (git push --set-upstream origin develop || echo push) &&
+    (git --no-pager status || echo status) &&
     cd ../r2-shared-js
   '
 
