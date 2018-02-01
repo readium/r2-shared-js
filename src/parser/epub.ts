@@ -529,7 +529,7 @@ export async function getMediaOverlay(publication: Publication, spineHref: strin
 const fillMediaOverlayParse =
     async (publication: Publication, mo: MediaOverlayNode) => {
 
-    if (mo.initialized) {
+    if (mo.initialized || !mo.SmilPathInZip) {
         return;
     }
 
@@ -684,7 +684,7 @@ const fillMediaOverlay =
                         }
                         return false;
                     });
-                    if (manItemSmil) {
+                    if (manItemSmil && opf.ZipPath) {
                         const smilFilePath2 = path.join(path.dirname(opf.ZipPath), manItemSmil.Href)
                             .replace(/\\/g, "/");
                         if (smilFilePath2 === item.Href) {
@@ -699,6 +699,10 @@ const fillMediaOverlay =
             mo.initialized = false;
 
             manItemsHtmlWithSmil.forEach((manItemHtmlWithSmil) => {
+
+                if (!opf.ZipPath) {
+                    return;
+                }
 
                 const htmlPathInZip = path.join(path.dirname(opf.ZipPath), manItemHtmlWithSmil.Href)
                     .replace(/\\/g, "/");
@@ -741,6 +745,10 @@ const fillMediaOverlay =
 const addSeqToMediaOverlay = (
     smil: SMIL, publication: Publication,
     rootMO: MediaOverlayNode, mo: MediaOverlayNode[], seqChild: SeqOrPar) => {
+
+    if (!smil.ZipPath) {
+        return;
+    }
 
     const moc = new MediaOverlayNode();
     moc.initialized = rootMO.initialized;
@@ -1236,7 +1244,7 @@ const findInManifestByID =
                 }
                 return false;
             });
-            if (item) {
+            if (item && opf.ZipPath) {
                 const linkItem = new Link();
                 linkItem.TypeLink = item.MediaType;
                 const zipPath = path.join(path.dirname(opf.ZipPath), item.Href)
@@ -1290,6 +1298,10 @@ const addRendition = (publication: Publication, _rootfile: Rootfile, opf: OPF) =
 };
 
 const fillSpineAndResource = async (publication: Publication, rootfile: Rootfile, opf: OPF) => {
+
+    if (!opf.ZipPath) {
+        return;
+    }
 
     if (opf.Spine && opf.Spine.Items && opf.Spine.Items.length) {
         // no forEach(), because of await/async within the iteration body
@@ -1425,7 +1437,7 @@ const fillTOCFromNCX = (publication: Publication, rootfile: Rootfile, opf: OPF, 
 const fillLandmarksFromGuide = (publication: Publication, _rootfile: Rootfile, opf: OPF) => {
     if (opf.Guide && opf.Guide.length) {
         opf.Guide.forEach((ref) => {
-            if (ref.Href) {
+            if (ref.Href && opf.ZipPath) {
                 const link = new Link();
                 const zipPath = path.join(path.dirname(opf.ZipPath), ref.Href)
                     .replace(/\\/g, "/");

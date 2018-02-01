@@ -15,7 +15,7 @@ export class NCX {
 
     @XmlXPathSelector("ncx:navMap/ncx:navPoint")
     @XmlItemType(NavPoint)
-    public Points: NavPoint[];
+    public Points!: NavPoint[];
 
     @XmlXPathSelector("ncx:pageList")
     public PageList!: PageList;
