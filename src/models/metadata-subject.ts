@@ -9,16 +9,16 @@ import {
 export class Subject {
 
     @JsonProperty("name")
-    public Name: string;
+    public Name!: string;
 
     @JsonProperty("sort_as")
-    public SortAs: string;
+    public SortAs!: string;
 
     @JsonProperty("scheme")
-    public Scheme: string;
+    public Scheme!: string;
 
     @JsonProperty("code")
-    public Code: string;
+    public Code!: string;
 
     @OnDeserialized()
     // tslint:disable-next-line:no-unused-variable

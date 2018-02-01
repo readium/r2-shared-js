@@ -15,15 +15,15 @@ export class Spine {
     // XPATH ROOT: /opf:package/opf:spine
 
     @XmlXPathSelector("@id | @xml:id")
-    public ID: string;
+    public ID!: string;
 
     @XmlXPathSelector("@toc")
-    public Toc: string;
+    public Toc!: string;
 
     @XmlXPathSelector("@page-progression-direction")
-    public PageProgression: string;
+    public PageProgression!: string;
 
     @XmlXPathSelector("opf:itemref")
     @XmlItemType(SpineItem)
-    public Items: SpineItem[];
+    public Items!: SpineItem[];
 }

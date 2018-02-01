@@ -12,5 +12,5 @@ export class Content {
     // XPATH ROOT: /ncx:ncx/ncx:navMap/ncx:navPoint/ncx:content
 
     @XmlXPathSelector("@src")
-    public Src: string;
+    public Src!: string;
 }

@@ -15,8 +15,8 @@ export class Compression {
     // enc:EncryptionProperty/ns:Compression
 
     @XmlXPathSelector("@Method")
-    public Method: string;
+    public Method!: string;
 
     @XmlXPathSelector("@OriginalLength")
-    public OriginalLength: string;
+    public OriginalLength!: string;
 }

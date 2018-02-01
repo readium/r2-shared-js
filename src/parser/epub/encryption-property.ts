@@ -15,5 +15,5 @@ export class EncryptionProperty {
     // XPATH ROOT: /encryption:encryption/enc:EncryptedData/enc:EncryptionProperties/enc:EncryptionProperty
 
     @XmlXPathSelector("ns:Compression")
-    public Compression: Compression;
+    public Compression!: Compression;
 }

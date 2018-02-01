@@ -14,5 +14,5 @@ export class EncryptionMethod {
     // XPATH ROOT: /encryption:encryption/enc:EncryptedData/enc:EncryptionMethod
 
     @XmlXPathSelector("@Algorithm")
-    public Algorithm: string;
+    public Algorithm!: string;
 }

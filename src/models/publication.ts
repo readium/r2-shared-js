@@ -22,62 +22,62 @@ export class Publication {
     @JsonProperty("@context")
     @JsonConverter(JsonStringConverter)
     @JsonElementType(String)
-    public Context: string[];
+    public Context!: string[];
 
     @JsonProperty("metadata")
-    public Metadata: Metadata;
+    public Metadata!: Metadata;
 
     @JsonProperty("links")
     @JsonElementType(Link)
-    public Links: Link[];
+    public Links!: Link[];
 
     @JsonProperty("spine")
     @JsonElementType(Link)
-    public Spine: Link[];
+    public Spine!: Link[];
 
     @JsonProperty("resources")
     @JsonElementType(Link)
-    public Resources: Link[];
+    public Resources!: Link[];
 
     @JsonProperty("toc")
     @JsonElementType(Link)
-    public TOC: Link[];
+    public TOC!: Link[];
 
     @JsonProperty("page-list")
     @JsonElementType(Link)
-    public PageList: Link[];
+    public PageList!: Link[];
 
     @JsonProperty("landmarks")
     @JsonElementType(Link)
-    public Landmarks: Link[];
+    public Landmarks!: Link[];
 
     @JsonProperty("loi")
     @JsonElementType(Link)
-    public LOI: Link[];
+    public LOI!: Link[];
 
     @JsonProperty("loa")
     @JsonElementType(Link)
-    public LOA: Link[];
+    public LOA!: Link[];
 
     @JsonProperty("lov")
     @JsonElementType(Link)
-    public LOV: Link[];
+    public LOV!: Link[];
 
     @JsonProperty("lot")
     @JsonElementType(Link)
-    public LOT: Link[];
+    public LOT!: Link[];
 
     // OPDS2
     @JsonProperty("images")
     @JsonElementType(Link)
-    public Images: Link[];
+    public Images!: Link[];
 
     // public OtherLinks: Link[];
     // public OtherCollections: IPublicationCollection[];
 
-    public LCP: LCP;
+    public LCP: LCP | undefined;
 
-    private Internal: IInternal[];
+    private Internal: IInternal[] | undefined;
 
     public freeDestroy() {
         console.log("freeDestroy: Publication");

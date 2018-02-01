@@ -12,14 +12,14 @@ export class Audio {
     // XPATH ROOT: /smil:smil/smil:body/**/smil:audio
 
     @XmlXPathSelector("@src")
-    public Src: string;
+    public Src!: string;
 
     @XmlXPathSelector("@clipBegin")
-    public ClipBegin: string;
+    public ClipBegin!: string;
 
     @XmlXPathSelector("@clipEnd")
-    public ClipEnd: string;
+    public ClipEnd!: string;
 
     @XmlXPathSelector("@epub:type")
-    public EpubType: string;
+    public EpubType!: string;
 }

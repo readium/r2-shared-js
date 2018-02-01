@@ -9,16 +9,16 @@ import {
 export class Collection {
 
     @JsonProperty("name")
-    public Name: string;
+    public Name!: string;
 
     @JsonProperty("sort_as")
-    public SortAs: string;
+    public SortAs!: string;
 
     @JsonProperty("identifier")
-    public Identifier: string;
+    public Identifier!: string;
 
     @JsonProperty("position")
-    public Position: number;
+    public Position!: number;
 
     @OnDeserialized()
     // tslint:disable-next-line:no-unused-variable

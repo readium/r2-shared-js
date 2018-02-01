@@ -13,11 +13,11 @@ export class Identifier {
     // XPATH ROOT: /opf:package/opf:metadata/dc:identifier
 
     @XmlXPathSelector("text()")
-    public Data: string;
+    public Data!: string;
 
     @XmlXPathSelector("@id | @xml:id")
-    public ID: string;
+    public ID!: string;
 
     @XmlXPathSelector("@scheme")
-    public Scheme: string;
+    public Scheme!: string;
 }

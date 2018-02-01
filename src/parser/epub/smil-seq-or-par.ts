@@ -13,5 +13,5 @@ export class SeqOrPar {
     // protected localName: string;
 
     @XmlXPathSelector("@epub:type")
-    public EpubType: string;
+    public EpubType!: string;
 }

@@ -15,5 +15,5 @@ export class CipherData {
     // XPATH ROOT: /encryption:encryption/enc:EncryptedData/enc:CipherData
 
     @XmlXPathSelector("enc:CipherReference")
-    public CipherReference: CipherReference;
+    public CipherReference!: CipherReference;
 }

@@ -14,8 +14,8 @@ export class RetrievalMethod {
     // XPATH ROOT: /encryption:encryption/enc:EncryptedData/ds:KeyInfo/ds:RetrievalMethod
 
     @XmlXPathSelector("@URI")
-    public URI: string;
+    public URI!: string;
 
     @XmlXPathSelector("@Type")
-    public Type: string;
+    public Type!: string;
 }

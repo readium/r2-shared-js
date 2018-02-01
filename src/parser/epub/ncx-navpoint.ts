@@ -15,17 +15,17 @@ export class NavPoint {
 
     @XmlXPathSelector("ncx:navPoint")
     @XmlItemType(NavPoint)
-    public Points: NavPoint[];
+    public Points!: NavPoint[];
 
     @XmlXPathSelector("ncx:navLabel/ncx:text/text()")
-    public Text: string;
+    public Text!: string;
 
     @XmlXPathSelector("ncx:content")
-    public Content: Content;
+    public Content!: Content;
 
     @XmlXPathSelector("@playOrder")
-    public PlayerOrder: number;
+    public PlayerOrder!: number;
 
     @XmlXPathSelector("@id | @xml:id")
-    public ID: string;
+    public ID!: string;
 }

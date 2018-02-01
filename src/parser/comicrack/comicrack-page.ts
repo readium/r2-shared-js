@@ -12,20 +12,20 @@ export class Page {
     // XPATH ROOT: /ComicInfo/Pages/Page
 
     @XmlXPathSelector("@Image")
-    public Image: number;
+    public Image!: number;
 
     @XmlXPathSelector("@Bookmark")
-    public Bookmark: string;
+    public Bookmark!: string;
 
     @XmlXPathSelector("@Type")
-    public Type: string;
+    public Type!: string;
 
     @XmlXPathSelector("@ImageSize")
-    public ImageSize: number;
+    public ImageSize!: number;
 
     @XmlXPathSelector("@ImageWidth")
-    public ImageWidth: number;
+    public ImageWidth!: number;
 
     @XmlXPathSelector("@ImageHeight")
-    public ImageHeight: number;
+    public ImageHeight!: number;
 }

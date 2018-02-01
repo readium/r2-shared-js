@@ -13,22 +13,22 @@ export class Manifest {
     // XPATH ROOT: /opf:package/opf:manifest/opf:item
 
     @XmlXPathSelector("@id | @xml:id")
-    public ID: string;
+    public ID!: string;
 
     @XmlXPathSelector("@href")
-    public Href: string;
+    public Href!: string;
 
     @XmlXPathSelector("@media-type")
-    public MediaType: string;
+    public MediaType!: string;
 
     @XmlXPathSelector("@media-fallback")
-    public Fallback: string;
+    public Fallback!: string;
 
     @XmlXPathSelector("@properties")
-    public Properties: string;
+    public Properties!: string;
 
     @XmlXPathSelector("@media-overlay")
-    public MediaOverlay: string;
+    public MediaOverlay!: string;
 
     // public inspect(depth: number, opts: any): string | null | undefined {
     //     return undefined;

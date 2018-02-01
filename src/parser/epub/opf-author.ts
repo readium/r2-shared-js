@@ -14,14 +14,14 @@ export class Author {
     // XPATH ROOT: /opf:package/opf:metadata/dc:contributor
 
     @XmlXPathSelector("text()")
-    public Data: string;
+    public Data!: string;
 
     @XmlXPathSelector("@file-as")
-    public FileAs: string;
+    public FileAs!: string;
 
     @XmlXPathSelector("@role")
-    public Role: string;
+    public Role!: string;
 
     @XmlXPathSelector("@id | @xml:id")
-    public ID: string;
+    public ID!: string;
 }

@@ -12,8 +12,8 @@ export class MetaDate {
     // XPATH ROOT: /opf:package/opf:metadata/dc:date
 
     @XmlXPathSelector("text()")
-    public Data: string;
+    public Data!: string;
 
     @XmlXPathSelector("@event")
-    public Event: string;
+    public Event!: string;
 }

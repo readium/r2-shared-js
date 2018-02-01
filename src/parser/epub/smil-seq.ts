@@ -18,7 +18,7 @@ export class Seq extends SeqOrPar {
 
     @XmlXPathSelector("smil:par|smil:seq")
     @XmlItemType(SeqOrPar)
-    public Children: SeqOrPar[];
+    public Children!: SeqOrPar[];
 
     // @XmlXPathSelector("smil:seq")
     // @XmlItemType(Seq)
@@ -29,7 +29,7 @@ export class Seq extends SeqOrPar {
     // public Par: Par[];
 
     @XmlXPathSelector("@epub:textref")
-    public TextRef: string;
+    public TextRef!: string;
 
     // constructor() {
     //     super();

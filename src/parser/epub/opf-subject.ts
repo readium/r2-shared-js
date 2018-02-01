@@ -13,14 +13,14 @@ export class Subject {
     // XPATH ROOT: /opf:package/opf:metadata/dc:subject
 
     @XmlXPathSelector("text()")
-    public Data: string;
+    public Data!: string;
 
     @XmlXPathSelector("@term")
-    public Term: string;
+    public Term!: string;
 
     @XmlXPathSelector("@authority")
-    public Authority: string;
+    public Authority!: string;
 
     @XmlXPathSelector("@lang | @xml:lang")
-    public Lang: string;
+    public Lang!: string;
 }

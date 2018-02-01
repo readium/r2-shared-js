@@ -10,14 +10,14 @@ import { IStringMap } from "./metadata-multilang";
 export class Contributor {
 
     @JsonProperty("name")
-    public Name: string | IStringMap;
+    public Name!: string | IStringMap;
 
     @JsonProperty("sort_as")
-    public SortAs: string;
+    public SortAs!: string;
 
     @JsonProperty("identifier")
-    public Identifier: string;
+    public Identifier!: string;
 
     @JsonProperty("role")
-    public Role: string;
+    public Role!: string;
 }

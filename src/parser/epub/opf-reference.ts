@@ -12,11 +12,11 @@ export class Reference {
     // XPATH ROOT: /opf:package/opf:guide/opf:reference
 
     @XmlXPathSelector("@href")
-    public Href: string;
+    public Href!: string;
 
     @XmlXPathSelector("@title")
-    public Title: string;
+    public Title!: string;
 
     @XmlXPathSelector("@type")
-    public Type: string;
+    public Type!: string;
 }

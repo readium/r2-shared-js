@@ -15,11 +15,11 @@ export class PageList {
 
     @XmlXPathSelector("ncx:pageTarget")
     @XmlItemType(PageTarget)
-    public PageTarget: PageTarget[];
+    public PageTarget!: PageTarget[];
 
     @XmlXPathSelector("@class")
-    public Class: string;
+    public Class!: string;
 
     @XmlXPathSelector("@id | @xml:id")
-    public ID: string;
+    public ID!: string;
 }

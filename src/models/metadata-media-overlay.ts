@@ -8,8 +8,8 @@ import {
 export class MediaOverlay {
 
     @JsonProperty("active-class")
-    public ActiveClass: string;
+    public ActiveClass!: string;
 
     @JsonProperty("playback-active-class")
-    public PlaybackActiveClass: string;
+    public PlaybackActiveClass!: string;
 }

@@ -13,14 +13,14 @@ export class SpineItem {
     // XPATH ROOT: /opf:package/opf:spine/opf:itemref
 
     @XmlXPathSelector("@idref")
-    public IDref: string;
+    public IDref!: string;
 
     @XmlXPathSelector("@linear")
-    public Linear: string;
+    public Linear!: string;
 
     @XmlXPathSelector("@id | @xml:id")
-    public ID: string;
+    public ID!: string;
 
     @XmlXPathSelector("@properties")
-    public Properties: string;
+    public Properties!: string;
 }

@@ -14,13 +14,13 @@ export class SMIL {
     // XPATH ROOT: /smil:smil
 
     @XmlXPathSelector("smil:body")
-    public Body: Body;
+    public Body!: Body;
 
     // Bug with Javascript / Typescript @ANNOTATION() !
     // Requires the class hierarchy to explicitely include all object types
     // (see SeqOrPar)
     @XmlXPathSelector("dummy")
-    public Par: Par;
+    public Par!: Par;
 
-    public ZipPath: string;
+    public ZipPath: string | undefined;
 }

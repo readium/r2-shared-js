@@ -18,7 +18,7 @@ export class NCX {
     public Points: NavPoint[];
 
     @XmlXPathSelector("ncx:pageList")
-    public PageList: PageList;
+    public PageList!: PageList;
 
-    public ZipPath: string;
+    public ZipPath!: string;
 }

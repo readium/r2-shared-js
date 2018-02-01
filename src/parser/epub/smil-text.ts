@@ -12,8 +12,8 @@ export class Text {
     // XPATH ROOT: /smil:smil/smil:body/**/smil:text
 
     @XmlXPathSelector("@src")
-    public Src: string;
+    public Src!: string;
 
     @XmlXPathSelector("@epub:type")
-    public EpubType: string;
+    public EpubType!: string;
 }

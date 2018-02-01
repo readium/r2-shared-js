@@ -13,26 +13,26 @@ export class Metafield {
     // XPATH ROOT: /opf:package/opf:metadata/opf:meta
 
     @XmlXPathSelector("text()")
-    public Data: string;
+    public Data!: string;
 
     @XmlXPathSelector("@name")
-    public Name: string;
+    public Name!: string;
 
     @XmlXPathSelector("@content")
-    public Content: string;
+    public Content!: string;
 
     @XmlXPathSelector("@refines")
-    public Refine: string;
+    public Refine!: string;
 
     @XmlXPathSelector("@scheme")
-    public Scheme: string;
+    public Scheme!: string;
 
     @XmlXPathSelector("@property")
-    public Property: string;
+    public Property!: string;
 
     @XmlXPathSelector("@id | @xml:id")
-    public ID: string;
+    public ID!: string;
 
     @XmlXPathSelector("@lang | @xml:lang")
-    public Lang: string;
+    public Lang!: string;
 }

@@ -17,27 +17,27 @@ export class OPF {
     // XPATH ROOT: /opf:package
 
     @XmlXPathSelector("opf:metadata")
-    public Metadata: Metadata;
+    public Metadata!: Metadata;
 
     @XmlXPathSelector("opf:manifest/opf:item")
     @XmlItemType(Manifest)
-    public Manifest: Manifest[];
+    public Manifest!: Manifest[];
 
     @XmlXPathSelector("opf:spine")
-    public Spine: Spine;
+    public Spine!: Spine;
 
     @XmlXPathSelector("opf:guide/opf:reference")
     @XmlItemType(Reference)
-    public Guide: Reference[];
+    public Guide!: Reference[];
 
     @XmlXPathSelector("@unique-identifier")
-    public UniqueIdentifier: string;
+    public UniqueIdentifier!: string;
 
     @XmlXPathSelector("@dir")
-    public Dir: string;
+    public Dir!: string;
 
     @XmlXPathSelector("@version")
-    public Version: string;
+    public Version!: string;
 
-    public ZipPath: string;
+    public ZipPath: string | undefined;
 }

@@ -13,14 +13,14 @@ export class Title {
     // XPATH ROOT: /opf:package/opf:metadata/dc:title
 
     @XmlXPathSelector("text()")
-    public Data: string;
+    public Data!: string;
 
     @XmlXPathSelector("@id | @xml:id")
-    public ID: string;
+    public ID!: string;
 
     @XmlXPathSelector("@lang | @xml:lang")
-    public Lang: string;
+    public Lang!: string;
 
     @XmlXPathSelector("@dir")
-    public Dir: string;
+    public Dir!: string;
 }

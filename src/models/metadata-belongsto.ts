@@ -12,9 +12,9 @@ export class BelongsTo {
 
     @JsonProperty("series")
     @JsonElementType(Collection)
-    public Series: Collection[];
+    public Series!: Collection[];
 
     @JsonProperty("collection")
     @JsonElementType(Collection)
-    public Collection: Collection[];
+    public Collection!: Collection[];
 }

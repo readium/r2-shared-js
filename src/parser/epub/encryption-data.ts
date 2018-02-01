@@ -19,15 +19,15 @@ export class EncryptedData {
     // XPATH ROOT: /encryption:encryption/enc:EncryptedData
 
     @XmlXPathSelector("enc:EncryptionMethod")
-    public EncryptionMethod: EncryptionMethod;
+    public EncryptionMethod!: EncryptionMethod;
 
     @XmlXPathSelector("ds:KeyInfo")
-    public KeyInfo: KeyInfo;
+    public KeyInfo!: KeyInfo;
 
     @XmlXPathSelector("enc:CipherData")
-    public CipherData: CipherData;
+    public CipherData!: CipherData;
 
     @XmlXPathSelector("enc:EncryptionProperties/enc:EncryptionProperty")
     @XmlItemType(EncryptionProperty)
-    public EncryptionProperties: EncryptionProperty[];
+    public EncryptionProperties!: EncryptionProperty[];
 }

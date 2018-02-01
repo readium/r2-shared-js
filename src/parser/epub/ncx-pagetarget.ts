@@ -13,20 +13,20 @@ export class PageTarget {
     // XPATH ROOT: /ncx:ncx/ncx:pageList/ncx:pageTarget
 
     @XmlXPathSelector("ncx:navLabel/ncx:text/text()")
-    public Text: string;
+    public Text!: string;
 
     @XmlXPathSelector("@value")
-    public Value: string;
+    public Value!: string;
 
     @XmlXPathSelector("@type")
-    public Type: string;
+    public Type!: string;
 
     @XmlXPathSelector("@playOrder")
-    public PlayOrder: number;
+    public PlayOrder!: number;
 
     @XmlXPathSelector("@id | @xml:id")
-    public ID: string;
+    public ID!: string;
 
     @XmlXPathSelector("ncx:content")
-    public Content: Content;
+    public Content!: Content;
 }

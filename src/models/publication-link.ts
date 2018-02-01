@@ -15,42 +15,42 @@ import { Properties } from "./metadata-properties";
 export class Link {
 
     @JsonProperty("href")
-    public Href: string;
+    public Href!: string;
 
     @JsonProperty("type")
-    public TypeLink: string;
+    public TypeLink!: string;
 
     @JsonProperty("height")
-    public Height: number;
+    public Height!: number;
 
     @JsonProperty("width")
-    public Width: number;
+    public Width!: number;
 
     @JsonProperty("title")
-    public Title: string;
+    public Title!: string;
 
     @JsonProperty("properties")
-    public Properties: Properties;
+    public Properties!: Properties;
 
     @JsonProperty("duration")
-    public Duration: number;
+    public Duration!: number;
 
     @JsonProperty("bitrate")
-    public Bitrate: number;
+    public Bitrate!: number;
 
     @JsonProperty("templated")
-    public Templated: boolean;
+    public Templated!: boolean;
 
     @JsonProperty("children")
     @JsonElementType(Link)
-    public Children: Link[];
+    public Children!: Link[];
 
-    public MediaOverlays: MediaOverlayNode[];
+    public MediaOverlays: MediaOverlayNode[] | undefined;
 
     @JsonProperty("rel")
     @JsonConverter(JsonStringConverter)
     @JsonElementType(String)
-    public Rel: string[];
+    public Rel!: string[];
 
     public AddRels(rels: string[]) {
         rels.forEach((rel) => {

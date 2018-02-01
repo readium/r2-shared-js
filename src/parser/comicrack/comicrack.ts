@@ -14,44 +14,44 @@ export class ComicInfo {
     // XPATH ROOT: /ComicInfo
 
     @XmlXPathSelector("Title")
-    public Title: string;
+    public Title!: string;
 
     @XmlXPathSelector("Series")
-    public Series: string;
+    public Series!: string;
 
     @XmlXPathSelector("Volume")
-    public Volume: number;
+    public Volume!: number;
 
     @XmlXPathSelector("Number")
-    public Number: number;
+    public Number!: number;
 
     @XmlXPathSelector("Writer")
-    public Writer: string;
+    public Writer!: string;
 
     @XmlXPathSelector("Penciller")
-    public Penciller: string;
+    public Penciller!: string;
 
     @XmlXPathSelector("Inker")
-    public Inker: string;
+    public Inker!: string;
 
     @XmlXPathSelector("Colorist")
-    public Colorist: string;
+    public Colorist!: string;
 
     @XmlXPathSelector("ScanInformation")
-    public ScanInformation: string;
+    public ScanInformation!: string;
 
     @XmlXPathSelector("Summary")
-    public Summary: string;
+    public Summary!: string;
 
     @XmlXPathSelector("Year")
-    public Year: number;
+    public Year!: number;
 
     @XmlXPathSelector("PageCount")
-    public PageCount: number;
+    public PageCount!: number;
 
     @XmlXPathSelector("Pages/Page")
     @XmlItemType(Page)
-    public Pages: Page[];
+    public Pages!: Page[];
 
-    public ZipPath: string;
+    public ZipPath: string | undefined;
 }

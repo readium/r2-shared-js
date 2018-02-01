@@ -20,7 +20,7 @@ export class Container {
             rendition: "http://www.idpf.org/2013/rendition",
         })
     @XmlItemType(Rootfile)
-    public Rootfile: Rootfile[];
+    public Rootfile!: Rootfile[];
 
-    public ZipPath: string;
+    public ZipPath: string | undefined;
 }

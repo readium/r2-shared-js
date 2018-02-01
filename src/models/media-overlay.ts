@@ -79,22 +79,22 @@ export function timeStrToSeconds(timeStr: string): number {
 @JsonObject()
 export class MediaOverlayNode {
     @JsonProperty("text")
-    public Text: string;
+    public Text!: string;
 
     @JsonProperty("audio")
-    public Audio: string;
+    public Audio!: string;
 
     @JsonProperty("role")
     @JsonElementType(String)
-    public Role: string[];
+    public Role!: string[];
 
     @JsonProperty("children")
     @JsonElementType(MediaOverlayNode)
-    public Children: MediaOverlayNode[];
+    public Children!: MediaOverlayNode[];
 
-    public SmilPathInZip: string;
+    public SmilPathInZip: string | undefined;
 
-    public initialized: boolean;
+    public initialized: boolean = false;
 
     // public inspect(depth: number, opts: any): string | null | undefined {
     //     return "MediaOverlay: " + this.SmilPathInZip;

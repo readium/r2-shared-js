@@ -12,26 +12,26 @@ export class Properties {
 
     @JsonProperty("contains")
     @JsonElementType(String)
-    public Contains: string[];
+    public Contains!: string[];
 
     @JsonProperty("layout")
-    public Layout: string;
+    public Layout!: string;
 
     @JsonProperty("media-overlay")
-    public MediaOverlay: string;
+    public MediaOverlay!: string;
 
     @JsonProperty("orientation")
-    public Orientation: string;
+    public Orientation!: string;
 
     @JsonProperty("overflow")
-    public Overflow: string;
+    public Overflow!: string;
 
     @JsonProperty("page")
-    public Page: string;
+    public Page!: string;
 
     @JsonProperty("spread")
-    public Spread: string;
+    public Spread!: string;
 
     @JsonProperty("encrypted")
-    public Encrypted: Encrypted;
+    public Encrypted!: Encrypted;
 }
