@@ -113,7 +113,7 @@
     "lint:typescript:full": "tslint --project \"./tsconfig.json\" -c \"./tslint.json\" \"./src/**/*.ts\" \"./test/**/*.ts\"",
     "lintfix": "sed -i \"\" \"s/let normalizedPath = path\\\\.normalize(documentPath);/let normalizedPath = path.normalize(documentPath).toLowerCase();/g\" ./node_modules/tslint-language-service/out/src/index.js",
     "pretranspile:typescript": "npm run clean",
-    "transpile:typescript": "tsc -p \"./tsconfig.json\"",
+    "transpile:typescript": "tsc --pretty -p \"./tsconfig.json\"",
     "pretranspile:typescript:all": "npm run clean",
     "transpile:typescript:all": "npm run transpile:typescript:es5 && npm run transpile:typescript:es6-es2015 && npm run transpile:typescript:es7-es2016 && npm run transpile:typescript:es8-es2017",
     "transpile:typescript:es8-es2017+afterdist": "npm run transpile:typescript:es8-es2017 && npm run afterdist",
@@ -126,19 +126,19 @@
     "prebuild:es5": "npm run lint && npm run clean",
     "build:es5": "npm run transpile:typescript:es5",
     "postbuild:es5": "npm run afterdist",
-    "transpile:typescript:es5": "tsc -p \"./tsconfigs/tsconfig-es5-all.json\"",
+    "transpile:typescript:es5": "tsc --pretty -p \"./tsconfigs/tsconfig-es5-all.json\"",
     "prebuild:es6-es2015": "npm run lint && npm run clean",
     "build:es6-es2015": "npm run transpile:typescript:es6-es2015",
     "postbuild:es6-es2015": "npm run afterdist",
-    "transpile:typescript:es6-es2015": "tsc -p \"./tsconfigs/tsconfig-es6-es2015-all.json\"",
+    "transpile:typescript:es6-es2015": "tsc --pretty -p \"./tsconfigs/tsconfig-es6-es2015-all.json\"",
     "prebuild:es7-es2016": "npm run lint && npm run clean",
     "build:es7-es2016": "npm run transpile:typescript:es7-es2016",
     "postbuild:es7-es2016": "npm run afterdist",
-    "transpile:typescript:es7-es2016": "tsc -p \"./tsconfigs/tsconfig-es7-es2016-all.json\"",
+    "transpile:typescript:es7-es2016": "tsc --pretty -p \"./tsconfigs/tsconfig-es7-es2016-all.json\"",
     "prebuild:es8-es2017": "npm run lint && npm run clean",
     "build:es8-es2017": "npm run transpile:typescript:es8-es2017",
     "postbuild:es8-es2017": "npm run afterdist",
-    "transpile:typescript:es8-es2017": "tsc -p \"./tsconfigs/tsconfig-es8-es2017-all.json\""
+    "transpile:typescript:es8-es2017": "tsc --pretty -p \"./tsconfigs/tsconfig-es8-es2017-all.json\""
   },
   "importSort": {
     ".ts": {
