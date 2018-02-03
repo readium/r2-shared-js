@@ -2,7 +2,7 @@ import { timeStrToSeconds } from "@models/media-overlay";
 import { test } from "ava";
 import * as debug_ from "debug";
 
-const debug = debug_("r2:test");
+const debug = debug_("r2:shared#test");
 
 // ==========================
 

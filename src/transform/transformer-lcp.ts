@@ -7,8 +7,7 @@ import { IStreamAndLength } from "@utils/zip/zip";
 import { ITransformer } from "./transformer";
 
 // import * as debug_ from "debug";
-// const debug = debug_("r2:transformer:lcp");
-// const debugx = debug_("r2:transformer:stream:lcp");
+// const debug = debug_("r2:shared#transform/transformer-lcp");
 
 export class TransformerLCP implements ITransformer {
 

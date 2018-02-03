@@ -41,7 +41,7 @@ import { Par } from "./epub/smil-par";
 import { Seq } from "./epub/smil-seq";
 import { SeqOrPar } from "./epub/smil-seq-or-par";
 
-const debug = debug_("r2:epub");
+const debug = debug_("r2:shared#parser/epub");
 
 const epub3 = "3.0";
 const epub301 = "3.0.1";
