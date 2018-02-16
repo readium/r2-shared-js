@@ -71,13 +71,13 @@
     "cson": "^5.1.0",
     "eclint": "^2.6.0",
     "filehound": "^1.16.2",
-    "git-rev-sync": "^1.9.1",
+    "git-rev-sync": "^1.10.0",
     "json": "^9.0.6",
     "mkdirp": "^0.5.1",
     "rimraf": "^2.6.2",
     "tslint": "^5.9.1",
     "tslint-language-service": "^0.9.8",
-    "typescript": "^2.7.1"
+    "typescript": "^2.7.2"
   },
   "main": "dist/es6-es2015/src/index.js",
   "types": "dist/es6-es2015/src/index.d.js",
