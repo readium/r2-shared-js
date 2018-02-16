@@ -826,13 +826,23 @@ const fillPublicationDate = (publication: Publication, rootfile: Rootfile, opf: 
     if (opf.Metadata && opf.Metadata.Date && opf.Metadata.Date.length) {
 
         if (isEpub3OrMore(rootfile, opf) && opf.Metadata.Date[0] && opf.Metadata.Date[0].Data) {
-            publication.Metadata.PublicationDate = moment(opf.Metadata.Date[0].Data).toDate();
+            const token = opf.Metadata.Date[0].Data;
+            try {
+                publication.Metadata.PublicationDate = moment(token).toDate();
+            } catch (err) {
+                console.log("INVALID DATE/TIME? " + token);
+            }
             return;
         }
 
         opf.Metadata.Date.forEach((date) => {
             if (date.Data && date.Event && date.Event.indexOf("publication") >= 0) {
-                publication.Metadata.PublicationDate = moment(date.Data).toDate();
+                const token = date.Data;
+                try {
+                    publication.Metadata.PublicationDate = moment(token).toDate();
+                } catch (err) {
+                    console.log("INVALID DATE/TIME? " + token);
+                }
             }
         });
     }
