@@ -79,8 +79,8 @@
     "tslint-language-service": "^0.9.9",
     "typescript": "^2.9.2"
   },
-  "main": "dist/es6-es2015/src/index.js",
-  "types": "dist/es6-es2015/src/index.d.js",
+  "main": "dist/es5/src/index.js",
+  "types": "dist/es5/src/index.d.js",
   "bin": {
     "r2-shared-js-cli": "dist/es6-es2015/src/_utils/cli.js"
   },
