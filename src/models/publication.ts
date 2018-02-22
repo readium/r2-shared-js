@@ -10,6 +10,7 @@ import { JsonStringConverter } from "@utils/ta-json-string-converter";
 import { IZip } from "@utils/zip/zip";
 // https://github.com/edcarroll/ta-json
 import {
+    JSON as TAJSON,
     JsonConverter,
     JsonElementType,
     JsonObject,
@@ -25,6 +26,10 @@ import { Link } from "./publication-link";
 
 @JsonObject()
 export class Publication {
+
+    public static parse(json: string): Publication {
+        return TAJSON.parse<Publication>(json, Publication);
+    }
 
     @JsonProperty("@context")
     @JsonConverter(JsonStringConverter)
