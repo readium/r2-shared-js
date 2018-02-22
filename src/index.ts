@@ -5,5 +5,8 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
+import { initGlobals } from "./init-globals";
+initGlobals();
+
 export { Publication } from "@models/publication";
 export { Link as PublicationLink } from "@models/publication-link";
