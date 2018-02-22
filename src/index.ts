@@ -6,3 +6,4 @@
 // ==LICENSE-END==
 
 export { Publication } from "@models/publication";
+export { Link as PublicationLink } from "@models/publication-link";
