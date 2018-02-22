@@ -48,7 +48,7 @@
   "dependencies": {
     "debug": "^3.1.0",
     "image-size": "^0.6.2",
-    "mime-types": "^2.1.17",
+    "mime-types": "^2.1.18",
     "moment": "^2.20.1",
     "r2-lcp-js": "github:edrlab/r2-lcp-js-dist#develop",
     "r2-opds-js": "github:edrlab/r2-opds-js-dist#develop",
