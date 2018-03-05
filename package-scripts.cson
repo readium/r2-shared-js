@@ -8,9 +8,9 @@
   '
 
   'copydist': '
-    cpy "dist/**/*" ../r2-streamer-js/node_modules/r2-shared-js/ --cwd=./ --parents &&
-    cpy "dist/**/*" ../r2-navigator-js/node_modules/r2-shared-js/ --cwd=./ --parents &&
-    cpy "dist/**/*" ../r2-testapp-js/node_modules/r2-shared-js/ --cwd=./ --parents
+    cpy "./dist/**/*" ../r2-streamer-js/node_modules/r2-shared-js/ --cwd=./ --parents --no-dir &&
+    cpy "./dist/**/*" ../r2-navigator-js/node_modules/r2-shared-js/ --cwd=./ --parents --no-dir &&
+    cpy "./dist/**/*" ../r2-testapp-js/node_modules/r2-shared-js/ --cwd=./ --parents --no-dir
   '
 
   'quick-build-dist': '
@@ -32,8 +32,8 @@
     cpy ../r2-shared-js/package-lock.json . &&
     cpy ../r2-shared-js/LICENSE . &&
     cpy ../r2-shared-js/README.md . &&
-    cpy "docs/**/*" ../r2-shared-js-dist/ --cwd=../r2-shared-js/ --parents &&
-    cpy "dist/**/*" ../r2-shared-js-dist/ --cwd=../r2-shared-js/ --parents &&
+    cpy "./docs/**/*" ../r2-shared-js-dist/ --cwd=../r2-shared-js/ --parents --no-dir &&
+    cpy "./dist/**/*" ../r2-shared-js-dist/ --cwd=../r2-shared-js/ --parents --no-dir &&
     (git add * || echo add) &&
     (git commit -a -m "add new dist" || echo commit) &&
     (git push --set-upstream origin develop || echo push) &&
