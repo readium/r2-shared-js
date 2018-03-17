@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import * as path from "path";
 
 import { Publication } from "@models/publication";
@@ -8,7 +9,8 @@ export async function PublicationParsePromise(filePath: string): Promise<Publica
 
     const fileName = path.basename(filePath);
     const ext = path.extname(fileName).toLowerCase();
-    return /\.epub[3]?$/.test(ext) ?
+    const isEPUB = /\.epub[3]?$/.test(ext) || fs.existsSync(path.join(filePath, "META-INF", "container.xml"));
+    return isEPUB ?
         EpubParsePromise(filePath) :
         CbzParsePromise(filePath);
 }

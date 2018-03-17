@@ -38,7 +38,9 @@ export async function CbzParsePromise(filePath: string): Promise<Publication> {
     publication.AddToInternal("zip", zip);
 
     let comicInfoEntryName: string | undefined;
-    zip.forEachEntry((entryName: string) => {
+
+    const entries = await zip.getEntries();
+    for (const entryName of entries) {
         // console.log("++ZIP: entry");
 
         // console.log(entryName);
@@ -64,7 +66,7 @@ export async function CbzParsePromise(filePath: string): Promise<Publication> {
         } else if (entryName.endsWith("ComicInfo.xml")) {
             comicInfoEntryName = entryName;
         }
-    });
+    }
 
     if (!publication.Metadata.Title) {
         publication.Metadata.Title = path.basename(filePath);
