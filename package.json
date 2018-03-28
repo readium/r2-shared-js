@@ -27,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/edrlab/r2-shared-js.git"
+    "url": "git+https://github.com/readium/r2-shared-js.git"
   },
   "author": {
     "name": "EDRLab",
@@ -42,17 +42,17 @@
     }
   ],
   "bugs": {
-    "url": "https://github.com/edrlab/r2-shared-js/issues"
+    "url": "https://github.com/readium/r2-shared-js/issues"
   },
-  "homepage": "https://github.com/edrlab/r2-shared-js",
+  "homepage": "https://github.com/readium/r2-shared-js",
   "dependencies": {
     "debug": "^3.1.0",
     "image-size": "^0.6.2",
     "mime-types": "^2.1.18",
     "moment": "^2.21.0",
-    "r2-lcp-js": "github:edrlab/r2-lcp-js-dist#develop",
-    "r2-opds-js": "github:edrlab/r2-opds-js-dist#develop",
-    "r2-utils-js": "github:edrlab/r2-utils-js-dist#develop",
+    "r2-lcp-js": "github:readium/r2-lcp-js-dist#develop",
+    "r2-opds-js": "github:readium/r2-opds-js-dist#develop",
+    "r2-utils-js": "github:readium/r2-utils-js-dist#develop",
     "slugify": "^1.2.9",
     "ta-json": "github:danielweck/ta-json#dist",
     "tslib": "^1.9.0",
