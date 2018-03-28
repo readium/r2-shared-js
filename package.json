@@ -63,7 +63,7 @@
     "@types/debug": "^0.0.30",
     "@types/image-size": "^0.0.29",
     "@types/mime-types": "^2.1.0",
-    "@types/node": "^9.4.7",
+    "@types/node": "^9.6.0",
     "@types/xmldom": "^0.1.29",
     "ava": "^0.25.0",
     "cpy-cli": "github:sindresorhus/cpy-cli#nodir",
@@ -76,8 +76,8 @@
     "mkdirp": "^0.5.1",
     "rimraf": "^2.6.2",
     "tslint": "^5.9.1",
-    "tslint-language-service": "^0.9.8",
-    "typescript": "^2.7.2"
+    "tslint-language-service": "^0.9.9",
+    "typescript": "^2.8.1"
   },
   "main": "dist/es6-es2015/src/index.js",
   "types": "dist/es6-es2015/src/index.d.js",
