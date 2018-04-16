@@ -10,3 +10,6 @@ initGlobals();
 
 export { Publication } from "@models/publication";
 export { Link as PublicationLink } from "@models/publication-link";
+export { PublicationParsePromise } from "@parser/publication-parser";
+export { EpubParsePromise } from "@parser/epub";
+export { CbzParsePromise } from "@parser/cbz";
