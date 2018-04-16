@@ -214,6 +214,10 @@ export class Publication {
         return links;
     }
 
+    public getManifestJSON(): string {
+        return TAJSON.serialize(this);
+    }
+
     @OnDeserialized()
     // tslint:disable-next-line:no-unused-variable
     // @ts-ignore: TS6133 (is declared but its value is never read.)
