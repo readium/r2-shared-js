@@ -67,7 +67,7 @@ export const addCoverDimensions = async (publication: Publication, coverLink: Li
     const zipInternal = publication.findFromInternal("zip");
     if (zipInternal) {
         const zip = zipInternal.Value as IZip;
-        if (zip.hasEntry(coverLink.Href)) {
+        if (await zip.hasEntry(coverLink.Href)) {
             let zipStream: IStreamAndLength;
             try {
                 zipStream = await zip.entryStreamPromise(coverLink.Href);
@@ -128,7 +128,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
 
     let lcpl: LCP | undefined;
     const lcplZipPath = "META-INF/license.lcpl";
-    if (zip.hasEntry(lcplZipPath)) {
+    if (await zip.hasEntry(lcplZipPath)) {
         let lcplZipStream_: IStreamAndLength;
         try {
             lcplZipStream_ = await zip.entryStreamPromise(lcplZipPath);
@@ -174,7 +174,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
 
     let encryption: Encryption | undefined;
     const encZipPath = "META-INF/encryption.xml";
-    if (zip.hasEntry(encZipPath)) {
+    if (await zip.hasEntry(encZipPath)) {
 
         let encryptionXmlZipStream_: IStreamAndLength;
         try {
@@ -678,7 +678,7 @@ const fillMediaOverlay =
                 continue;
             }
 
-            if (!zip.hasEntry(item.Href)) {
+            if (!await zip.hasEntry(item.Href)) {
                 continue;
             }
 
@@ -1551,7 +1551,7 @@ const fillTOCFromNavDoc = async (publication: Publication, _rootfile: Rootfile, 
     }
 
     const navDocFilePath = navLink.Href;
-    if (!zip.hasEntry(navDocFilePath)) {
+    if (!await zip.hasEntry(navDocFilePath)) {
         return;
     }
 
