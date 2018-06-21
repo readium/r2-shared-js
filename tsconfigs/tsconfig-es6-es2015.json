@@ -30,13 +30,13 @@
         "node_modules/r2-opds-js/dist/es6-es2015/src/*"
       ],
       "@utils/*": [
-        "node_modules/r2-utils-js/dist/es6-es2015/src/_utils/*"
+        "node_modules/@evidentpoint/r2-utils-js/dist/es6-es2015/src/_utils/*"
       ],
       "@r2-utils-js/*": [
-        "node_modules/r2-utils-js/dist/es6-es2015/src/*"
+        "node_modules/@evidentpoint/r2-utils-js/dist/es6-es2015/src/*"
       ],
       "@r2-lcp-js/*": [
-        "node_modules/r2-lcp-js/dist/es6-es2015/src/*"
+        "node_modules/@evidentpoint/r2-lcp-js/dist/es6-es2015/src/*"
       ]
     }
   }
