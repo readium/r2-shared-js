@@ -5,7 +5,7 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
-import * as fs from "fs";
+// import * as fs from "fs";
 import * as path from "path";
 
 import { Publication } from "@models/publication";
@@ -16,8 +16,7 @@ export async function PublicationParsePromise(filePath: string): Promise<Publica
 
     const fileName = path.basename(filePath);
     const ext = path.extname(fileName).toLowerCase();
-    const isEPUB = /\.epub[3]?$/.test(ext) || fs.existsSync(path.join(filePath, "META-INF", "container.xml"));
-    return isEPUB ?
+    return /\.epub[3]?$/.test(ext) ?
         EpubParsePromise(filePath) :
         CbzParsePromise(filePath);
 }
