@@ -5,12 +5,13 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
+// import { JsonStringConverter } from "@utils/ta-json-string-converter";
+
 import { LCP } from "@r2-lcp-js/parser/epub/lcp";
-import { JsonStringConverter } from "@utils/ta-json-string-converter";
 import { IZip } from "@utils/zip/zip";
 // https://github.com/edcarroll/ta-json
 import {
-    JsonConverter,
+    // JsonConverter,
     JsonElementType,
     JsonObject,
     JsonProperty,
@@ -26,8 +27,8 @@ import { Link } from "./publication-link";
 @JsonObject()
 export class Publication {
 
+    // @JsonConverter(JsonStringConverter)
     @JsonProperty("@context")
-    @JsonConverter(JsonStringConverter)
     @JsonElementType(String)
     public Context!: string[];
 
@@ -38,7 +39,7 @@ export class Publication {
     @JsonElementType(Link)
     public Links!: Link[];
 
-    @JsonProperty("spine")
+    @JsonProperty("readingOrder")
     @JsonElementType(Link)
     public Spine!: Link[];
 
