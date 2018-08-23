@@ -49,7 +49,7 @@ test("JSON SERIALIZE: Publication.Context => string[]", (t) => {
     t.is(json["@context"][1], contextStr2);
 });
 
-test("JSON SERIALIZE: Publication.Context => string[1] collapse-array", (t) => {
+test("JSON SERIALIZE: Publication.Context => string[1] NO collapse-array", (t) => {
 
     const pub = new Publication();
     pub.Context = [contextStr1];
@@ -65,8 +65,8 @@ test("JSON SERIALIZE: Publication.Context => string[1] collapse-array", (t) => {
     //     });
     logJSON(json);
 
-    checkType_String(t, json["@context"]);
-    t.is(json["@context"], contextStr1);
+    checkType_Array(t, json["@context"]);
+    t.is(json["@context"][0], contextStr1);
 });
 
 // implemented, see IPropertyConverter.collapseArrayWithSingleItem()
@@ -121,18 +121,18 @@ test("JSON DESERIALIZE: Publication.Context => string[1]", (t) => {
     t.is(pub.Context[0], contextStr1);
 });
 
-test("JSON DESERIALIZE: Publication.Context => string", (t) => {
+// test("JSON DESERIALIZE: Publication.Context => string", (t) => {
 
-    const json: any = {};
-    json["@context"] = contextStr1;
-    logJSON(json);
+//     const json: any = {};
+//     json["@context"] = contextStr1;
+//     logJSON(json);
 
-    const pub: Publication = TAJSON.deserialize<Publication>(json, Publication);
-    inspect(pub);
+//     const pub: Publication = TAJSON.deserialize<Publication>(json, Publication);
+//     inspect(pub);
 
-    checkType_Array(t, pub.Context);
-    t.is(pub.Context.length, 1);
+//     checkType_Array(t, pub.Context);
+//     t.is(pub.Context.length, 1);
 
-    checkType_String(t, pub.Context[0]);
-    t.is(pub.Context[0], contextStr1);
-});
+//     checkType_String(t, pub.Context[0]);
+//     t.is(pub.Context[0], contextStr1);
+// });
