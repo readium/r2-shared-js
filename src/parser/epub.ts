@@ -169,7 +169,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
         // application/vnd.readium.lcp.license.v1.0+json (NEW)
         // application/vnd.readium.license.status.v1.0+json (LSD)
         const mime = "application/vnd.readium.lcp.license.v1.0+json";
-        publication.AddLink(mime, ["license"], lcpl.ZipPath, false);
+        publication.AddLink(mime, ["license"], lcpl.ZipPath, undefined);
     }
 
     let encryption: Encryption | undefined;

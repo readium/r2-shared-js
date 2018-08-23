@@ -178,13 +178,15 @@ export class Publication {
         return undefined;
     }
 
-    public AddLink(typeLink: string, rel: string[], url: string, templated: boolean) {
+    public AddLink(typeLink: string, rel: string[], url: string, templated: boolean | undefined) {
         const link = new Link();
         link.AddRels(rel);
         link.Href = url;
         link.TypeLink = typeLink;
 
-        link.Templated = templated;
+        if (typeof templated !== "undefined") {
+            link.Templated = templated;
+        }
 
         if (!this.Links) {
             this.Links = [];
