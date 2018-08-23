@@ -8,7 +8,7 @@
   '
 
   'copydist': '
-    cpy "./dist/**/*" ../r2-shared-js/node_modules/r2-shared-js/ --cwd=./ --parents --no-dir &&
+    cpy "./dist/**/*" ../r2-opds-js/node_modules/r2-shared-js/ --cwd=./ --parents --no-dir &&
     cpy "./dist/**/*" ../r2-streamer-js/node_modules/r2-shared-js/ --cwd=./ --parents --no-dir &&
     cpy "./dist/**/*" ../r2-navigator-js/node_modules/r2-shared-js/ --cwd=./ --parents --no-dir &&
     cpy "./dist/**/*" ../r2-testapp-js/node_modules/r2-shared-js/ --cwd=./ --parents --no-dir
