@@ -194,24 +194,6 @@ export class Publication {
         this.Links.push(link);
     }
 
-    public GetPreFetchResources(): Link[] {
-        const links: Link[] = [];
-
-        if (this.Resources) {
-            const mediaTypes = ["text/css", "application/vnd.ms-opentype", "text/javascript"];
-
-            this.Resources.forEach((link) => {
-                mediaTypes.forEach((mediaType) => {
-                    if (link.TypeLink === mediaType) {
-                        links.push(link);
-                    }
-                });
-            });
-        }
-
-        return links;
-    }
-
     @OnDeserialized()
     // tslint:disable-next-line:no-unused-variable
     // @ts-ignore: TS6133 (is declared but its value is never read.)
