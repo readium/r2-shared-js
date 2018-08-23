@@ -2,11 +2,14 @@ import * as path from "path";
 
 import { BelongsTo } from "@models/metadata-belongsto";
 import { Collection } from "@models/metadata-collection";
+import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
 import { test } from "ava";
 import { JSON as TAJSON } from "ta-json";
 
-import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
-import { initGlobals } from "../src/init-globals";
+import {
+    initGlobalConverters_GENERIC,
+    initGlobalConverters_SHARED,
+} from "../src/init-globals";
 import {
     checkType,
     checkType_Array,
@@ -16,7 +19,9 @@ import {
     logJSON,
 } from "./helpers";
 
-initGlobals();
+initGlobalConverters_GENERIC();
+initGlobalConverters_SHARED();
+
 setLcpNativePluginPath(path.join(process.cwd(), "LCP", "lcp.node"));
 
 // ==========================

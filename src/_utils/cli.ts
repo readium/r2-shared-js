@@ -13,9 +13,17 @@ import { Publication } from "@models/publication";
 import { PublicationParsePromise } from "@parser/publication-parser";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
 
-import { initGlobals } from "../init-globals";
+import {
+    initGlobalConverters_GENERIC,
+    initGlobalConverters_SHARED,
+} from "../init-globals";
 
-initGlobals();
+// import { initGlobalConverters_OPDS } from "@opds/init-globals";
+
+initGlobalConverters_GENERIC();
+initGlobalConverters_SHARED();
+// initGlobalConverters_OPDS();
+
 setLcpNativePluginPath(path.join(process.cwd(), "LCP", "lcp.node"));
 
 console.log("process.cwd():");
