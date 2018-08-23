@@ -23,12 +23,6 @@
       "@r2-shared-js/*": [
         "src/*"
       ],
-      "@opds/*": [
-        "node_modules/r2-opds-js/dist/es8-es2017/src/opds/*"
-      ],
-      "@r2-opds-js/*": [
-        "node_modules/r2-opds-js/dist/es8-es2017/src/*"
-      ],
       "@utils/*": [
         "node_modules/r2-utils-js/dist/es8-es2017/src/_utils/*"
       ],
