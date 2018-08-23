@@ -75,10 +75,10 @@ export class Publication {
     @JsonElementType(Link)
     public LOT!: Link[];
 
-    // OPDS2
-    @JsonProperty("images")
-    @JsonElementType(Link)
-    public Images!: Link[];
+    // // OPDS2
+    // @JsonProperty("images")
+    // @JsonElementType(Link)
+    // public Images!: Link[];
 
     // public OtherLinks: Link[];
     // public OtherCollections: IPublicationCollection[];
