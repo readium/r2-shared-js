@@ -20,9 +20,9 @@ import {
 
 // import { initGlobalConverters_OPDS } from "@opds/init-globals";
 
-initGlobalConverters_GENERIC();
-initGlobalConverters_SHARED();
 // initGlobalConverters_OPDS();
+initGlobalConverters_SHARED();
+initGlobalConverters_GENERIC();
 
 setLcpNativePluginPath(path.join(process.cwd(), "LCP", "lcp.node"));
 

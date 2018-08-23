@@ -19,8 +19,8 @@ import {
     logJSON,
 } from "./helpers";
 
-initGlobalConverters_GENERIC();
 initGlobalConverters_SHARED();
+initGlobalConverters_GENERIC();
 
 setLcpNativePluginPath(path.join(process.cwd(), "LCP", "lcp.node"));
 
