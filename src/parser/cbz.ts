@@ -36,7 +36,7 @@ export async function CbzParsePromise(filePath: string): Promise<Publication> {
     }
 
     const publication = new Publication();
-    publication.Context = ["http://readium.org/webpub/default.jsonld"];
+    publication.Context = ["https://readium.org/webpub-manifest/context.jsonld"];
     publication.Metadata = new Metadata();
     publication.Metadata.RDFType = "http://schema.org/ComicIssue";
     publication.Metadata.Identifier = filePathToTitle(filePath);
