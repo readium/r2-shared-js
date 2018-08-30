@@ -9,3 +9,7 @@ NPM updates:
 * `@types/node`
 * `r2-lcp-js`
 * `r2-utils-js`
+
+# 1.0.0-alpha.3
+
+* `package-lock.json` had incorrect version
