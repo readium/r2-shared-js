@@ -46,7 +46,7 @@
   },
   "homepage": "https://github.com/readium/r2-shared-js",
   "dependencies": {
-    "debug": "^3.1.0",
+    "debug": "^4.0.1",
     "image-size": "^0.6.3",
     "mime-types": "^2.1.20",
     "moment": "^2.22.2",
