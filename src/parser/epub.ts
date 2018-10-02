@@ -29,7 +29,7 @@ import { zipLoadPromise } from "@utils/zip/zipFactory";
 import * as debug_ from "debug";
 import * as sizeOf from "image-size";
 import * as moment from "moment";
-import { JSON as TAJSON } from "ta-json";
+import { JSON as TAJSON } from "ta-json-x";
 import * as xmldom from "xmldom";
 import * as xpath from "xpath";
 

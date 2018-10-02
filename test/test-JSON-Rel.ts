@@ -3,7 +3,7 @@ import * as path from "path";
 import { Link } from "@models/publication-link";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
 import { test } from "ava";
-import { JSON as TAJSON } from "ta-json";
+import { JSON as TAJSON } from "ta-json-x";
 
 import {
     initGlobalConverters_GENERIC,

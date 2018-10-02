@@ -11,7 +11,7 @@ import {
     JsonObject,
     JsonProperty,
     OnDeserialized,
-} from "ta-json";
+} from "ta-json-x";
 
 import { BelongsTo } from "./metadata-belongsto";
 import { Contributor } from "./metadata-contributor";

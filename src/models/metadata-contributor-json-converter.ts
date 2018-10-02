@@ -9,7 +9,7 @@ import {
     IPropertyConverter,
     JSON as TAJSON,
     JsonValue,
-} from "ta-json";
+} from "ta-json-x";
 
 import { Contributor } from "./metadata-contributor";
 

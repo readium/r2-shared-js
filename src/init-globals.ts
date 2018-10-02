@@ -19,7 +19,7 @@ import {
 import {
     BufferConverter as JsonBufferConverter,
     propertyConverters as jsonConverters,
-} from "ta-json";
+} from "ta-json-x";
 
 export function initGlobalConverters_SHARED() {
     jsonConverters.set(Contributor, new JsonContributorConverter());

@@ -10,7 +10,7 @@ import {
     JsonElementType,
     JsonObject,
     JsonProperty,
-} from "ta-json";
+} from "ta-json-x";
 
 import { Collection } from "./metadata-collection";
 

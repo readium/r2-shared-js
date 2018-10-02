@@ -10,7 +10,7 @@ import {
     JsonElementType,
     JsonObject,
     JsonProperty,
-} from "ta-json";
+} from "ta-json-x";
 
 // http://www.idpf.org/epub/31/spec/epub-mediaoverlays.html#app-clock-examples
 // https://www.w3.org/TR/2008/REC-SMIL3-20081201/smil-timing.html#q22

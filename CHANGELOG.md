@@ -1,7 +1,24 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.0-alpha.4...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.0-alpha.5...develop
+
+# 1.0.0-alpha.5
+
+Changes:
+* Dependency "ta-json" GitHub semver dependency becomes "ta-json-x" NPM package (fixes https://github.com/readium/r2-testapp-js/issues/10 )
+* Removed TypeScript linter warning message (checks for no unused variables)
+* NPM updates related to the Node TypeScript typings
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.0-alpha.5/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.0-alpha.5/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.0-alpha.5
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.0-alpha.4...v1.0.0-alpha.5
 
 # 1.0.0-alpha.4
 

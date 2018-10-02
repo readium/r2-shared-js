@@ -16,7 +16,7 @@ import {
     JsonObject,
     JsonProperty,
     OnDeserialized,
-} from "ta-json";
+} from "ta-json-x";
 
 import { IInternal } from "./internal";
 import { Metadata } from "./metadata";

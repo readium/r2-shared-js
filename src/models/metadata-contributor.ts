@@ -9,7 +9,7 @@
 import {
     JsonObject,
     JsonProperty,
-} from "ta-json";
+} from "ta-json-x";
 
 import { IStringMap } from "./metadata-multilang";
 

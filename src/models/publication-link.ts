@@ -13,7 +13,7 @@ import {
     JsonObject,
     JsonProperty,
     OnDeserialized,
-} from "ta-json";
+} from "ta-json-x";
 
 import { MediaOverlayNode } from "./media-overlay";
 import { Properties } from "./metadata-properties";

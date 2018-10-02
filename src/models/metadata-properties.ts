@@ -10,7 +10,7 @@ import {
     JsonElementType,
     JsonObject,
     JsonProperty,
-} from "ta-json";
+} from "ta-json-x";
 
 import { Encrypted } from "@r2-lcp-js/models/metadata-encrypted";
 
