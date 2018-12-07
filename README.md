@@ -107,6 +107,8 @@ Command line steps (NPM, but similar with YARN):
 5) `npm run build:all` (invoke the main build script: clean, lint, compile)
 6) `ls dist` (that's the build output which gets published as NPM package)
 7) `npm run cli PATH_TO_PACKED_OR_EXPLODED_EPUB PATH_TO_OUTPUT_FOLDER OPTIONAL_DECRYPT_KEY` (to parse a publication and convert it to a Readium2 manifest with extracted resources, paths can be relative or absolute)
+8) `npm run cli ./misc/epubs/wasteland-otf-obf_LCP_dan.lcpl.epub ./misc/epubs/ dan` (same as above, working example with built-in sample LCP basic/test profile)
+9) `npm run cli ./misc/epubs/wasteland-otf-obf_LCP_dan.lcpl.epub ./misc/epubs/ ec4f2dbb3b140095550c9afbbb69b5d6fd9e814b9da82fad0b34e9fcbe56f1cb` (same as above, with SHA256 checksum/hex-digest to avoid plain-text passphrase in console)
 
 ## Documentation
 
