@@ -10,9 +10,10 @@
       "cwd": "${workspaceRoot}",
       "internalConsoleOptions": "openOnSessionStart",
       "args": [
-        "./misc/epubs",
-        "${file}",
-        "${workspaceRoot}/misc/epubs/wasteland-otf-obf.epub"
+        "${workspaceRoot}/misc/epubs/wasteland-otf-obf_LCP_dan.lcpl.epub",
+        "${workspaceRoot}/misc/epubs/",
+        "dan;ec4f2dbb3b140095550c9afbbb69b5d6fd9e814b9da82fad0b34e9fcbe56f1cb;nope;zz4f2dbb3b140095550c9afbbb69b5d6fd9e814b9da82fad0b34e9fcbe56f1cb",
+        "${file}"
       ],
       "env": {
         "DEBUG": "*",
