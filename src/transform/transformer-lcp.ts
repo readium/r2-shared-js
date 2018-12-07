@@ -20,6 +20,7 @@ export class TransformerLCP implements ITransformer {
 
     public supports(publication: Publication, link: Link): boolean {
         return (typeof publication.LCP !== "undefined") &&
+            link.Properties && link.Properties.Encrypted &&
             supports_(publication.LCP, link.Href, link.Properties.Encrypted);
     }
 

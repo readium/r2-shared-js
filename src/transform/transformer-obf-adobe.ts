@@ -14,7 +14,8 @@ import { ITransformer } from "./transformer";
 
 export class TransformerObfAdobe implements ITransformer {
     public supports(_publication: Publication, link: Link): boolean {
-        return link.Properties.Encrypted.Algorithm === "http://ns.adobe.com/pdf/enc#RC";
+        return link.Properties && link.Properties.Encrypted &&
+            link.Properties.Encrypted.Algorithm === "http://ns.adobe.com/pdf/enc#RC";
     }
 
     public async transformStream(

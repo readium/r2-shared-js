@@ -16,7 +16,8 @@ import { ITransformer } from "./transformer";
 
 export class TransformerObfIDPF implements ITransformer {
     public supports(_publication: Publication, link: Link): boolean {
-        return link.Properties.Encrypted.Algorithm === "http://www.idpf.org/2008/embedding";
+        return link.Properties && link.Properties.Encrypted &&
+            link.Properties.Encrypted.Algorithm === "http://www.idpf.org/2008/embedding";
     }
 
     public async transformStream(
