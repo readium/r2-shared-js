@@ -109,6 +109,7 @@ Command line steps (NPM, but similar with YARN):
 7) `npm run cli PATH_TO_PACKED_OR_EXPLODED_EPUB PATH_TO_OUTPUT_FOLDER OPTIONAL_DECRYPT_KEY` (to parse a publication and convert it to a Readium2 manifest with extracted resources, paths can be relative or absolute)
 8) `npm run cli ./misc/epubs/wasteland-otf-obf_LCP_dan.lcpl.epub ./misc/epubs/ dan` (same as above, working example with built-in sample LCP basic/test profile)
 9) `npm run cli ./misc/epubs/wasteland-otf-obf_LCP_dan.lcpl.epub ./misc/epubs/ ec4f2dbb3b140095550c9afbbb69b5d6fd9e814b9da82fad0b34e9fcbe56f1cb` (same as above, with SHA256 checksum/hex-digest to avoid plain-text passphrase in console)
+10) `npm run cli https://raw.githubusercontent.com/readium/r2-shared-js/develop/misc/epubs/wasteland-otf-obf_LCP_dan.lcpl.epub ./misc/epubs/ dan` (same as above, but with a remote HTTP URL)
 
 ## Documentation
 

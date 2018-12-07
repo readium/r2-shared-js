@@ -44,30 +44,34 @@ if (!args[0]) {
 const argPath = args[0].trim();
 let filePath = argPath;
 console.log(filePath);
-if (!fs.existsSync(filePath)) {
-    filePath = path.join(__dirname, argPath);
-    console.log(filePath);
+
+const isHTTP = filePath.startsWith("http");
+if (!isHTTP) {
     if (!fs.existsSync(filePath)) {
-        filePath = path.join(process.cwd(), argPath);
+        filePath = path.join(__dirname, argPath);
         console.log(filePath);
         if (!fs.existsSync(filePath)) {
-            console.log("FILEPATH DOES NOT EXIST.");
-            process.exit(1);
+            filePath = path.join(process.cwd(), argPath);
+            console.log(filePath);
+            if (!fs.existsSync(filePath)) {
+                console.log("FILEPATH DOES NOT EXIST.");
+                process.exit(1);
+            }
         }
     }
-}
 
-const stats = fs.lstatSync(filePath);
-if (!stats.isFile() && !stats.isDirectory()) {
-    console.log("FILEPATH MUST BE FILE OR DIRECTORY.");
-    process.exit(1);
+    const stats = fs.lstatSync(filePath);
+    if (!stats.isFile() && !stats.isDirectory()) {
+        console.log("FILEPATH MUST BE FILE OR DIRECTORY.");
+        process.exit(1);
+    }
 }
 
 const fileName = path.basename(filePath);
 const ext = path.extname(fileName).toLowerCase();
 
 const isEPUBPacked = /\.epub[3]?$/.test(ext);
-const isEPUBExploded = fs.existsSync(path.join(filePath, "META-INF", "container.xml"));
+const isEPUBExploded = isHTTP ? false : fs.existsSync(path.join(filePath, "META-INF", "container.xml"));
 const isEPUB = isEPUBPacked || isEPUBExploded;
 
 let outputDirPath: string | undefined;
