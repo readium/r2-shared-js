@@ -1,10 +1,34 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.0-alpha.6...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.0...develop
 
 Changes:
 * TODO
+
+# 1.0.0
+
+> Build environment: NodeJS `8.14.0`, NPM `6.5.0`
+
+Changes:
+* EPUB - ReadiumWebPubManifest converter CLI (demo)
+* Chainable transforms (content filters)
+* Sample HTML transform (will evolve into ReadiumCSS injector for navigator)
+* Locator model
+* NPM updates (minor)
+* README info
+* VisualStudio code tweaks (developer workflow)
+* Semantic versioning bump 1.*.* (3-digit style now, "-alphaX" suffix caused issues with NPM tooling: updates, lockfile, etc.)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.0/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.0/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.0
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.0-alpha.6...v1.0.0
 
 # 1.0.0-alpha.6
 
