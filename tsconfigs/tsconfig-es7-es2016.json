@@ -20,9 +20,6 @@
       "@transform/*": [
         "src/transform/*"
       ],
-      "@r2-shared-js/*": [
-        "src/*"
-      ],
       "@r2-utils-js/*": [
         "node_modules/r2-utils-js/dist/es6-es2015/src/*"
       ],
