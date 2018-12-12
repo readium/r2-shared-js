@@ -8,7 +8,7 @@
 import {
     XmlObject,
     XmlXPathSelector,
-} from "@utils/xml-js-mapper";
+} from "@r2-utils-js/_utils/xml-js-mapper";
 
 @XmlObject({
     xsd: "http://www.w3.org/2001/XMLSchema",

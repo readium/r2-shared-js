@@ -8,7 +8,7 @@
 import {
     XmlObject,
     XmlXPathSelector,
-} from "@utils/xml-js-mapper";
+} from "@r2-utils-js/_utils/xml-js-mapper";
 
 @XmlObject({
     ds: "http://www.w3.org/2000/09/xmldsig#",

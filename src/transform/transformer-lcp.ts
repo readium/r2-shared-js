@@ -9,7 +9,7 @@ import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
 import { LCP } from "@r2-lcp-js/parser/epub/lcp";
 import { supports as supports_, transformStream as transformStream_ } from "@r2-lcp-js/transform/transformer-lcp";
-import { IStreamAndLength } from "@utils/zip/zip";
+import { IStreamAndLength } from "@r2-utils-js/_utils/zip/zip";
 
 import { ITransformer } from "./transformer";
 

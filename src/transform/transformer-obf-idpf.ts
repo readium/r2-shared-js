@@ -9,8 +9,8 @@ import * as crypto from "crypto";
 
 import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
-import { bufferToStream, streamToBufferPromise } from "@utils/stream/BufferUtils";
-import { IStreamAndLength } from "@utils/zip/zip";
+import { bufferToStream, streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
+import { IStreamAndLength } from "@r2-utils-js/_utils/zip/zip";
 
 import { ITransformer } from "./transformer";
 

@@ -23,9 +23,6 @@
       "@r2-shared-js/*": [
         "src/*"
       ],
-      "@utils/*": [
-        "node_modules/r2-utils-js/dist/es5/src/_utils/*"
-      ],
       "@r2-utils-js/*": [
         "node_modules/r2-utils-js/dist/es5/src/*"
       ],

@@ -9,13 +9,13 @@ import { Collection } from "@models/metadata-collection";
 import { JsonCollectionConverter } from "@models/metadata-collection-json-converter";
 import { Contributor } from "@models/metadata-contributor";
 import { JsonContributorConverter } from "@models/metadata-contributor-json-converter";
-import { JsonDateConverter } from "@utils/ta-json-date-converter";
-import { JsonNumberConverter } from "@utils/ta-json-number-converter";
+import { JsonDateConverter } from "@r2-utils-js/_utils/ta-json-date-converter";
+import { JsonNumberConverter } from "@r2-utils-js/_utils/ta-json-number-converter";
 import {
     BufferConverter as XmlBufferConverter,
     DateConverter as XmlDateConverter,
     propertyConverters as xmlConverters,
-} from "@utils/xml-js-mapper";
+} from "@r2-utils-js/_utils/xml-js-mapper";
 import {
     BufferConverter as JsonBufferConverter,
     propertyConverters as jsonConverters,

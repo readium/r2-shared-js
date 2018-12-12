@@ -35,7 +35,7 @@ export function checkDate(t: TestContext, d1: Date, d2: Date) {
     t.true(d1 >= d2 && d1 <= d2);
 }
 
-// import { FunctionType } from "@utils/xml-js-mapper";
+// import { FunctionType } from "@r2-utils-js/_utils/xml-js-mapper";
 // tslint:disable-next-line:ban-types
 export function checkType(t: TestContext, obj: any, clazz: Function) {
     t.is(typeof obj, "object"); // obj.constructor.name

@@ -5,7 +5,7 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
-import { JsonStringConverter } from "@utils/ta-json-string-converter";
+import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
 // https://github.com/edcarroll/ta-json
 import {
     JsonConverter,

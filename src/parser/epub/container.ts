@@ -9,7 +9,7 @@ import {
     XmlItemType,
     XmlObject,
     XmlXPathSelector,
-} from "@utils/xml-js-mapper";
+} from "@r2-utils-js/_utils/xml-js-mapper";
 import { Rootfile } from "./container-rootfile";
 
 @XmlObject({

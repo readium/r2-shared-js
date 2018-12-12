@@ -10,7 +10,7 @@ import {
     XmlItemType,
     XmlObject,
     XmlXPathSelector,
-} from "@utils/xml-js-mapper";
+} from "@r2-utils-js/_utils/xml-js-mapper";
 import { SeqOrPar } from "./smil-seq-or-par";
 
 @XmlObject({

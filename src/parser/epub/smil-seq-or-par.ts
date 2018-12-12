@@ -9,7 +9,7 @@ import {
     XmlDiscriminatorProperty,
     XmlObject,
     XmlXPathSelector,
-} from "@utils/xml-js-mapper";
+} from "@r2-utils-js/_utils/xml-js-mapper";
 
 @XmlObject({
     epub: "http://www.idpf.org/2007/ops",

@@ -9,7 +9,7 @@ import {
     XmlItemType,
     XmlObject,
     XmlXPathSelector,
-} from "@utils/xml-js-mapper";
+} from "@r2-utils-js/_utils/xml-js-mapper";
 import { CipherData } from "./encryption-cypherdata";
 import { KeyInfo } from "./encryption-keyinfo";
 import { EncryptionMethod } from "./encryption-method";

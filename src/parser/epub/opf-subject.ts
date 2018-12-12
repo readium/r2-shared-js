@@ -8,7 +8,7 @@
 import {
     XmlObject,
     XmlXPathSelector,
-} from "@utils/xml-js-mapper";
+} from "@r2-utils-js/_utils/xml-js-mapper";
 
 @XmlObject({
     dc: "http://purl.org/dc/elements/1.1/",
