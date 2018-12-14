@@ -10,13 +10,19 @@ import { Link } from "@models/publication-link";
 import { bufferToStream, streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { IStreamAndLength } from "@r2-utils-js/_utils/zip/zip";
 import * as mime from "mime-types";
-import * as xmldom from "xmldom";
 import { ITransformer } from "./transformer";
 
 import * as debug_ from "debug";
 const debug = debug_("r2:shared#transform/transformer-html");
 
 export class TransformerHTML implements ITransformer {
+
+    private readonly transformString: (publication: Publication, link: Link, data: string) => string;
+
+    constructor(transformerFunction: (publication: Publication, link: Link, data: string) => string) {
+        this.transformString = transformerFunction;
+    }
+
     public supports(publication: Publication, link: Link): boolean {
 
         let mediaType = mime.lookup(link.Href);
@@ -72,23 +78,11 @@ export class TransformerHTML implements ITransformer {
         return Promise.resolve(sal);
     }
 
-    private async transformBuffer(_publication: Publication, link: Link, data: Buffer): Promise<Buffer> {
-
-        let mediaType = mime.lookup(link.Href);
-        if (link && link.TypeLink) {
-            mediaType = link.TypeLink;
-        }
+    private async transformBuffer(publication: Publication, link: Link, data: Buffer): Promise<Buffer> {
 
         try {
             const str = data.toString("utf8");
-
-            const dom = typeof mediaType === "string" ?
-                new xmldom.DOMParser().parseFromString(str, mediaType) :
-                new xmldom.DOMParser().parseFromString(str);
-
-            // TODO
-
-            const str_ = new xmldom.XMLSerializer().serializeToString(dom) + "\n\n<!-- JUST TESTING -->";
+            const str_ = this.transformString(publication, link, str);
             return Promise.resolve(Buffer.from(str_));
         } catch (err) {
             debug("TransformerHTML fail => no change");
