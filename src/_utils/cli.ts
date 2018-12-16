@@ -8,12 +8,15 @@
 import * as crypto from "crypto";
 import * as fs from "fs";
 import * as path from "path";
+import { URL } from "url";
 import * as util from "util";
 
 import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
+import { isEPUBlication } from "@parser/epub";
 import { PublicationParsePromise } from "@parser/publication-parser";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
+import { isHTTP } from "@r2-utils-js/_utils/http/UrlUtils";
 import { streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
 import { Transformers } from "@transform/transformer";
@@ -47,8 +50,7 @@ const argPath = args[0].trim();
 let filePath = argPath;
 console.log(filePath);
 
-const isHTTP = filePath.startsWith("http");
-if (!isHTTP) {
+if (!isHTTP(filePath)) {
     if (!fs.existsSync(filePath)) {
         filePath = path.join(__dirname, argPath);
         console.log(filePath);
@@ -69,12 +71,15 @@ if (!isHTTP) {
     }
 }
 
-const fileName = path.basename(filePath);
-const ext = path.extname(fileName).toLowerCase();
+let fileName = filePath;
+if (isHTTP(filePath)) {
+    const url = new URL(filePath);
+    fileName = url.pathname;
+}
+fileName = fileName.replace(/META-INF[\/|\\]container.xml$/, "");
+fileName = path.basename(fileName);
 
-const isEPUBPacked = /\.epub[3]?$/.test(ext);
-const isEPUBExploded = isHTTP ? false : fs.existsSync(path.join(filePath, "META-INF", "container.xml"));
-const isEPUB = isEPUBPacked || isEPUBExploded;
+const isAnEPUB = isEPUBlication(filePath);
 
 let outputDirPath: string | undefined;
 if (args[1]) {
@@ -127,7 +132,7 @@ if (args[2]) {
         return;
     }
 
-    if (isEPUB) {
+    if (isAnEPUB) {
         if (outputDirPath) {
             try {
                 await extractEPUB(publication, outputDirPath, decryptKeys);
@@ -137,7 +142,7 @@ if (args[2]) {
                 return;
             }
         }
-    } else if (ext === ".cbz") {
+    } else { //  if (ext === ".cbz")
         dumpPublication(publication);
     }
 })();

@@ -5,8 +5,10 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
+import * as fs from "fs";
 import * as path from "path";
 import * as querystring from "querystring";
+import { URL } from "url";
 
 import { MediaOverlayNode, timeStrToSeconds } from "@models/media-overlay";
 import { Metadata } from "@models/metadata";
@@ -21,6 +23,7 @@ import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
 import { Encrypted } from "@r2-lcp-js/models/metadata-encrypted";
 import { LCP } from "@r2-lcp-js/parser/epub/lcp";
+import { isHTTP } from "@r2-utils-js/_utils/http/UrlUtils";
 import { streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { XML } from "@r2-utils-js/_utils/xml-js-mapper";
 import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
@@ -102,10 +105,55 @@ export const addCoverDimensions = async (publication: Publication, coverLink: Li
     }
 };
 
+export enum EPUBis {
+    LocalExploded = "LocalExploded",
+    LocalPacked = "LocalPacked",
+    RemoteExploded = "RemoteExploded",
+    RemotePacked = "RemotePacked",
+}
+export function isEPUBlication(urlOrPath: string): EPUBis | undefined {
+    let p = urlOrPath;
+    const http = isHTTP(urlOrPath);
+    if (http) {
+        const url = new URL(urlOrPath);
+        p = url.pathname;
+    } else if (fs.existsSync(path.join(urlOrPath, "META-INF", "container.xml"))) {
+        return EPUBis.LocalExploded;
+    }
+    const fileName = path.basename(p);
+    const ext = path.extname(fileName).toLowerCase();
+
+    const epub = /\.epub[3]?$/.test(ext);
+    if (epub) {
+        return http ? EPUBis.RemotePacked : EPUBis.LocalPacked;
+    }
+
+    if (p.replace(/\//, "/").endsWith("META-INF/container.xml")) {
+        return http ? EPUBis.RemoteExploded : EPUBis.LocalExploded;
+    }
+
+    return undefined;
+}
+
 export async function EpubParsePromise(filePath: string): Promise<Publication> {
+
+    const isAnEPUB = isEPUBlication(filePath);
+    // excludes EPUBis.RemoteExploded
+    const canLoad = isAnEPUB === EPUBis.LocalExploded ||
+        isAnEPUB === EPUBis.LocalPacked ||
+        isAnEPUB === EPUBis.RemotePacked;
+    if (!canLoad) {
+        // TODO? r2-utils-js zip-ext.ts => variant for HTTP without directory listing? (no deterministic zip entries)
+        const err = "Cannot load exploded remote EPUB (needs filesystem access to list directory contents).";
+        debug(err);
+        return Promise.reject(err);
+    }
+
+    // EPUBis.LocalExploded (must ensure is directory/folder)
+    const filePathToLoad = filePath.replace(/META-INF[\/|\\]container.xml$/, "");
     let zip: IZip;
     try {
-        zip = await zipLoadPromise(filePath);
+        zip = await zipLoadPromise(filePathToLoad);
     } catch (err) {
         debug(err);
         return Promise.reject(err);
