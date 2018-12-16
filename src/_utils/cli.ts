@@ -179,22 +179,22 @@ function extractEPUB_ManifestJSON(pub: Publication, outDir: string, keys: string
                 }
             }
         });
-    }
-    if (manifestJson.links) {
-        let index = -1;
-        for (let i = 0; i < manifestJson.links.length; i++) {
-            const link = manifestJson.links[i];
-            if (link.type === "application/vnd.readium.lcp.license.v1.0+json"
-                && link.rel === "license") {
-                    index = i;
-                    break;
-                }
-        }
-        if (index >= 0) {
-            manifestJson.links.splice(index, 1);
-        }
-        if (manifestJson.links.length === 0) {
-            delete manifestJson.links;
+        if (manifestJson.links) {
+            let index = -1;
+            for (let i = 0; i < manifestJson.links.length; i++) {
+                const link = manifestJson.links[i];
+                if (link.type === "application/vnd.readium.lcp.license.v1.0+json"
+                    && link.rel === "license") {
+                        index = i;
+                        break;
+                    }
+            }
+            if (index >= 0) {
+                manifestJson.links.splice(index, 1);
+            }
+            if (manifestJson.links.length === 0) {
+                delete manifestJson.links;
+            }
         }
     }
 
@@ -388,6 +388,11 @@ async function extractEPUB(pub: Publication, outDir: string, keys: string[] | un
     //     l.Href = "META-INF/container.xml";
     //     links.push(l);
     // }
+    if (!keys && zip.hasEntry("META-INF/license.lcpl")) {
+        const l = new Link();
+        l.Href = "META-INF/license.lcpl";
+        links.push(l);
+    }
     for (const link of links) {
         try {
             await extractEPUB_Link(pub, zip, outDir, link);
