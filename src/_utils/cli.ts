@@ -147,7 +147,7 @@ if (args[2]) {
     }
 })();
 
-function extractEPUB_ManifestJSON(pub: Publication, outDir: string) {
+function extractEPUB_ManifestJSON(pub: Publication, outDir: string, keys: string[] | undefined) {
 
     const manifestJson = TAJSON.serialize(pub);
 
@@ -158,26 +158,45 @@ function extractEPUB_ManifestJSON(pub: Publication, outDir: string) {
     if (manifestJson.resources) {
         arrLinks.push(...manifestJson.resources);
     }
-    arrLinks.forEach((link: any) => {
-        if (link.properties && link.properties.encrypted) {
-            delete link.properties.encrypted;
+    if (keys) {
+        arrLinks.forEach((link: any) => {
+            if (link.properties && link.properties.encrypted) {
+                delete link.properties.encrypted;
 
-            let atLeastOne = false;
-            const jsonProps = Object.keys(link.properties);
-            if (jsonProps) {
-                jsonProps.forEach((jsonProp) => {
-                    if (link.properties.hasOwnProperty(jsonProp)) {
-                        atLeastOne = true;
-                        return false;
-                    }
-                    return true;
-                });
+                let atLeastOne = false;
+                const jsonProps = Object.keys(link.properties);
+                if (jsonProps) {
+                    jsonProps.forEach((jsonProp) => {
+                        if (link.properties.hasOwnProperty(jsonProp)) {
+                            atLeastOne = true;
+                            return false;
+                        }
+                        return true;
+                    });
+                }
+                if (!atLeastOne) {
+                    delete link.properties;
+                }
             }
-            if (!atLeastOne) {
-                delete link.properties;
-            }
+        });
+    }
+    if (manifestJson.links) {
+        let index = -1;
+        for (let i = 0; i < manifestJson.links.length; i++) {
+            const link = manifestJson.links[i];
+            if (link.type === "application/vnd.readium.lcp.license.v1.0+json"
+                && link.rel === "license") {
+                    index = i;
+                    break;
+                }
         }
-    });
+        if (index >= 0) {
+            manifestJson.links.splice(index, 1);
+        }
+        if (manifestJson.links.length === 0) {
+            delete manifestJson.links;
+        }
+    }
 
     const manifestJsonStr = JSON.stringify(manifestJson, null, "  ");
     // console.log(manifestJsonStr);
@@ -355,7 +374,7 @@ async function extractEPUB(pub: Publication, outDir: string, keys: string[] | un
 
     fs.mkdirSync(outDir); // { recursive: false }
 
-    extractEPUB_ManifestJSON(pub, outDir);
+    extractEPUB_ManifestJSON(pub, outDir, keys);
 
     const links = [];
     if (pub.Resources) {
