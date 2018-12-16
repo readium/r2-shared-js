@@ -160,7 +160,8 @@ function extractEPUB_ManifestJSON(pub: Publication, outDir: string, keys: string
     }
     if (keys) {
         arrLinks.forEach((link: any) => {
-            if (link.properties && link.properties.encrypted) {
+            if (link.properties && link.properties.encrypted &&
+                link.properties.encrypted.scheme === "http://readium.org/2014/01/lcp") {
                 delete link.properties.encrypted;
 
                 let atLeastOne = false;
@@ -197,6 +198,29 @@ function extractEPUB_ManifestJSON(pub: Publication, outDir: string, keys: string
             }
         }
     }
+
+    arrLinks.forEach((link: any) => {
+        if (link.properties && link.properties.encrypted &&
+            (link.properties.encrypted.algorithm === "http://www.idpf.org/2008/embedding" ||
+            link.properties.encrypted.algorithm === "http://ns.adobe.com/pdf/enc#RC")) {
+            delete link.properties.encrypted;
+
+            let atLeastOne = false;
+            const jsonProps = Object.keys(link.properties);
+            if (jsonProps) {
+                jsonProps.forEach((jsonProp) => {
+                    if (link.properties.hasOwnProperty(jsonProp)) {
+                        atLeastOne = true;
+                        return false;
+                    }
+                    return true;
+                });
+            }
+            if (!atLeastOne) {
+                delete link.properties;
+            }
+        }
+    });
 
     const manifestJsonStr = JSON.stringify(manifestJson, null, "  ");
     // console.log(manifestJsonStr);
