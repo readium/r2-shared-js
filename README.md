@@ -94,7 +94,7 @@ https://unpkg.com/r2-shared-js/dist/gitrev.json
 
 Alternatively, GitHub mirror with semantic-versioning release tags:
 
-https://rawgit.com/edrlab/r2-shared-js-dist/develop/dist/gitrev.json
+https://raw.githack.com/edrlab/r2-shared-js-dist/develop/dist/gitrev.json
 
 ## Developer quick start
 
