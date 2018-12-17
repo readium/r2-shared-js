@@ -1,10 +1,30 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.1...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.2...develop
 
 Changes:
 * TODO
+
+# 1.0.2
+
+> Build environment: NodeJS `8.14.0`, NPM `6.5.0`
+
+Changes:
+* Fixed EPUB detection and adapted CLI + publication parser (matrix: local vs. remote, exploded vs. packed)
+* NPM updates (minor)
+* Replaced deprecated RawGit URLs
+* Improved Ava unit test setup
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.2/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.2/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.2
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.1...v1.0.2
 
 # 1.0.1
 
