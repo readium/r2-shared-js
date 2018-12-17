@@ -114,6 +114,7 @@
       "!.git/**/*"
       "!node_modules*/**/*"
       "!dist/**/*"
+      "!ava-ts/**/*"
       "!misc/**/*"
       "!now/**/*"
       "!.vscode/**/*"
@@ -188,11 +189,15 @@
   'test': '
     cross-env DEBUG=r2:*
     ava
-      --verbose
-      --fail-fast
-      --serial
-      --color
       "./dist/es8-es2017/test/**/test*.js"
+  '
+
+  'testTS': '
+    cross-env DEBUG=r2:* TS_NODE_CACHE=true TS_NODE_CACHE_DIRECTORY="./ava-ts/" TS_NODE_PRETTY=true
+    ava
+      "./test/**/test*.ts"
+      --require "ts-node/register"
+      --require "tsconfig-paths/register"
   '
 
   'cli': '

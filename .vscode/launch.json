@@ -27,19 +27,40 @@
       ]
     },
     {
+      "name": "test",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/node_modules/ava/profile.js",
+      "stopOnEntry": false,
+      "cwd": "${workspaceRoot}",
+      "args": [
+        "${workspaceRoot}/dist/es8-es2017/${relativeFile}/../${fileBasenameNoExtension}.js",
+        "--verbose",
+        "--fail-fast",
+        "--serial",
+        "--color",
+        "--no-cache",
+      ],
+      "skipFiles": [
+        "<node_internals>/**/*.js",
+        "<node_internals>/**"
+      ],
+      "env": {
+        "DEBUG": "r2:*",
+        "NODE_DEBUG": "1",
+        "NODE_ENV": "development"
+      },
+      "console": "integratedTerminal",
+      "sourceMaps": true,
+      "outFiles": [
+        "${workspaceRoot}/dist/es8-es2017/**/*.js"
+      ]
+    },
+    {
       "name": "Attach (--remote-debugging-port=9222)",
       "type": "node",
       "request": "attach",
       "port": 9222
     }
   ],
-  "compounds": [
-    {
-      "name": "cli+test",
-      "configurations": [
-        "cli",
-        "test-ava-1"
-      ]
-    }
-  ]
 }
