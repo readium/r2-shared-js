@@ -27,69 +27,6 @@
       ]
     },
     {
-      "name": "test-ava-1",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}/node_modules/ava/profile.js",
-      "stopOnEntry": false,
-      "cwd": "${workspaceRoot}",
-      "internalConsoleOptions": "openOnSessionStart",
-      "args": [
-        "--verbose",
-        "--fail-fast",
-        "--serial",
-        "${workspaceRoot}/dist/es8-es2017/test/test.js",
-        "${workspaceRoot}/dist/es8-es2017/test/test-JSON-Rel.js",
-        "${workspaceRoot}/dist/es8-es2017/test/test-JSON-Title.js",
-        "${workspaceRoot}/dist/es8-es2017/test/test-JSON-Contributor.js",
-        "${workspaceRoot}/dist/es8-es2017/test/test-JSON-Collection.js",
-        "${workspaceRoot}/dist/es8-es2017/test/test-JSON-Context.js",
-        "${workspaceRoot}/dist/es8-es2017/test/test-JSON-XML-Date.js"
-      ],
-      "env": {
-        "DEBUG": "r2:*",
-        "NODE_DEBUG": "1",
-        "NODE_ENV": "development"
-      },
-      "console": "internalConsole",
-      "sourceMaps": true,
-      "outFiles": [
-        "${workspaceRoot}/dist/es8-es2017/**/*.js"
-      ]
-    },
-    {
-      "name": "test-ava-2",
-      "trace": "all",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}/test/ava.ts",
-      "stopOnEntry": false,
-      "cwd": "${workspaceRoot}",
-      "internalConsoleOptions": "openOnSessionStart",
-      "args": [
-        "--verbose",
-        "--fail-fast",
-        "--serial",
-        "${workspaceRoot}/dist/es8-es2017/test/test.js",
-        "${workspaceRoot}/dist/es8-es2017/test/test-JSON-Rel.js",
-        "${workspaceRoot}/dist/es8-es2017/test/test-JSON-Title.js",
-        "${workspaceRoot}/dist/es8-es2017/test/test-JSON-Contributor.js",
-        "${workspaceRoot}/dist/es8-es2017/test/test-JSON-Collection.js",
-        "${workspaceRoot}/dist/es8-es2017/test/test-JSON-Context.js",
-        "${workspaceRoot}/dist/es8-es2017/test/test-JSON-XML-Date.js"
-      ],
-      "env": {
-        "DEBUG": "r2:*",
-        "NODE_DEBUG": "1",
-        "NODE_ENV": "development"
-      },
-      "console": "internalConsole",
-      "sourceMaps": true,
-      "outFiles": [
-        "${workspaceRoot}/dist/es8-es2017/**/*.js"
-      ]
-    },
-    {
       "name": "Attach (--remote-debugging-port=9222)",
       "type": "node",
       "request": "attach",

@@ -3,7 +3,7 @@ import * as path from "path";
 import { BelongsTo } from "@models/metadata-belongsto";
 import { Collection } from "@models/metadata-collection";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
-import { test } from "ava";
+import test from "ava";
 import { JSON as TAJSON } from "ta-json-x";
 
 import {
