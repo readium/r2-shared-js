@@ -132,15 +132,13 @@ if (args[2]) {
         return;
     }
 
-    if (isAnEPUB) {
-        if (outputDirPath) {
-            try {
-                await extractEPUB(publication, outputDirPath, decryptKeys);
-            } catch (err) {
-                console.log("== Publication extract FAIL");
-                console.log(err);
-                return;
-            }
+    if (isAnEPUB && outputDirPath) {
+        try {
+            await extractEPUB(publication, outputDirPath, decryptKeys);
+        } catch (err) {
+            console.log("== Publication extract FAIL");
+            console.log(err);
+            return;
         }
     } else { //  if (ext === ".cbz")
         dumpPublication(publication);
@@ -158,6 +156,7 @@ function extractEPUB_ManifestJSON(pub: Publication, outDir: string, keys: string
     if (manifestJson.resources) {
         arrLinks.push(...manifestJson.resources);
     }
+
     if (keys) {
         arrLinks.forEach((link: any) => {
             if (link.properties && link.properties.encrypted &&
@@ -230,14 +229,21 @@ function extractEPUB_ManifestJSON(pub: Publication, outDir: string, keys: string
 }
 
 async function extractEPUB_Check(zip: IZip, outDir: string) {
-    const zipEntries = await zip.getEntries();
-    for (const zipEntry of zipEntries) {
-        if (zipEntry !== "mimetype" && !zipEntry.startsWith("META-INF/") && !zipEntry.endsWith(".opf") &&
-            zipEntry !== ".DS_Store") { // zip entry can actually be exploded EPUB file
-            const expectedOutputPath = path.join(outDir, zipEntry);
-            if (!fs.existsSync(expectedOutputPath)) {
-                console.log("Zip entry not extracted??");
-                console.log(expectedOutputPath);
+    let zipEntries: string[] | undefined;
+    try {
+        zipEntries = await zip.getEntries();
+    } catch (err) {
+        console.log(err);
+    }
+    if (zipEntries) {
+        for (const zipEntry of zipEntries) {
+            if (zipEntry !== "mimetype" && !zipEntry.startsWith("META-INF/") && !zipEntry.endsWith(".opf") &&
+                zipEntry !== ".DS_Store") { // zip entry can actually be exploded EPUB file
+                const expectedOutputPath = path.join(outDir, zipEntry);
+                if (!fs.existsSync(expectedOutputPath)) {
+                    console.log("Zip entry not extracted??");
+                    console.log(expectedOutputPath);
+                }
             }
         }
     }
@@ -412,10 +418,21 @@ async function extractEPUB(pub: Publication, outDir: string, keys: string[] | un
     //     l.Href = "META-INF/container.xml";
     //     links.push(l);
     // }
-    if (!keys && zip.hasEntry("META-INF/license.lcpl")) {
-        const l = new Link();
-        l.Href = "META-INF/license.lcpl";
-        links.push(l);
+    if (!keys) {
+        const lic = "META-INF/license.lcpl";
+        let has = zip.hasEntry(lic);
+        if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
+            try {
+                has = await (zip as any).hasEntryAsync(lic);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        if (has) {
+            const l = new Link();
+            l.Href = lic;
+            links.push(l);
+        }
     }
     for (const link of links) {
         try {

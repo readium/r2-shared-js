@@ -70,7 +70,15 @@ export const addCoverDimensions = async (publication: Publication, coverLink: Li
     const zipInternal = publication.findFromInternal("zip");
     if (zipInternal) {
         const zip = zipInternal.Value as IZip;
-        if (zip.hasEntry(coverLink.Href)) {
+        let has = zip.hasEntry(coverLink.Href);
+        if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
+            try {
+                has = await (zip as any).hasEntryAsync(coverLink.Href);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        if (has) {
             let zipStream: IStreamAndLength;
             try {
                 zipStream = await zip.entryStreamPromise(coverLink.Href);
@@ -128,7 +136,8 @@ export function isEPUBlication(urlOrPath: string): EPUBis | undefined {
         return http ? EPUBis.RemotePacked : EPUBis.LocalPacked;
     }
 
-    if (p.replace(/\//, "/").endsWith("META-INF/container.xml")) {
+    // filePath.replace(/\//, "/").endsWith("META-INF/container.xml")
+    if (/META-INF[\/|\\]container.xml$/.test(p)) {
         return http ? EPUBis.RemoteExploded : EPUBis.LocalExploded;
     }
 
@@ -138,19 +147,28 @@ export function isEPUBlication(urlOrPath: string): EPUBis | undefined {
 export async function EpubParsePromise(filePath: string): Promise<Publication> {
 
     const isAnEPUB = isEPUBlication(filePath);
-    // excludes EPUBis.RemoteExploded
-    const canLoad = isAnEPUB === EPUBis.LocalExploded ||
-        isAnEPUB === EPUBis.LocalPacked ||
-        isAnEPUB === EPUBis.RemotePacked;
-    if (!canLoad) {
-        // TODO? r2-utils-js zip-ext.ts => variant for HTTP without directory listing? (no deterministic zip entries)
-        const err = "Cannot load exploded remote EPUB (needs filesystem access to list directory contents).";
-        debug(err);
-        return Promise.reject(err);
-    }
 
-    // EPUBis.LocalExploded (must ensure is directory/folder)
-    const filePathToLoad = filePath.replace(/META-INF[\/|\\]container.xml$/, "");
+    // // excludes EPUBis.RemoteExploded
+    // const canLoad = isAnEPUB === EPUBis.LocalExploded ||
+    //     isAnEPUB === EPUBis.LocalPacked ||
+    //     isAnEPUB === EPUBis.RemotePacked;
+    // if (!canLoad) {
+    //     // TODO? r2-utils-js zip-ext.ts => variant for HTTP without directory listing? (no deterministic zip entries)
+    //     const err = "Cannot load exploded remote EPUB (needs filesystem access to list directory contents).";
+    //     debug(err);
+    //     return Promise.reject(err);
+    // }
+
+    let filePathToLoad = filePath;
+    if (isAnEPUB === EPUBis.LocalExploded) { // (must ensure is directory/folder)
+        filePathToLoad = filePathToLoad.replace(/META-INF[\/|\\]container.xml$/, "");
+    } else if (isAnEPUB === EPUBis.RemoteExploded) {
+        const url = new URL(filePathToLoad);
+        url.pathname = url.pathname.replace(/META-INF[\/|\\]container.xml$/, "");
+        // contains trailing slash
+        filePathToLoad = url.toString();
+        debug("filePathToLoad: ", filePathToLoad);
+    }
     let zip: IZip;
     try {
         zip = await zipLoadPromise(filePathToLoad);
@@ -176,7 +194,15 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
 
     let lcpl: LCP | undefined;
     const lcplZipPath = "META-INF/license.lcpl";
-    if (zip.hasEntry(lcplZipPath)) {
+    let has = zip.hasEntry(lcplZipPath);
+    if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
+        try {
+            has = await (zip as any).hasEntryAsync(lcplZipPath);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    if (has) {
         let lcplZipStream_: IStreamAndLength;
         try {
             lcplZipStream_ = await zip.entryStreamPromise(lcplZipPath);
@@ -222,8 +248,15 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
 
     let encryption: Encryption | undefined;
     const encZipPath = "META-INF/encryption.xml";
-    if (zip.hasEntry(encZipPath)) {
-
+    has = zip.hasEntry(encZipPath);
+    if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
+        try {
+            has = await (zip as any).hasEntryAsync(encZipPath);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    if (has) {
         let encryptionXmlZipStream_: IStreamAndLength;
         try {
             encryptionXmlZipStream_ = await zip.entryStreamPromise(encZipPath);
@@ -726,7 +759,15 @@ const fillMediaOverlay =
                 continue;
             }
 
-            if (!zip.hasEntry(item.Href)) {
+            let has = zip.hasEntry(item.Href);
+            if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
+                try {
+                    has = await (zip as any).hasEntryAsync(item.Href);
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+            if (!has) {
                 continue;
             }
 
@@ -1599,7 +1640,16 @@ const fillTOCFromNavDoc = async (publication: Publication, _rootfile: Rootfile, 
     }
 
     const navDocFilePath = navLink.Href;
-    if (!zip.hasEntry(navDocFilePath)) {
+
+    let has = zip.hasEntry(navDocFilePath);
+    if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
+        try {
+            has = await (zip as any).hasEntryAsync(navDocFilePath);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    if (!has) {
         return;
     }
 
