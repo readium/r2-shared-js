@@ -167,7 +167,6 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
         url.pathname = url.pathname.replace(/META-INF[\/|\\]container.xml$/, "");
         // contains trailing slash
         filePathToLoad = url.toString();
-        debug("filePathToLoad: ", filePathToLoad);
     }
     let zip: IZip;
     try {
