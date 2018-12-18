@@ -46,32 +46,40 @@ export async function CbzParsePromise(filePath: string): Promise<Publication> {
 
     let comicInfoEntryName: string | undefined;
 
-    const entries = await zip.getEntries();
-    for (const entryName of entries) {
-        // console.log("++ZIP: entry");
+    let entries: string[] | undefined;
+    try {
+        entries = await zip.getEntries();
+    } catch (err) {
+        console.log(err);
+        return Promise.reject("Problem getting CBZ zip entries");
+    }
+    if (entries) {
+        for (const entryName of entries) {
+            // console.log("++ZIP: entry");
 
-        // console.log(entryName);
+            // console.log(entryName);
 
-        const link = new Link();
-        link.Href = entryName;
+            const link = new Link();
+            link.Href = entryName;
 
-        const mediaType = mime.lookup(entryName);
-        if (mediaType) {
-            // console.log(mediaType);
+            const mediaType = mime.lookup(entryName);
+            if (mediaType) {
+                // console.log(mediaType);
 
-            link.TypeLink = mediaType as string;
-        } else {
-            console.log("!!!!!! NO MEDIA TYPE?!");
-        }
-
-        if (link.TypeLink && link.TypeLink.startsWith("image/")) {
-            if (!publication.Spine) {
-                publication.Spine = [];
+                link.TypeLink = mediaType as string;
+            } else {
+                console.log("!!!!!! NO MEDIA TYPE?!");
             }
-            publication.Spine.push(link);
 
-        } else if (entryName.endsWith("ComicInfo.xml")) {
-            comicInfoEntryName = entryName;
+            if (link.TypeLink && link.TypeLink.startsWith("image/")) {
+                if (!publication.Spine) {
+                    publication.Spine = [];
+                }
+                publication.Spine.push(link);
+
+            } else if (entryName.endsWith("ComicInfo.xml")) {
+                comicInfoEntryName = entryName;
+            }
         }
     }
 
