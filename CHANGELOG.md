@@ -1,10 +1,28 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.4...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.5...develop
 
 Changes:
 * TODO
+
+# 1.0.5
+
+> Build environment: NodeJS `8.14.1`, NPM `6.4.1`
+
+Changes:
+* Updated documentation (minor)
+* NPM 6.5.* has regression bugs for global package installs, so revert back to NPM 6.4.1 (which is officially shipped with the NodeJS installer).
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.5/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.5/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.5
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.4...v1.0.5
 
 # 1.0.4
 
