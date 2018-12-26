@@ -18,7 +18,7 @@ export class Subject {
     @JsonProperty("name")
     public Name!: string;
 
-    @JsonProperty("sort_as")
+    @JsonProperty("sortAs")
     public SortAs!: string;
 
     @JsonProperty("scheme")

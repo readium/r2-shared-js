@@ -125,7 +125,9 @@ export class Metadata {
     @JsonElementType(Subject)
     public Subject!: Subject[];
 
-    @JsonProperty("belongs_to")
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L140
+    @JsonProperty("belongsTo")
     public BelongsTo!: BelongsTo;
 
     @JsonProperty("duration")

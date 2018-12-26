@@ -19,7 +19,7 @@ export class Contributor {
     @JsonProperty("name")
     public Name!: string | IStringMap;
 
-    @JsonProperty("sort_as")
+    @JsonProperty("sortAs")
     public SortAs!: string;
 
     @JsonProperty("identifier")

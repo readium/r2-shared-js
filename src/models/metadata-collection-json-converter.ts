@@ -12,6 +12,7 @@ import {
 } from "ta-json-x";
 
 import { Collection } from "./metadata-collection";
+import { IStringMap } from "./metadata-multilang";
 
 export class JsonCollectionConverter implements IPropertyConverter {
     public serialize(property: Collection): JsonValue {
@@ -28,13 +29,31 @@ export class JsonCollectionConverter implements IPropertyConverter {
         //         return this.deserialize(v);
         //     }) as Collection[];
         // } else
+
+        // tslint:disable-next-line:max-line-length
+        // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/contributor.schema.json#L7
+        // tslint:disable-next-line:max-line-length
+        // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/contributor-object.schema.json#L7
+        // tslint:disable-next-line:max-line-length
+        // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/contributor-object.schema.json#L52
         if (typeof value === "string") {
             const c = new Collection();
             c.Name = value as string;
             return c;
-        } else {
-            return TAJSON.deserialize<Collection>(value, Collection);
+        } else if (typeof value === "object" && !(value as any)["name"]) { // tslint:disable-line:no-string-literal
+            const c = new Collection();
+            c.Name = {} as IStringMap;
+            const keys = Object.keys(value as any);
+            keys.forEach((key: string) => {
+                // TODO? check key is BCP47 language tag?
+                const val = (value as any)[key];
+                if (typeof val === "string") {
+                    (c.Name as IStringMap)[key] = val;
+                }
+            });
+            return c;
         }
+        return TAJSON.deserialize<Collection>(value, Collection);
     }
 
     public collapseArrayWithSingleItem(): boolean {

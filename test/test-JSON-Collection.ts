@@ -2,7 +2,9 @@ import * as path from "path";
 
 import { BelongsTo } from "@models/metadata-belongsto";
 import { Collection } from "@models/metadata-collection";
+import { IStringMap } from "@models/metadata-multilang";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
+import { ExecutionContext } from "ava";
 import test from "ava";
 import { JSON as TAJSON } from "ta-json-x";
 
@@ -13,6 +15,7 @@ import {
 import {
     checkType,
     checkType_Array,
+    checkType_Number,
     checkType_Object,
     checkType_String,
     inspect,
@@ -28,15 +31,102 @@ setLcpNativePluginPath(path.join(process.cwd(), "LCP", "lcp.node"));
 
 const colName1 = "theName1";
 const colID1 = "theID1";
+const colPOS1 = 1;
 const col1 = new Collection();
 col1.Name = colName1;
 col1.Identifier = colID1;
+col1.Position = colPOS1;
+const colROLE1 = ["theRole1-A", "theRole1-B"];
+col1.Role = colROLE1;
 
-const colName2 = "theName2";
+const colName2Lang = "en";
+const colName2Val = "theName2";
+const colName2 = {} as IStringMap;
+colName2[colName2Lang] = colName2Val;
 const colID2 = "theID2";
 const col2 = new Collection();
 col2.Name = colName2;
 col2.Identifier = colID2;
+const colROLE2 = "theRole2";
+col2.Role = [colROLE2];
+
+const checkCol1 = (t: ExecutionContext, obj: any) => {
+
+    checkType_Object(t, obj);
+
+    checkType_String(t, obj.name);
+    t.is(obj.name, colName1);
+
+    checkType_String(t, obj.identifier);
+    t.is(obj.identifier, colID1);
+
+    checkType_Number(t, obj.position);
+    t.is(obj.position, colPOS1);
+
+    checkType_Array(t, obj.role);
+    t.is(obj.role.length, colROLE1.length);
+    t.is(obj.role[0], colROLE1[0]);
+    t.is(obj.role[1], colROLE1[1]);
+};
+
+const checkCol2 = (t: ExecutionContext, obj: any) => {
+
+    checkType_Object(t, obj);
+
+    checkType_Object(t, obj.name);
+    checkType_String(t, obj.name[colName2Lang]);
+    t.is(obj.name[colName2Lang], colName2Val);
+
+    checkType_String(t, obj.identifier);
+    t.is(obj.identifier, colID2);
+
+    checkType_String(t, obj.role);
+    t.is(obj.role, colROLE2);
+};
+
+const checkCol1Name = (t: ExecutionContext, obj: string | IStringMap) => {
+
+    checkType_String(t, obj);
+    t.is(obj, colName1);
+};
+
+const checkCol1_ = (t: ExecutionContext, obj: Collection) => {
+
+    checkType(t, obj, Collection);
+
+    checkCol1Name(t, obj.Name);
+
+    checkType_String(t, obj.Identifier);
+    t.is(obj.Identifier, colID1);
+
+    checkType_Number(t, obj.Position);
+    t.is(obj.Position, colPOS1);
+
+    checkType_Array(t, obj.Role);
+    t.is(obj.Role.length, 2);
+    t.is(obj.Role[0], colROLE1[0]);
+    t.is(obj.Role[1], colROLE1[1]);
+};
+
+const checkCol2Name = (t: ExecutionContext, obj: string | IStringMap) => {
+
+    checkType_Object(t, obj);
+    t.is((obj as IStringMap)[colName2Lang], colName2Val);
+};
+
+const checkCol2_ = (t: ExecutionContext, obj: Collection) => {
+
+    checkType(t, obj, Collection);
+
+    checkCol2Name(t, obj.Name);
+
+    checkType_String(t, obj.Identifier);
+    t.is(obj.Identifier, colID2);
+
+    checkType_Array(t, obj.Role);
+    t.is(obj.Role.length, 1);
+    t.is(obj.Role[0], colROLE2);
+};
 
 // ==========================
 
@@ -54,21 +144,8 @@ test("JSON SERIALIZE: BelongsTo.Series => Collection[]", (t) => {
     checkType_Array(t, json.series);
     t.is(json.series.length, 2);
 
-    checkType_Object(t, json.series[0]);
-
-    checkType_String(t, json.series[0].name);
-    t.is(json.series[0].name, colName1);
-
-    checkType_String(t, json.series[0].identifier);
-    t.is(json.series[0].identifier, colID1);
-
-    checkType_Object(t, json.series[1]);
-
-    checkType_String(t, json.series[1].name);
-    t.is(json.series[1].name, colName2);
-
-    checkType_String(t, json.series[1].identifier);
-    t.is(json.series[1].identifier, colID2);
+    checkCol1(t, json.series[0]);
+    checkCol2(t, json.series[1]);
 });
 
 test("JSON SERIALIZE: BelongsTo.Series => Collection[1] collapse-array", (t) => {
@@ -87,19 +164,16 @@ test("JSON SERIALIZE: BelongsTo.Series => Collection[1] collapse-array", (t) => 
     //     });
     logJSON(json);
 
-    checkType_Object(t, json.series);
-
-    checkType_String(t, json.series.name);
-    t.is(json.series.name, colName1);
-
-    checkType_String(t, json.series.identifier);
-    t.is(json.series.identifier, colID1);
+    checkCol1(t, json.series);
 });
 
 test("JSON DESERIALIZE: BelongsTo.Series => Collection[]", (t) => {
 
     const json: any = {};
-    json.series = [{ name: colName1, identifier: colID1 }, { name: colName2, identifier: colID2 }];
+    json.series = [
+        { name: colName1, identifier: colID1, position: colPOS1, role: colROLE1 },
+        { name: colName2, identifier: colID2, role: colROLE2 },
+    ];
     logJSON(json);
 
     const b: BelongsTo = TAJSON.deserialize<BelongsTo>(json, BelongsTo);
@@ -108,27 +182,16 @@ test("JSON DESERIALIZE: BelongsTo.Series => Collection[]", (t) => {
     checkType_Array(t, b.Series);
     t.is(b.Series.length, 2);
 
-    checkType(t, b.Series[0], Collection);
-
-    checkType_String(t, b.Series[0].Name);
-    t.is(b.Series[0].Name, colName1);
-
-    checkType_String(t, b.Series[0].Identifier);
-    t.is(b.Series[0].Identifier, colID1);
-
-    checkType(t, b.Series[1], Collection);
-
-    checkType_String(t, b.Series[1].Name);
-    t.is(b.Series[1].Name, colName2);
-
-    checkType_String(t, b.Series[1].Identifier);
-    t.is(b.Series[1].Identifier, colID2);
+    checkCol1_(t, b.Series[0]);
+    checkCol2_(t, b.Series[1]);
 });
 
 test("JSON DESERIALIZE: BelongsTo.Series => Collection[1]", (t) => {
 
     const json: any = {};
-    json.series = [{ name: colName1, identifier: colID1 }];
+    json.series = [
+        { name: colName1, identifier: colID1, position: colPOS1, role: colROLE1 },
+    ];
     logJSON(json);
 
     const b: BelongsTo = TAJSON.deserialize<BelongsTo>(json, BelongsTo);
@@ -137,19 +200,13 @@ test("JSON DESERIALIZE: BelongsTo.Series => Collection[1]", (t) => {
     checkType_Array(t, b.Series);
     t.is(b.Series.length, 1);
 
-    checkType(t, b.Series[0], Collection);
-
-    checkType_String(t, b.Series[0].Name);
-    t.is(b.Series[0].Name, colName1);
-
-    checkType_String(t, b.Series[0].Identifier);
-    t.is(b.Series[0].Identifier, colID1);
+    checkCol1_(t, b.Series[0]);
 });
 
 test("JSON DESERIALIZE: BelongsTo.Series => Collection", (t) => {
 
     const json: any = {};
-    json.series = { name: colName2, identifier: colID2 };
+    json.series = { name: colName1, identifier: colID1, position: colPOS1, role: colROLE1 };
     logJSON(json);
 
     const b: BelongsTo = TAJSON.deserialize<BelongsTo>(json, BelongsTo);
@@ -158,16 +215,10 @@ test("JSON DESERIALIZE: BelongsTo.Series => Collection", (t) => {
     checkType_Array(t, b.Series);
     t.is(b.Series.length, 1);
 
-    checkType(t, b.Series[0], Collection);
-
-    checkType_String(t, b.Series[0].Name);
-    t.is(b.Series[0].Name, colName2);
-
-    checkType_String(t, b.Series[0].Identifier);
-    t.is(b.Series[0].Identifier, colID2);
+    checkCol1_(t, b.Series[0]);
 });
 
-test("JSON DESERIALIZE: BelongsTo.Series => CollectionSTR[]", (t) => {
+test("JSON DESERIALIZE: BelongsTo.Series => Collection NAME []", (t) => {
 
     const json: any = {};
     json.series = [colName1, colName2];
@@ -180,17 +231,13 @@ test("JSON DESERIALIZE: BelongsTo.Series => CollectionSTR[]", (t) => {
     t.is(b.Series.length, 2);
 
     checkType(t, b.Series[0], Collection);
-
-    checkType_String(t, b.Series[0].Name);
-    t.is(b.Series[0].Name, colName1);
+    checkCol1Name(t, b.Series[0].Name);
 
     checkType(t, b.Series[1], Collection);
-
-    checkType_String(t, b.Series[1].Name);
-    t.is(b.Series[1].Name, colName2);
+    checkCol2Name(t, b.Series[1].Name);
 });
 
-test("JSON DESERIALIZE: BelongsTo.Series => CollectionSTR[1]", (t) => {
+test("JSON DESERIALIZE: BelongsTo.Series => Collection NAME [1] A", (t) => {
 
     const json: any = {};
     json.series = [colName1];
@@ -203,12 +250,42 @@ test("JSON DESERIALIZE: BelongsTo.Series => CollectionSTR[1]", (t) => {
     t.is(b.Series.length, 1);
 
     checkType(t, b.Series[0], Collection);
-
-    checkType_String(t, b.Series[0].Name);
-    t.is(b.Series[0].Name, colName1);
+    checkCol1Name(t, b.Series[0].Name);
 });
 
-test("JSON DESERIALIZE: BelongsTo.Series => CollectionSTR", (t) => {
+test("JSON DESERIALIZE: BelongsTo.Series => Collection NAME [1] B", (t) => {
+
+    const json: any = {};
+    json.series = [colName2];
+    logJSON(json);
+
+    const b: BelongsTo = TAJSON.deserialize<BelongsTo>(json, BelongsTo);
+    inspect(b);
+
+    checkType_Array(t, b.Series);
+    t.is(b.Series.length, 1);
+
+    checkType(t, b.Series[0], Collection);
+    checkCol2Name(t, b.Series[0].Name);
+});
+
+test("JSON DESERIALIZE: BelongsTo.Series => Collection NAME A", (t) => {
+
+    const json: any = {};
+    json.series = colName1;
+    logJSON(json);
+
+    const b: BelongsTo = TAJSON.deserialize<BelongsTo>(json, BelongsTo);
+    inspect(b);
+
+    checkType_Array(t, b.Series);
+    t.is(b.Series.length, 1);
+
+    checkType(t, b.Series[0], Collection);
+    checkCol1Name(t, b.Series[0].Name);
+});
+
+test("JSON DESERIALIZE: BelongsTo.Series => Collection NAME B", (t) => {
 
     const json: any = {};
     json.series = colName2;
@@ -221,7 +298,5 @@ test("JSON DESERIALIZE: BelongsTo.Series => CollectionSTR", (t) => {
     t.is(b.Series.length, 1);
 
     checkType(t, b.Series[0], Collection);
-
-    checkType_String(t, b.Series[0].Name);
-    t.is(b.Series[0].Name, colName2);
+    checkCol2Name(t, b.Series[0].Name);
 });

@@ -50,6 +50,14 @@ export function checkType_String(t: ExecutionContext, obj: any) {
     t.is(obj.constructor, String);
 }
 
+export function checkType_Number(t: ExecutionContext, obj: any) {
+    t.is(typeof obj, "number");
+    t.false(obj instanceof String);
+    t.false(obj instanceof Object);
+    t.false(obj instanceof Number);
+    t.is(obj.constructor, Number);
+}
+
 export function checkType_Array(t: ExecutionContext, obj: any) {
     t.is(typeof obj, "object");
     t.true(obj instanceof Array);

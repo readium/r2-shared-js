@@ -5,8 +5,6 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
-import { Collection } from "@models/metadata-collection";
-import { JsonCollectionConverter } from "@models/metadata-collection-json-converter";
 import { Contributor } from "@models/metadata-contributor";
 import { JsonContributorConverter } from "@models/metadata-contributor-json-converter";
 import { JsonDateConverter } from "@r2-utils-js/_utils/ta-json-date-converter";
@@ -21,9 +19,12 @@ import {
     propertyConverters as jsonConverters,
 } from "ta-json-x";
 
+// import { Collection } from "@models/metadata-collection";
+// import { JsonCollectionConverter } from "@models/metadata-collection-json-converter";
+
 export function initGlobalConverters_SHARED() {
     jsonConverters.set(Contributor, new JsonContributorConverter());
-    jsonConverters.set(Collection, new JsonCollectionConverter());
+    // jsonConverters.set(Collection, new JsonCollectionConverter());
 }
 
 export function initGlobalConverters_GENERIC() {
