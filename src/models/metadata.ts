@@ -105,7 +105,7 @@ export class Metadata {
     @JsonProperty("description")
     public Description!: string;
 
-    @JsonProperty("direction")
+    @JsonProperty("readingProgression")
     public Direction!: string;
 
     @JsonProperty("rendition")
