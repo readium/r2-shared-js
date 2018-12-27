@@ -14,6 +14,12 @@ import {
 
 import { Encrypted } from "@r2-lcp-js/models/metadata-encrypted";
 
+// TODO: not in JSON Schema?? https://github.com/readium/webpub-manifest/issues/16
+// tslint:disable-next-line:max-line-length
+// https://github.com/readium/webpub-manifest/blob/ca6d887caa2d0495200fef4695f41aacb5fed2e9/schema/link.schema.json
+// TODO: RENDITION not in JSON Schema?? https://github.com/readium/webpub-manifest/issues/15
+// tslint:disable-next-line:max-line-length
+// https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json
 @JsonObject()
 export class Properties {
 

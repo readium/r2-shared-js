@@ -12,6 +12,11 @@ import { Link } from "./publication-link";
 /// UNUSED at the moment, see Publication:
 ///// public OtherCollections: IPublicationCollection[];
 
+// TODO subcollection?
+// tslint:disable-next-line:max-line-length
+// https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json#L65
+// tslint:disable-next-line:max-line-length
+// https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/subcollection.schema.json
 export interface IPublicationCollection {
     Role: string;
     // Metadata: IMeta[];
