@@ -1,7 +1,7 @@
 import * as path from "path";
 
 import { BelongsTo } from "@models/metadata-belongsto";
-import { Collection } from "@models/metadata-collection";
+import { Contributor } from "@models/metadata-contributor";
 import { IStringMap } from "@models/metadata-multilang";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
 import { ExecutionContext } from "ava";
@@ -32,7 +32,7 @@ setLcpNativePluginPath(path.join(process.cwd(), "LCP", "lcp.node"));
 const colName1 = "theName1";
 const colID1 = "theID1";
 const colPOS1 = 1;
-const col1 = new Collection();
+const col1 = new Contributor();
 col1.Name = colName1;
 col1.Identifier = colID1;
 col1.Position = colPOS1;
@@ -44,7 +44,7 @@ const colName2Val = "theName2";
 const colName2 = {} as IStringMap;
 colName2[colName2Lang] = colName2Val;
 const colID2 = "theID2";
-const col2 = new Collection();
+const col2 = new Contributor();
 col2.Name = colName2;
 col2.Identifier = colID2;
 const colROLE2 = "theRole2";
@@ -90,9 +90,9 @@ const checkCol1Name = (t: ExecutionContext, obj: string | IStringMap) => {
     t.is(obj, colName1);
 };
 
-const checkCol1_ = (t: ExecutionContext, obj: Collection) => {
+const checkCol1_ = (t: ExecutionContext, obj: Contributor) => {
 
-    checkType(t, obj, Collection);
+    checkType(t, obj, Contributor);
 
     checkCol1Name(t, obj.Name);
 
@@ -114,9 +114,9 @@ const checkCol2Name = (t: ExecutionContext, obj: string | IStringMap) => {
     t.is((obj as IStringMap)[colName2Lang], colName2Val);
 };
 
-const checkCol2_ = (t: ExecutionContext, obj: Collection) => {
+const checkCol2_ = (t: ExecutionContext, obj: Contributor) => {
 
-    checkType(t, obj, Collection);
+    checkType(t, obj, Contributor);
 
     checkCol2Name(t, obj.Name);
 
@@ -130,7 +130,7 @@ const checkCol2_ = (t: ExecutionContext, obj: Collection) => {
 
 // ==========================
 
-test("JSON SERIALIZE: BelongsTo.Series => Collection[]", (t) => {
+test("JSON SERIALIZE: BelongsTo.Series => Contributor[]", (t) => {
 
     const b = new BelongsTo();
     b.Series = [];
@@ -148,7 +148,7 @@ test("JSON SERIALIZE: BelongsTo.Series => Collection[]", (t) => {
     checkCol2(t, json.series[1]);
 });
 
-test("JSON SERIALIZE: BelongsTo.Series => Collection[1] collapse-array", (t) => {
+test("JSON SERIALIZE: BelongsTo.Series => Contributor[1] collapse-array", (t) => {
 
     const b = new BelongsTo();
     b.Series = [col1];
@@ -167,7 +167,7 @@ test("JSON SERIALIZE: BelongsTo.Series => Collection[1] collapse-array", (t) => 
     checkCol1(t, json.series);
 });
 
-test("JSON DESERIALIZE: BelongsTo.Series => Collection[]", (t) => {
+test("JSON DESERIALIZE: BelongsTo.Series => Contributor[]", (t) => {
 
     const json: any = {};
     json.series = [
@@ -186,7 +186,7 @@ test("JSON DESERIALIZE: BelongsTo.Series => Collection[]", (t) => {
     checkCol2_(t, b.Series[1]);
 });
 
-test("JSON DESERIALIZE: BelongsTo.Series => Collection[1]", (t) => {
+test("JSON DESERIALIZE: BelongsTo.Series => Contributor[1]", (t) => {
 
     const json: any = {};
     json.series = [
@@ -203,7 +203,7 @@ test("JSON DESERIALIZE: BelongsTo.Series => Collection[1]", (t) => {
     checkCol1_(t, b.Series[0]);
 });
 
-test("JSON DESERIALIZE: BelongsTo.Series => Collection", (t) => {
+test("JSON DESERIALIZE: BelongsTo.Series => Contributor", (t) => {
 
     const json: any = {};
     json.series = { name: colName1, identifier: colID1, position: colPOS1, role: colROLE1 };
@@ -218,7 +218,7 @@ test("JSON DESERIALIZE: BelongsTo.Series => Collection", (t) => {
     checkCol1_(t, b.Series[0]);
 });
 
-test("JSON DESERIALIZE: BelongsTo.Series => Collection NAME []", (t) => {
+test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME []", (t) => {
 
     const json: any = {};
     json.series = [colName1, colName2];
@@ -230,14 +230,14 @@ test("JSON DESERIALIZE: BelongsTo.Series => Collection NAME []", (t) => {
     checkType_Array(t, b.Series);
     t.is(b.Series.length, 2);
 
-    checkType(t, b.Series[0], Collection);
+    checkType(t, b.Series[0], Contributor);
     checkCol1Name(t, b.Series[0].Name);
 
-    checkType(t, b.Series[1], Collection);
+    checkType(t, b.Series[1], Contributor);
     checkCol2Name(t, b.Series[1].Name);
 });
 
-test("JSON DESERIALIZE: BelongsTo.Series => Collection NAME [1] A", (t) => {
+test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME [1] A", (t) => {
 
     const json: any = {};
     json.series = [colName1];
@@ -249,11 +249,11 @@ test("JSON DESERIALIZE: BelongsTo.Series => Collection NAME [1] A", (t) => {
     checkType_Array(t, b.Series);
     t.is(b.Series.length, 1);
 
-    checkType(t, b.Series[0], Collection);
+    checkType(t, b.Series[0], Contributor);
     checkCol1Name(t, b.Series[0].Name);
 });
 
-test("JSON DESERIALIZE: BelongsTo.Series => Collection NAME [1] B", (t) => {
+test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME [1] B", (t) => {
 
     const json: any = {};
     json.series = [colName2];
@@ -265,11 +265,11 @@ test("JSON DESERIALIZE: BelongsTo.Series => Collection NAME [1] B", (t) => {
     checkType_Array(t, b.Series);
     t.is(b.Series.length, 1);
 
-    checkType(t, b.Series[0], Collection);
+    checkType(t, b.Series[0], Contributor);
     checkCol2Name(t, b.Series[0].Name);
 });
 
-test("JSON DESERIALIZE: BelongsTo.Series => Collection NAME A", (t) => {
+test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME A", (t) => {
 
     const json: any = {};
     json.series = colName1;
@@ -281,11 +281,11 @@ test("JSON DESERIALIZE: BelongsTo.Series => Collection NAME A", (t) => {
     checkType_Array(t, b.Series);
     t.is(b.Series.length, 1);
 
-    checkType(t, b.Series[0], Collection);
+    checkType(t, b.Series[0], Contributor);
     checkCol1Name(t, b.Series[0].Name);
 });
 
-test("JSON DESERIALIZE: BelongsTo.Series => Collection NAME B", (t) => {
+test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME B", (t) => {
 
     const json: any = {};
     json.series = colName2;
@@ -297,6 +297,6 @@ test("JSON DESERIALIZE: BelongsTo.Series => Collection NAME B", (t) => {
     checkType_Array(t, b.Series);
     t.is(b.Series.length, 1);
 
-    checkType(t, b.Series[0], Collection);
+    checkType(t, b.Series[0], Contributor);
     checkCol2Name(t, b.Series[0].Name);
 });

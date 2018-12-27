@@ -5,8 +5,10 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
+import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
 // https://github.com/edcarroll/ta-json
 import {
+    JsonConverter,
     JsonElementType,
     JsonObject,
     JsonProperty,
@@ -15,6 +17,7 @@ import {
 
 import { BelongsTo } from "./metadata-belongsto";
 import { Contributor } from "./metadata-contributor";
+import { JsonContributorConverter } from "./metadata-contributor-json-converter";
 import { MediaOverlay } from "./metadata-media-overlay";
 import { IStringMap } from "./metadata-multilang";
 import { Properties } from "./metadata-properties";
@@ -28,125 +31,218 @@ import { Subject } from "./metadata-subject";
 
 @JsonObject()
 export class Metadata {
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L11
     @JsonProperty("@type")
     public RDFType!: string;
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L15
     @JsonProperty("title")
     // @JsonType(String)
     // not needed because primitive string union with
     // simple object type (string keys, string values)
     public Title!: string | IStringMap; // | string[] | IStringMap[]
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L33
+    @JsonProperty("subtitle")
+    public SubTitle!: string | IStringMap;
+
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L7
     @JsonProperty("identifier")
     public Identifier!: string;
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L81
     @JsonProperty("author")
     @JsonElementType(Contributor)
+    @JsonConverter(JsonContributorConverter)
     public Author!: Contributor[];
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L84
     @JsonProperty("translator")
     @JsonElementType(Contributor)
+    @JsonConverter(JsonContributorConverter)
     public Translator!: Contributor[];
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L87
     @JsonProperty("editor")
     @JsonElementType(Contributor)
+    @JsonConverter(JsonContributorConverter)
     public Editor!: Contributor[];
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L90
     @JsonProperty("artist")
     @JsonElementType(Contributor)
+    @JsonConverter(JsonContributorConverter)
     public Artist!: Contributor[];
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L93
     @JsonProperty("illustrator")
     @JsonElementType(Contributor)
+    @JsonConverter(JsonContributorConverter)
     public Illustrator!: Contributor[];
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L96
     @JsonProperty("letterer")
     @JsonElementType(Contributor)
+    @JsonConverter(JsonContributorConverter)
     public Letterer!: Contributor[];
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L99
     @JsonProperty("penciler")
     @JsonElementType(Contributor)
+    @JsonConverter(JsonContributorConverter)
     public Penciler!: Contributor[];
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L102
     @JsonProperty("colorist")
     @JsonElementType(Contributor)
+    @JsonConverter(JsonContributorConverter)
     public Colorist!: Contributor[];
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L105
     @JsonProperty("inker")
     @JsonElementType(Contributor)
+    @JsonConverter(JsonContributorConverter)
     public Inker!: Contributor[];
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L108
     @JsonProperty("narrator")
     @JsonElementType(Contributor)
+    @JsonConverter(JsonContributorConverter)
     public Narrator!: Contributor[];
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L111
     @JsonProperty("contributor")
     @JsonElementType(Contributor)
+    @JsonConverter(JsonContributorConverter)
     public Contributor!: Contributor[];
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L114
     @JsonProperty("publisher")
     @JsonElementType(Contributor)
+    @JsonConverter(JsonContributorConverter)
     public Publisher!: Contributor[];
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L117
     @JsonProperty("imprint")
     @JsonElementType(Contributor)
+    @JsonConverter(JsonContributorConverter)
     public Imprint!: Contributor[];
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L66
     @JsonProperty("language")
     @JsonElementType(String)
+    @JsonConverter(JsonStringConverter)
     public Language!: string[];
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L51
     @JsonProperty("modified")
     public Modified!: Date;
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L55
     @JsonProperty("published")
     public PublicationDate!: Date;
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L78
+    @JsonProperty("sortAs")
+    public SortAs!: string;
+
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L129
     @JsonProperty("description")
     public Description!: string;
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L120
     @JsonProperty("readingProgression")
-    public Direction!: string;
-
-    @JsonProperty("rendition")
-    public Rendition!: Properties;
-
-    @JsonProperty("source")
-    public Source!: string;
-
-    @JsonProperty("epub-type")
-    @JsonElementType(String)
-    public EpubType!: string[];
-
-    @JsonProperty("rights")
-    public Rights!: string;
-
-    @JsonProperty("subject")
-    @JsonElementType(Subject)
-    public Subject!: Subject[];
+    public Direction!: string; // TODO: enum "rtl", "ltr", "auto"
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L140
     @JsonProperty("belongsTo")
     public BelongsTo!: BelongsTo;
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L132
     @JsonProperty("duration")
     public Duration!: number;
 
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L136
+    @JsonProperty("numberOfPages")
+    public NumberOfPages!: number;
+
+    // public OtherMetadata: IMeta[];
+
+    // TODO: not in JSON Schema??
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json
     @JsonProperty("media-overlay")
     public MediaOverlay!: MediaOverlay;
 
-    // public OtherMetadata: IMeta[];
+    // TODO: not in JSON Schema??
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json
+    @JsonProperty("rights")
+    public Rights!: string;
+
+    // TODO: not in JSON Schema??
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json
+    @JsonProperty("rendition")
+    public Rendition!: Properties;
+
+    // TODO: not in JSON Schema??
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json
+    @JsonProperty("source")
+    public Source!: string;
+
+    // TODO: not in JSON Schema??
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json
+    @JsonProperty("subject")
+    @JsonElementType(Subject)
+    public Subject!: Subject[];
+
+    // TODO: not in JSON Schema??
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json
+    // @JsonProperty("epub-type")
+    // @JsonElementType(String)
+    // public EpubType!: string[];
 
     @OnDeserialized()
     // tslint:disable-next-line:no-unused-variable
     // @ts-ignore: TS6133 (is declared but its value is never read.)
     private _OnDeserialized() {
+        // tslint:disable-next-line:max-line-length
+        // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L153
         if (!this.Title) {
             console.log("Metadata.Title is not set!");
         }
-        if (!this.Identifier) {
-            console.log("Metadata.Identifier is not set!");
-        }
+        // if (!this.Identifier) {
+        //     console.log("Metadata.Identifier is not set!");
+        // }
     }
 }

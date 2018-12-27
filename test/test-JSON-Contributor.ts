@@ -2,8 +2,10 @@ import * as path from "path";
 
 import { Metadata } from "@models/metadata";
 import { Contributor } from "@models/metadata-contributor";
+import { IStringMap } from "@models/metadata-multilang";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
 import test from "ava";
+import { ExecutionContext } from "ava";
 import { JSON as TAJSON } from "ta-json-x";
 
 import {
@@ -13,6 +15,7 @@ import {
 import {
     checkType,
     checkType_Array,
+    checkType_Number,
     checkType_Object,
     checkType_String,
     inspect,
@@ -26,57 +29,132 @@ setLcpNativePluginPath(path.join(process.cwd(), "LCP", "lcp.node"));
 
 // ==========================
 
-const contName1 = "theName1";
-const contRole1 = "theRole1";
-const cont1 = new Contributor();
-cont1.Name = contName1;
-cont1.Role = contRole1;
-const contName2 = "theName2";
-const contRole2 = "theRole2";
-const cont2 = new Contributor();
-cont2.Name = contName2;
-cont2.Role = contRole2;
+const colName1 = "theName1";
+const colID1 = "theID1";
+const colPOS1 = 1;
+const col1 = new Contributor();
+col1.Name = colName1;
+col1.Identifier = colID1;
+col1.Position = colPOS1;
+const colROLE1 = ["theRole1-A", "theRole1-B"];
+col1.Role = colROLE1;
+
+const colName2Lang = "en";
+const colName2Val = "theName2";
+const colName2 = {} as IStringMap;
+colName2[colName2Lang] = colName2Val;
+const colID2 = "theID2";
+const col2 = new Contributor();
+col2.Name = colName2;
+col2.Identifier = colID2;
+const colROLE2 = "theRole2";
+col2.Role = [colROLE2];
+
+const checkCol1 = (t: ExecutionContext, obj: any) => {
+
+    checkType_Object(t, obj);
+
+    checkType_String(t, obj.name);
+    t.is(obj.name, colName1);
+
+    checkType_String(t, obj.identifier);
+    t.is(obj.identifier, colID1);
+
+    checkType_Number(t, obj.position);
+    t.is(obj.position, colPOS1);
+
+    checkType_Array(t, obj.role);
+    t.is(obj.role.length, colROLE1.length);
+    t.is(obj.role[0], colROLE1[0]);
+    t.is(obj.role[1], colROLE1[1]);
+};
+
+const checkCol2 = (t: ExecutionContext, obj: any) => {
+
+    checkType_Object(t, obj);
+
+    checkType_Object(t, obj.name);
+    checkType_String(t, obj.name[colName2Lang]);
+    t.is(obj.name[colName2Lang], colName2Val);
+
+    checkType_String(t, obj.identifier);
+    t.is(obj.identifier, colID2);
+
+    checkType_String(t, obj.role);
+    t.is(obj.role, colROLE2);
+};
+
+const checkCol1Name = (t: ExecutionContext, obj: string | IStringMap) => {
+
+    checkType_String(t, obj);
+    t.is(obj, colName1);
+};
+
+const checkCol1_ = (t: ExecutionContext, obj: Contributor) => {
+
+    checkType(t, obj, Contributor);
+
+    checkCol1Name(t, obj.Name);
+
+    checkType_String(t, obj.Identifier);
+    t.is(obj.Identifier, colID1);
+
+    checkType_Number(t, obj.Position);
+    t.is(obj.Position, colPOS1);
+
+    checkType_Array(t, obj.Role);
+    t.is(obj.Role.length, 2);
+    t.is(obj.Role[0], colROLE1[0]);
+    t.is(obj.Role[1], colROLE1[1]);
+};
+
+const checkCol2Name = (t: ExecutionContext, obj: string | IStringMap) => {
+
+    checkType_Object(t, obj);
+    t.is((obj as IStringMap)[colName2Lang], colName2Val);
+};
+
+const checkCol2_ = (t: ExecutionContext, obj: Contributor) => {
+
+    checkType(t, obj, Contributor);
+
+    checkCol2Name(t, obj.Name);
+
+    checkType_String(t, obj.Identifier);
+    t.is(obj.Identifier, colID2);
+
+    checkType_Array(t, obj.Role);
+    t.is(obj.Role.length, 1);
+    t.is(obj.Role[0], colROLE2);
+};
 
 // ==========================
 
 test("JSON SERIALIZE: Metadata.Imprint => Contributor[]", (t) => {
 
-    const md = new Metadata();
-    md.Imprint = [];
-    md.Imprint.push(cont1);
-    md.Imprint.push(cont2);
-    inspect(md);
+    const b = new Metadata();
+    b.Imprint = [];
+    b.Imprint.push(col1);
+    b.Imprint.push(col2);
+    inspect(b);
 
-    const json = TAJSON.serialize(md);
+    const json = TAJSON.serialize(b);
     logJSON(json);
 
     checkType_Array(t, json.imprint);
     t.is(json.imprint.length, 2);
 
-    checkType_Object(t, json.imprint[0]);
-
-    checkType_String(t, json.imprint[0].name);
-    t.is(json.imprint[0].name, contName1);
-
-    checkType_String(t, json.imprint[0].role);
-    t.is(json.imprint[0].role, contRole1);
-
-    checkType_Object(t, json.imprint[1]);
-
-    checkType_String(t, json.imprint[1].name);
-    t.is(json.imprint[1].name, contName2);
-
-    checkType_String(t, json.imprint[1].role);
-    t.is(json.imprint[1].role, contRole2);
+    checkCol1(t, json.imprint[0]);
+    checkCol2(t, json.imprint[1]);
 });
 
 test("JSON SERIALIZE: Metadata.Imprint => Contributor[1] collapse-array", (t) => {
 
-    const md = new Metadata();
-    md.Imprint = [cont1];
-    inspect(md);
+    const b = new Metadata();
+    b.Imprint = [col1];
+    inspect(b);
 
-    const json = TAJSON.serialize(md);
+    const json = TAJSON.serialize(b);
     // // (normalizes single-item array to the item value itself)
     // traverseJsonObjects(json,
     //     (obj, parent, keyInParent) => {
@@ -86,163 +164,139 @@ test("JSON SERIALIZE: Metadata.Imprint => Contributor[1] collapse-array", (t) =>
     //     });
     logJSON(json);
 
-    checkType_Object(t, json.imprint);
-
-    checkType_String(t, json.imprint.name);
-    t.is(json.imprint.name, contName1);
-
-    checkType_String(t, json.imprint.role);
-    t.is(json.imprint.role, contRole1);
+    checkCol1(t, json.imprint);
 });
-
-// implemented, see IPropertyConverter.collapseArrayWithSingleItem()
-// test("JSON SERIALIZE: Metadata.Imprint => Contributor[1] keep-array", (t) => {
-
-//     const md = new Metadata();
-//     md.Imprint = [cont1];
-//     inspect(md);
-
-//     const json = TAJSON.serialize(md);
-//     logJSON(json);
-
-//     checkType_Array(t, json.imprint);
-//     t.is(json.imprint.length, 1);
-
-//     checkType_Object(t, json.imprint[0]);
-
-//     checkType_String(t, json.imprint[0].name);
-//     t.is(json.imprint[0].name, contName1);
-
-//     checkType_String(t, json.imprint[0].role);
-//     t.is(json.imprint[0].role, contRole1);
-// });
 
 test("JSON DESERIALIZE: Metadata.Imprint => Contributor[]", (t) => {
 
     const json: any = {};
-    json.imprint = [{ name: contName1, role: contRole1 }, { name: contName2, role: contRole2 }];
+    json.imprint = [
+        { name: colName1, identifier: colID1, position: colPOS1, role: colROLE1 },
+        { name: colName2, identifier: colID2, role: colROLE2 },
+    ];
     logJSON(json);
 
-    const md: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
-    inspect(md);
+    const b: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
+    inspect(b);
 
-    checkType_Array(t, md.Imprint);
-    t.is(md.Imprint.length, 2);
+    checkType_Array(t, b.Imprint);
+    t.is(b.Imprint.length, 2);
 
-    checkType(t, md.Imprint[0], Contributor);
-
-    checkType_String(t, md.Imprint[0].Name);
-    t.is(md.Imprint[0].Name, contName1);
-
-    checkType_String(t, md.Imprint[0].Role);
-    t.is(md.Imprint[0].Role, contRole1);
-
-    checkType(t, md.Imprint[1], Contributor);
-
-    checkType_String(t, md.Imprint[1].Name);
-    t.is(md.Imprint[1].Name, contName2);
-
-    checkType_String(t, md.Imprint[1].Role);
-    t.is(md.Imprint[1].Role, contRole2);
+    checkCol1_(t, b.Imprint[0]);
+    checkCol2_(t, b.Imprint[1]);
 });
 
 test("JSON DESERIALIZE: Metadata.Imprint => Contributor[1]", (t) => {
 
     const json: any = {};
-    json.imprint = [{ name: contName1, role: contRole1 }];
+    json.imprint = [
+        { name: colName1, identifier: colID1, position: colPOS1, role: colROLE1 },
+    ];
     logJSON(json);
 
-    const md: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
-    inspect(md);
+    const b: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
+    inspect(b);
 
-    checkType_Array(t, md.Imprint);
-    t.is(md.Imprint.length, 1);
+    checkType_Array(t, b.Imprint);
+    t.is(b.Imprint.length, 1);
 
-    checkType(t, md.Imprint[0], Contributor);
-
-    checkType_String(t, md.Imprint[0].Name);
-    t.is(md.Imprint[0].Name, contName1);
-
-    checkType_String(t, md.Imprint[0].Role);
-    t.is(md.Imprint[0].Role, contRole1);
+    checkCol1_(t, b.Imprint[0]);
 });
 
 test("JSON DESERIALIZE: Metadata.Imprint => Contributor", (t) => {
 
     const json: any = {};
-    json.imprint = { name: contName2, role: contRole2 };
+    json.imprint = { name: colName1, identifier: colID1, position: colPOS1, role: colROLE1 };
     logJSON(json);
 
-    const md: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
-    inspect(md);
+    const b: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
+    inspect(b);
 
-    checkType_Array(t, md.Imprint);
-    t.is(md.Imprint.length, 1);
+    checkType_Array(t, b.Imprint);
+    t.is(b.Imprint.length, 1);
 
-    checkType(t, md.Imprint[0], Contributor);
-
-    checkType_String(t, md.Imprint[0].Name);
-    t.is(md.Imprint[0].Name, contName2);
-
-    checkType_String(t, md.Imprint[0].Role);
-    t.is(md.Imprint[0].Role, contRole2);
+    checkCol1_(t, b.Imprint[0]);
 });
 
-test("JSON DESERIALIZE: Metadata.Imprint => ContributorSTR[]", (t) => {
+test("JSON DESERIALIZE: Metadata.Imprint => Contributor NAME []", (t) => {
 
     const json: any = {};
-    json.imprint = [contName1, contName2];
+    json.imprint = [colName1, colName2];
     logJSON(json);
 
-    const md: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
-    inspect(md);
+    const b: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
+    inspect(b);
 
-    checkType_Array(t, md.Imprint);
-    t.is(md.Imprint.length, 2);
+    checkType_Array(t, b.Imprint);
+    t.is(b.Imprint.length, 2);
 
-    checkType(t, md.Imprint[0], Contributor);
+    checkType(t, b.Imprint[0], Contributor);
+    checkCol1Name(t, b.Imprint[0].Name);
 
-    checkType_String(t, md.Imprint[0].Name);
-    t.is(md.Imprint[0].Name, contName1);
-
-    checkType(t, md.Imprint[1], Contributor);
-
-    checkType_String(t, md.Imprint[1].Name);
-    t.is(md.Imprint[1].Name, contName2);
+    checkType(t, b.Imprint[1], Contributor);
+    checkCol2Name(t, b.Imprint[1].Name);
 });
 
-test("JSON DESERIALIZE: Metadata.Imprint => ContributorSTR[1]", (t) => {
+test("JSON DESERIALIZE: Metadata.Imprint => Contributor NAME [1] A", (t) => {
 
     const json: any = {};
-    json.imprint = [contName1];
+    json.imprint = [colName1];
     logJSON(json);
 
-    const md: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
-    inspect(md);
+    const b: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
+    inspect(b);
 
-    checkType_Array(t, md.Imprint);
-    t.is(md.Imprint.length, 1);
+    checkType_Array(t, b.Imprint);
+    t.is(b.Imprint.length, 1);
 
-    checkType(t, md.Imprint[0], Contributor);
-
-    checkType_String(t, md.Imprint[0].Name);
-    t.is(md.Imprint[0].Name, contName1);
+    checkType(t, b.Imprint[0], Contributor);
+    checkCol1Name(t, b.Imprint[0].Name);
 });
 
-test("JSON DESERIALIZE: Metadata.Imprint => ContributorSTR", (t) => {
+test("JSON DESERIALIZE: Metadata.Imprint => Contributor NAME [1] B", (t) => {
 
     const json: any = {};
-    json.imprint = contName2;
+    json.imprint = [colName2];
     logJSON(json);
 
-    const md: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
-    inspect(md);
+    const b: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
+    inspect(b);
 
-    checkType_Array(t, md.Imprint);
-    t.is(md.Imprint.length, 1);
+    checkType_Array(t, b.Imprint);
+    t.is(b.Imprint.length, 1);
 
-    checkType(t, md.Imprint[0], Contributor);
+    checkType(t, b.Imprint[0], Contributor);
+    checkCol2Name(t, b.Imprint[0].Name);
+});
 
-    checkType_String(t, md.Imprint[0].Name);
-    t.is(md.Imprint[0].Name, contName2);
+test("JSON DESERIALIZE: Metadata.Imprint => Contributor NAME A", (t) => {
+
+    const json: any = {};
+    json.imprint = colName1;
+    logJSON(json);
+
+    const b: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
+    inspect(b);
+
+    checkType_Array(t, b.Imprint);
+    t.is(b.Imprint.length, 1);
+
+    checkType(t, b.Imprint[0], Contributor);
+    checkCol1Name(t, b.Imprint[0].Name);
+});
+
+test("JSON DESERIALIZE: Metadata.Imprint => Contributor NAME B", (t) => {
+
+    const json: any = {};
+    json.imprint = colName2;
+    logJSON(json);
+
+    const b: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
+    inspect(b);
+
+    checkType_Array(t, b.Imprint);
+    t.is(b.Imprint.length, 1);
+
+    checkType(t, b.Imprint[0], Contributor);
+    checkCol2Name(t, b.Imprint[0].Name);
 });

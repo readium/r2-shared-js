@@ -13,8 +13,8 @@ import {
     JsonProperty,
 } from "ta-json-x";
 
-import { Collection } from "./metadata-collection";
-import { JsonCollectionConverter } from "./metadata-collection-json-converter";
+import { Contributor } from "./metadata-contributor";
+import { JsonContributorConverter } from "./metadata-contributor-json-converter";
 
 // tslint:disable-next-line:max-line-length
 // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L140
@@ -28,9 +28,9 @@ export class BelongsTo {
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/contributor-object.schema.json
     @JsonProperty("series")
-    @JsonElementType(Collection)
-    @JsonConverter(JsonCollectionConverter)
-    public Series!: Collection[];
+    @JsonElementType(Contributor)
+    @JsonConverter(JsonContributorConverter)
+    public Series!: Contributor[];
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L143
@@ -39,7 +39,7 @@ export class BelongsTo {
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/contributor-object.schema.json
     @JsonProperty("collection")
-    @JsonElementType(Collection)
-    @JsonConverter(JsonCollectionConverter)
-    public Collection!: Collection[];
+    @JsonElementType(Contributor)
+    @JsonConverter(JsonContributorConverter)
+    public Collection!: Contributor[];
 }

@@ -13,7 +13,6 @@ import { URL } from "url";
 import { MediaOverlayNode, timeStrToSeconds } from "@models/media-overlay";
 import { Metadata } from "@models/metadata";
 import { BelongsTo } from "@models/metadata-belongsto";
-import { Collection } from "@models/metadata-collection";
 import { Contributor } from "@models/metadata-contributor";
 import { MediaOverlay } from "@models/metadata-media-overlay";
 import { IStringMap } from "@models/metadata-multilang";
@@ -1088,7 +1087,7 @@ const addContributor = (
                 break;
             }
             default: {
-                contributor.Role = role;
+                contributor.Role = [role];
 
                 if (!publication.Metadata.Contributor) {
                     publication.Metadata.Contributor = [];
@@ -1615,10 +1614,10 @@ const fillCalibreSerieInfo = (publication: Publication, _rootfile: Rootfile, opf
     }
 
     if (serie) {
-        const collection = new Collection();
-        collection.Name = serie;
+        const contributor = new Contributor();
+        contributor.Name = serie;
         if (seriePosition) {
-            collection.Position = seriePosition;
+            contributor.Position = seriePosition;
         }
         if (!publication.Metadata.BelongsTo) {
             publication.Metadata.BelongsTo = new BelongsTo();
@@ -1626,7 +1625,7 @@ const fillCalibreSerieInfo = (publication: Publication, _rootfile: Rootfile, opf
         if (!publication.Metadata.BelongsTo.Series) {
             publication.Metadata.BelongsTo.Series = [];
         }
-        publication.Metadata.BelongsTo.Series.push(collection);
+        publication.Metadata.BelongsTo.Series.push(contributor);
     }
 };
 
