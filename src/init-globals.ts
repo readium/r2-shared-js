@@ -19,12 +19,9 @@ import {
 
 // import { Contributor } from "@models/metadata-contributor";
 // import { JsonContributorConverter } from "@models/metadata-contributor-json-converter";
-// import { Collection } from "@models/metadata-collection";
-// import { JsonCollectionConverter } from "@models/metadata-collection-json-converter";
 
 export function initGlobalConverters_SHARED() {
     // jsonConverters.set(Contributor, new JsonContributorConverter());
-    // jsonConverters.set(Collection, new JsonCollectionConverter());
 }
 
 export function initGlobalConverters_GENERIC() {
