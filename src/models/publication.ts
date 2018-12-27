@@ -8,10 +8,11 @@
 // import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
 
 import { LCP } from "@r2-lcp-js/parser/epub/lcp";
+import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
 import { IZip } from "@r2-utils-js/_utils/zip/zip";
 // https://github.com/edcarroll/ta-json
 import {
-    // JsonConverter,
+    JsonConverter,
     JsonElementType,
     JsonObject,
     JsonProperty,
@@ -27,9 +28,11 @@ import { Link } from "./publication-link";
 @JsonObject()
 export class Publication {
 
-    // @JsonConverter(JsonStringConverter)
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json#L6
     @JsonProperty("@context")
     @JsonElementType(String)
+    @JsonConverter(JsonStringConverter)
     public Context!: string[];
 
     @JsonProperty("metadata")
