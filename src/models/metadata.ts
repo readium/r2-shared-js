@@ -237,7 +237,7 @@ export class Metadata {
     @OnDeserialized()
     // tslint:disable-next-line:no-unused-variable
     // @ts-ignore: TS6133 (is declared but its value is never read.)
-    private _OnDeserialized() {
+    protected _OnDeserialized() {
         // tslint:disable-next-line:max-line-length
         // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L153
         if (!this.Title) {

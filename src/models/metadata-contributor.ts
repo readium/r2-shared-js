@@ -62,7 +62,7 @@ export class Contributor {
     // tslint:disable-next-line:no-unused-variable
     // tslint:disable-next-line
     // @ts-ignore: TS6133 (is declared but its value is never read.)
-    private _OnDeserialized() { // tslint:disable-line
+    protected _OnDeserialized() { // tslint:disable-line
 
         // tslint:disable-next-line:max-line-length
         // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/contributor-object.schema.json#L52

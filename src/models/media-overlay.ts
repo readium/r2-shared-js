@@ -132,7 +132,7 @@ export class MediaOverlayNode {
 
     // @OnDeserialized()
     //// tslint:disable-next-line:no-unused-variable
-    // private _OnDeserialized() {
+    // protected _OnDeserialized() {
     //     console.log("_OnDeserialized");
     //     console.log("==> " + this.info);
     // }

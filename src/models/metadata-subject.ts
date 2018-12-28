@@ -33,7 +33,7 @@ export class Subject {
     @OnDeserialized()
     // tslint:disable-next-line:no-unused-variable
     // @ts-ignore: TS6133 (is declared but its value is never read.)
-    private _OnDeserialized() {
+    protected _OnDeserialized() {
         if (!this.Name) {
             console.log("Subject.Name is not set!");
         }
