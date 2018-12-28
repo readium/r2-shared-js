@@ -22,6 +22,7 @@ import { MediaOverlay } from "./metadata-media-overlay";
 import { IStringMap } from "./metadata-multilang";
 import { Properties } from "./metadata-properties";
 import { Subject } from "./metadata-subject";
+import { JsonSubjectConverter } from "./metadata-subject-json-converter";
 
 // export interface IMeta {
 //     property: string;
@@ -35,24 +36,34 @@ import { Subject } from "./metadata-subject";
 export class Metadata {
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L11
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/opds-community/drafts/blob/4d82fb9a64f35a174a5f205c23ba623ec010d5ec/schema/feed-metadata.schema.json#L11
     @JsonProperty("@type")
     public RDFType!: string;
 
+    // TODO: array? https://github.com/opds-community/drafts/issues/24
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L15
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/opds-community/drafts/blob/4d82fb9a64f35a174a5f205c23ba623ec010d5ec/schema/feed-metadata.schema.json#L15
     @JsonProperty("title")
     // @JsonType(String)
     // not needed because primitive string union with
     // simple object type (string keys, string values)
     public Title!: string | IStringMap; // | string[] | IStringMap[]
 
+    // TODO: array? https://github.com/opds-community/drafts/issues/24
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L33
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/opds-community/drafts/blob/4d82fb9a64f35a174a5f205c23ba623ec010d5ec/schema/feed-metadata.schema.json#L22
     @JsonProperty("subtitle")
     public SubTitle!: string | IStringMap;
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L7
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/opds-community/drafts/blob/4d82fb9a64f35a174a5f205c23ba623ec010d5ec/schema/feed-metadata.schema.json#L7
     @JsonProperty("identifier")
     public Identifier!: string;
 
@@ -156,6 +167,8 @@ export class Metadata {
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L51
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/opds-community/drafts/blob/4d82fb9a64f35a174a5f205c23ba623ec010d5ec/schema/feed-metadata.schema.json#L29
     @JsonProperty("modified")
     public Modified!: Date;
 
@@ -171,6 +184,8 @@ export class Metadata {
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L129
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/opds-community/drafts/blob/4d82fb9a64f35a174a5f205c23ba623ec010d5ec/schema/feed-metadata.schema.json#L33
     @JsonProperty("description")
     public Description!: string;
 
@@ -224,6 +239,7 @@ export class Metadata {
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json
     @JsonProperty("subject")
+    @JsonConverter(JsonSubjectConverter)
     @JsonElementType(Subject)
     public Subject!: Subject[];
 
@@ -240,6 +256,8 @@ export class Metadata {
     protected _OnDeserialized() {
         // tslint:disable-next-line:max-line-length
         // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L153
+        // tslint:disable-next-line:max-line-length
+        // https://github.com/opds-community/drafts/blob/4d82fb9a64f35a174a5f205c23ba623ec010d5ec/schema/feed-metadata.schema.json#L50
         if (!this.Title) {
             console.log("Metadata.Title is not set!");
         }

@@ -12,6 +12,8 @@ import {
     OnDeserialized,
 } from "ta-json-x";
 
+import { IStringMap } from "./metadata-multilang";
+
 // TODO: not in JSON Schema?? https://github.com/readium/webpub-manifest/issues/13
 // tslint:disable-next-line:max-line-length
 // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json
@@ -19,7 +21,7 @@ import {
 export class Subject {
 
     @JsonProperty("name")
-    public Name!: string;
+    public Name!: string | IStringMap;
 
     @JsonProperty("sortAs")
     public SortAs!: string;
