@@ -11,6 +11,9 @@ import {
     JsonProperty,
 } from "ta-json-x";
 
+// TODO: MEDIA OVERLAY not in JSON Schema
+// tslint:disable-next-line:max-line-length
+// https://github.com/readium/webpub-manifest/tree/master/schema
 @JsonObject()
 export class MediaOverlay {
 

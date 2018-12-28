@@ -196,9 +196,9 @@ export class Metadata {
 
     // public OtherMetadata: IMeta[];
 
-    // TODO: not in JSON Schema??
+    // TODO: not in JSON Schema
     // tslint:disable-next-line:max-line-length
-    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json
+    // https://github.com/readium/webpub-manifest/tree/master/schema
     @JsonProperty("media-overlay")
     public MediaOverlay!: MediaOverlay;
 

@@ -83,6 +83,9 @@ export function timeStrToSeconds(timeStr: string): number {
     return (hours * 3600) + (minutes * 60) + seconds; // total in seconds
 }
 
+// TODO: MEDIA OVERLAY not in JSON Schema
+// tslint:disable-next-line:max-line-length
+// https://github.com/readium/webpub-manifest/tree/master/schema
 @JsonObject()
 export class MediaOverlayNode {
     @JsonProperty("text")

@@ -30,9 +30,6 @@ export class Properties {
     @JsonProperty("layout")
     public Layout!: string;
 
-    @JsonProperty("media-overlay")
-    public MediaOverlay!: string;
-
     @JsonProperty("orientation")
     public Orientation!: string;
 
@@ -47,4 +44,10 @@ export class Properties {
 
     @JsonProperty("encrypted")
     public Encrypted!: Encrypted;
+
+    // TODO: MEDIA OVERLAY not in JSON Schema
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/tree/master/schema
+    @JsonProperty("media-overlay")
+    public MediaOverlay!: string;
 }
