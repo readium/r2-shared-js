@@ -1505,15 +1505,17 @@ const fillEncryptionInfo =
                 }
             });
 
-            publication.Spine.forEach((l, _i, _arr) => {
-                const filePath = l.Href;
-                if (filePath === encInfo.CipherData.CipherReference.URI) {
-                    if (!l.Properties) {
-                        l.Properties = new Properties();
+            if (publication.Spine) {
+                publication.Spine.forEach((l, _i, _arr) => {
+                    const filePath = l.Href;
+                    if (filePath === encInfo.CipherData.CipherReference.URI) {
+                        if (!l.Properties) {
+                            l.Properties = new Properties();
+                        }
+                        l.Properties.Encrypted = encrypted;
                     }
-                    l.Properties.Encrypted = encrypted;
-                }
-            });
+                });
+            }
         });
     };
 

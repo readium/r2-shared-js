@@ -180,7 +180,18 @@ export class Metadata {
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L78
     @JsonProperty("sortAs")
-    public SortAs!: string;
+    public SortAs2!: string;
+    @JsonProperty("sort_as")
+    public SortAs1: string | undefined;
+    get SortAs(): string | undefined {
+        return this.SortAs2 ? this.SortAs2 : this.SortAs1;
+    }
+    set SortAs(sortas: string | undefined) {
+        if (sortas) {
+            this.SortAs1 = undefined;
+            this.SortAs2 = sortas;
+        }
+    }
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L129
@@ -192,12 +203,34 @@ export class Metadata {
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L120
     @JsonProperty("readingProgression")
-    public Direction!: string; // TODO: enum "rtl", "ltr", "auto"
+    public Direction2!: string; // TODO: enum "rtl", "ltr", "auto"
+    @JsonProperty("direction")
+    public Direction1: string | undefined;
+    get Direction(): string | undefined {
+        return this.Direction2 ? this.Direction2 : this.Direction1;
+    }
+    set Direction(direction: string | undefined) {
+        if (direction) {
+            this.Direction1 = undefined;
+            this.Direction2 = direction;
+        }
+    }
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L140
     @JsonProperty("belongsTo")
-    public BelongsTo!: BelongsTo;
+    public BelongsTo2!: BelongsTo;
+    @JsonProperty("belongs_to")
+    public BelongsTo1: BelongsTo | undefined;
+    get BelongsTo(): BelongsTo | undefined {
+        return this.BelongsTo2 ? this.BelongsTo2 : this.BelongsTo1;
+    }
+    set BelongsTo(belongsto: BelongsTo | undefined) {
+        if (belongsto) {
+            this.BelongsTo1 = undefined;
+            this.BelongsTo2 = belongsto;
+        }
+    }
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L132

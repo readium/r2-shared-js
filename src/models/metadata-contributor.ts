@@ -31,7 +31,18 @@ export class Contributor {
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/contributor-object.schema.json#L29
     @JsonProperty("sortAs")
-    public SortAs!: string;
+    public SortAs2!: string;
+    @JsonProperty("sort_as")
+    public SortAs1: string | undefined;
+    get SortAs(): string | undefined {
+        return this.SortAs2 ? this.SortAs2 : this.SortAs1;
+    }
+    set SortAs(sortas: string | undefined) {
+        if (sortas) {
+            this.SortAs1 = undefined;
+            this.SortAs2 = sortas;
+        }
+    }
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/contributor-object.schema.json#L32

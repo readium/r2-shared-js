@@ -7,12 +7,14 @@
 
 // https://github.com/edcarroll/ta-json
 import {
+    JsonElementType,
     JsonObject,
     JsonProperty,
     OnDeserialized,
 } from "ta-json-x";
 
 import { IStringMap } from "./metadata-multilang";
+import { Link } from "./publication-link";
 
 // TODO: not in JSON Schema?? https://github.com/readium/webpub-manifest/issues/13
 // tslint:disable-next-line:max-line-length
@@ -24,13 +26,28 @@ export class Subject {
     public Name!: string | IStringMap;
 
     @JsonProperty("sortAs")
-    public SortAs!: string;
+    public SortAs2!: string;
+    @JsonProperty("sort_as")
+    public SortAs1: string | undefined;
+    get SortAs(): string | undefined {
+        return this.SortAs2 ? this.SortAs2 : this.SortAs1;
+    }
+    set SortAs(sortas: string | undefined) {
+        if (sortas) {
+            this.SortAs1 = undefined;
+            this.SortAs2 = sortas;
+        }
+    }
 
     @JsonProperty("scheme")
     public Scheme!: string;
 
     @JsonProperty("code")
     public Code!: string;
+
+    @JsonProperty("links")
+    @JsonElementType(Link)
+    public Links!: Link[];
 
     @OnDeserialized()
     // tslint:disable-next-line:no-unused-variable

@@ -52,7 +52,19 @@ export class Publication {
     // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json#L44
     @JsonProperty("readingOrder")
     @JsonElementType(Link)
-    public Spine!: Link[];
+    public Spine2!: Link[];
+    @JsonProperty("spine")
+    @JsonElementType(Link)
+    public Spine1!: Link[] | undefined;
+    get Spine(): Link[] | undefined {
+        return this.Spine2 ? this.Spine2 : this.Spine1;
+    }
+    set Spine(spine: Link[] | undefined) {
+        if (spine) {
+            this.Spine1 = undefined;
+            this.Spine2 = spine;
+        }
+    }
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json#L51
