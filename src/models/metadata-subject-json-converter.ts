@@ -11,22 +11,23 @@ import {
     JsonValue,
 } from "ta-json-x";
 
-import { IStringMap } from "./metadata-multilang";
 import { Subject } from "./metadata-subject";
+
+// import { IStringMap } from "./metadata-multilang";
 
 export class JsonSubjectConverter implements IPropertyConverter {
     public serialize(s: Subject): JsonValue {
-        if (s.Name &&
-            !s.SortAs &&
-            !s.Scheme &&
-            !s.Code &&
-            (!s.Links || !s.Links.length)) {
-            if (typeof s.Name === "string") {
-                return s.Name;
-            } else if (typeof s.Name === "object") {
-                return s.Name; // IStringMap
-            }
-        }
+        // if (s.Name &&
+        //     !s.SortAs &&
+        //     !s.Scheme &&
+        //     !s.Code &&
+        //     (!s.Links || !s.Links.length)) {
+        //     if (typeof s.Name === "string") {
+        //         return s.Name;
+        //     } else if (typeof s.Name === "object") {
+        //         return s.Name; // IStringMap
+        //     }
+        // }
         return TAJSON.serialize(s);
     }
 
@@ -35,19 +36,20 @@ export class JsonSubjectConverter implements IPropertyConverter {
             const s = new Subject();
             s.Name = value as string;
             return s;
-        } else if (typeof value === "object" && !(value as any)["name"]) { // tslint:disable-line:no-string-literal
-            const s = new Subject();
-            s.Name = {} as IStringMap;
-            const keys = Object.keys(value as any);
-            keys.forEach((key: string) => {
-                // TODO? check key is BCP47 language tag?
-                const val = (value as any)[key];
-                if (typeof val === "string") {
-                    (s.Name as IStringMap)[key] = val;
-                }
-            });
-            return s;
         }
+        // else if (typeof value === "object" && !(value as any)["name"]) { // tslint:disable-line:no-string-literal
+        //     const s = new Subject();
+        //     s.Name = {} as IStringMap;
+        //     const keys = Object.keys(value as any);
+        //     keys.forEach((key: string) => {
+        //         // TODO? check key is BCP47 language tag?
+        //         const val = (value as any)[key];
+        //         if (typeof val === "string") {
+        //             (s.Name as IStringMap)[key] = val;
+        //         }
+        //     });
+        //     return s;
+        // }
         return TAJSON.deserialize<Subject>(value, Subject);
     }
 

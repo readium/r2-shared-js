@@ -29,103 +29,102 @@ setLcpNativePluginPath(path.join(process.cwd(), "LCP", "lcp.node"));
 
 // ==========================
 
-const colName1 = "theName1";
-const colID1 = "theID1";
-const colPOS1 = 1;
-const col1 = new Contributor();
-col1.Name = colName1;
-col1.Identifier = colID1;
-col1.Position = colPOS1;
-const colROLE1 = ["theRole1-A", "theRole1-B"];
-col1.Role = colROLE1;
+const contributor1NameStr = "theName1";
+const contributor1Id = "theID1";
+const contributor1Pos = 1;
+const contributor1 = new Contributor();
+contributor1.Name = contributor1NameStr;
+contributor1.Identifier = contributor1Id;
+contributor1.Position = contributor1Pos;
+const contributor1RoleArr = ["theRole1-A", "theRole1-B"];
+contributor1.Role = contributor1RoleArr;
 
-const colName2Lang = "en";
-const colName2Val = "theName2";
-const colName2 = {} as IStringMap;
-colName2[colName2Lang] = colName2Val;
-const colID2 = "theID2";
-const col2 = new Contributor();
-col2.Name = colName2;
-col2.Identifier = colID2;
-const colROLE2 = "theRole2";
-col2.Role = [colROLE2];
+const contributor2NameMapLang = "en";
+const contributor2NameMapVal = "theName2";
+const contributor2NameMap = {} as IStringMap;
+contributor2NameMap[contributor2NameMapLang] = contributor2NameMapVal;
+const contributor2NameObj = { name: contributor2NameMap };
+const contributor2Id = "theID2";
+const contributor2 = new Contributor();
+contributor2.Name = contributor2NameMap;
+contributor2.Identifier = contributor2Id;
+const contributor2RoleStr = "theRole2";
+contributor2.Role = [contributor2RoleStr];
 
-const checkCol1 = (t: ExecutionContext, obj: any) => {
-
-    checkType_Object(t, obj);
-
-    checkType_String(t, obj.name);
-    t.is(obj.name, colName1);
-
-    checkType_String(t, obj.identifier);
-    t.is(obj.identifier, colID1);
-
-    checkType_Number(t, obj.position);
-    t.is(obj.position, colPOS1);
-
-    checkType_Array(t, obj.role);
-    t.is(obj.role.length, colROLE1.length);
-    t.is(obj.role[0], colROLE1[0]);
-    t.is(obj.role[1], colROLE1[1]);
-};
-
-const checkCol2 = (t: ExecutionContext, obj: any) => {
-
-    checkType_Object(t, obj);
-
-    checkType_Object(t, obj.name);
-    checkType_String(t, obj.name[colName2Lang]);
-    t.is(obj.name[colName2Lang], colName2Val);
-
-    checkType_String(t, obj.identifier);
-    t.is(obj.identifier, colID2);
-
-    checkType_String(t, obj.role);
-    t.is(obj.role, colROLE2);
-};
-
-const checkCol1Name = (t: ExecutionContext, obj: string | IStringMap) => {
+const checkContributor1Name = (t: ExecutionContext, obj: string | IStringMap) => {
 
     checkType_String(t, obj);
-    t.is(obj, colName1);
+    t.is(obj, contributor1NameStr);
 };
 
-const checkCol1_ = (t: ExecutionContext, obj: Contributor) => {
+const checkContributor2Name = (t: ExecutionContext, obj: string | IStringMap) => {
+
+    checkType_Object(t, obj);
+    checkType_String(t, (obj as IStringMap)[contributor2NameMapLang]);
+    t.is((obj as IStringMap)[contributor2NameMapLang], contributor2NameMapVal);
+};
+
+const checkJsonContributor1 = (t: ExecutionContext, obj: any) => {
+
+    checkType_Object(t, obj);
+
+    checkContributor1Name(t, obj.name);
+
+    checkType_String(t, obj.identifier);
+    t.is(obj.identifier, contributor1Id);
+
+    checkType_Number(t, obj.position);
+    t.is(obj.position, contributor1Pos);
+
+    checkType_Array(t, obj.role);
+    t.is(obj.role.length, contributor1RoleArr.length);
+    t.is(obj.role[0], contributor1RoleArr[0]);
+    t.is(obj.role[1], contributor1RoleArr[1]);
+};
+
+const checkJsonContributor2 = (t: ExecutionContext, obj: any) => {
+
+    checkType_Object(t, obj);
+
+    checkContributor2Name(t, obj.name);
+
+    checkType_String(t, obj.identifier);
+    t.is(obj.identifier, contributor2Id);
+
+    checkType_String(t, obj.role);
+    t.is(obj.role, contributor2RoleStr);
+};
+
+const checkObjContributor1 = (t: ExecutionContext, obj: Contributor) => {
 
     checkType(t, obj, Contributor);
 
-    checkCol1Name(t, obj.Name);
+    checkContributor1Name(t, obj.Name);
 
     checkType_String(t, obj.Identifier);
-    t.is(obj.Identifier, colID1);
+    t.is(obj.Identifier, contributor1Id);
 
     checkType_Number(t, obj.Position);
-    t.is(obj.Position, colPOS1);
+    t.is(obj.Position, contributor1Pos);
 
     checkType_Array(t, obj.Role);
     t.is(obj.Role.length, 2);
-    t.is(obj.Role[0], colROLE1[0]);
-    t.is(obj.Role[1], colROLE1[1]);
+    t.is(obj.Role[0], contributor1RoleArr[0]);
+    t.is(obj.Role[1], contributor1RoleArr[1]);
 };
 
-const checkCol2Name = (t: ExecutionContext, obj: string | IStringMap) => {
-
-    checkType_Object(t, obj);
-    t.is((obj as IStringMap)[colName2Lang], colName2Val);
-};
-
-const checkCol2_ = (t: ExecutionContext, obj: Contributor) => {
+const checkObjContributor2 = (t: ExecutionContext, obj: Contributor) => {
 
     checkType(t, obj, Contributor);
 
-    checkCol2Name(t, obj.Name);
+    checkContributor2Name(t, obj.Name);
 
     checkType_String(t, obj.Identifier);
-    t.is(obj.Identifier, colID2);
+    t.is(obj.Identifier, contributor2Id);
 
     checkType_Array(t, obj.Role);
     t.is(obj.Role.length, 1);
-    t.is(obj.Role[0], colROLE2);
+    t.is(obj.Role[0], contributor2RoleStr);
 };
 
 // ==========================
@@ -134,8 +133,8 @@ test("JSON SERIALIZE: BelongsTo.Series => Contributor[]", (t) => {
 
     const b = new BelongsTo();
     b.Series = [];
-    b.Series.push(col1);
-    b.Series.push(col2);
+    b.Series.push(contributor1);
+    b.Series.push(contributor2);
     inspect(b);
 
     const json = TAJSON.serialize(b);
@@ -144,14 +143,14 @@ test("JSON SERIALIZE: BelongsTo.Series => Contributor[]", (t) => {
     checkType_Array(t, json.series);
     t.is(json.series.length, 2);
 
-    checkCol1(t, json.series[0]);
-    checkCol2(t, json.series[1]);
+    checkJsonContributor1(t, json.series[0]);
+    checkJsonContributor2(t, json.series[1]);
 });
 
 test("JSON SERIALIZE: BelongsTo.Series => Contributor[1] collapse-array", (t) => {
 
     const b = new BelongsTo();
-    b.Series = [col1];
+    b.Series = [contributor1];
     inspect(b);
 
     const json = TAJSON.serialize(b);
@@ -164,15 +163,15 @@ test("JSON SERIALIZE: BelongsTo.Series => Contributor[1] collapse-array", (t) =>
     //     });
     logJSON(json);
 
-    checkCol1(t, json.series);
+    checkJsonContributor1(t, json.series);
 });
 
 test("JSON DESERIALIZE: BelongsTo.Series => Contributor[]", (t) => {
 
     const json: any = {};
     json.series = [
-        { name: colName1, identifier: colID1, position: colPOS1, role: colROLE1 },
-        { name: colName2, identifier: colID2, role: colROLE2 },
+        { name: contributor1NameStr, identifier: contributor1Id, position: contributor1Pos, role: contributor1RoleArr },
+        { name: contributor2NameMap, identifier: contributor2Id, role: contributor2RoleStr },
     ];
     logJSON(json);
 
@@ -182,15 +181,15 @@ test("JSON DESERIALIZE: BelongsTo.Series => Contributor[]", (t) => {
     checkType_Array(t, b.Series);
     t.is(b.Series.length, 2);
 
-    checkCol1_(t, b.Series[0]);
-    checkCol2_(t, b.Series[1]);
+    checkObjContributor1(t, b.Series[0]);
+    checkObjContributor2(t, b.Series[1]);
 });
 
 test("JSON DESERIALIZE: BelongsTo.Series => Contributor[1]", (t) => {
 
     const json: any = {};
     json.series = [
-        { name: colName1, identifier: colID1, position: colPOS1, role: colROLE1 },
+        { name: contributor1NameStr, identifier: contributor1Id, position: contributor1Pos, role: contributor1RoleArr },
     ];
     logJSON(json);
 
@@ -200,13 +199,14 @@ test("JSON DESERIALIZE: BelongsTo.Series => Contributor[1]", (t) => {
     checkType_Array(t, b.Series);
     t.is(b.Series.length, 1);
 
-    checkCol1_(t, b.Series[0]);
+    checkObjContributor1(t, b.Series[0]);
 });
 
 test("JSON DESERIALIZE: BelongsTo.Series => Contributor", (t) => {
 
     const json: any = {};
-    json.series = { name: colName1, identifier: colID1, position: colPOS1, role: colROLE1 };
+    // tslint:disable-next-line:max-line-length
+    json.series = { name: contributor1NameStr, identifier: contributor1Id, position: contributor1Pos, role: contributor1RoleArr };
     logJSON(json);
 
     const b: BelongsTo = TAJSON.deserialize<BelongsTo>(json, BelongsTo);
@@ -215,13 +215,13 @@ test("JSON DESERIALIZE: BelongsTo.Series => Contributor", (t) => {
     checkType_Array(t, b.Series);
     t.is(b.Series.length, 1);
 
-    checkCol1_(t, b.Series[0]);
+    checkObjContributor1(t, b.Series[0]);
 });
 
 test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME []", (t) => {
 
     const json: any = {};
-    json.series = [colName1, colName2];
+    json.series = [contributor1NameStr, contributor2NameObj];
     logJSON(json);
 
     const b: BelongsTo = TAJSON.deserialize<BelongsTo>(json, BelongsTo);
@@ -231,16 +231,16 @@ test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME []", (t) => {
     t.is(b.Series.length, 2);
 
     checkType(t, b.Series[0], Contributor);
-    checkCol1Name(t, b.Series[0].Name);
+    checkContributor1Name(t, b.Series[0].Name);
 
     checkType(t, b.Series[1], Contributor);
-    checkCol2Name(t, b.Series[1].Name);
+    checkContributor2Name(t, b.Series[1].Name);
 });
 
 test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME [1] A", (t) => {
 
     const json: any = {};
-    json.series = [colName1];
+    json.series = [contributor1NameStr];
     logJSON(json);
 
     const b: BelongsTo = TAJSON.deserialize<BelongsTo>(json, BelongsTo);
@@ -250,13 +250,13 @@ test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME [1] A", (t) => {
     t.is(b.Series.length, 1);
 
     checkType(t, b.Series[0], Contributor);
-    checkCol1Name(t, b.Series[0].Name);
+    checkContributor1Name(t, b.Series[0].Name);
 });
 
 test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME [1] B", (t) => {
 
     const json: any = {};
-    json.series = [colName2];
+    json.series = [contributor2NameObj];
     logJSON(json);
 
     const b: BelongsTo = TAJSON.deserialize<BelongsTo>(json, BelongsTo);
@@ -266,13 +266,13 @@ test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME [1] B", (t) => {
     t.is(b.Series.length, 1);
 
     checkType(t, b.Series[0], Contributor);
-    checkCol2Name(t, b.Series[0].Name);
+    checkContributor2Name(t, b.Series[0].Name);
 });
 
 test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME A", (t) => {
 
     const json: any = {};
-    json.series = colName1;
+    json.series = contributor1NameStr;
     logJSON(json);
 
     const b: BelongsTo = TAJSON.deserialize<BelongsTo>(json, BelongsTo);
@@ -282,13 +282,13 @@ test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME A", (t) => {
     t.is(b.Series.length, 1);
 
     checkType(t, b.Series[0], Contributor);
-    checkCol1Name(t, b.Series[0].Name);
+    checkContributor1Name(t, b.Series[0].Name);
 });
 
 test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME B", (t) => {
 
     const json: any = {};
-    json.series = colName2;
+    json.series = contributor2NameObj;
     logJSON(json);
 
     const b: BelongsTo = TAJSON.deserialize<BelongsTo>(json, BelongsTo);
@@ -298,5 +298,5 @@ test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME B", (t) => {
     t.is(b.Series.length, 1);
 
     checkType(t, b.Series[0], Contributor);
-    checkCol2Name(t, b.Series[0].Name);
+    checkContributor2Name(t, b.Series[0].Name);
 });

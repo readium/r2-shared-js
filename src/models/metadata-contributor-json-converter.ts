@@ -12,22 +12,23 @@ import {
 } from "ta-json-x";
 
 import { Contributor } from "./metadata-contributor";
-import { IStringMap } from "./metadata-multilang";
+
+// import { IStringMap } from "./metadata-multilang";
 
 export class JsonContributorConverter implements IPropertyConverter {
     public serialize(c: Contributor): JsonValue {
-        if (c.Name &&
-            !c.SortAs &&
-            (!c.Role || !c.Role.length) &&
-            !c.Identifier &&
-            (typeof c.Position === "undefined") &&
-            (!c.Links || !c.Links.length)) {
-            if (typeof c.Name === "string") {
-                return c.Name;
-            } else if (typeof c.Name === "object") {
-                return c.Name; // IStringMap
-            }
-        }
+        // if (c.Name &&
+        //     !c.SortAs &&
+        //     (!c.Role || !c.Role.length) &&
+        //     !c.Identifier &&
+        //     (typeof c.Position === "undefined") &&
+        //     (!c.Links || !c.Links.length)) {
+        //     if (typeof c.Name === "string") {
+        //         return c.Name;
+        //     } else if (typeof c.Name === "object") {
+        //         return c.Name; // IStringMap
+        //     }
+        // }
         return TAJSON.serialize(c);
     }
 
@@ -42,19 +43,20 @@ export class JsonContributorConverter implements IPropertyConverter {
             const c = new Contributor();
             c.Name = value as string;
             return c;
-        } else if (typeof value === "object" && !(value as any)["name"]) { // tslint:disable-line:no-string-literal
-            const c = new Contributor();
-            c.Name = {} as IStringMap;
-            const keys = Object.keys(value as any);
-            keys.forEach((key: string) => {
-                // TODO? check key is BCP47 language tag?
-                const val = (value as any)[key];
-                if (typeof val === "string") {
-                    (c.Name as IStringMap)[key] = val;
-                }
-            });
-            return c;
         }
+        // else if (typeof value === "object" && !(value as any)["name"]) { // tslint:disable-line:no-string-literal
+        //     const c = new Contributor();
+        //     c.Name = {} as IStringMap;
+        //     const keys = Object.keys(value as any);
+        //     keys.forEach((key: string) => {
+        //         // TODO? check key is BCP47 language tag?
+        //         const val = (value as any)[key];
+        //         if (typeof val === "string") {
+        //             (c.Name as IStringMap)[key] = val;
+        //         }
+        //     });
+        //     return c;
+        // }
         return TAJSON.deserialize<Contributor>(value, Contributor);
     }
 
