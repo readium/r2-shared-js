@@ -17,17 +17,18 @@ import { Subject } from "./metadata-subject";
 
 export class JsonSubjectConverter implements IPropertyConverter {
     public serialize(s: Subject): JsonValue {
-        // if (s.Name &&
-        //     !s.SortAs &&
-        //     !s.Scheme &&
-        //     !s.Code &&
-        //     (!s.Links || !s.Links.length)) {
-        //     if (typeof s.Name === "string") {
-        //         return s.Name;
-        //     } else if (typeof s.Name === "object") {
-        //         return s.Name; // IStringMap
-        //     }
-        // }
+        if (s.Name &&
+            !s.SortAs &&
+            !s.Scheme &&
+            !s.Code &&
+            (!s.Links || !s.Links.length)) {
+            if (typeof s.Name === "string") {
+                return s.Name;
+            }
+            // else if (typeof s.Name === "object") {
+            //     return s.Name; // IStringMap
+            // }
+        }
         return TAJSON.serialize(s);
     }
 

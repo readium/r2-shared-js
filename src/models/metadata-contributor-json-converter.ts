@@ -17,18 +17,20 @@ import { Contributor } from "./metadata-contributor";
 
 export class JsonContributorConverter implements IPropertyConverter {
     public serialize(c: Contributor): JsonValue {
-        // if (c.Name &&
-        //     !c.SortAs &&
-        //     (!c.Role || !c.Role.length) &&
-        //     !c.Identifier &&
-        //     (typeof c.Position === "undefined") &&
-        //     (!c.Links || !c.Links.length)) {
-        //     if (typeof c.Name === "string") {
-        //         return c.Name;
-        //     } else if (typeof c.Name === "object") {
-        //         return c.Name; // IStringMap
-        //     }
-        // }
+        if (c.Name &&
+            !c.SortAs &&
+            (!c.Role || !c.Role.length) &&
+            !c.Identifier &&
+            (typeof c.Position === "undefined") &&
+            (!c.Links || !c.Links.length)) {
+
+            if (typeof c.Name === "string") {
+                return c.Name;
+            }
+            // else if (typeof c.Name === "object") {
+            //     return c.Name; // IStringMap
+            // }
+        }
         return TAJSON.serialize(c);
     }
 
