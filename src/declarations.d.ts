@@ -8,3 +8,6 @@
 // declare module "*";
 
 declare module "slugify";
+
+declare module "filehound";
+declare module "json-diff";

@@ -1,6 +1,21 @@
+import * as path from "path";
+
 import { timeStrToSeconds } from "@models/media-overlay";
+import { Publication } from "@models/publication";
+import { PublicationParsePromise } from "@parser/publication-parser";
 import test from "ava";
 import * as debug_ from "debug";
+import * as filehound from "filehound";
+import * as jsonDiff from "json-diff";
+import { JSON as TAJSON } from "ta-json-x";
+
+import {
+    initGlobalConverters_GENERIC,
+    initGlobalConverters_SHARED,
+} from "../src/init-globals";
+
+initGlobalConverters_SHARED();
+initGlobalConverters_GENERIC();
 
 const debug = debug_("r2:shared#test");
 
@@ -36,4 +51,60 @@ test("SMIL clock values", (t) => {
     t.is(timeStrToSeconds("7.5z"), 7.5);
     t.is(timeStrToSeconds("4:5:34:31.396"), 0);
     t.is(timeStrToSeconds(""), 0);
+});
+
+// ==========================
+
+async function delay(okay: boolean): Promise<boolean> {
+    return new Promise((resolve, _reject) => {
+        setTimeout(() => {
+            resolve(okay);
+        }, 1000);
+    });
+}
+
+test("EPUB parsing (de)serialize roundtrip", async (t) => {
+
+    const dirPath = path.join(process.cwd(), "misc/epubs/");
+
+    const filePaths: string[] = await filehound.create()
+        .discard("node_modules")
+        .depth(5)
+        .paths(dirPath)
+        .ext([".epub", ".epub3"])
+        .find();
+
+    for (const filePath of filePaths) {
+        debug("------------------------");
+        debug(filePath);
+        // debug("------------------------");
+
+        let pub: Publication;
+        try {
+            pub = await PublicationParsePromise(filePath);
+        } catch (err) {
+            console.log(err);
+            continue;
+        }
+        const publicationJson1 = TAJSON.serialize(pub);
+        const publication = TAJSON.deserialize<Publication>(publicationJson1, Publication);
+        const publicationJson2 = TAJSON.serialize(publication);
+
+        const str1 = JSON.stringify(publicationJson1, null, 2);
+        const str2 = JSON.stringify(publicationJson2, null, 2);
+
+        if (str1 !== str2) {
+            process.stdout.write("###########################\n");
+            process.stdout.write("###########################\n");
+            process.stdout.write("#### JSON DIFF\n");
+            process.stdout.write(jsonDiff.diffString(publicationJson1, publicationJson2) + "\n");
+            process.stdout.write("###########################\n");
+            process.stdout.write("###########################\n");
+
+            t.true(await delay(false));
+            return;
+        }
+    }
+
+    t.true(await delay(true));
 });

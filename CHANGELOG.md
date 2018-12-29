@@ -1,10 +1,29 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.5...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.6...develop
 
 Changes:
 * TODO
+
+# 1.0.6
+
+> Build environment: NodeJS `8.14.1`, NPM `6.4.1`
+
+Changes:
+* Reviewed and annotated the data models based on the most current JSON Schema
+* Added fallback mechanism for (de)serialization to/from legacy (since renamed) JSON dictionary keys (e.g. `sort_as`, `belongs_to`, `direction`, `spine`)
+* Minor NPM updates
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.6/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.6/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.6
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.5...v1.0.6
 
 # 1.0.5
 

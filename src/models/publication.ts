@@ -255,14 +255,15 @@ export class Publication {
             console.log("Publication.Metadata is not set!");
         }
         // tslint:disable-next-line:max-line-length
-        // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json#L61
-        if (!this.Links) {
-            console.log("Publication.Links is not set!");
-        }
-        // tslint:disable-next-line:max-line-length
         // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json#L62
         if (!this.Spine) {
             console.log("Publication.Spine/ReadingOrder is not set!");
         }
+        // TODO: many EPUB publications do not have Links
+        // tslint:disable-next-line:max-line-length
+        // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json#L61
+        // if (!this.Links) {
+        //     console.log("Publication.Links is not set!");
+        // }
     }
 }

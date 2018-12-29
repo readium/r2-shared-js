@@ -137,8 +137,8 @@ export class Link {
         // https://github.com/readium/webpub-manifest/blob/ca6d887caa2d0495200fef4695f41aacb5fed2e9/schema/link.schema.json#L59
         // tslint:disable-next-line:max-line-length
         // https://github.com/opds-community/drafts/blob/4d82fb9a64f35a174a5f205c23ba623ec010d5ec/schema/link.schema.json#L54
-        if (!this.Href) {
-            console.log("Link.Href is not set!");
+        if (!this.Href && (!this.Children || !this.Children.length)) {
+            console.log("Link.Href is not set! (and no child Links)");
         }
     }
 }
