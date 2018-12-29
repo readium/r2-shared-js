@@ -220,7 +220,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
 
         const lcplStr = lcplZipData.toString("utf8");
         const lcplJson = global.JSON.parse(lcplStr);
-        debug(lcplJson);
+        // debug(lcplJson);
         lcpl = TAJSON.deserialize<LCP>(lcplJson, LCP);
         lcpl.ZipPath = lcplZipPath;
         lcpl.JsonSource = lcplStr;
