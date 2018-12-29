@@ -15,21 +15,22 @@ import { IStringMap } from "./metadata-multilang";
 import { Subject } from "./metadata-subject";
 
 export class JsonSubjectConverter implements IPropertyConverter {
-    public serialize(property: Subject): JsonValue {
-        // console.log("JsonSubjectConverter.serialize()");
-
-        return TAJSON.serialize(property);
+    public serialize(s: Subject): JsonValue {
+        if (s.Name &&
+            !s.SortAs &&
+            !s.Scheme &&
+            !s.Code &&
+            (!s.Links || !s.Links.length)) {
+            if (typeof s.Name === "string") {
+                return s.Name;
+            } else if (typeof s.Name === "object") {
+                return s.Name; // IStringMap
+            }
+        }
+        return TAJSON.serialize(s);
     }
 
     public deserialize(value: JsonValue): Subject {
-        // console.log("JsonSubjectConverter.deserialize()");
-
-        // if (value instanceof Array) {
-        //     return value.map((v) => {
-        //         return this.deserialize(v);
-        //     }) as Collection[];
-        // } else
-
         if (typeof value === "string") {
             const s = new Subject();
             s.Name = value as string;
