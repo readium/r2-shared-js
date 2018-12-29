@@ -1365,7 +1365,7 @@ const findInManifestByID =
                 return linkItem;
             }
         }
-        return Promise.reject(`${ID} not found`);
+        return Promise.reject(`ID ${ID} not found`);
     };
 
 const addRendition = (publication: Publication, _rootfile: Rootfile, opf: OPF) => {
