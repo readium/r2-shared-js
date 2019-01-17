@@ -1275,7 +1275,7 @@ const addToLinkFromProperties = async (publication: Publication, link: Link, pro
                 break;
             }
             case "rendition:spread-portrait": {
-                propertiesStruct.Spread = "portrait";
+                propertiesStruct.Spread = "both"; // https://github.com/readium/webpub-manifest/issues/24
                 break;
             }
             case "rendition:spread-both": {
@@ -1389,6 +1389,10 @@ const addRendition = (publication: Publication, _rootfile: Rootfile, opf: OPF) =
                 }
                 case "rendition:spread": {
                     rendition.Spread = meta.Data;
+                    // https://github.com/readium/webpub-manifest/issues/24
+                    if (rendition.Spread === "portrait") {
+                        rendition.Spread = "both";
+                    }
                     break;
                 }
                 case "rendition:flow": {
