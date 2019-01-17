@@ -256,9 +256,8 @@ export class Metadata {
     @JsonProperty("rights")
     public Rights!: string;
 
-    // TODO: not in JSON Schema?? https://github.com/readium/webpub-manifest/issues/15
     // tslint:disable-next-line:max-line-length
-    // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json
+    // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/metadata.schema.json#L7
     @JsonProperty("rendition")
     public Rendition!: Properties;
 

@@ -72,51 +72,44 @@ export class Publication {
     @JsonElementType(Link)
     public Resources!: Link[];
 
-    // TODO: not in JSON Schema?? https://github.com/readium/webpub-manifest/issues/17
     // tslint:disable-next-line:max-line-length
-    // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json
+    // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/publication.schema.json#L58
     @JsonProperty("toc")
     @JsonElementType(Link)
     public TOC!: Link[];
 
-    // TODO: not in JSON Schema?? https://github.com/readium/webpub-manifest/issues/17
     // tslint:disable-next-line:max-line-length
-    // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json
+    // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/subcollections.schema.json#L7
     @JsonProperty("page-list")
     @JsonElementType(Link)
     public PageList!: Link[];
 
-    // TODO: not in JSON Schema?? https://github.com/readium/webpub-manifest/issues/17
     // tslint:disable-next-line:max-line-length
-    // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json
+    // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/subcollections.schema.json#L13
     @JsonProperty("landmarks")
     @JsonElementType(Link)
     public Landmarks!: Link[];
 
-    // TODO: not in JSON Schema?? https://github.com/readium/webpub-manifest/issues/17
     // tslint:disable-next-line:max-line-length
-    // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json
+    // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/subcollections.schema.json#L25
     @JsonProperty("loi")
     @JsonElementType(Link)
     public LOI!: Link[];
 
-    // TODO: not in JSON Schema?? https://github.com/readium/webpub-manifest/issues/17
     // tslint:disable-next-line:max-line-length
-    // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json
+    // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/subcollections.schema.json#L19
     @JsonProperty("loa")
     @JsonElementType(Link)
     public LOA!: Link[];
 
-    // TODO: not in JSON Schema?? https://github.com/readium/webpub-manifest/issues/17
     // tslint:disable-next-line:max-line-length
-    // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json
+    // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/subcollections.schema.json#L37
     @JsonProperty("lov")
     @JsonElementType(Link)
     public LOV!: Link[];
 
-    // TODO: not in JSON Schema?? https://github.com/readium/webpub-manifest/issues/17
     // tslint:disable-next-line:max-line-length
-    // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json
+    // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/subcollections.schema.json#L31
     @JsonProperty("lot")
     @JsonElementType(Link)
     public LOT!: Link[];
@@ -125,14 +118,6 @@ export class Publication {
     // @JsonProperty("images")
     // @JsonElementType(Link)
     // public Images!: Link[];
-
-    // TODO subcollection?
-    // tslint:disable-next-line:max-line-length
-    // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json#L65
-    // tslint:disable-next-line:max-line-length
-    // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/subcollection.schema.json
-    // public OtherLinks: Link[];
-    // public OtherCollections: IPublicationCollection[];
 
     public LCP: LCP | undefined;
 
