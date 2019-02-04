@@ -547,6 +547,16 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
         fillLandmarksFromGuide(publication, rootfile, opf);
     }
 
+    // EPUB extended with Adobe Digital Editions page map
+    //  https://wiki.mobileread.com/wiki/Adobe_Digital_Editions#Page-map
+    const pageMapLink = publication.Resources.find((item: Link): boolean => {
+        return item.TypeLink === "application/oebps-page-map+xml";
+    });
+    if (pageMapLink) {
+        const zipPathHref = pageMapLink.Href;
+        await fillPageListFromPageMapXML(publication, rootfile, opf, zip, zipPathHref);
+    }
+
     fillCalibreSerieInfo(publication, rootfile, opf);
     fillSubject(publication, rootfile, opf);
 
@@ -1537,6 +1547,75 @@ const fillPageListFromNCX = (publication: Publication, _rootfile: Rootfile, _opf
             publication.PageList.push(link);
         });
     }
+};
+
+const fillPageListFromPageMapXML = async (
+    publication: Publication,
+    _rootfile: Rootfile,
+    _opf: OPF,
+    zip: IZip,
+    pageMapZipPath: string,
+): Promise<void> => {
+    const pageMapDocStr = await createDocStringFromZipPath(pageMapZipPath, zip);
+    if (!pageMapDocStr) {
+        return;
+    }
+    const pageMapXmlDoc = new xmldom.DOMParser().parseFromString(pageMapDocStr);
+
+    const pages = pageMapXmlDoc.getElementsByTagName("page");
+    if (pages && pages.length) {
+        // tslint:disable-next-line:prefer-for-of
+        for (let i = 0; i < pages.length; i += 1) {
+            const page = pages.item(i)!;
+
+            const link = new Link();
+            const href = page.getAttribute("href");
+            const title = page.getAttribute("name");
+            if (href === null || title === null) {
+                continue;
+            }
+
+            link.Href = href;
+            link.Title = title;
+            if (!publication.PageList) {
+                publication.PageList = [];
+            }
+            publication.PageList.push(link);
+        }
+    }
+};
+
+const createDocStringFromZipPath = async (filePath: string, zip: IZip): Promise<string | undefined> => {
+    let has = zip.hasEntry(filePath);
+    if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
+        try {
+            has = await (zip as any).hasEntryAsync(filePath);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    if (!has) {
+        return undefined;
+    }
+
+    let zipStream_: IStreamAndLength;
+    try {
+        zipStream_ = await zip.entryStreamPromise(filePath);
+    } catch (err) {
+        debug(err);
+        return Promise.reject(err);
+    }
+    const zipStream = zipStream_.stream;
+
+    let zipData: Buffer;
+    try {
+        zipData = await streamToBufferPromise(zipStream);
+    } catch (err) {
+        debug(err);
+        return Promise.reject(err);
+    }
+
+    return zipData.toString("utf8");
 };
 
 const fillTOCFromNCX = (publication: Publication, rootfile: Rootfile, opf: OPF, ncx: NCX) => {
