@@ -542,19 +542,23 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
     if (!publication.TOC || !publication.TOC.length) {
         if (ncx) {
             fillTOCFromNCX(publication, rootfile, opf, ncx);
-            fillPageListFromNCX(publication, rootfile, opf, ncx);
+            if (!publication.PageList) {
+                fillPageListFromNCX(publication, rootfile, opf, ncx);
+            }
         }
         fillLandmarksFromGuide(publication, rootfile, opf);
     }
 
-    // EPUB extended with Adobe Digital Editions page map
-    //  https://wiki.mobileread.com/wiki/Adobe_Digital_Editions#Page-map
-    const pageMapLink = publication.Resources.find((item: Link): boolean => {
-        return item.TypeLink === "application/oebps-page-map+xml";
-    });
-    if (pageMapLink) {
-        const zipPathHref = pageMapLink.Href;
-        await fillPageListFromPageMapXML(publication, rootfile, opf, zip, zipPathHref);
+    if (!publication.PageList) {
+        // EPUB extended with Adobe Digital Editions page map
+        //  https://wiki.mobileread.com/wiki/Adobe_Digital_Editions#Page-map
+        const pageMapLink = publication.Resources.find((item: Link): boolean => {
+            return item.TypeLink === "application/oebps-page-map+xml";
+        });
+        if (pageMapLink) {
+            const zipPathHref = pageMapLink.Href;
+            await fillPageListFromAdobePageMap(publication, rootfile, opf, zip, zipPathHref);
+        }
     }
 
     fillCalibreSerieInfo(publication, rootfile, opf);
@@ -1549,7 +1553,7 @@ const fillPageListFromNCX = (publication: Publication, _rootfile: Rootfile, _opf
     }
 };
 
-const fillPageListFromPageMapXML = async (
+const fillPageListFromAdobePageMap = async (
     publication: Publication,
     _rootfile: Rootfile,
     _opf: OPF,
@@ -1562,6 +1566,9 @@ const fillPageListFromPageMapXML = async (
     }
     const pageMapXmlDoc = new xmldom.DOMParser().parseFromString(pageMapDocStr);
 
+    if (!publication.PageList) {
+        publication.PageList = [];
+    }
     const pages = pageMapXmlDoc.getElementsByTagName("page");
     if (pages && pages.length) {
         // tslint:disable-next-line:prefer-for-of
@@ -1579,9 +1586,6 @@ const fillPageListFromPageMapXML = async (
 
             link.Href = zipPath;
             link.Title = title;
-            if (!publication.PageList) {
-                publication.PageList = [];
-            }
             publication.PageList.push(link);
         }
     }
