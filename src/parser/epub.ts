@@ -1574,8 +1574,10 @@ const fillPageListFromPageMapXML = async (
             if (href === null || title === null) {
                 continue;
             }
+            const zipPath = path.join(path.dirname(pageMapZipPath), href)
+                .replace(/\\/g, "/");
 
-            link.Href = href;
+            link.Href = zipPath;
             link.Title = title;
             if (!publication.PageList) {
                 publication.PageList = [];
