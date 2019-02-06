@@ -194,12 +194,17 @@
   '
 
   'testTS': '
-    cross-env DEBUG=r2:* TS_NODE_CACHE=true TS_NODE_CACHE_DIRECTORY="./ava-ts/" TS_NODE_PRETTY=true
-    ava
-      "./test/**/test*.ts"
-      --require "ts-node/register"
-      --require "tsconfig-paths/register"
-  '
+     cross-env
+     DEBUG=r2:*
+     TS_NODE_CACHE=true
+     TS_NODE_CACHE_DIRECTORY="./ava-ts/"
+     TS_NODE_PRETTY=true
+     TS_NODE_COMPILER_OPTIONS="{\\\"typeRoots\\\" : [\\\"./node_modules/@types\\\", \\\"./test/@types\\\"]}"
+     ava
+       "./test/**/test*.ts"
+       --require "ts-node/register"
+       --require "tsconfig-paths/register"
+   '
 
   'cli': '
     node "./dist/es8-es2017/src/_utils/cli.js"
