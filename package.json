@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "@types/debug": "^0.0.31",
-    "@types/image-size": "^0.0.29",
+    "@types/image-size": "^0.7.0",
     "@types/mime-types": "^2.1.0",
     "@types/node": "^8.10.39",
     "@types/xmldom": "^0.1.29",
