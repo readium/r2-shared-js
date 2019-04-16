@@ -543,9 +543,23 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
     if (!publication.TOC || !publication.TOC.length) {
         if (ncx) {
             fillTOCFromNCX(publication, rootfile, opf, ncx);
-            fillPageListFromNCX(publication, rootfile, opf, ncx);
+            if (!publication.PageList) {
+                fillPageListFromNCX(publication, rootfile, opf, ncx);
+            }
         }
         fillLandmarksFromGuide(publication, rootfile, opf);
+    }
+
+    if (!publication.PageList) {
+        // EPUB extended with Adobe Digital Editions page map
+        //  https://wiki.mobileread.com/wiki/Adobe_Digital_Editions#Page-map
+        const pageMapLink = publication.Resources.find((item: Link): boolean => {
+            return item.TypeLink === "application/oebps-page-map+xml";
+        });
+        if (pageMapLink) {
+            const zipPathHref = pageMapLink.Href;
+            await fillPageListFromAdobePageMap(publication, rootfile, opf, zip, zipPathHref);
+        }
     }
 
     fillCalibreSerieInfo(publication, rootfile, opf);
@@ -1655,6 +1669,77 @@ const fillPageListFromNCX = (publication: Publication, _rootfile: Rootfile, _opf
             publication.PageList.push(link);
         });
     }
+};
+
+const fillPageListFromAdobePageMap = async (
+    publication: Publication,
+    _rootfile: Rootfile,
+    _opf: OPF,
+    zip: IZip,
+    pageMapZipPath: string,
+): Promise<void> => {
+    const pageMapDocStr = await createDocStringFromZipPath(pageMapZipPath, zip);
+    if (!pageMapDocStr) {
+        return;
+    }
+    const pageMapXmlDoc = new xmldom.DOMParser().parseFromString(pageMapDocStr);
+
+    if (!publication.PageList) {
+        publication.PageList = [];
+    }
+    const pages = pageMapXmlDoc.getElementsByTagName("page");
+    if (pages && pages.length) {
+        // tslint:disable-next-line:prefer-for-of
+        for (let i = 0; i < pages.length; i += 1) {
+            const page = pages.item(i)!;
+
+            const link = new Link();
+            const href = page.getAttribute("href");
+            const title = page.getAttribute("name");
+            if (href === null || title === null) {
+                continue;
+            }
+            const zipPath = path.join(path.dirname(pageMapZipPath), href)
+                .replace(/\\/g, "/");
+
+            link.Href = zipPath;
+            link.Title = title;
+            publication.PageList.push(link);
+        }
+    }
+};
+
+const createDocStringFromZipPath = async (filePath: string, zip: IZip): Promise<string | undefined> => {
+    let has = zip.hasEntry(filePath);
+    if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
+        try {
+            has = await (zip as any).hasEntryAsync(filePath);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    if (!has) {
+        return undefined;
+    }
+
+    let zipStream_: IStreamAndLength;
+    try {
+        zipStream_ = await zip.entryStreamPromise(filePath);
+    } catch (err) {
+        debug(err);
+        return Promise.reject(err);
+    }
+    const zipStream = zipStream_.stream;
+
+    let zipData: Buffer;
+    try {
+        zipData = await streamToBufferPromise(zipStream);
+    } catch (err) {
+        debug(err);
+        return Promise.reject(err);
+    }
+
+    return zipData.toString("utf8");
 };
 
 const fillTOCFromNCX = (publication: Publication, rootfile: Rootfile, opf: OPF, ncx: NCX) => {
