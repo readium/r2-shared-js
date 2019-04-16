@@ -1409,91 +1409,117 @@ const addRendition = async (publication: Publication, _rootfile: Rootfile, opf: 
         if (!rendition.Layout || !rendition.Orientation) {
 
             let displayOptionsZipPath = "META-INF/com.apple.ibooks.display-options.xml";
-            let displayOptionsZipStream_: IStreamAndLength | undefined;
-            try {
-                displayOptionsZipStream_ = await zip.entryStreamPromise(displayOptionsZipPath);
-                debug("Info: found iBooks display-options XML");
-            } catch (err) {
-                displayOptionsZipPath = "META-INF/com.kobobooks.display-options.xml";
+            let has = zip.hasEntry(displayOptionsZipPath);
+            if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
                 try {
-                    displayOptionsZipStream_ = await zip.entryStreamPromise(displayOptionsZipPath);
-                    debug("Info: found Kobo display-options XML");
+                    has = await (zip as any).hasEntryAsync(displayOptionsZipPath);
                 } catch (err) {
-                    debug("Info: no iBooks / Kobo display-options XML");
+                    console.log(err);
                 }
             }
-            if (displayOptionsZipStream_) {
-                const displayOptionsZipStream = displayOptionsZipStream_.stream;
-
-                let displayOptionsZipData: Buffer;
-                try {
-                    displayOptionsZipData = await streamToBufferPromise(displayOptionsZipStream);
-
-                    const displayOptionsStr = displayOptionsZipData.toString("utf8");
-                    const displayOptionsDoc = new xmldom.DOMParser().parseFromString(displayOptionsStr);
-
-                    const displayOptions = XML.deserialize<DisplayOptions>(displayOptionsDoc, DisplayOptions);
-                    displayOptions.ZipPath = displayOptionsZipPath;
-
-                    if (displayOptions && displayOptions.Platforms) {
-                        const renditionPlatformAll = new Properties();
-                        const renditionPlatformIpad = new Properties();
-                        const renditionPlatformIphone = new Properties();
-                        displayOptions.Platforms.forEach((platform) => {
-                            if (platform.Options) {
-                                platform.Options.forEach((option) => {
-                                    if (!rendition.Layout) {
-                                        // tslint:disable-next-line:max-line-length
-                                        // https://github.com/readium/architecture/blob/master/streamer/parser/metadata.md#epub-2x-9
-                                        if (option.Name === "fixed-layout") {
-                                            if (option.Value === "true") {
-                                                rendition.Layout = "fixed";
-                                            } else {
-                                                rendition.Layout = "reflowable";
-                                            }
-                                        }
-                                    }
-                                    if (!rendition.Orientation) {
-                                        // tslint:disable-next-line:max-line-length
-                                        // https://github.com/readium/architecture/blob/master/streamer/parser/metadata.md#epub-2x-10
-                                        if (option.Name === "orientation-lock") {
-                                            const rend = platform.Name === "*" ? renditionPlatformAll :
-                                                (platform.Name === "ipad" ? renditionPlatformIpad :
-                                                (platform.Name === "iphone" ? renditionPlatformIphone :
-                                                renditionPlatformAll));
-                                            switch (option.Value) {
-                                                case "none": {
-                                                    rend.Orientation = "auto";
-                                                    break;
-                                                }
-                                                case "landscape-only": {
-                                                    rend.Orientation = "landscape";
-                                                    break;
-                                                }
-                                                case "portrait-only": {
-                                                    rend.Orientation = "portrait";
-                                                    break;
-                                                }
-                                                default: {
-                                                    rend.Orientation = "auto";
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-                                });
-                            }
-                        });
-                        if (renditionPlatformAll.Orientation) {
-                            rendition.Orientation = renditionPlatformAll.Orientation;
-                        } else if (renditionPlatformIpad.Orientation) {
-                            rendition.Orientation = renditionPlatformIpad.Orientation;
-                        } else if (renditionPlatformIphone.Orientation) {
-                            rendition.Orientation = renditionPlatformIphone.Orientation;
-                        }
+            if (has) {
+                debug("Info: found iBooks display-options XML");
+            } else {
+                displayOptionsZipPath = "META-INF/com.kobobooks.display-options.xml";
+                has = zip.hasEntry(displayOptionsZipPath);
+                if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
+                    try {
+                        has = await (zip as any).hasEntryAsync(displayOptionsZipPath);
+                    } catch (err) {
+                        console.log(err);
                     }
+                }
+                if (has) {
+                    debug("Info: found Kobo display-options XML");
+                }
+            }
+            if (!has) {
+                debug("Info: not found iBooks or Kobo display-options XML");
+            } else {
+                let displayOptionsZipStream_: IStreamAndLength | undefined;
+                try {
+                    displayOptionsZipStream_ = await zip.entryStreamPromise(displayOptionsZipPath);
                 } catch (err) {
                     debug(err);
+                }
+                if (displayOptionsZipStream_) {
+                    const displayOptionsZipStream = displayOptionsZipStream_.stream;
+
+                    let displayOptionsZipData: Buffer | undefined;
+                    try {
+                        displayOptionsZipData = await streamToBufferPromise(displayOptionsZipStream);
+                    } catch (err) {
+                        debug(err);
+                    }
+                    if (displayOptionsZipData) {
+                        try {
+                            const displayOptionsStr = displayOptionsZipData.toString("utf8");
+                            const displayOptionsDoc = new xmldom.DOMParser().parseFromString(displayOptionsStr);
+
+                            const displayOptions = XML.deserialize<DisplayOptions>(displayOptionsDoc, DisplayOptions);
+                            displayOptions.ZipPath = displayOptionsZipPath;
+
+                            if (displayOptions && displayOptions.Platforms) {
+                                const renditionPlatformAll = new Properties();
+                                const renditionPlatformIpad = new Properties();
+                                const renditionPlatformIphone = new Properties();
+                                displayOptions.Platforms.forEach((platform) => {
+                                    if (platform.Options) {
+                                        platform.Options.forEach((option) => {
+                                            if (!rendition.Layout) {
+                                                // tslint:disable-next-line:max-line-length
+                                                // https://github.com/readium/architecture/blob/master/streamer/parser/metadata.md#epub-2x-9
+                                                if (option.Name === "fixed-layout") {
+                                                    if (option.Value === "true") {
+                                                        rendition.Layout = "fixed";
+                                                    } else {
+                                                        rendition.Layout = "reflowable";
+                                                    }
+                                                }
+                                            }
+                                            if (!rendition.Orientation) {
+                                                // tslint:disable-next-line:max-line-length
+                                                // https://github.com/readium/architecture/blob/master/streamer/parser/metadata.md#epub-2x-10
+                                                if (option.Name === "orientation-lock") {
+                                                    const rend = platform.Name === "*" ? renditionPlatformAll :
+                                                        (platform.Name === "ipad" ? renditionPlatformIpad :
+                                                        (platform.Name === "iphone" ? renditionPlatformIphone :
+                                                        renditionPlatformAll));
+                                                    switch (option.Value) {
+                                                        case "none": {
+                                                            rend.Orientation = "auto";
+                                                            break;
+                                                        }
+                                                        case "landscape-only": {
+                                                            rend.Orientation = "landscape";
+                                                            break;
+                                                        }
+                                                        case "portrait-only": {
+                                                            rend.Orientation = "portrait";
+                                                            break;
+                                                        }
+                                                        default: {
+                                                            rend.Orientation = "auto";
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+                                });
+                                if (renditionPlatformAll.Orientation) {
+                                    rendition.Orientation = renditionPlatformAll.Orientation;
+                                } else if (renditionPlatformIpad.Orientation) {
+                                    rendition.Orientation = renditionPlatformIpad.Orientation;
+                                } else if (renditionPlatformIphone.Orientation) {
+                                    rendition.Orientation = renditionPlatformIphone.Orientation;
+                                }
+                            }
+                        } catch (err) {
+                            debug(err);
+                        }
+                    }
                 }
             }
         }
