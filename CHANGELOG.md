@@ -1,10 +1,31 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.8...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.9...develop
 
 Changes:
 * TODO
+
+# 1.0.9
+
+> Build environment: NodeJS `8.15.1`, NPM `6.4.1`
+
+Changes:
+* Added EPUB subtitle parsing
+* Added string enums for publication metadata
+* Support for iBooks and Kobo display-options EPUB metadata (META-INF XML)
+* Support for Adobe page map
+* Added Locator JSON-Schema references
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.9/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.9/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.9
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.8...v1.0.9
 
 # 1.0.8
 
