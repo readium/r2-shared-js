@@ -1131,6 +1131,8 @@ const addTitle = (publication: Publication, rootfile: Rootfile, opf: OPF) => {
 
     if (isEpub3OrMore(rootfile, opf)) {
         let mainTitle: Title | undefined;
+        let subTitle: Title | undefined;
+        let subTitleDisplaySeq = 0;
 
         if (opf.Metadata &&
             opf.Metadata.Title &&
@@ -1141,6 +1143,7 @@ const addTitle = (publication: Publication, rootfile: Rootfile, opf: OPF) => {
                     const refineID = "#" + title.ID;
 
                     const m = opf.Metadata.Meta.find((meta) => {
+                        // meta.Property === "title-type"
                         if (meta.Data === "main" && meta.Refine === refineID) {
                             return true;
                         }
@@ -1154,6 +1157,47 @@ const addTitle = (publication: Publication, rootfile: Rootfile, opf: OPF) => {
                 if (tt) {
                     mainTitle = tt;
                 }
+
+                opf.Metadata.Title.forEach((title) => {
+                    const refineID = "#" + title.ID;
+
+                    const m = opf.Metadata.Meta.find((meta) => {
+                        // meta.Property === "title-type"
+                        if (meta.Data === "subtitle" && meta.Refine === refineID) {
+                            return true;
+                        }
+                        return false;
+                    });
+                    if (m) {
+                        let titleDisplaySeq = 0;
+                        const mds = opf.Metadata.Meta.find((meta) => {
+                            if (meta.Property === "display-seq" && meta.Refine === refineID) {
+                                return true;
+                            }
+                            return false;
+                        });
+                        if (mds) {
+                            try {
+                                titleDisplaySeq = parseInt(mds.Data, 10);
+                            } catch (err) {
+                                debug(err);
+                                debug(mds.Data);
+                                titleDisplaySeq = 0;
+                            }
+                            if (isNaN(titleDisplaySeq)) {
+                                debug("NaN");
+                                debug(mds.Data);
+                                titleDisplaySeq = 0;
+                            }
+                        } else {
+                            titleDisplaySeq = 0;
+                        }
+                        if (!subTitle || titleDisplaySeq < subTitleDisplaySeq) {
+                            subTitle = title;
+                            subTitleDisplaySeq = titleDisplaySeq;
+                        }
+                    }
+                });
             }
 
             if (!mainTitle) {
@@ -1177,6 +1221,25 @@ const addTitle = (publication: Publication, rootfile: Rootfile, opf: OPF) => {
                 });
             } else {
                 publication.Metadata.Title = mainTitle.Data;
+            }
+        }
+
+        if (subTitle) {
+            const metaAlt = findAllMetaByRefineAndProperty(rootfile, opf, subTitle.ID, "alternate-script");
+            if (metaAlt && metaAlt.length) {
+                publication.Metadata.SubTitle = {} as IStringMap;
+
+                if (subTitle.Lang) {
+                    publication.Metadata.SubTitle[subTitle.Lang.toLowerCase()] = subTitle.Data;
+                }
+
+                metaAlt.forEach((m) => {
+                    if (m.Lang) {
+                        (publication.Metadata.SubTitle as IStringMap)[m.Lang.toLowerCase()] = m.Data;
+                    }
+                });
+            } else {
+                publication.Metadata.SubTitle = subTitle.Data;
             }
         }
 
