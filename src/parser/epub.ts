@@ -1684,9 +1684,6 @@ const fillPageListFromAdobePageMap = async (
     }
     const pageMapXmlDoc = new xmldom.DOMParser().parseFromString(pageMapDocStr);
 
-    if (!publication.PageList) {
-        publication.PageList = [];
-    }
     const pages = pageMapXmlDoc.getElementsByTagName("page");
     if (pages && pages.length) {
         // tslint:disable-next-line:prefer-for-of
@@ -1699,6 +1696,11 @@ const fillPageListFromAdobePageMap = async (
             if (href === null || title === null) {
                 continue;
             }
+
+            if (!publication.PageList) {
+                publication.PageList = [];
+            }
+
             const zipPath = path.join(path.dirname(pageMapZipPath), href)
                 .replace(/\\/g, "/");
 
