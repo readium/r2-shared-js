@@ -30,6 +30,12 @@ import { JsonSubjectConverter } from "./metadata-subject-json-converter";
 //     children: IMeta[];
 // }
 
+export enum DirectionEnum {
+    Auto = "auto",
+    RTL = "rtl",
+    LTR = "ltr",
+}
+
 // tslint:disable-next-line:max-line-length
 // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json
 @JsonObject()
@@ -203,7 +209,7 @@ export class Metadata {
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L120
     @JsonProperty("readingProgression")
-    public Direction2!: string; // TODO: enum "rtl", "ltr", "auto"
+    public Direction2!: string;
     @JsonProperty("direction")
     public Direction1: string | undefined;
     get Direction(): string | undefined {
@@ -215,6 +221,7 @@ export class Metadata {
             this.Direction2 = direction;
         }
     }
+    // see DirectionEnum
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L140

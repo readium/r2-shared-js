@@ -13,6 +13,37 @@ import {
     JsonProperty,
 } from "ta-json-x";
 
+export enum LayoutEnum {
+    Fixed = "fixed",
+    Reflowable = "reflowable",
+}
+
+export enum OrientationEnum {
+    Auto = "auto",
+    Landscape = "landscape",
+    Portrait = "portrait",
+}
+
+export enum OverflowEnum {
+    Auto = "auto",
+    Paginated = "paginated",
+    Scrolled = "scrolled",
+    ScrolledContinuous = "scrolled-continuous",
+}
+
+export enum PageEnum {
+    Left = "left",
+    Right = "right",
+    Center = "center",
+}
+
+export enum SpreadEnum {
+    Auto = "auto",
+    Both = "both",
+    None = "none",
+    Landscape = "landscape",
+}
+
 // tslint:disable-next-line:max-line-length
 // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/properties.schema.json
 @JsonObject()
@@ -30,6 +61,7 @@ export class Properties {
     // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/metadata.schema.json#L10
     @JsonProperty("layout")
     public Layout!: string;
+    // see LayoutEnum
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/properties.schema.json#L7
@@ -37,6 +69,7 @@ export class Properties {
     // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/metadata.schema.json#L18
     @JsonProperty("orientation")
     public Orientation!: string;
+    // see OrientationEnum
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/properties.schema.json#L36
@@ -44,11 +77,13 @@ export class Properties {
     // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/metadata.schema.json#L27
     @JsonProperty("overflow")
     public Overflow!: string;
+    // see OverflowEnum
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/properties.schema.json#L16
     @JsonProperty("page")
     public Page!: string;
+    // see PageEnum
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/properties.schema.json#L46
@@ -56,6 +91,7 @@ export class Properties {
     // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/metadata.schema.json#L37
     @JsonProperty("spread")
     public Spread!: string;
+    // see SpreadEnum
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/properties.schema.json#L56

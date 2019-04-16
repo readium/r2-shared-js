@@ -11,12 +11,19 @@ import * as querystring from "querystring";
 import { URL } from "url";
 
 import { MediaOverlayNode, timeStrToSeconds } from "@models/media-overlay";
-import { Metadata } from "@models/metadata";
+import { DirectionEnum, Metadata } from "@models/metadata";
 import { BelongsTo } from "@models/metadata-belongsto";
 import { Contributor } from "@models/metadata-contributor";
 import { MediaOverlay } from "@models/metadata-media-overlay";
 import { IStringMap } from "@models/metadata-multilang";
-import { Properties } from "@models/metadata-properties";
+import {
+    LayoutEnum,
+    OrientationEnum,
+    OverflowEnum,
+    PageEnum,
+    Properties,
+    SpreadEnum,
+} from "@models/metadata-properties";
 import { Subject } from "@models/metadata-subject";
 import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
@@ -58,9 +65,6 @@ const epub301 = "3.0.1";
 const epub31 = "3.1";
 // const epub2 = "2.0";
 // const epub201 = "2.0.1";
-const autoMeta = "auto";
-const noneMeta = "none";
-const reflowableMeta = "reflowable";
 
 export const mediaOverlayURLPath = "media-overlay.json";
 export const mediaOverlayURLParam = "resource";
@@ -519,11 +523,21 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
     }
 
     if (opf.Spine && opf.Spine.PageProgression) {
-        publication.Metadata.Direction = opf.Spine.PageProgression;
+        switch (opf.Spine.PageProgression) {
+            case "auto": {
+                publication.Metadata.Direction = DirectionEnum.Auto;
+                break;
+            }
+            case "ltr": {
+                publication.Metadata.Direction = DirectionEnum.LTR;
+                break;
+            }
+            case "rtl": {
+                publication.Metadata.Direction = DirectionEnum.RTL;
+                break;
+            }
+        }
     }
-    // else {
-    //     publication.Metadata.Direction = "default";
-    // }
 
     if (isEpub3OrMore(rootfile, opf)) {
         findContributorInMeta(publication, rootfile, opf);
@@ -1329,71 +1343,71 @@ const addToLinkFromProperties = async (publication: Publication, link: Link, pro
                 break;
             }
             case "page-spread-left": {
-                propertiesStruct.Page = "left";
+                propertiesStruct.Page = PageEnum.Left;
                 break;
             }
             case "page-spread-right": {
-                propertiesStruct.Page = "right";
+                propertiesStruct.Page = PageEnum.Right;
                 break;
             }
             case "page-spread-center": {
-                propertiesStruct.Page = "center";
+                propertiesStruct.Page = PageEnum.Center;
                 break;
             }
             case "rendition:spread-none": {
-                propertiesStruct.Spread = noneMeta;
+                propertiesStruct.Spread = SpreadEnum.None;
                 break;
             }
             case "rendition:spread-auto": {
-                propertiesStruct.Spread = autoMeta;
+                propertiesStruct.Spread = SpreadEnum.Auto;
                 break;
             }
             case "rendition:spread-landscape": {
-                propertiesStruct.Spread = "landscape";
+                propertiesStruct.Spread = SpreadEnum.Landscape;
                 break;
             }
             case "rendition:spread-portrait": {
-                propertiesStruct.Spread = "both"; // https://github.com/readium/webpub-manifest/issues/24
+                propertiesStruct.Spread = SpreadEnum.Both; // https://github.com/readium/webpub-manifest/issues/24
                 break;
             }
             case "rendition:spread-both": {
-                propertiesStruct.Spread = "both";
+                propertiesStruct.Spread = SpreadEnum.Both;
                 break;
             }
             case "rendition:layout-reflowable": {
-                propertiesStruct.Layout = reflowableMeta;
+                propertiesStruct.Layout = LayoutEnum.Reflowable;
                 break;
             }
             case "rendition:layout-pre-paginated": {
-                propertiesStruct.Layout = "fixed";
+                propertiesStruct.Layout = LayoutEnum.Fixed;
                 break;
             }
             case "rendition:orientation-auto": {
-                propertiesStruct.Orientation = "auto";
+                propertiesStruct.Orientation = OrientationEnum.Auto;
                 break;
             }
             case "rendition:orientation-landscape": {
-                propertiesStruct.Orientation = "landscape";
+                propertiesStruct.Orientation = OrientationEnum.Landscape;
                 break;
             }
             case "rendition:orientation-portrait": {
-                propertiesStruct.Orientation = "portrait";
+                propertiesStruct.Orientation = OrientationEnum.Portrait;
                 break;
             }
             case "rendition:flow-auto": {
-                propertiesStruct.Overflow = autoMeta;
+                propertiesStruct.Overflow = OverflowEnum.Auto;
                 break;
             }
             case "rendition:flow-paginated": {
-                propertiesStruct.Overflow = "paginated";
+                propertiesStruct.Overflow = OverflowEnum.Paginated;
                 break;
             }
             case "rendition:flow-scrolled-continuous": {
-                propertiesStruct.Overflow = "scrolled-continuous";
+                propertiesStruct.Overflow = OverflowEnum.ScrolledContinuous;
                 break;
             }
             case "rendition:flow-scrolled-doc": {
-                propertiesStruct.Overflow = "scrolled";
+                propertiesStruct.Overflow = OverflowEnum.Scrolled;
                 break;
             }
             default: {
@@ -1454,27 +1468,79 @@ const addRendition = async (publication: Publication, _rootfile: Rootfile, opf: 
         opf.Metadata.Meta.forEach((meta) => {
             switch (meta.Property) {
                 case "rendition:layout": {
-                    if (meta.Data === "pre-paginated") {
-                        rendition.Layout = "fixed";
-                    } else if (meta.Data === "reflowable") {
-                        rendition.Layout = "reflowable";
+                    switch (meta.Data) {
+                        case "pre-paginated": {
+                            rendition.Layout = LayoutEnum.Fixed;
+                            break;
+                        }
+                        case "reflowable": {
+                            rendition.Layout = LayoutEnum.Reflowable;
+                            break;
+                        }
                     }
                     break;
                 }
                 case "rendition:orientation": {
-                    rendition.Orientation = meta.Data;
+                    switch (meta.Data) {
+                        case "auto": {
+                            rendition.Orientation = OrientationEnum.Auto;
+                            break;
+                        }
+                        case "landscape": {
+                            rendition.Orientation = OrientationEnum.Landscape;
+                            break;
+                        }
+                        case "portrait": {
+                            rendition.Orientation = OrientationEnum.Portrait;
+                            break;
+                        }
+                    }
                     break;
                 }
                 case "rendition:spread": {
-                    rendition.Spread = meta.Data;
-                    // https://github.com/readium/webpub-manifest/issues/24
-                    if (rendition.Spread === "portrait") {
-                        rendition.Spread = "both";
+                    switch (meta.Data) {
+                        case "auto": {
+                            rendition.Spread = SpreadEnum.Auto;
+                            break;
+                        }
+                        case "both": {
+                            rendition.Spread = SpreadEnum.Both;
+                            break;
+                        }
+                        case "none": {
+                            rendition.Spread = SpreadEnum.None;
+                            break;
+                        }
+                        case "landscape": {
+                            rendition.Spread = SpreadEnum.Landscape;
+                            break;
+                        }
+                        case "portrait": { // https://github.com/readium/webpub-manifest/issues/24
+                            rendition.Spread = SpreadEnum.Both;
+                            break;
+                        }
                     }
                     break;
                 }
                 case "rendition:flow": {
-                    rendition.Overflow = meta.Data;
+                    switch (meta.Data) {
+                        case "auto": {
+                            rendition.Overflow = OverflowEnum.Auto;
+                            break;
+                        }
+                        case "paginated": {
+                            rendition.Overflow = OverflowEnum.Paginated;
+                            break;
+                        }
+                        case "scrolled": {
+                            rendition.Overflow = OverflowEnum.Scrolled;
+                            break;
+                        }
+                        case "scrolled-continuous": {
+                            rendition.Overflow = OverflowEnum.ScrolledContinuous;
+                            break;
+                        }
+                    }
                     break;
                 }
                 default: {
@@ -1548,9 +1614,9 @@ const addRendition = async (publication: Publication, _rootfile: Rootfile, opf: 
                                                 // https://github.com/readium/architecture/blob/master/streamer/parser/metadata.md#epub-2x-9
                                                 if (option.Name === "fixed-layout") {
                                                     if (option.Value === "true") {
-                                                        rendition.Layout = "fixed";
+                                                        rendition.Layout = LayoutEnum.Fixed;
                                                     } else {
-                                                        rendition.Layout = "reflowable";
+                                                        rendition.Layout = LayoutEnum.Reflowable;
                                                     }
                                                 }
                                             }
@@ -1564,19 +1630,19 @@ const addRendition = async (publication: Publication, _rootfile: Rootfile, opf: 
                                                         renditionPlatformAll));
                                                     switch (option.Value) {
                                                         case "none": {
-                                                            rend.Orientation = "auto";
+                                                            rend.Orientation = OrientationEnum.Auto;
                                                             break;
                                                         }
                                                         case "landscape-only": {
-                                                            rend.Orientation = "landscape";
+                                                            rend.Orientation = OrientationEnum.Landscape;
                                                             break;
                                                         }
                                                         case "portrait-only": {
-                                                            rend.Orientation = "portrait";
+                                                            rend.Orientation = OrientationEnum.Portrait;
                                                             break;
                                                         }
                                                         default: {
-                                                            rend.Orientation = "auto";
+                                                            rend.Orientation = OrientationEnum.Auto;
                                                             break;
                                                         }
                                                     }
