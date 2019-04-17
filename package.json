@@ -77,7 +77,7 @@
     "rimraf": "^2.6.3",
     "ts-node": "^8.0.3",
     "tsconfig-paths": "^3.8.0",
-    "tslint": "^5.15.0",
+    "tslint": "^5.16.0",
     "tslint-language-service": "^0.9.9",
     "typescript": "^3.4.3"
   },
