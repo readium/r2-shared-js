@@ -48,7 +48,7 @@
   "dependencies": {
     "debug": "^4.1.1",
     "image-size": "^0.7.3",
-    "mime-types": "^2.1.22",
+    "mime-types": "^2.1.24",
     "moment": "^2.24.0",
     "r2-lcp-js": "^1.0.8",
     "r2-utils-js": "^1.0.8",
@@ -62,7 +62,7 @@
     "@types/debug": "^4.1.4",
     "@types/image-size": "^0.7.0",
     "@types/mime-types": "^2.1.0",
-    "@types/node": "^8.10.45",
+    "@types/node": "^8.10.46",
     "@types/xmldom": "^0.1.29",
     "ava": "^1.4.1",
     "cpy-cli": "^2.0.0",
@@ -79,7 +79,7 @@
     "tsconfig-paths": "^3.8.0",
     "tslint": "^5.16.0",
     "tslint-language-service": "^0.9.9",
-    "typescript": "^3.4.3"
+    "typescript": "^3.4.4"
   },
   "main": "dist/es6-es2015/src/index.js",
   "types": "dist/es6-es2015/src/index.d.js",
