@@ -47,7 +47,7 @@
   "homepage": "https://github.com/readium/r2-shared-js",
   "dependencies": {
     "debug": "^4.1.1",
-    "image-size": "^0.7.3",
+    "image-size": "^0.7.4",
     "mime-types": "^2.1.24",
     "moment": "^2.24.0",
     "r2-lcp-js": "^1.0.8",
@@ -79,7 +79,7 @@
     "tsconfig-paths": "^3.8.0",
     "tslint": "^5.16.0",
     "tslint-language-service": "^0.9.9",
-    "typescript": "^3.4.4"
+    "typescript": "^3.4.5"
   },
   "main": "dist/es6-es2015/src/index.js",
   "types": "dist/es6-es2015/src/index.d.js",
