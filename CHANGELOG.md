@@ -1,10 +1,27 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.11...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.12...develop
 
 Changes:
 * TODO
+
+# 1.0.12
+
+> Build environment: NodeJS `10.15.3`, NPM `6.9.0`
+
+Changes:
+* When no `page-progression-direction` is specified on EPUB spine, check the `dc:language` to enforce RTL if necessary (matches `dir="rtl"` injection logic, which occurs on a per-document basis)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.12/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.12/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.12
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.11...v1.0.12
 
 # 1.0.11
 
