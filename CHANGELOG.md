@@ -1,10 +1,27 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.12...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.13...develop
 
 Changes:
 * TODO
+
+# 1.0.13
+
+> Build environment: NodeJS `10.16.0`, NPM `6.9.0`
+
+Changes:
+* NPM updates (notable: Ava unit tests)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.13/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.13/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.13
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.12...v1.0.13
 
 # 1.0.12
 
