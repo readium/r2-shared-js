@@ -31,8 +31,8 @@ const conf = {
     "no-cache": false,
     "noCache": false,
     "extensions": [
-      "js",
-      "ts"
+        "js",
+        "ts"
     ]
 };
 if (ts) {
