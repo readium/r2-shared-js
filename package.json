@@ -64,7 +64,7 @@
     "@types/mime-types": "^2.1.0",
     "@types/node": "^10.14.6",
     "@types/xmldom": "^0.1.29",
-    "ava": "^1.4.1",
+    "ava": "^2.1.0",
     "cpy-cli": "^2.0.0",
     "cross-env": "^5.2.0",
     "cson": "^5.1.0",
@@ -75,7 +75,7 @@
     "json-diff": "^0.5.4",
     "mkdirp": "^0.5.1",
     "rimraf": "^2.6.3",
-    "ts-node": "^8.1.0",
+    "ts-node": "^8.3.0",
     "tsconfig-paths": "^3.8.0",
     "tslint": "^5.17.0",
     "tslint-language-service": "^0.9.9",
@@ -124,8 +124,9 @@
     "transpile:typescript:es8-es2017+afterdist": "npm run transpile:typescript:es8-es2017 && npm run afterdist",
     "transpile:typescript:single": "node tools/typescript_compile_single.js",
     "posttranspile:typescript:single": "npm run afterdist",
-    "test": "cross-env DEBUG=r2:* ava \"./dist/es8-es2017/test/**/test*.js\"",
-    "testTS": "cross-env DEBUG=r2:* TS_NODE_CACHE=true TS_NODE_CACHE_DIRECTORY=\"./ava-ts/\" TS_NODE_PRETTY=true TS_NODE_COMPILER_OPTIONS=\"{\\\"typeRoots\\\" : [\\\"./node_modules/@types\\\", \\\"./test/@types\\\"]}\" ava \"./test/**/test*.ts\" --require \"ts-node/register\" --require \"tsconfig-paths/register\"",
+    "avaResetCache": "ava --reset-cache",
+    "test": "cross-env DEBUG=r2:* ava",
+    "testTS": "cross-env DEBUG=r2:* TYPESCRIPT=1 ava",
     "cli": "node \"./dist/es8-es2017/src/_utils/cli.js\"",
     "cli-debug": "cross-env DEBUG=r2:* npm run cli",
     "cli-debug-x": "cross-env DEBUG=* npm run cli",
@@ -151,18 +152,5 @@
       "parser": "typescript",
       "style": "module"
     }
-  },
-  "ava": {
-    "babel": false,
-    "compileEnhancements": false,
-    "verbose": true,
-    "fail-fast": true,
-    "color": true,
-    "serial": true,
-    "no-cache": true,
-    "extensions": [
-      "js",
-      "ts"
-    ]
   }
 }
