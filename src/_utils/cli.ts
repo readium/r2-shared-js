@@ -295,8 +295,8 @@ async function extractEPUB_ProcessKeys(pub: Publication, keys: string[] | undefi
         console.log(keySha256Hex);
         return keySha256Hex;
 
-        // const lcpPass64 = new Buffer(hash).toString("base64");
-        // const lcpPassHex = new Buffer(lcpPass64, "base64").toString("utf8");
+        // const lcpPass64 = Buffer.from(hash).toString("base64");
+        // const lcpPassHex = Buffer.from(lcpPass64, "base64").toString("utf8");
     });
 
     try {
