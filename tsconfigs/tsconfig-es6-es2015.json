@@ -11,6 +11,9 @@
       "dom.iterable"
     ],
     "paths": {
+      "filehound": [
+        "src/noop.d.ts"
+      ],
       "@parser/*": [
         "src/parser/*"
       ],
