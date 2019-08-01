@@ -578,7 +578,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
         fillLandmarksFromGuide(publication, rootfile, opf);
     }
 
-    if (!publication.PageList) {
+    if (!publication.PageList && publication.Resources) {
         // EPUB extended with Adobe Digital Editions page map
         //  https://wiki.mobileread.com/wiki/Adobe_Digital_Editions#Page-map
         const pageMapLink = publication.Resources.find((item: Link): boolean => {
@@ -667,14 +667,12 @@ const fillMediaOverlayParse =
 
         const relativePath = mo.SmilPathInZip;
 
-        if (publication.Resources) {
-            link = publication.Resources.find((l) => {
-                if (l.Href === relativePath) {
-                    return true;
-                }
-                return false;
-            });
-        }
+        link = publication.Resources.find((l) => {
+            if (l.Href === relativePath) {
+                return true;
+            }
+            return false;
+        });
         if (!link) {
             if (publication.Spine) {
                 link = publication.Spine.find((l) => {
@@ -1773,16 +1771,18 @@ const fillEncryptionInfo =
                 });
             }
 
-            publication.Resources.forEach((l, _i, _arr) => {
+            if (publication.Resources) {
+                publication.Resources.forEach((l, _i, _arr) => {
 
-                const filePath = l.Href;
-                if (filePath === encInfo.CipherData.CipherReference.URI) {
-                    if (!l.Properties) {
-                        l.Properties = new Properties();
+                    const filePath = l.Href;
+                    if (filePath === encInfo.CipherData.CipherReference.URI) {
+                        if (!l.Properties) {
+                            l.Properties = new Properties();
+                        }
+                        l.Properties.Encrypted = encrypted;
                     }
-                    l.Properties.Encrypted = encrypted;
-                }
-            });
+                });
+            }
 
             if (publication.Spine) {
                 publication.Spine.forEach((l, _i, _arr) => {
