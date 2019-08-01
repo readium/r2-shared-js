@@ -1,10 +1,27 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.14...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.15...develop
 
 Changes:
 * TODO
+
+# 1.0.15
+
+> Build environment: NodeJS `10.16.0`, NPM `6.10.2`
+
+Changes:
+* support for publications without resources (but with valid spine items, navdoc, etc.)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.15/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.15/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.15
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.14...v1.0.15
 
 # 1.0.14
 
