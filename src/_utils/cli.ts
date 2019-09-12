@@ -8,6 +8,7 @@
 import * as crypto from "crypto";
 import * as fs from "fs";
 import * as path from "path";
+import { JSON as TAJSON } from "ta-json-x";
 import { URL } from "url";
 import * as util from "util";
 
@@ -20,7 +21,6 @@ import { isHTTP } from "@r2-utils-js/_utils/http/UrlUtils";
 import { streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
 import { Transformers } from "@transform/transformer";
-import { JSON as TAJSON } from "ta-json-x";
 
 import { initGlobalConverters_GENERIC, initGlobalConverters_SHARED } from "../init-globals";
 

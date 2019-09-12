@@ -6,10 +6,7 @@
 // ==LICENSE-END==
 
 // https://github.com/edcarroll/ta-json
-import {
-    JsonObject,
-    JsonProperty,
-} from "ta-json-x";
+import { JsonObject, JsonProperty } from "ta-json-x";
 
 // TODO: MEDIA OVERLAY not in JSON Schema
 // tslint:disable-next-line:max-line-length

@@ -5,11 +5,7 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
-import {
-    XmlItemType,
-    XmlObject,
-    XmlXPathSelector,
-} from "@r2-utils-js/_utils/xml-js-mapper";
+import { XmlItemType, XmlObject, XmlXPathSelector } from "@r2-utils-js/_utils/xml-js-mapper";
 
 import { DisplayOptionsPlatformProp } from "./display-options-platform-prop";
 

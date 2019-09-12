@@ -6,9 +6,7 @@
 // ==LICENSE-END==
 
 import {
-    XmlDiscriminatorProperty,
-    XmlObject,
-    XmlXPathSelector,
+    XmlDiscriminatorProperty, XmlObject, XmlXPathSelector,
 } from "@r2-utils-js/_utils/xml-js-mapper";
 
 @XmlObject({

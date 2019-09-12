@@ -6,11 +6,9 @@
 // ==LICENSE-END==
 
 import {
-    XmlDiscriminatorValue,
-    XmlItemType,
-    XmlObject,
-    XmlXPathSelector,
+    XmlDiscriminatorValue, XmlItemType, XmlObject, XmlXPathSelector,
 } from "@r2-utils-js/_utils/xml-js-mapper";
+
 import { SeqOrPar } from "./smil-seq-or-par";
 
 @XmlObject({

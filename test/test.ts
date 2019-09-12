@@ -1,18 +1,15 @@
-import * as path from "path";
-
-import { timeStrToSeconds } from "@models/media-overlay";
-import { Publication } from "@models/publication";
-import { PublicationParsePromise } from "@parser/publication-parser";
 import test from "ava";
 import * as debug_ from "debug";
 import * as filehound from "filehound";
 import * as jsonDiff from "json-diff";
+import * as path from "path";
 import { JSON as TAJSON } from "ta-json-x";
 
-import {
-    initGlobalConverters_GENERIC,
-    initGlobalConverters_SHARED,
-} from "../src/init-globals";
+import { timeStrToSeconds } from "@models/media-overlay";
+import { Publication } from "@models/publication";
+import { PublicationParsePromise } from "@parser/publication-parser";
+
+import { initGlobalConverters_GENERIC, initGlobalConverters_SHARED } from "../src/init-globals";
 
 initGlobalConverters_SHARED();
 initGlobalConverters_GENERIC();

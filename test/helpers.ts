@@ -1,6 +1,5 @@
-import * as util from "util";
-
 import { ExecutionContext } from "ava";
+import * as util from "util";
 
 export function inspect(obj: any) {
     if (!process.env.DEBUG || process.env.DEBUG === "false" || process.env.DEBUG === "0") {

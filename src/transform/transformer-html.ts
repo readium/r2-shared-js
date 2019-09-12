@@ -5,14 +5,16 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
+import * as debug_ from "debug";
+import * as mime from "mime-types";
+
 import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
 import { bufferToStream, streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { IStreamAndLength } from "@r2-utils-js/_utils/zip/zip";
-import * as mime from "mime-types";
+
 import { ITransformer } from "./transformer";
 
-import * as debug_ from "debug";
 const debug = debug_("r2:shared#transform/transformer-html");
 
 export class TransformerHTML implements ITransformer {

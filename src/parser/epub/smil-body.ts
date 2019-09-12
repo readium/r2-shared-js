@@ -5,9 +5,8 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
-import {
-    XmlObject,
-} from "@r2-utils-js/_utils/xml-js-mapper";
+import { XmlObject } from "@r2-utils-js/_utils/xml-js-mapper";
+
 import { Seq } from "./smil-seq";
 
 @XmlObject({

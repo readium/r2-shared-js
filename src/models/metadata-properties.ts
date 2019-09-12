@@ -5,13 +5,10 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
-import { Encrypted } from "@r2-lcp-js/models/metadata-encrypted";
 // https://github.com/edcarroll/ta-json
-import {
-    JsonElementType,
-    JsonObject,
-    JsonProperty,
-} from "ta-json-x";
+import { JsonElementType, JsonObject, JsonProperty } from "ta-json-x";
+
+import { Encrypted } from "@r2-lcp-js/models/metadata-encrypted";
 
 export enum LayoutEnum {
     Fixed = "fixed",

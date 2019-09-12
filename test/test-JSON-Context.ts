@@ -1,20 +1,12 @@
+import test from "ava";
 import * as path from "path";
+import { JSON as TAJSON } from "ta-json-x";
 
 import { Publication } from "@models/publication";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
-import test from "ava";
-import { JSON as TAJSON } from "ta-json-x";
 
-import {
-    initGlobalConverters_GENERIC,
-    initGlobalConverters_SHARED,
-} from "../src/init-globals";
-import {
-    checkType_Array,
-    checkType_String,
-    inspect,
-    logJSON,
-} from "./helpers";
+import { initGlobalConverters_GENERIC, initGlobalConverters_SHARED } from "../src/init-globals";
+import { checkType_Array, checkType_String, inspect, logJSON } from "./helpers";
 
 initGlobalConverters_SHARED();
 initGlobalConverters_GENERIC();

@@ -5,10 +5,16 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
+import * as debug_ from "debug";
 import * as fs from "fs";
+import * as sizeOf from "image-size";
+import * as moment from "moment";
 import * as path from "path";
 import * as querystring from "querystring";
+import { JSON as TAJSON } from "ta-json-x";
 import { URL } from "url";
+import * as xmldom from "xmldom";
+import * as xpath from "xpath";
 
 import { MediaOverlayNode, timeStrToSeconds } from "@models/media-overlay";
 import { DirectionEnum, Metadata } from "@models/metadata";
@@ -17,12 +23,7 @@ import { Contributor } from "@models/metadata-contributor";
 import { MediaOverlay } from "@models/metadata-media-overlay";
 import { IStringMap } from "@models/metadata-multilang";
 import {
-    LayoutEnum,
-    OrientationEnum,
-    OverflowEnum,
-    PageEnum,
-    Properties,
-    SpreadEnum,
+    LayoutEnum, OrientationEnum, OverflowEnum, PageEnum, Properties, SpreadEnum,
 } from "@models/metadata-properties";
 import { Subject } from "@models/metadata-subject";
 import { Publication } from "@models/publication";
@@ -35,12 +36,6 @@ import { XML } from "@r2-utils-js/_utils/xml-js-mapper";
 import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
 import { zipLoadPromise } from "@r2-utils-js/_utils/zip/zipFactory";
 import { Transformers } from "@transform/transformer";
-import * as debug_ from "debug";
-import * as sizeOf from "image-size";
-import * as moment from "moment";
-import { JSON as TAJSON } from "ta-json-x";
-import * as xmldom from "xmldom";
-import * as xpath from "xpath";
 
 import { Container } from "./epub/container";
 import { Rootfile } from "./epub/container-rootfile";

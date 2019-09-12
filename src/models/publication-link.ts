@@ -5,15 +5,12 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
-import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
 // https://github.com/edcarroll/ta-json
 import {
-    JsonConverter,
-    JsonElementType,
-    JsonObject,
-    JsonProperty,
-    OnDeserialized,
+    JsonConverter, JsonElementType, JsonObject, JsonProperty, OnDeserialized,
 } from "ta-json-x";
+
+import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
 
 import { MediaOverlayNode } from "./media-overlay";
 import { Properties } from "./metadata-properties";

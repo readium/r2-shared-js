@@ -5,10 +5,7 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
-import {
-    XmlObject,
-    XmlXPathSelector,
-} from "@r2-utils-js/_utils/xml-js-mapper";
+import { XmlObject, XmlXPathSelector } from "@r2-utils-js/_utils/xml-js-mapper";
 
 @XmlObject({
     dc: "http://purl.org/dc/elements/1.1/",

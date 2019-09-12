@@ -6,12 +6,7 @@
 // ==LICENSE-END==
 
 // https://github.com/edcarroll/ta-json
-import {
-    JsonElementType,
-    JsonObject,
-    JsonProperty,
-    OnDeserialized,
-} from "ta-json-x";
+import { JsonElementType, JsonObject, JsonProperty, OnDeserialized } from "ta-json-x";
 
 import { IStringMap } from "./metadata-multilang";
 import { Link } from "./publication-link";

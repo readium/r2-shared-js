@@ -6,12 +6,7 @@
 // ==LICENSE-END==
 
 // https://github.com/edcarroll/ta-json
-import {
-    JsonConverter,
-    JsonElementType,
-    JsonObject,
-    JsonProperty,
-} from "ta-json-x";
+import { JsonConverter, JsonElementType, JsonObject, JsonProperty } from "ta-json-x";
 
 import { Contributor } from "./metadata-contributor";
 import { JsonContributorConverter } from "./metadata-contributor-json-converter";

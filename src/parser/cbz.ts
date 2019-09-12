@@ -5,7 +5,10 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
+import * as mime from "mime-types";
 import * as path from "path";
+import * as slugify from "slugify";
+import * as xmldom from "xmldom";
 
 import { Metadata } from "@models/metadata";
 import { Contributor } from "@models/metadata-contributor";
@@ -15,9 +18,6 @@ import { streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { XML } from "@r2-utils-js/_utils/xml-js-mapper";
 import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
 import { zipLoadPromise } from "@r2-utils-js/_utils/zip/zipFactory";
-import * as mime from "mime-types";
-import * as slugify from "slugify";
-import * as xmldom from "xmldom";
 
 import { ComicInfo } from "./comicrack/comicrack";
 import { addCoverDimensions } from "./epub";

@@ -6,10 +6,9 @@
 // ==LICENSE-END==
 
 import {
-    XmlDiscriminatorValue,
-    XmlObject,
-    XmlXPathSelector,
+    XmlDiscriminatorValue, XmlObject, XmlXPathSelector,
 } from "@r2-utils-js/_utils/xml-js-mapper";
+
 import { Audio } from "./smil-audio";
 import { SeqOrPar } from "./smil-seq-or-par";
 import { Text } from "./smil-text";

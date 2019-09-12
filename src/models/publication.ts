@@ -5,24 +5,20 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
-// import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
+// https://github.com/edcarroll/ta-json
+import {
+    JsonConverter, JsonElementType, JsonObject, JsonProperty, OnDeserialized,
+} from "ta-json-x";
 
 import { LCP } from "@r2-lcp-js/parser/epub/lcp";
 import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
 import { IZip } from "@r2-utils-js/_utils/zip/zip";
-// https://github.com/edcarroll/ta-json
-import {
-    JsonConverter,
-    JsonElementType,
-    JsonObject,
-    JsonProperty,
-    OnDeserialized,
-} from "ta-json-x";
 
 import { IInternal } from "./internal";
 import { Metadata } from "./metadata";
 import { Link } from "./publication-link";
 
+// import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
 // import { IPublicationCollection } from "./publication-collection";
 
 // tslint:disable-next-line:max-line-length

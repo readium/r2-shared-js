@@ -5,11 +5,7 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
-import {
-    IPropertyConverter,
-    JSON as TAJSON,
-    JsonValue,
-} from "ta-json-x";
+import { IPropertyConverter, JSON as TAJSON, JsonValue } from "ta-json-x";
 
 import { Subject } from "./metadata-subject";
 
