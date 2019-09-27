@@ -7,7 +7,8 @@
 
 import * as debug_ from "debug";
 import * as fs from "fs";
-import * as sizeOf from "image-size";
+import { imageSize } from "image-size";
+import { ISize } from "image-size/dist/types/interface";
 import * as moment from "moment";
 import * as path from "path";
 import * as querystring from "querystring";
@@ -92,8 +93,8 @@ export const addCoverDimensions = async (publication: Publication, coverLink: Li
             try {
                 zipData = await streamToBufferPromise(zipStream.stream);
 
-                const imageInfo = sizeOf(zipData);
-                if (imageInfo) {
+                const imageInfo = imageSize(zipData) as ISize;
+                if (imageInfo && imageInfo.width && imageInfo.height) {
                     coverLink.Width = imageInfo.width;
                     coverLink.Height = imageInfo.height;
 
