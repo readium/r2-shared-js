@@ -1965,7 +1965,12 @@ const fillSubject = (publication: Publication, _rootfile: Rootfile, opf: OPF) =>
     if (opf.Metadata && opf.Metadata.Subject && opf.Metadata.Subject.length) {
         opf.Metadata.Subject.forEach((s) => {
             const sub = new Subject();
-            sub.Name = s.Data;
+            if (s.Lang) {
+                sub.Name = {} as IStringMap;
+                sub.Name[s.Lang] = s.Data;
+            } else {
+                sub.Name = s.Data;
+            }
             sub.Code = s.Term;
             sub.Scheme = s.Authority;
             if (!publication.Metadata.Subject) {
