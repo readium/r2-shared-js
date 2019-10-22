@@ -1234,6 +1234,12 @@ const addTitle = (publication: Publication, rootfile: Rootfile, opf: OPF) => {
 
                 if (mainTitle.Lang) {
                     publication.Metadata.Title[mainTitle.Lang.toLowerCase()] = mainTitle.Data;
+                } else {
+                    // tslint:disable-next-line: no-string-literal
+                    publication.Metadata.Title["_"] = mainTitle.Data;
+                    // TODO, what lang other than unknown "_"??
+                    // Problem: "dc:language" overlaps with "alternate-script" :(
+                    // https://github.com/readium/webpub-manifest/issues/34
                 }
 
                 metaAlt.forEach((m) => {
@@ -1253,6 +1259,12 @@ const addTitle = (publication: Publication, rootfile: Rootfile, opf: OPF) => {
 
                 if (subTitle.Lang) {
                     publication.Metadata.SubTitle[subTitle.Lang.toLowerCase()] = subTitle.Data;
+                } else {
+                    // tslint:disable-next-line: no-string-literal
+                    publication.Metadata.SubTitle["_"] = subTitle.Data;
+                    // TODO, what lang other than unknown "_"??
+                    // Problem: "dc:language" overlaps with "alternate-script" :(
+                    // https://github.com/readium/webpub-manifest/issues/34
                 }
 
                 metaAlt.forEach((m) => {
