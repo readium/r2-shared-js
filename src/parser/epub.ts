@@ -431,14 +431,17 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
         }
     }
 
+    if (opf.Metadata) {
+        if (opf.Metadata.Language) {
+            publication.Metadata.Language = opf.Metadata.Language;
+        }
+    }
+
     addTitle(publication, rootfile, opf);
 
     addIdentifier(publication, rootfile, opf);
 
     if (opf.Metadata) {
-        if (opf.Metadata.Language) {
-            publication.Metadata.Language = opf.Metadata.Language;
-        }
         if (opf.Metadata.Rights && opf.Metadata.Rights.length) {
             publication.Metadata.Rights = opf.Metadata.Rights.join(" ");
         }
