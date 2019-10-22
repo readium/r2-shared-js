@@ -1012,9 +1012,18 @@ const addContributor = (
 
     if (isEpub3OrMore(rootfile, opf)) {
 
-        const meta = findMetaByRefineAndProperty(rootfile, opf, cont.ID, "role");
-        if (meta && meta.Property === "role") {
-            role = meta.Data;
+        if (cont.FileAs) {
+            contributor.SortAs = cont.FileAs;
+        } else {
+            const metaFileAs = findMetaByRefineAndProperty(rootfile, opf, cont.ID, "file-as");
+            if (metaFileAs && metaFileAs.Property === "file-as") {
+                contributor.SortAs = metaFileAs.Data;
+            }
+        }
+
+        const metaRole = findMetaByRefineAndProperty(rootfile, opf, cont.ID, "role");
+        if (metaRole && metaRole.Property === "role") {
+            role = metaRole.Data;
         }
         if (!role && forcedRole) {
             role = forcedRole;
