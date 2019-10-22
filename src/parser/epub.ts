@@ -1021,18 +1021,24 @@ const addContributor = (
         if (metaAlt && metaAlt.length) {
             contributor.Name = {} as IStringMap;
 
-            if (publication.Metadata &&
-                publication.Metadata.Language &&
-                publication.Metadata.Language.length) {
-
-                contributor.Name[publication.Metadata.Language[0].toLowerCase()] = cont.Data;
-            }
-
             metaAlt.forEach((m) => {
                 if (m.Lang) {
                     (contributor.Name as IStringMap)[m.Lang] = m.Data;
                 }
             });
+
+            if (publication.Metadata &&
+                publication.Metadata.Language &&
+                publication.Metadata.Language.length &&
+                !contributor.Name[publication.Metadata.Language[0].toLowerCase()]) {
+                contributor.Name[publication.Metadata.Language[0].toLowerCase()] = cont.Data;
+            } else {
+                // tslint:disable-next-line: no-string-literal
+                contributor.Name["_"] = cont.Data;
+                // TODO, what lang other than unknown "_"??
+                // Problem: "dc:language" overlaps with "alternate-script" :(
+                // https://github.com/readium/webpub-manifest/issues/34
+            }
         } else {
             contributor.Name = cont.Data;
         }
@@ -1232,8 +1238,18 @@ const addTitle = (publication: Publication, rootfile: Rootfile, opf: OPF) => {
             if (metaAlt && metaAlt.length) {
                 publication.Metadata.Title = {} as IStringMap;
 
+                metaAlt.forEach((m) => {
+                    if (m.Lang) {
+                        (publication.Metadata.Title as IStringMap)[m.Lang.toLowerCase()] = m.Data;
+                    }
+                });
+
                 if (mainTitle.Lang) {
                     publication.Metadata.Title[mainTitle.Lang.toLowerCase()] = mainTitle.Data;
+                } else if (publication.Metadata.Language &&
+                    publication.Metadata.Language.length &&
+                    !publication.Metadata.Title[publication.Metadata.Language[0].toLowerCase()]) {
+                    publication.Metadata.Title[publication.Metadata.Language[0].toLowerCase()] = mainTitle.Data;
                 } else {
                     // tslint:disable-next-line: no-string-literal
                     publication.Metadata.Title["_"] = mainTitle.Data;
@@ -1242,11 +1258,6 @@ const addTitle = (publication: Publication, rootfile: Rootfile, opf: OPF) => {
                     // https://github.com/readium/webpub-manifest/issues/34
                 }
 
-                metaAlt.forEach((m) => {
-                    if (m.Lang) {
-                        (publication.Metadata.Title as IStringMap)[m.Lang.toLowerCase()] = m.Data;
-                    }
-                });
             } else {
                 publication.Metadata.Title = mainTitle.Data;
             }
@@ -1257,8 +1268,18 @@ const addTitle = (publication: Publication, rootfile: Rootfile, opf: OPF) => {
             if (metaAlt && metaAlt.length) {
                 publication.Metadata.SubTitle = {} as IStringMap;
 
+                metaAlt.forEach((m) => {
+                    if (m.Lang) {
+                        (publication.Metadata.SubTitle as IStringMap)[m.Lang.toLowerCase()] = m.Data;
+                    }
+                });
+
                 if (subTitle.Lang) {
                     publication.Metadata.SubTitle[subTitle.Lang.toLowerCase()] = subTitle.Data;
+                } else if (publication.Metadata.Language &&
+                    publication.Metadata.Language.length &&
+                    !publication.Metadata.SubTitle[publication.Metadata.Language[0].toLowerCase()]) {
+                    publication.Metadata.SubTitle[publication.Metadata.Language[0].toLowerCase()] = subTitle.Data;
                 } else {
                     // tslint:disable-next-line: no-string-literal
                     publication.Metadata.SubTitle["_"] = subTitle.Data;
@@ -1267,11 +1288,6 @@ const addTitle = (publication: Publication, rootfile: Rootfile, opf: OPF) => {
                     // https://github.com/readium/webpub-manifest/issues/34
                 }
 
-                metaAlt.forEach((m) => {
-                    if (m.Lang) {
-                        (publication.Metadata.SubTitle as IStringMap)[m.Lang.toLowerCase()] = m.Data;
-                    }
-                });
             } else {
                 publication.Metadata.SubTitle = subTitle.Data;
             }
