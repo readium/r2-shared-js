@@ -1,10 +1,27 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.19...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.20...develop
 
 Changes:
 * TODO
+
+# 1.0.20
+
+> Build environment: NodeJS `10.16.3`, NPM `6.12.0`
+
+Changes:
+* EPUB parser fixes: added support for file-as/sort-as in Contributor, added language map support for Subject, added "_" default language fallback for object map that already has metadata refines.
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.20/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.20/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.20
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.19...v1.0.20
 
 # 1.0.19
 
