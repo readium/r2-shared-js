@@ -15,6 +15,7 @@ import { Spine } from "./opf-spine";
 @XmlObject({
     dc: "http://purl.org/dc/elements/1.1/",
     opf: "http://www.idpf.org/2007/opf",
+    xml: "http://www.w3.org/XML/1998/namespace",
 })
 export class OPF {
 
@@ -39,6 +40,9 @@ export class OPF {
 
     @XmlXPathSelector("@dir")
     public Dir!: string;
+
+    @XmlXPathSelector("@lang | @xml:lang")
+    public Lang!: string;
 
     @XmlXPathSelector("@version")
     public Version!: string;

@@ -28,4 +28,7 @@ export class Author {
 
     @XmlXPathSelector("@id | @xml:id")
     public ID!: string;
+
+    @XmlXPathSelector("@lang | @xml:lang")
+    public Lang!: string;
 }

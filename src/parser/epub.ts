@@ -1039,7 +1039,11 @@ const addContributor = (
                 }
             });
 
-            if (publication.Metadata &&
+            // https://github.com/readium/architecture/blob/master/streamer/parser/metadata.md#title
+            const xmlLang: string = cont.Lang || opf.Lang;
+            if (xmlLang) {
+                contributor.Name[xmlLang.toLowerCase()] = cont.Data;
+            } else if (publication.Metadata &&
                 publication.Metadata.Language &&
                 publication.Metadata.Language.length &&
                 !contributor.Name[publication.Metadata.Language[0].toLowerCase()]) {
@@ -1047,9 +1051,6 @@ const addContributor = (
             } else {
                 // tslint:disable-next-line: no-string-literal
                 contributor.Name["_"] = cont.Data;
-                // TODO, what lang other than unknown "_"??
-                // Problem: "dc:language" overlaps with "alternate-script" :(
-                // https://github.com/readium/webpub-manifest/issues/34
             }
         } else {
             contributor.Name = cont.Data;
@@ -1256,8 +1257,10 @@ const addTitle = (publication: Publication, rootfile: Rootfile, opf: OPF) => {
                     }
                 });
 
-                if (mainTitle.Lang) {
-                    publication.Metadata.Title[mainTitle.Lang.toLowerCase()] = mainTitle.Data;
+                // https://github.com/readium/architecture/blob/master/streamer/parser/metadata.md#title
+                const xmlLang: string = mainTitle.Lang || opf.Lang;
+                if (xmlLang) {
+                    publication.Metadata.Title[xmlLang.toLowerCase()] = mainTitle.Data;
                 } else if (publication.Metadata.Language &&
                     publication.Metadata.Language.length &&
                     !publication.Metadata.Title[publication.Metadata.Language[0].toLowerCase()]) {
@@ -1265,9 +1268,6 @@ const addTitle = (publication: Publication, rootfile: Rootfile, opf: OPF) => {
                 } else {
                     // tslint:disable-next-line: no-string-literal
                     publication.Metadata.Title["_"] = mainTitle.Data;
-                    // TODO, what lang other than unknown "_"??
-                    // Problem: "dc:language" overlaps with "alternate-script" :(
-                    // https://github.com/readium/webpub-manifest/issues/34
                 }
 
             } else {
@@ -1286,8 +1286,10 @@ const addTitle = (publication: Publication, rootfile: Rootfile, opf: OPF) => {
                     }
                 });
 
-                if (subTitle.Lang) {
-                    publication.Metadata.SubTitle[subTitle.Lang.toLowerCase()] = subTitle.Data;
+                // https://github.com/readium/architecture/blob/master/streamer/parser/metadata.md#title
+                const xmlLang: string = subTitle.Lang || opf.Lang;
+                if (xmlLang) {
+                    publication.Metadata.SubTitle[xmlLang.toLowerCase()] = subTitle.Data;
                 } else if (publication.Metadata.Language &&
                     publication.Metadata.Language.length &&
                     !publication.Metadata.SubTitle[publication.Metadata.Language[0].toLowerCase()]) {
@@ -1295,9 +1297,6 @@ const addTitle = (publication: Publication, rootfile: Rootfile, opf: OPF) => {
                 } else {
                     // tslint:disable-next-line: no-string-literal
                     publication.Metadata.SubTitle["_"] = subTitle.Data;
-                    // TODO, what lang other than unknown "_"??
-                    // Problem: "dc:language" overlaps with "alternate-script" :(
-                    // https://github.com/readium/webpub-manifest/issues/34
                 }
 
             } else {
