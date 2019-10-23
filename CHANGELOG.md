@@ -1,10 +1,27 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.20...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.21...develop
 
 Changes:
 * TODO
+
+# 1.0.21
+
+> Build environment: NodeJS `10.16.3`, NPM `6.12.0`
+
+Changes:
+* EPUB parser fix: title/etc. language map with full xml:lang support (local element and root OPF package)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.21/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.21/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.21
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.20...v1.0.21
 
 # 1.0.20
 
