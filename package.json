@@ -60,9 +60,9 @@
   },
   "devDependencies": {
     "@types/debug": "^4.1.5",
-    "@types/image-size": "^0.7.0",
+    "@types/image-size": "^0.8.0",
     "@types/mime-types": "^2.1.0",
-    "@types/node": "^12.7.12",
+    "@types/node": "^12.11.5",
     "@types/xmldom": "^0.1.29",
     "ava": "^2.4.0",
     "cpy-cli": "^2.0.0",
