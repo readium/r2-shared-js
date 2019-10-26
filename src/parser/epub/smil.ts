@@ -28,4 +28,5 @@ export class SMIL {
     public Par!: Par;
 
     public ZipPath: string | undefined;
+    public ZipPathParsedEncodedOriginal: string | undefined;
 }

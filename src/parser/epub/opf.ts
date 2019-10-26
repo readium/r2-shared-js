@@ -48,4 +48,5 @@ export class OPF {
     public Version!: string;
 
     public ZipPath: string | undefined;
+    public ZipPathParsedEncodedOriginal: string | undefined;
 }

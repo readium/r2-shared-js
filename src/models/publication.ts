@@ -213,7 +213,10 @@ export class Publication {
     public AddLink(typeLink: string, rel: string[], url: string, templated: boolean | undefined) {
         const link = new Link();
         link.AddRels(rel);
-        link.Href = url;
+
+        link.HrefParsedEncodedOriginal = url;
+        link.Href = decodeURI(url);
+
         link.TypeLink = typeLink;
 
         if (typeof templated !== "undefined") {

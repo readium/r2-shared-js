@@ -102,6 +102,7 @@ export class MediaOverlayNode {
     public Children!: MediaOverlayNode[];
 
     public SmilPathInZip: string | undefined;
+    public SmilPathInZipParsedEncodedOriginal: string | undefined;
 
     public initialized: boolean = false;
 

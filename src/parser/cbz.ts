@@ -60,7 +60,9 @@ export async function CbzParsePromise(filePath: string): Promise<Publication> {
             // console.log(entryName);
 
             const link = new Link();
-            link.Href = entryName;
+
+            link.HrefParsedEncodedOriginal = entryName;
+            link.Href = decodeURI(entryName);
 
             const mediaType = mime.lookup(entryName);
             if (mediaType) {
@@ -105,6 +107,32 @@ const filePathToTitle = (filePath: string): string => {
 };
 
 const comicRackMetadata = async (zip: IZip, entryName: string, publication: Publication) => {
+    const entryNameParsedEncodedOriginal = entryName;
+
+    let has = zip.hasEntry(entryNameParsedEncodedOriginal);
+    if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
+        try {
+            has = await (zip as any).hasEntryAsync(entryNameParsedEncodedOriginal);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    if (!has) {
+        entryName = decodeURI(entryName);
+        has = zip.hasEntry(entryName);
+        if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
+            try {
+                has = await (zip as any).hasEntryAsync(entryName);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    }
+    if (!has) {
+        console.log(`NOT IN ZIP: ${entryName}`);
+        return;
+    }
+
     let comicZipStream_: IStreamAndLength;
     try {
         comicZipStream_ = await zip.entryStreamPromise(entryName);
@@ -126,6 +154,7 @@ const comicRackMetadata = async (zip: IZip, entryName: string, publication: Publ
 
     const comicMeta = XML.deserialize<ComicInfo>(comicXmlDoc, ComicInfo);
     comicMeta.ZipPath = entryName;
+    comicMeta.ZipPathParsedEncodedOriginal = entryNameParsedEncodedOriginal;
 
     if (!publication.Metadata) {
         publication.Metadata = new Metadata();

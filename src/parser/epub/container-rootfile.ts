@@ -15,6 +15,8 @@ export class Rootfile {
     @XmlXPathSelector("@full-path")
     public Path!: string;
 
+    public PathParsedEncodedOriginal!: string;
+
     @XmlXPathSelector("@media-type")
     public Type!: string;
 

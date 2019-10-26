@@ -338,8 +338,35 @@ async function extractEPUB_ProcessKeys(pub: Publication, keys: string[] | undefi
 
 async function extractEPUB_Link(pub: Publication, zip: IZip, outDir: string, link: Link) {
 
-    const pathInZip = link.Href;
+    let pathInZip = link.HrefParsedEncodedOriginal;
     console.log("===== " + pathInZip);
+
+    let has = false;
+    if (pathInZip) {
+        has = zip.hasEntry(pathInZip);
+        if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
+            try {
+                has = await (zip as any).hasEntryAsync(pathInZip);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    }
+    if (!has) {
+        pathInZip = link.Href;
+        has = zip.hasEntry(pathInZip);
+        if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
+            try {
+                has = await (zip as any).hasEntryAsync(pathInZip);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    }
+    if (!has) {
+        console.log(`NOT IN ZIP: ${pathInZip}`);
+        return;
+    }
 
     let zipStream_: IStreamAndLength;
     try {
@@ -377,7 +404,7 @@ async function extractEPUB_Link(pub: Publication, zip: IZip, outDir: string, lin
     }
     // console.log("CHECK: " + zipStream_.length + " ==> " + zipData.length);
 
-    const linkOutputPath = path.join(outDir, pathInZip);
+    const linkOutputPath = path.join(outDir, link.Href);
     ensureDirs(linkOutputPath);
     fs.writeFileSync(linkOutputPath, zipData);
 }
