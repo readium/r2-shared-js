@@ -9,6 +9,7 @@ import {
     XmlDiscriminatorValue, XmlItemType, XmlObject, XmlXPathSelector,
 } from "@r2-utils-js/_utils/xml-js-mapper";
 
+import { tryDecodeURI } from "../../_utils/decodeURI";
 import { SeqOrPar } from "./smil-seq-or-par";
 
 @XmlObject({
@@ -34,7 +35,29 @@ export class Seq extends SeqOrPar {
     // public Par: Par[];
 
     @XmlXPathSelector("@epub:textref")
-    public TextRef!: string;
+    public TextRef1!: string;
+    get TextRef(): string {
+        return this.TextRef1;
+    }
+    set TextRef(href: string) {
+        this.TextRef1 = href;
+        this._urlDecoded = undefined;
+    }
+    private _urlDecoded: string | undefined | null;
+    get TextRefDecoded(): string | undefined {
+        if (this._urlDecoded) {
+            return this._urlDecoded;
+        }
+        if (this._urlDecoded === null) {
+            return undefined;
+        }
+        if (!this.TextRef) {
+            this._urlDecoded = null;
+            return undefined;
+        }
+        this._urlDecoded = tryDecodeURI(this.TextRef);
+        return !this._urlDecoded ? undefined : this._urlDecoded;
+    }
 
     // constructor() {
     //     super();

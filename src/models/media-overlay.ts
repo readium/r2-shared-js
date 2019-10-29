@@ -87,10 +87,10 @@ export function timeStrToSeconds(timeStr: string): number {
 @JsonObject()
 export class MediaOverlayNode {
     @JsonProperty("text")
-    public Text!: string;
+    public Text!: string; // URL already decodeURI()
 
     @JsonProperty("audio")
-    public Audio!: string;
+    public Audio!: string; // URL already decodeURI()
 
     @JsonProperty("role")
     @JsonConverter(JsonStringConverter)
@@ -101,7 +101,7 @@ export class MediaOverlayNode {
     @JsonElementType(MediaOverlayNode)
     public Children!: MediaOverlayNode[];
 
-    public SmilPathInZip: string | undefined;
+    public SmilPathInZip: string | undefined; // URL already decodeURI()
 
     public initialized: boolean = false;
 

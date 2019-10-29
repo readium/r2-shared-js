@@ -18,5 +18,5 @@ export class DisplayOptions {
     @XmlItemType(DisplayOptionsPlatform)
     public Platforms!: DisplayOptionsPlatform[];
 
-    public ZipPath: string | undefined;
+    public ZipPath: string | undefined; // URL already decodeURI()
 }

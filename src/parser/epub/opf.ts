@@ -47,5 +47,5 @@ export class OPF {
     @XmlXPathSelector("@version")
     public Version!: string;
 
-    public ZipPath: string | undefined;
+    public ZipPath: string | undefined; // URL already decodeURI()
 }

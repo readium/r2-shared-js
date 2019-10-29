@@ -23,6 +23,7 @@ import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
 import { Transformers } from "@transform/transformer";
 
 import { initGlobalConverters_GENERIC, initGlobalConverters_SHARED } from "../init-globals";
+import { zipHasEntry } from "./zipHasEntry";
 
 // import { initGlobalConverters_OPDS } from "@opds/init-globals";
 
@@ -238,7 +239,7 @@ async function extractEPUB_Check(zip: IZip, outDir: string) {
     if (zipEntries) {
         for (const zipEntry of zipEntries) {
             if (zipEntry !== "mimetype" && !zipEntry.startsWith("META-INF/") && !zipEntry.endsWith(".opf") &&
-                zipEntry !== ".DS_Store") { // zip entry can actually be exploded EPUB file
+                !zipEntry.endsWith(".DS_Store")) { // zip entry can actually be exploded EPUB file
                 const expectedOutputPath = path.join(outDir, zipEntry);
                 if (!fs.existsSync(expectedOutputPath)) {
                     console.log("Zip entry not extracted??");
@@ -345,16 +346,9 @@ async function extractEPUB_Link(pub: Publication, zip: IZip, outDir: string, lin
         return;
     }
 
-    let has = zip.hasEntry(hrefDecoded);
-    if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-        try {
-            has = await (zip as any).hasEntryAsync(hrefDecoded);
-        } catch (err) {
-            console.log(err);
-        }
-    }
+    const has = await zipHasEntry(zip, hrefDecoded, link.Href);
     if (!has) {
-        console.log(`NOT IN ZIP: ${link.Href} --- ${hrefDecoded}`);
+        console.log(`NOT IN ZIP (extractEPUB_Link): ${link.Href} --- ${hrefDecoded}`);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
             console.log(zipEntry);
@@ -434,21 +428,14 @@ async function extractEPUB(pub: Publication, outDir: string, keys: string[] | un
     if (pub.Spine) { // JSON.readingOrder
         links.push(...pub.Spine);
     }
-    // if (zip.hasEntry("META-INF/container.xml")) {
+    // if (await zipHasEntry(zip, "META-INF/container.xml", undefined)) {
     //     const l = new Link();
     //     l.Href = "META-INF/container.xml";
     //     links.push(l);
     // }
     if (!keys) {
         const lic = "META-INF/license.lcpl";
-        let has = zip.hasEntry(lic);
-        if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-            try {
-                has = await (zip as any).hasEntryAsync(lic);
-            } catch (err) {
-                console.log(err);
-            }
-        }
+        const has = await zipHasEntry(zip, lic, undefined);
         if (has) {
             const l = new Link();
             l.Href = lic;

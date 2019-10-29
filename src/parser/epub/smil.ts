@@ -27,5 +27,5 @@ export class SMIL {
     @XmlXPathSelector("dummy")
     public Par!: Par;
 
-    public ZipPath: string | undefined;
+    public ZipPath: string | undefined; // URL already decodeURI()
 }

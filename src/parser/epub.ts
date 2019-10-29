@@ -39,6 +39,7 @@ import { zipLoadPromise } from "@r2-utils-js/_utils/zip/zipFactory";
 import { Transformers } from "@transform/transformer";
 
 import { tryDecodeURI } from "../_utils/decodeURI";
+import { zipHasEntry } from "../_utils/zipHasEntry";
 import { Container } from "./epub/container";
 import { Rootfile } from "./epub/container-rootfile";
 import { DisplayOptions } from "./epub/display-options";
@@ -76,16 +77,9 @@ export const addCoverDimensions = async (publication: Publication, coverLink: Li
         if (!coverLinkHrefDecoded) {
             return;
         }
-        let has = zip.hasEntry(coverLinkHrefDecoded);
-        if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-            try {
-                has = await (zip as any).hasEntryAsync(coverLinkHrefDecoded);
-            } catch (err) {
-                console.log(err);
-            }
-        }
+        const has = await zipHasEntry(zip, coverLinkHrefDecoded, coverLink.Href);
         if (!has) {
-            console.log(`NOT IN ZIP: ${coverLink.Href} --- ${coverLinkHrefDecoded}`);
+            console.log(`NOT IN ZIP (addCoverDimensions): ${coverLink.Href} --- ${coverLinkHrefDecoded}`);
             const zipEntries = await zip.getEntries();
             for (const zipEntry of zipEntries) {
                 console.log(zipEntry);
@@ -205,14 +199,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
 
     let lcpl: LCP | undefined;
     const lcplZipPath = "META-INF/license.lcpl";
-    let has = zip.hasEntry(lcplZipPath);
-    if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-        try {
-            has = await (zip as any).hasEntryAsync(lcplZipPath);
-        } catch (err) {
-            console.log(err);
-        }
-    }
+    let has = await zipHasEntry(zip, lcplZipPath, undefined);
     if (has) {
         let lcplZipStream_: IStreamAndLength;
         try {
@@ -259,14 +246,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
 
     let encryption: Encryption | undefined;
     const encZipPath = "META-INF/encryption.xml";
-    has = zip.hasEntry(encZipPath);
-    if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-        try {
-            has = await (zip as any).hasEntryAsync(encZipPath);
-        } catch (err) {
-            console.log(err);
-        }
-    }
+    has = await zipHasEntry(zip, encZipPath, undefined);
     if (has) {
         let encryptionXmlZipStream_: IStreamAndLength;
         try {
@@ -337,17 +317,9 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
     }
 
     // let timeBegin = process.hrtime();
-
-    has = zip.hasEntry(rootfilePathDecoded);
-    if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-        try {
-            has = await (zip as any).hasEntryAsync(rootfilePathDecoded);
-        } catch (err) {
-            console.log(err);
-        }
-    }
+    has = await zipHasEntry(zip, rootfilePathDecoded, rootfile.Path);
     if (!has) {
-        const err = `NOT IN ZIP: ${rootfile.Path} --- ${rootfilePathDecoded}`;
+        const err = `NOT IN ZIP (container OPF rootfile): ${rootfile.Path} --- ${rootfilePathDecoded}`;
         console.log(err);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
@@ -434,16 +406,9 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
             }
             const ncxFilePath = path.join(dname, ncxManItemHrefDecoded).replace(/\\/g, "/");
 
-            has = zip.hasEntry(ncxFilePath);
-            if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-                try {
-                    has = await (zip as any).hasEntryAsync(ncxFilePath);
-                } catch (err) {
-                    console.log(err);
-                }
-            }
+            has = await zipHasEntry(zip, ncxFilePath, undefined);
             if (!has) {
-                const err = `NOT IN ZIP: ${ncxManItem.Href} --- ${ncxFilePath}`;
+                const err = `NOT IN ZIP (NCX): ${ncxManItem.Href} --- ${ncxFilePath}`;
                 console.log(err);
                 const zipEntries = await zip.getEntries();
                 for (const zipEntry of zipEntries) {
@@ -743,16 +708,9 @@ const fillMediaOverlayParse =
     }
     const zip = zipInternal.Value as IZip;
 
-    let has = zip.hasEntry(mo.SmilPathInZip);
-    if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-        try {
-            has = await (zip as any).hasEntryAsync(mo.SmilPathInZip);
-        } catch (err) {
-            console.log(err);
-        }
-    }
+    const has = await zipHasEntry(zip, mo.SmilPathInZip, undefined);
     if (!has) {
-        const err = `NOT IN ZIP: ${mo.SmilPathInZip}`;
+        const err = `NOT IN ZIP (fillMediaOverlayParse): ${mo.SmilPathInZip}`;
         console.log(err);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
@@ -831,10 +789,14 @@ const fillMediaOverlayParse =
             });
         }
         if (smil.Body.TextRef) {
-            const zipPath = path.join(path.dirname(smil.ZipPath), smil.Body.TextRef)
-                .replace(/\\/g, "/");
-            mo.Text = zipPath;
-
+            const smilBodyTextRefDecoded = smil.Body.TextRefDecoded;
+            if (!smilBodyTextRefDecoded) {
+                console.log("!?smilBodyTextRefDecoded");
+            } else {
+                const zipPath = path.join(path.dirname(smil.ZipPath), smilBodyTextRefDecoded)
+                    .replace(/\\/g, "/");
+                mo.Text = zipPath;
+            }
         }
         if (smil.Body.Children && smil.Body.Children.length) {
             smil.Body.Children.forEach((seqChild) => {
@@ -868,16 +830,9 @@ const fillMediaOverlay =
                 console.log("?!item.HrefDecoded");
                 continue;
             }
-            let has = zip.hasEntry(itemHrefDecoded);
-            if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-                try {
-                    has = await (zip as any).hasEntryAsync(itemHrefDecoded);
-                } catch (err) {
-                    console.log(err);
-                }
-            }
+            const has = await zipHasEntry(zip, itemHrefDecoded, item.Href);
             if (!has) {
-                console.log(`NOT IN ZIP: ${item.HrefDecoded} --- ${itemHrefDecoded}`);
+                console.log(`NOT IN ZIP (fillMediaOverlay): ${item.HrefDecoded} --- ${itemHrefDecoded}`);
                 const zipEntries = await zip.getEntries();
                 for (const zipEntry of zipEntries) {
                     console.log(zipEntry);
@@ -991,9 +946,14 @@ const addSeqToMediaOverlay = (
         }
 
         if (seq.TextRef) {
-            const zipPath = path.join(path.dirname(smil.ZipPath), seq.TextRef)
-                .replace(/\\/g, "/");
-            moc.Text = zipPath;
+            const seqTextRefDecoded = seq.TextRefDecoded;
+            if (!seqTextRefDecoded) {
+                console.log("!?seqTextRefDecoded");
+            } else {
+                const zipPath = path.join(path.dirname(smil.ZipPath), seqTextRefDecoded)
+                    .replace(/\\/g, "/");
+                moc.Text = zipPath;
+            }
         }
 
         if (seq.Children && seq.Children.length) {
@@ -1022,19 +982,29 @@ const addSeqToMediaOverlay = (
         }
 
         if (par.Text && par.Text.Src) {
-            const zipPath = path.join(path.dirname(smil.ZipPath), par.Text.Src)
-                .replace(/\\/g, "/");
-            moc.Text = zipPath;
+            const parTextSrcDcoded = par.Text.SrcDecoded;
+            if (!parTextSrcDcoded) {
+                console.log("?!parTextSrcDcoded");
+            } else {
+                const zipPath = path.join(path.dirname(smil.ZipPath), parTextSrcDcoded)
+                    .replace(/\\/g, "/");
+                moc.Text = zipPath;
+            }
         }
         if (par.Audio && par.Audio.Src) {
-            const zipPath = path.join(path.dirname(smil.ZipPath), par.Audio.Src)
-                .replace(/\\/g, "/");
-            moc.Audio = zipPath;
-            moc.Audio += "#t=";
-            moc.Audio += par.Audio.ClipBegin ? timeStrToSeconds(par.Audio.ClipBegin) : "0";
-            if (par.Audio.ClipEnd) {
-                moc.Audio += ",";
-                moc.Audio += timeStrToSeconds(par.Audio.ClipEnd);
+            const parAudioSrcDcoded = par.Audio.SrcDecoded;
+            if (!parAudioSrcDcoded) {
+                console.log("?!parAudioSrcDcoded");
+            } else {
+                const zipPath = path.join(path.dirname(smil.ZipPath), parAudioSrcDcoded)
+                    .replace(/\\/g, "/");
+                moc.Audio = zipPath;
+                moc.Audio += "#t=";
+                moc.Audio += par.Audio.ClipBegin ? timeStrToSeconds(par.Audio.ClipBegin) : "0";
+                if (par.Audio.ClipEnd) {
+                    moc.Audio += ",";
+                    moc.Audio += timeStrToSeconds(par.Audio.ClipEnd);
+                }
             }
         }
     }
@@ -1689,26 +1659,12 @@ const addRendition = async (publication: Publication, _rootfile: Rootfile, opf: 
         if (!rendition.Layout || !rendition.Orientation) {
 
             let displayOptionsZipPath = "META-INF/com.apple.ibooks.display-options.xml";
-            let has = zip.hasEntry(displayOptionsZipPath);
-            if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-                try {
-                    has = await (zip as any).hasEntryAsync(displayOptionsZipPath);
-                } catch (err) {
-                    console.log(err);
-                }
-            }
+            let has = await zipHasEntry(zip, displayOptionsZipPath, undefined);
             if (has) {
                 debug("Info: found iBooks display-options XML");
             } else {
                 displayOptionsZipPath = "META-INF/com.kobobooks.display-options.xml";
-                has = zip.hasEntry(displayOptionsZipPath);
-                if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-                    try {
-                        has = await (zip as any).hasEntryAsync(displayOptionsZipPath);
-                    } catch (err) {
-                        console.log(err);
-                    }
-                }
+                has = await zipHasEntry(zip, displayOptionsZipPath, undefined);
                 if (has) {
                     debug("Info: found Kobo display-options XML");
                 }
@@ -2007,16 +1963,9 @@ const createDocStringFromZipPath = async (link: Link, zip: IZip): Promise<string
         console.log("!?link.HrefDecoded");
         return undefined;
     }
-    let has = zip.hasEntry(linkHrefDecoded);
-    if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-        try {
-            has = await (zip as any).hasEntryAsync(linkHrefDecoded);
-        } catch (err) {
-            console.log(err);
-        }
-    }
+    const has = await zipHasEntry(zip, linkHrefDecoded, link.Href);
     if (!has) {
-        console.log(`NOT IN ZIP: ${link.Href} --- ${linkHrefDecoded}`);
+        console.log(`NOT IN ZIP (createDocStringFromZipPath): ${link.Href} --- ${linkHrefDecoded}`);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
             console.log(zipEntry);
@@ -2173,16 +2122,9 @@ const fillTOCFromNavDoc = async (publication: Publication, _rootfile: Rootfile, 
         return;
     }
 
-    let has = zip.hasEntry(navLinkHrefDecoded);
-    if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-        try {
-            has = await (zip as any).hasEntryAsync(navLinkHrefDecoded);
-        } catch (err) {
-            console.log(err);
-        }
-    }
+    const has = await zipHasEntry(zip, navLinkHrefDecoded, navLink.Href);
     if (!has) {
-        console.log(`NOT IN ZIP: ${navLink.Href} --- ${navLinkHrefDecoded}`);
+        console.log(`NOT IN ZIP (fillTOCFromNavDoc): ${navLink.Href} --- ${navLinkHrefDecoded}`);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
             console.log(zipEntry);

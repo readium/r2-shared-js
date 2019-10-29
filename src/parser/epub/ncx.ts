@@ -24,5 +24,5 @@ export class NCX {
     @XmlXPathSelector("ncx:pageList")
     public PageList!: PageList;
 
-    public ZipPath!: string;
+    public ZipPath!: string; // URL already decodeURI()
 }

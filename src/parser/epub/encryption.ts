@@ -23,5 +23,5 @@ export class Encryption {
     @XmlItemType(EncryptedData)
     public EncryptedData!: EncryptedData[];
 
-    public ZipPath: string | undefined;
+    public ZipPath: string | undefined; // URL already decodeURI()
 }

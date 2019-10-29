@@ -57,5 +57,5 @@ export class ComicInfo {
     @XmlItemType(Page)
     public Pages!: Page[];
 
-    public ZipPath: string | undefined;
+    public ZipPath: string | undefined; // URL already decodeURI()
 }

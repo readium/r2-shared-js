@@ -20,6 +20,7 @@ import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
 import { zipLoadPromise } from "@r2-utils-js/_utils/zip/zipFactory";
 
 import { tryDecodeURI } from "../_utils/decodeURI";
+import { zipHasEntry } from "../_utils/zipHasEntry";
 import { ComicInfo } from "./comicrack/comicrack";
 import { addCoverDimensions } from "./epub";
 
@@ -112,14 +113,7 @@ const comicRackMetadata = async (zip: IZip, entryName: string, publication: Publ
         return;
     }
 
-    let has = zip.hasEntry(entryNameDecoded);
-    if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-        try {
-            has = await (zip as any).hasEntryAsync(entryNameDecoded);
-        } catch (err) {
-            console.log(err);
-        }
-    }
+    const has = await zipHasEntry(zip, entryNameDecoded, entryName);
     if (!has) {
         console.log(`NOT IN ZIP: ${entryName} --- ${entryNameDecoded}`);
         const zipEntries = await zip.getEntries();

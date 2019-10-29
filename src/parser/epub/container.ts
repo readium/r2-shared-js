@@ -26,5 +26,5 @@ export class Container {
     @XmlItemType(Rootfile)
     public Rootfile!: Rootfile[];
 
-    public ZipPath: string | undefined;
+    public ZipPath: string | undefined; // URL already decodeURI()
 }
