@@ -210,12 +210,12 @@ export class Publication {
         return undefined;
     }
 
+    // Note: currently only used internally for META-INF/license.lcpl?
     public AddLink(typeLink: string, rel: string[], url: string, templated: boolean | undefined) {
         const link = new Link();
         link.AddRels(rel);
 
-        link.HrefParsedEncodedOriginal = url;
-        link.Href = decodeURI(url);
+        link.Href = url;
 
         link.TypeLink = typeLink;
 

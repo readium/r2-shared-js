@@ -25,5 +25,4 @@ export class NCX {
     public PageList!: PageList;
 
     public ZipPath!: string;
-    public ZipPathParsedEncodedOriginal!: string;
 }

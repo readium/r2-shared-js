@@ -12,6 +12,7 @@ import {
 
 import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
 
+import { tryDecodeURI } from "../_utils/decodeURI";
 import { MediaOverlayNode } from "./media-overlay";
 import { Properties } from "./metadata-properties";
 
@@ -19,13 +20,6 @@ import { Properties } from "./metadata-properties";
 // https://github.com/readium/webpub-manifest/blob/ca6d887caa2d0495200fef4695f41aacb5fed2e9/schema/link.schema.json
 @JsonObject()
 export class Link {
-
-    // tslint:disable-next-line:max-line-length
-    // https://github.com/readium/webpub-manifest/blob/ca6d887caa2d0495200fef4695f41aacb5fed2e9/schema/link.schema.json#L7
-    @JsonProperty("href")
-    public Href!: string;
-
-    public HrefParsedEncodedOriginal!: string;
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/ca6d887caa2d0495200fef4695f41aacb5fed2e9/schema/link.schema.json#L11
@@ -87,6 +81,33 @@ export class Link {
     public Rel!: string[];
 
     public MediaOverlays: MediaOverlayNode[] | undefined;
+
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/ca6d887caa2d0495200fef4695f41aacb5fed2e9/schema/link.schema.json#L7
+    @JsonProperty("href")
+    public Href1!: string;
+    get Href(): string {
+        return this.Href1;
+    }
+    set Href(href: string) {
+        this.Href1 = href;
+        this._urlDecoded = undefined;
+    }
+    private _urlDecoded: string | undefined | null;
+    get HrefDecoded(): string | undefined {
+        if (this._urlDecoded) {
+            return this._urlDecoded;
+        }
+        if (this._urlDecoded === null) {
+            return undefined;
+        }
+        if (!this.Href) {
+            this._urlDecoded = null;
+            return undefined;
+        }
+        this._urlDecoded = tryDecodeURI(this.Href);
+        return !this._urlDecoded ? undefined : this._urlDecoded;
+    }
 
     public AddRels(rels: string[]) {
         rels.forEach((rel) => {

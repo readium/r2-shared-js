@@ -7,6 +7,8 @@
 
 import { XmlObject, XmlXPathSelector } from "@r2-utils-js/_utils/xml-js-mapper";
 
+import { tryDecodeURI } from "../../_utils/decodeURI";
+
 @XmlObject({
     dc: "http://purl.org/dc/elements/1.1/",
     opf: "http://www.idpf.org/2007/opf",
@@ -15,12 +17,34 @@ export class Reference {
 
     // XPATH ROOT: /opf:package/opf:guide/opf:reference
 
-    @XmlXPathSelector("@href")
-    public Href!: string;
-
     @XmlXPathSelector("@title")
     public Title!: string;
 
     @XmlXPathSelector("@type")
     public Type!: string;
+
+    @XmlXPathSelector("@href")
+    public Href1!: string;
+    get Href(): string {
+        return this.Href1;
+    }
+    set Href(href: string) {
+        this.Href1 = href;
+        this._urlDecoded = undefined;
+    }
+    private _urlDecoded: string | undefined | null;
+    get HrefDecoded(): string | undefined {
+        if (this._urlDecoded) {
+            return this._urlDecoded;
+        }
+        if (this._urlDecoded === null) {
+            return undefined;
+        }
+        if (!this.Href) {
+            this._urlDecoded = null;
+            return undefined;
+        }
+        this._urlDecoded = tryDecodeURI(this.Href);
+        return !this._urlDecoded ? undefined : this._urlDecoded;
+    }
 }

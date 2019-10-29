@@ -19,6 +19,7 @@ import { XML } from "@r2-utils-js/_utils/xml-js-mapper";
 import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
 import { zipLoadPromise } from "@r2-utils-js/_utils/zip/zipFactory";
 
+import { tryDecodeURI } from "../_utils/decodeURI";
 import { ComicInfo } from "./comicrack/comicrack";
 import { addCoverDimensions } from "./epub";
 
@@ -61,8 +62,7 @@ export async function CbzParsePromise(filePath: string): Promise<Publication> {
 
             const link = new Link();
 
-            link.HrefParsedEncodedOriginal = entryName;
-            link.Href = decodeURI(entryName);
+            link.Href = entryName;
 
             const mediaType = mime.lookup(entryName);
             if (mediaType) {
@@ -107,35 +107,31 @@ const filePathToTitle = (filePath: string): string => {
 };
 
 const comicRackMetadata = async (zip: IZip, entryName: string, publication: Publication) => {
-    const entryNameParsedEncodedOriginal = entryName;
+    const entryNameDecoded = tryDecodeURI(entryName);
+    if (!entryNameDecoded) {
+        return;
+    }
 
-    let has = zip.hasEntry(entryNameParsedEncodedOriginal);
+    let has = zip.hasEntry(entryNameDecoded);
     if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
         try {
-            has = await (zip as any).hasEntryAsync(entryNameParsedEncodedOriginal);
+            has = await (zip as any).hasEntryAsync(entryNameDecoded);
         } catch (err) {
             console.log(err);
         }
     }
     if (!has) {
-        entryName = decodeURI(entryName);
-        has = zip.hasEntry(entryName);
-        if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-            try {
-                has = await (zip as any).hasEntryAsync(entryName);
-            } catch (err) {
-                console.log(err);
-            }
+        console.log(`NOT IN ZIP: ${entryName} --- ${entryNameDecoded}`);
+        const zipEntries = await zip.getEntries();
+        for (const zipEntry of zipEntries) {
+            console.log(zipEntry);
         }
-    }
-    if (!has) {
-        console.log(`NOT IN ZIP: ${entryName}`);
         return;
     }
 
     let comicZipStream_: IStreamAndLength;
     try {
-        comicZipStream_ = await zip.entryStreamPromise(entryName);
+        comicZipStream_ = await zip.entryStreamPromise(entryNameDecoded);
     } catch (err) {
         console.log(err);
         return;
@@ -153,8 +149,7 @@ const comicRackMetadata = async (zip: IZip, entryName: string, publication: Publ
     const comicXmlDoc = new xmldom.DOMParser().parseFromString(comicXmlStr);
 
     const comicMeta = XML.deserialize<ComicInfo>(comicXmlDoc, ComicInfo);
-    comicMeta.ZipPath = entryName;
-    comicMeta.ZipPathParsedEncodedOriginal = entryNameParsedEncodedOriginal;
+    comicMeta.ZipPath = entryNameDecoded;
 
     if (!publication.Metadata) {
         publication.Metadata = new Metadata();

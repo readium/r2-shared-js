@@ -58,5 +58,4 @@ export class ComicInfo {
     public Pages!: Page[];
 
     public ZipPath: string | undefined;
-    public ZipPathParsedEncodedOriginal: string | undefined;
 }

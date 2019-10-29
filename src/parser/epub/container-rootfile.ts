@@ -7,19 +7,41 @@
 
 import { XmlObject, XmlXPathSelector } from "@r2-utils-js/_utils/xml-js-mapper";
 
+import { tryDecodeURI } from "../../_utils/decodeURI";
+
 @XmlObject()
 export class Rootfile {
 
     // XPATH ROOT: /epub:container/epub:rootfiles/epub:rootfile
-
-    @XmlXPathSelector("@full-path")
-    public Path!: string;
-
-    public PathParsedEncodedOriginal!: string;
 
     @XmlXPathSelector("@media-type")
     public Type!: string;
 
     @XmlXPathSelector("@version")
     public Version!: string;
+
+    @XmlXPathSelector("@full-path")
+    public Path1!: string;
+    get Path(): string {
+        return this.Path1;
+    }
+    set Path(href: string) {
+        this.Path1 = href;
+        this._urlDecoded = undefined;
+    }
+    private _urlDecoded: string | undefined | null;
+    get PathDecoded(): string | undefined {
+        if (this._urlDecoded) {
+            return this._urlDecoded;
+        }
+        if (this._urlDecoded === null) {
+            return undefined;
+        }
+        if (!this.Path) {
+            this._urlDecoded = null;
+            return undefined;
+        }
+        this._urlDecoded = tryDecodeURI(this.Path);
+        return !this._urlDecoded ? undefined : this._urlDecoded;
+    }
 }

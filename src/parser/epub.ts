@@ -38,6 +38,7 @@ import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
 import { zipLoadPromise } from "@r2-utils-js/_utils/zip/zipFactory";
 import { Transformers } from "@transform/transformer";
 
+import { tryDecodeURI } from "../_utils/decodeURI";
 import { Container } from "./epub/container";
 import { Rootfile } from "./epub/container-rootfile";
 import { DisplayOptions } from "./epub/display-options";
@@ -71,60 +72,55 @@ export const addCoverDimensions = async (publication: Publication, coverLink: Li
     if (zipInternal) {
         const zip = zipInternal.Value as IZip;
 
-        let has = false;
-        let coverLinkHref = coverLink.HrefParsedEncodedOriginal;
-        if (coverLinkHref) {
-            has = zip.hasEntry(coverLinkHref);
-            if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-                try {
-                    has = await (zip as any).hasEntryAsync(coverLinkHref);
-                } catch (err) {
-                    console.log(err);
-                }
+        const coverLinkHrefDecoded = coverLink.HrefDecoded;
+        if (!coverLinkHrefDecoded) {
+            return;
+        }
+        let has = zip.hasEntry(coverLinkHrefDecoded);
+        if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
+            try {
+                has = await (zip as any).hasEntryAsync(coverLinkHrefDecoded);
+            } catch (err) {
+                console.log(err);
             }
         }
         if (!has) {
-            coverLinkHref = coverLink.Href;
-            has = zip.hasEntry(coverLinkHref);
-            if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-                try {
-                    has = await (zip as any).hasEntryAsync(coverLinkHref);
-                } catch (err) {
-                    console.log(err);
-                }
+            console.log(`NOT IN ZIP: ${coverLink.Href} --- ${coverLinkHrefDecoded}`);
+            const zipEntries = await zip.getEntries();
+            for (const zipEntry of zipEntries) {
+                console.log(zipEntry);
             }
+            return;
         }
-        if (has) {
-            let zipStream: IStreamAndLength;
-            try {
-                zipStream = await zip.entryStreamPromise(coverLinkHref);
-            } catch (err) {
-                debug(coverLinkHref);
-                debug(coverLink.TypeLink);
-                debug(err);
-                return;
-            }
+        let zipStream: IStreamAndLength;
+        try {
+            zipStream = await zip.entryStreamPromise(coverLinkHrefDecoded);
+        } catch (err) {
+            debug(coverLinkHrefDecoded);
+            debug(coverLink.TypeLink);
+            debug(err);
+            return;
+        }
 
-            let zipData: Buffer;
-            try {
-                zipData = await streamToBufferPromise(zipStream.stream);
+        let zipData: Buffer;
+        try {
+            zipData = await streamToBufferPromise(zipStream.stream);
 
-                const imageInfo = imageSize(zipData) as ISize;
-                if (imageInfo && imageInfo.width && imageInfo.height) {
-                    coverLink.Width = imageInfo.width;
-                    coverLink.Height = imageInfo.height;
+            const imageInfo = imageSize(zipData) as ISize;
+            if (imageInfo && imageInfo.width && imageInfo.height) {
+                coverLink.Width = imageInfo.width;
+                coverLink.Height = imageInfo.height;
 
-                    if (coverLink.TypeLink &&
-                        coverLink.TypeLink.replace("jpeg", "jpg").replace("+xml", "")
-                        !== ("image/" + imageInfo.type)) {
-                        debug(`Wrong image type? ${coverLink.TypeLink} -- ${imageInfo.type}`);
-                    }
+                if (coverLink.TypeLink &&
+                    coverLink.TypeLink.replace("jpeg", "jpg").replace("+xml", "")
+                    !== ("image/" + imageInfo.type)) {
+                    debug(`Wrong image type? ${coverLink.TypeLink} -- ${imageInfo.type}`);
                 }
-            } catch (err) {
-                debug(coverLink.Href);
-                debug(coverLink.TypeLink);
-                debug(err);
             }
+        } catch (err) {
+            debug(coverLinkHrefDecoded);
+            debug(coverLink.TypeLink);
+            debug(err);
         }
     }
 };
@@ -335,44 +331,34 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
 
     const rootfile = container.Rootfile[0];
 
-    let rootfilePath = rootfile.Path;
-
-    // debug(`${rootfilePath}:`);
+    const rootfilePathDecoded = rootfile.PathDecoded;
+    if (!rootfilePathDecoded) {
+        return Promise.reject("?!rootfile.PathDecoded");
+    }
 
     // let timeBegin = process.hrtime();
 
-    has = zip.hasEntry(rootfilePath);
+    has = zip.hasEntry(rootfilePathDecoded);
     if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
         try {
-            has = await (zip as any).hasEntryAsync(rootfilePath);
+            has = await (zip as any).hasEntryAsync(rootfilePathDecoded);
         } catch (err) {
             console.log(err);
         }
     }
     if (!has) {
-        rootfilePath = decodeURI(rootfilePath);
-        console.log(`PACKAGE OPF: ${rootfile.Path} => ${rootfilePath} ...`);
-
-        has = zip.hasEntry(rootfilePath);
-        if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-            try {
-                has = await (zip as any).hasEntryAsync(rootfilePath);
-            } catch (err) {
-                console.log(err);
-            }
-        }
-    }
-    if (!has) {
-        const err = `NOT IN ZIP: ${rootfile.Path}`;
+        const err = `NOT IN ZIP: ${rootfile.Path} --- ${rootfilePathDecoded}`;
         console.log(err);
+        const zipEntries = await zip.getEntries();
+        for (const zipEntry of zipEntries) {
+            console.log(zipEntry);
+        }
         return Promise.reject(err);
     }
-    rootfile.PathParsedEncodedOriginal = rootfile.Path;
-    rootfile.Path = rootfilePath;
 
     let opfZipStream_: IStreamAndLength;
     try {
-        opfZipStream_ = await zip.entryStreamPromise(rootfilePath);
+        opfZipStream_ = await zip.entryStreamPromise(rootfilePathDecoded);
     } catch (err) {
         debug(err);
         return Promise.reject(err);
@@ -427,8 +413,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
     // const timeElapsed5 = process.hrtime(timeBegin);
     // debug(`5) ${timeElapsed5[0]} seconds + ${timeElapsed5[1]} nanoseconds`);
 
-    opf.ZipPath = rootfilePath;
-    opf.ZipPathParsedEncodedOriginal = rootfile.PathParsedEncodedOriginal;
+    opf.ZipPath = rootfilePathDecoded;
 
     // breakLength: 100  maxArrayLength: undefined
     // console.log(util.inspect(opf,
@@ -442,15 +427,12 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
             return manifestItem.ID === opf.Spine.Toc;
         });
         if (ncxManItem) {
-            let ncxFilePath = path.join(path.dirname(opf.ZipPath), ncxManItem.Href)
-                .replace(/\\/g, "/");
-            // debug("########## NCX: "
-            //     + opf.ZipPath
-            //     + " == "
-            //     + ncxManItem.Href
-            //     + " -- "
-            //     + ncxFilePath);
-            const ncxFilePathParsedEncodedOriginal = ncxFilePath;
+            const dname = path.dirname(opf.ZipPath);
+            const ncxManItemHrefDecoded = ncxManItem.HrefDecoded;
+            if (!ncxManItemHrefDecoded) {
+                return Promise.reject("?!ncxManItem.Href");
+            }
+            const ncxFilePath = path.join(dname, ncxManItemHrefDecoded).replace(/\\/g, "/");
 
             has = zip.hasEntry(ncxFilePath);
             if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
@@ -461,21 +443,12 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
                 }
             }
             if (!has) {
-                ncxFilePath = decodeURI(ncxFilePath);
-                console.log(`PACKAGE OPF: ${ncxFilePathParsedEncodedOriginal} => ${ncxFilePath} ...`);
-
-                has = zip.hasEntry(ncxFilePath);
-                if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-                    try {
-                        has = await (zip as any).hasEntryAsync(ncxFilePath);
-                    } catch (err) {
-                        console.log(err);
-                    }
-                }
-            }
-            if (!has) {
-                const err = `NOT IN ZIP: ${ncxFilePath}`;
+                const err = `NOT IN ZIP: ${ncxManItem.Href} --- ${ncxFilePath}`;
                 console.log(err);
+                const zipEntries = await zip.getEntries();
+                for (const zipEntry of zipEntries) {
+                    console.log(zipEntry);
+                }
                 return Promise.reject(err);
             }
 
@@ -500,7 +473,6 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
             const ncxDoc = new xmldom.DOMParser().parseFromString(ncxStr);
             ncx = XML.deserialize<NCX>(ncxDoc, NCX);
             ncx.ZipPath = ncxFilePath;
-            ncx.ZipPathParsedEncodedOriginal = ncxFilePathParsedEncodedOriginal;
 
             // breakLength: 100  maxArrayLength: undefined
             // console.log(util.inspect(ncx,
@@ -771,39 +743,27 @@ const fillMediaOverlayParse =
     }
     const zip = zipInternal.Value as IZip;
 
-    let moSmilPathInZip = mo.SmilPathInZipParsedEncodedOriginal;
-
-    let has = false;
-    if (moSmilPathInZip) {
-        has = zip.hasEntry(moSmilPathInZip);
-        if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-            try {
-                has = await (zip as any).hasEntryAsync(moSmilPathInZip);
-            } catch (err) {
-                console.log(err);
-            }
+    let has = zip.hasEntry(mo.SmilPathInZip);
+    if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
+        try {
+            has = await (zip as any).hasEntryAsync(mo.SmilPathInZip);
+        } catch (err) {
+            console.log(err);
         }
     }
     if (!has) {
-        moSmilPathInZip = mo.SmilPathInZip;
-        has = zip.hasEntry(moSmilPathInZip);
-        if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-            try {
-                has = await (zip as any).hasEntryAsync(moSmilPathInZip);
-            } catch (err) {
-                console.log(err);
-            }
-        }
-    }
-    if (!has) {
-        const err = `NOT IN ZIP: ${moSmilPathInZip}`;
+        const err = `NOT IN ZIP: ${mo.SmilPathInZip}`;
         console.log(err);
+        const zipEntries = await zip.getEntries();
+        for (const zipEntry of zipEntries) {
+            console.log(zipEntry);
+        }
         return Promise.reject(err);
     }
 
     let smilZipStream_: IStreamAndLength;
     try {
-        smilZipStream_ = await zip.entryStreamPromise(moSmilPathInZip as string);
+        smilZipStream_ = await zip.entryStreamPromise(mo.SmilPathInZip);
     } catch (err) {
         debug(err);
         return Promise.reject(err);
@@ -848,7 +808,6 @@ const fillMediaOverlayParse =
     const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
     const smil = XML.deserialize<SMIL>(smilXmlDoc, SMIL);
     smil.ZipPath = mo.SmilPathInZip;
-    smil.ZipPathParsedEncodedOriginal = mo.SmilPathInZipParsedEncodedOriginal;
 
     mo.initialized = true;
     debug("PARSED SMIL: " + mo.SmilPathInZip);
@@ -904,15 +863,25 @@ const fillMediaOverlay =
                 continue;
             }
 
-            let has = zip.hasEntry(item.Href);
+            const itemHrefDecoded = item.HrefDecoded;
+            if (!itemHrefDecoded) {
+                console.log("?!item.HrefDecoded");
+                continue;
+            }
+            let has = zip.hasEntry(itemHrefDecoded);
             if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
                 try {
-                    has = await (zip as any).hasEntryAsync(item.Href);
+                    has = await (zip as any).hasEntryAsync(itemHrefDecoded);
                 } catch (err) {
                     console.log(err);
                 }
             }
             if (!has) {
+                console.log(`NOT IN ZIP: ${item.HrefDecoded} --- ${itemHrefDecoded}`);
+                const zipEntries = await zip.getEntries();
+                for (const zipEntry of zipEntries) {
+                    console.log(zipEntry);
+                }
                 continue;
             }
 
@@ -926,9 +895,14 @@ const fillMediaOverlay =
                         return false;
                     });
                     if (manItemSmil && opf.ZipPath) {
-                        const smilFilePath2 = path.join(path.dirname(opf.ZipPath), manItemSmil.Href)
-                            .replace(/\\/g, "/");
-                        if (smilFilePath2 === item.Href) {
+                        const manItemSmilHrefDecoded = manItemSmil.HrefDecoded;
+                        if (!manItemSmilHrefDecoded) {
+                            console.log("!?manItemSmil.Href");
+                            return; // foreach
+                        }
+                        const smilFilePath = path.join(path.dirname(opf.ZipPath), manItemSmilHrefDecoded)
+                                .replace(/\\/g, "/");
+                        if (smilFilePath === itemHrefDecoded) {
                             manItemsHtmlWithSmil.push(manItemHtmlWithSmil);
                         }
                     }
@@ -936,8 +910,7 @@ const fillMediaOverlay =
             });
 
             const mo = new MediaOverlayNode();
-            mo.SmilPathInZip = item.Href;
-            mo.SmilPathInZipParsedEncodedOriginal = item.HrefParsedEncodedOriginal;
+            mo.SmilPathInZip = itemHrefDecoded;
             mo.initialized = false;
 
             manItemsHtmlWithSmil.forEach((manItemHtmlWithSmil) => {
@@ -945,8 +918,12 @@ const fillMediaOverlay =
                 if (!opf.ZipPath) {
                     return;
                 }
-
-                const htmlPathInZip = path.join(path.dirname(opf.ZipPath), manItemHtmlWithSmil.Href)
+                const manItemHtmlWithSmilHrefDecoded = manItemHtmlWithSmil.HrefDecoded;
+                if (!manItemHtmlWithSmilHrefDecoded) {
+                    console.log("?!manItemHtmlWithSmil.Href");
+                    return; // foreach
+                }
+                const htmlPathInZip = path.join(path.dirname(opf.ZipPath), manItemHtmlWithSmilHrefDecoded)
                     .replace(/\\/g, "/");
 
                 const link = findLinKByHref(publication, rootfile, opf, htmlPathInZip);
@@ -1604,11 +1581,13 @@ const findInManifestByID =
             if (item && opf.ZipPath) {
                 const linkItem = new Link();
                 linkItem.TypeLink = item.MediaType;
-                const zipPath = path.join(path.dirname(opf.ZipPath), item.Href)
-                    .replace(/\\/g, "/");
 
-                linkItem.HrefParsedEncodedOriginal = zipPath;
-                linkItem.Href = decodeURI(zipPath);
+                const itemHrefDecoded = item.HrefDecoded;
+                if (!itemHrefDecoded) {
+                    return Promise.reject("item.Href?!");
+                }
+                linkItem.Href = path.join(path.dirname(opf.ZipPath), itemHrefDecoded)
+                    .replace(/\\/g, "/");
 
                 await addRelAndPropertiesToLink(publication, linkItem, item, rootfile, opf);
                 addMediaOverlay(linkItem, item, rootfile, opf);
@@ -1867,7 +1846,12 @@ const fillSpineAndResource = async (publication: Publication, rootfile: Rootfile
         // opf.Manifest.forEach(async (item) => {
         for (const item of opf.Manifest) {
 
-            const zipPath = path.join(path.dirname(opf.ZipPath), item.Href)
+            const itemHrefDecoded = item.HrefDecoded;
+            if (!itemHrefDecoded) {
+                console.log("!? item.Href");
+                continue;
+            }
+            const zipPath = path.join(path.dirname(opf.ZipPath), itemHrefDecoded)
                 .replace(/\\/g, "/");
             const linkSpine = findInSpineByHref(publication, zipPath);
             if (!linkSpine || !linkSpine.Href) {
@@ -1875,8 +1859,7 @@ const fillSpineAndResource = async (publication: Publication, rootfile: Rootfile
                 const linkItem = new Link();
                 linkItem.TypeLink = item.MediaType;
 
-                linkItem.HrefParsedEncodedOriginal = zipPath;
-                linkItem.Href = decodeURI(zipPath);
+                linkItem.Href = zipPath;
 
                 await addRelAndPropertiesToLink(publication, linkItem, item, rootfile, opf);
                 addMediaOverlay(linkItem, item, rootfile, opf);
@@ -1951,11 +1934,15 @@ const fillPageListFromNCX = (publication: Publication, _rootfile: Rootfile, _opf
     if (ncx.PageList && ncx.PageList.PageTarget && ncx.PageList.PageTarget.length) {
         ncx.PageList.PageTarget.forEach((pageTarget) => {
             const link = new Link();
-            const zipPath = path.join(path.dirname(ncx.ZipPath), pageTarget.Content.Src)
+            const srcDecoded = pageTarget.Content.SrcDecoded;
+            if (!srcDecoded) {
+                console.log("!?srcDecoded");
+                return; // foreach
+            }
+            const zipPath = path.join(path.dirname(ncx.ZipPath), srcDecoded)
                 .replace(/\\/g, "/");
 
-            link.HrefParsedEncodedOriginal = zipPath;
-            link.Href = decodeURI(zipPath);
+            link.Href = zipPath;
 
             link.Title = pageTarget.Text;
             if (!publication.PageList) {
@@ -1973,11 +1960,14 @@ const fillPageListFromAdobePageMap = async (
     zip: IZip,
     l: Link,
 ): Promise<void> => {
-    const pageMapDef = await createDocStringFromZipPath(l, zip);
-    if (!pageMapDef) {
+    if (!l.HrefDecoded) {
         return;
     }
-    const pageMapXmlDoc = new xmldom.DOMParser().parseFromString(pageMapDef.zipResourceContent);
+    const pageMapContent = await createDocStringFromZipPath(l, zip);
+    if (!pageMapContent) {
+        return;
+    }
+    const pageMapXmlDoc = new xmldom.DOMParser().parseFromString(pageMapContent);
 
     const pages = pageMapXmlDoc.getElementsByTagName("page");
     if (pages && pages.length) {
@@ -1996,11 +1986,14 @@ const fillPageListFromAdobePageMap = async (
                 publication.PageList = [];
             }
 
-            const zipPath = path.join(path.dirname(pageMapDef.zipResourceFilepath), href)
+            const hrefDecoded = tryDecodeURI(href);
+            if (!hrefDecoded) {
+                continue;
+            }
+            const zipPath = path.join(path.dirname(l.HrefDecoded), hrefDecoded)
                 .replace(/\\/g, "/");
 
-            link.HrefParsedEncodedOriginal = zipPath;
-            link.Href = decodeURI(zipPath);
+            link.Href = zipPath;
 
             link.Title = title;
             publication.PageList.push(link);
@@ -2008,41 +2001,32 @@ const fillPageListFromAdobePageMap = async (
     }
 };
 
-interface ZipDef {
-    zipResourceContent: string;
-    zipResourceFilepath: string;
-}
-const createDocStringFromZipPath = async (link: Link, zip: IZip): Promise<ZipDef | undefined> => {
-    let filePath = link.HrefParsedEncodedOriginal;
-    let has = false;
-    if (filePath) {
-        has = zip.hasEntry(filePath);
-        if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-            try {
-                has = await (zip as any).hasEntryAsync(filePath);
-            } catch (err) {
-                console.log(err);
-            }
+const createDocStringFromZipPath = async (link: Link, zip: IZip): Promise<string | undefined> => {
+    const linkHrefDecoded = link.HrefDecoded;
+    if (!linkHrefDecoded) {
+        console.log("!?link.HrefDecoded");
+        return undefined;
+    }
+    let has = zip.hasEntry(linkHrefDecoded);
+    if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
+        try {
+            has = await (zip as any).hasEntryAsync(linkHrefDecoded);
+        } catch (err) {
+            console.log(err);
         }
     }
     if (!has) {
-        filePath = link.Href;
-        has = zip.hasEntry(filePath);
-        if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-            try {
-                has = await (zip as any).hasEntryAsync(filePath);
-            } catch (err) {
-                console.log(err);
-            }
+        console.log(`NOT IN ZIP: ${link.Href} --- ${linkHrefDecoded}`);
+        const zipEntries = await zip.getEntries();
+        for (const zipEntry of zipEntries) {
+            console.log(zipEntry);
         }
-    }
-    if (!has) {
         return undefined;
     }
 
     let zipStream_: IStreamAndLength;
     try {
-        zipStream_ = await zip.entryStreamPromise(filePath);
+        zipStream_ = await zip.entryStreamPromise(linkHrefDecoded);
     } catch (err) {
         debug(err);
         return Promise.reject(err);
@@ -2057,7 +2041,7 @@ const createDocStringFromZipPath = async (link: Link, zip: IZip): Promise<ZipDef
         return Promise.reject(err);
     }
 
-    return { zipResourceContent: zipData.toString("utf8"), zipResourceFilepath: filePath };
+    return zipData.toString("utf8");
 };
 
 const fillTOCFromNCX = (publication: Publication, rootfile: Rootfile, opf: OPF, ncx: NCX) => {
@@ -2075,12 +2059,16 @@ const fillLandmarksFromGuide = (publication: Publication, _rootfile: Rootfile, o
     if (opf.Guide && opf.Guide.length) {
         opf.Guide.forEach((ref) => {
             if (ref.Href && opf.ZipPath) {
+                const refHrefDecoded = ref.HrefDecoded;
+                if (!refHrefDecoded) {
+                    console.log("ref.Href?!");
+                    return; // foreach
+                }
                 const link = new Link();
-                const zipPath = path.join(path.dirname(opf.ZipPath), ref.Href)
+                const zipPath = path.join(path.dirname(opf.ZipPath), refHrefDecoded)
                     .replace(/\\/g, "/");
 
-                link.HrefParsedEncodedOriginal = zipPath;
-                link.Href = decodeURI(zipPath);
+                link.Href = zipPath;
 
                 link.Title = ref.Title;
                 if (!publication.Landmarks) {
@@ -2095,12 +2083,16 @@ const fillLandmarksFromGuide = (publication: Publication, _rootfile: Rootfile, o
 const fillTOCFromNavPoint =
     (publication: Publication, rootfile: Rootfile, opf: OPF, ncx: NCX, point: NavPoint, node: Link[]) => {
 
+        const srcDecoded = point.Content.SrcDecoded;
+        if (!srcDecoded) {
+            console.log("?!point.Content.Src");
+            return;
+        }
         const link = new Link();
-        const zipPath = path.join(path.dirname(ncx.ZipPath), point.Content.Src)
+        const zipPath = path.join(path.dirname(ncx.ZipPath), srcDecoded)
             .replace(/\\/g, "/");
 
-        link.HrefParsedEncodedOriginal = zipPath;
-        link.Href = decodeURI(zipPath);
+        link.Href = zipPath;
 
         link.Title = point.Text;
 
@@ -2175,37 +2167,32 @@ const fillTOCFromNavDoc = async (publication: Publication, _rootfile: Rootfile, 
         return;
     }
 
-    let navDocFilePath = navLink.HrefParsedEncodedOriginal;
+    const navLinkHrefDecoded = navLink.HrefDecoded;
+    if (!navLinkHrefDecoded) {
+        console.log("!?navLink.HrefDecoded");
+        return;
+    }
 
-    let has = false;
-    if (navDocFilePath) {
-        has = zip.hasEntry(navDocFilePath);
-        if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-            try {
-                has = await (zip as any).hasEntryAsync(navDocFilePath);
-            } catch (err) {
-                console.log(err);
-            }
+    let has = zip.hasEntry(navLinkHrefDecoded);
+    if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
+        try {
+            has = await (zip as any).hasEntryAsync(navLinkHrefDecoded);
+        } catch (err) {
+            console.log(err);
         }
     }
     if (!has) {
-        navDocFilePath = navLink.Href;
-        has = zip.hasEntry(navDocFilePath);
-        if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-            try {
-                has = await (zip as any).hasEntryAsync(navDocFilePath);
-            } catch (err) {
-                console.log(err);
-            }
+        console.log(`NOT IN ZIP: ${navLink.Href} --- ${navLinkHrefDecoded}`);
+        const zipEntries = await zip.getEntries();
+        for (const zipEntry of zipEntries) {
+            console.log(zipEntry);
         }
-    }
-    if (!has) {
         return;
     }
 
     let navDocZipStream_: IStreamAndLength;
     try {
-        navDocZipStream_ = await zip.entryStreamPromise(navDocFilePath);
+        navDocZipStream_ = await zip.entryStreamPromise(navLinkHrefDecoded);
     } catch (err) {
         debug(err);
         return Promise.reject(err);
@@ -2244,37 +2231,37 @@ const fillTOCFromNavDoc = async (publication: Publication, _rootfile: Rootfile, 
 
                     case "toc": {
                         publication.TOC = [];
-                        fillTOCFromNavDocWithOL(select, olElem, publication.TOC, navLink.Href);
+                        fillTOCFromNavDocWithOL(select, olElem, publication.TOC, navLinkHrefDecoded);
                         break;
                     }
                     case "page-list": {
                         publication.PageList = [];
-                        fillTOCFromNavDocWithOL(select, olElem, publication.PageList, navLink.Href);
+                        fillTOCFromNavDocWithOL(select, olElem, publication.PageList, navLinkHrefDecoded);
                         break;
                     }
                     case "landmarks": {
                         publication.Landmarks = [];
-                        fillTOCFromNavDocWithOL(select, olElem, publication.Landmarks, navLink.Href);
+                        fillTOCFromNavDocWithOL(select, olElem, publication.Landmarks, navLinkHrefDecoded);
                         break;
                     }
                     case "lot": {
                         publication.LOT = [];
-                        fillTOCFromNavDocWithOL(select, olElem, publication.LOT, navLink.Href);
+                        fillTOCFromNavDocWithOL(select, olElem, publication.LOT, navLinkHrefDecoded);
                         break;
                     }
                     case "loa": {
                         publication.LOA = [];
-                        fillTOCFromNavDocWithOL(select, olElem, publication.LOA, navLink.Href);
+                        fillTOCFromNavDocWithOL(select, olElem, publication.LOA, navLinkHrefDecoded);
                         break;
                     }
                     case "loi": {
                         publication.LOI = [];
-                        fillTOCFromNavDocWithOL(select, olElem, publication.LOI, navLink.Href);
+                        fillTOCFromNavDocWithOL(select, olElem, publication.LOI, navLinkHrefDecoded);
                         break;
                     }
                     case "lov": {
                         publication.LOV = [];
-                        fillTOCFromNavDocWithOL(select, olElem, publication.LOV, navLink.Href);
+                        fillTOCFromNavDocWithOL(select, olElem, publication.LOV, navLinkHrefDecoded);
                         break;
                     }
                     default: {
@@ -2303,16 +2290,20 @@ const fillTOCFromNavDocWithOL = (select: any, olElems: Element[], node: Link[], 
 
                     const aHref = select("@href", aElems[0]);
                     if (aHref && aHref.length) {
-                        let val = (aHref[0] as Attr).value;
+                        const val = (aHref[0] as Attr).value;
+                        let valDecoded = tryDecodeURI(val);
+                        if (!valDecoded) {
+                            console.log("!?valDecoded");
+                            return; // foreach
+                        }
                         if (val[0] === "#") {
-                            val = path.basename(navDocPath) + val;
+                            valDecoded = path.basename(navDocPath) + valDecoded;
                         }
 
-                        const zipPath = path.join(path.dirname(navDocPath), val)
+                        const zipPath = path.join(path.dirname(navDocPath), valDecoded)
                             .replace(/\\/g, "/");
 
-                        link.HrefParsedEncodedOriginal = zipPath;
-                        link.Href = decodeURI(zipPath);
+                        link.Href = zipPath;
                     }
 
                     let aText = aElems[0].textContent; // select("text()", aElems[0])[0].data;
@@ -2400,7 +2391,7 @@ const findInSpineByHref = (publication: Publication, href: string): Link | undef
 
     if (publication.Spine && publication.Spine.length) {
         const ll = publication.Spine.find((l) => {
-            if (l.Href === href) {
+            if (l.HrefDecoded === href) {
                 return true;
             }
             return false;
@@ -2459,9 +2450,7 @@ const isEpub3OrMore = (rootfile: Rootfile, opf: OPF): boolean => {
 const findLinKByHref = (publication: Publication, _rootfile: Rootfile, _opf: OPF, href: string): Link | undefined => {
     if (publication.Spine && publication.Spine.length) {
         const ll = publication.Spine.find((l) => {
-            const pathInZip = l.Href;
-
-            if (href === pathInZip) {
+            if (href === l.HrefDecoded) {
                 return true;
             }
             return false;

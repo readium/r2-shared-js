@@ -338,41 +338,35 @@ async function extractEPUB_ProcessKeys(pub: Publication, keys: string[] | undefi
 
 async function extractEPUB_Link(pub: Publication, zip: IZip, outDir: string, link: Link) {
 
-    let pathInZip = link.HrefParsedEncodedOriginal;
-    console.log("===== " + pathInZip);
+    const hrefDecoded = link.HrefDecoded;
+    console.log("===== " + hrefDecoded);
+    if (!hrefDecoded) {
+        console.log("!?link.HrefDecoded");
+        return;
+    }
 
-    let has = false;
-    if (pathInZip) {
-        has = zip.hasEntry(pathInZip);
-        if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-            try {
-                has = await (zip as any).hasEntryAsync(pathInZip);
-            } catch (err) {
-                console.log(err);
-            }
+    let has = zip.hasEntry(hrefDecoded);
+    if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
+        try {
+            has = await (zip as any).hasEntryAsync(hrefDecoded);
+        } catch (err) {
+            console.log(err);
         }
     }
     if (!has) {
-        pathInZip = link.Href;
-        has = zip.hasEntry(pathInZip);
-        if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
-            try {
-                has = await (zip as any).hasEntryAsync(pathInZip);
-            } catch (err) {
-                console.log(err);
-            }
+        console.log(`NOT IN ZIP: ${link.Href} --- ${hrefDecoded}`);
+        const zipEntries = await zip.getEntries();
+        for (const zipEntry of zipEntries) {
+            console.log(zipEntry);
         }
-    }
-    if (!has) {
-        console.log(`NOT IN ZIP: ${pathInZip}`);
         return;
     }
 
     let zipStream_: IStreamAndLength;
     try {
-        zipStream_ = await zip.entryStreamPromise(pathInZip);
+        zipStream_ = await zip.entryStreamPromise(hrefDecoded);
     } catch (err) {
-        console.log(pathInZip);
+        console.log(hrefDecoded);
         console.log(err);
         return;
     }
@@ -384,7 +378,7 @@ async function extractEPUB_Link(pub: Publication, zip: IZip, outDir: string, lin
             zipStream_,
             false, 0, 0);
     } catch (err) {
-        console.log(pathInZip);
+        console.log(hrefDecoded);
         console.log(err);
         return;
     }
@@ -398,13 +392,13 @@ async function extractEPUB_Link(pub: Publication, zip: IZip, outDir: string, lin
     try {
         zipData = await streamToBufferPromise(zipStream_.stream);
     } catch (err) {
-        console.log(pathInZip);
+        console.log(hrefDecoded);
         console.log(err);
         return;
     }
     // console.log("CHECK: " + zipStream_.length + " ==> " + zipData.length);
 
-    const linkOutputPath = path.join(outDir, link.Href);
+    const linkOutputPath = path.join(outDir, hrefDecoded);
     ensureDirs(linkOutputPath);
     fs.writeFileSync(linkOutputPath, zipData);
 }
