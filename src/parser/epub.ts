@@ -1556,8 +1556,8 @@ const findInManifestByID =
                 if (!itemHrefDecoded) {
                     return Promise.reject("item.Href?!");
                 }
-                linkItem.Href = path.join(path.dirname(opf.ZipPath), itemHrefDecoded)
-                    .replace(/\\/g, "/");
+                linkItem.setHrefDecoded(path.join(path.dirname(opf.ZipPath), itemHrefDecoded)
+                    .replace(/\\/g, "/"));
 
                 await addRelAndPropertiesToLink(publication, linkItem, item, rootfile, opf);
                 addMediaOverlay(linkItem, item, rootfile, opf);
@@ -1815,7 +1815,7 @@ const fillSpineAndResource = async (publication: Publication, rootfile: Rootfile
                 const linkItem = new Link();
                 linkItem.TypeLink = item.MediaType;
 
-                linkItem.Href = zipPath;
+                linkItem.setHrefDecoded(zipPath);
 
                 await addRelAndPropertiesToLink(publication, linkItem, item, rootfile, opf);
                 addMediaOverlay(linkItem, item, rootfile, opf);
@@ -1898,7 +1898,7 @@ const fillPageListFromNCX = (publication: Publication, _rootfile: Rootfile, _opf
             const zipPath = path.join(path.dirname(ncx.ZipPath), srcDecoded)
                 .replace(/\\/g, "/");
 
-            link.Href = zipPath;
+            link.setHrefDecoded(zipPath);
 
             link.Title = pageTarget.Text;
             if (!publication.PageList) {
@@ -1949,7 +1949,7 @@ const fillPageListFromAdobePageMap = async (
             const zipPath = path.join(path.dirname(l.HrefDecoded), hrefDecoded)
                 .replace(/\\/g, "/");
 
-            link.Href = zipPath;
+            link.setHrefDecoded(zipPath);
 
             link.Title = title;
             publication.PageList.push(link);
@@ -2017,7 +2017,7 @@ const fillLandmarksFromGuide = (publication: Publication, _rootfile: Rootfile, o
                 const zipPath = path.join(path.dirname(opf.ZipPath), refHrefDecoded)
                     .replace(/\\/g, "/");
 
-                link.Href = zipPath;
+                link.setHrefDecoded(zipPath);
 
                 link.Title = ref.Title;
                 if (!publication.Landmarks) {
@@ -2041,7 +2041,7 @@ const fillTOCFromNavPoint =
         const zipPath = path.join(path.dirname(ncx.ZipPath), srcDecoded)
             .replace(/\\/g, "/");
 
-        link.Href = zipPath;
+        link.setHrefDecoded(zipPath);
 
         link.Title = point.Text;
 
@@ -2245,7 +2245,7 @@ const fillTOCFromNavDocWithOL = (select: any, olElems: Element[], node: Link[], 
                         const zipPath = path.join(path.dirname(navDocPath), valDecoded)
                             .replace(/\\/g, "/");
 
-                        link.Href = zipPath;
+                        link.setHrefDecoded(zipPath);
                     }
 
                     let aText = aElems[0].textContent; // select("text()", aElems[0])[0].data;

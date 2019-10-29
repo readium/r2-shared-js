@@ -57,6 +57,13 @@ export class Manifest {
         this._urlDecoded = tryDecodeURI(this.Href);
         return !this._urlDecoded ? undefined : this._urlDecoded;
     }
+    set HrefDecoded(href: string | undefined) {
+        this._urlDecoded = href;
+    }
+    public setHrefDecoded(href: string) {
+        this.Href = href;
+        this.HrefDecoded = href;
+    }
 
     // public inspect(depth: number, opts: any): string | null | undefined {
     //     return undefined;

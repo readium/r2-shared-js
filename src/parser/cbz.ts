@@ -62,8 +62,7 @@ export async function CbzParsePromise(filePath: string): Promise<Publication> {
             // console.log(entryName);
 
             const link = new Link();
-
-            link.Href = entryName;
+            link.setHrefDecoded(entryName);
 
             const mediaType = mime.lookup(entryName);
             if (mediaType) {
@@ -213,7 +212,7 @@ const comicRackMetadata = async (zip: IZip, entryName: string, publication: Publ
                 await addCoverDimensions(publication, l);
             }
             if (publication.Spine) {
-                l.Href = publication.Spine[p.Image].Href;
+                l.setHrefDecoded(publication.Spine[p.Image].Href);
             }
             if (p.ImageHeight) {
                 l.Height = p.ImageHeight;

@@ -215,7 +215,7 @@ export class Publication {
         const link = new Link();
         link.AddRels(rel);
 
-        link.Href = url;
+        link.setHrefDecoded(url);
 
         link.TypeLink = typeLink;
 

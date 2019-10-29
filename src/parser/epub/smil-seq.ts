@@ -58,6 +58,13 @@ export class Seq extends SeqOrPar {
         this._urlDecoded = tryDecodeURI(this.TextRef);
         return !this._urlDecoded ? undefined : this._urlDecoded;
     }
+    set TextRefDecoded(href: string | undefined) {
+        this._urlDecoded = href;
+    }
+    public setTextRefDecoded(href: string) {
+        this.TextRef = href;
+        this.TextRefDecoded = href;
+    }
 
     // constructor() {
     //     super();

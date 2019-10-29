@@ -44,4 +44,11 @@ export class Rootfile {
         this._urlDecoded = tryDecodeURI(this.Path);
         return !this._urlDecoded ? undefined : this._urlDecoded;
     }
+    set PathDecoded(href: string | undefined) {
+        this._urlDecoded = href;
+    }
+    public setPathDecoded(href: string) {
+        this.Path = href;
+        this.PathDecoded = href;
+    }
 }

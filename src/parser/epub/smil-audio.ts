@@ -50,4 +50,11 @@ export class Audio {
         this._urlDecoded = tryDecodeURI(this.Src);
         return !this._urlDecoded ? undefined : this._urlDecoded;
     }
+    set SrcDecoded(href: string | undefined) {
+        this._urlDecoded = href;
+    }
+    public setSrcDecoded(href: string) {
+        this.Src = href;
+        this.SrcDecoded = href;
+    }
 }

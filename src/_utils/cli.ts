@@ -430,7 +430,7 @@ async function extractEPUB(pub: Publication, outDir: string, keys: string[] | un
     }
     // if (await zipHasEntry(zip, "META-INF/container.xml", undefined)) {
     //     const l = new Link();
-    //     l.Href = "META-INF/container.xml";
+    //     l.setHrefDecoded("META-INF/container.xml");
     //     links.push(l);
     // }
     if (!keys) {
@@ -438,7 +438,7 @@ async function extractEPUB(pub: Publication, outDir: string, keys: string[] | un
         const has = await zipHasEntry(zip, lic, undefined);
         if (has) {
             const l = new Link();
-            l.Href = lic;
+            l.setHrefDecoded(lic);
             links.push(l);
         }
     }
