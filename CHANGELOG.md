@@ -1,10 +1,27 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.22...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.23...develop
 
 Changes:
 * TODO
+
+# 1.0.23
+
+> Build environment: NodeJS `12.13.0`, NPM `6.12.0`
+
+Changes:
+* EPUB parser: improved support for percent-encoded URLs, with ZIP entry filename fallback on errors (edge case handling)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.23/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.23/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.23
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.22...v1.0.23
 
 # 1.0.22
 
