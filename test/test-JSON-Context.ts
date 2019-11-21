@@ -2,11 +2,10 @@ import test from "ava";
 import * as path from "path";
 
 import { Publication } from "@models/publication";
-import { TaJsonDeserialize, TaJsonSerialize } from "@models/serializable";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
+import { JsonArray, TaJsonDeserialize, TaJsonSerialize } from "@r2-lcp-js/serializable";
 
 import { initGlobalConverters_GENERIC, initGlobalConverters_SHARED } from "../src/init-globals";
-import { JsonArray } from "../src/json";
 import { checkType_Array, checkType_String, inspect, logJSON } from "./helpers";
 
 initGlobalConverters_SHARED();

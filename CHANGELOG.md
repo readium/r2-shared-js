@@ -1,10 +1,28 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.23...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.24...develop
 
 Changes:
 * TODO
+
+# 1.0.24
+
+> Build environment: NodeJS `12.13.0`, NPM `6.13.0`
+
+Changes:
+* NPM package updates
+* TAJSON now parses/generates arbitrary JSON properties with typed object
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.24/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.24/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.24
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.23...v1.0.24
 
 # 1.0.23
 

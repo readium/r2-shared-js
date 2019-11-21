@@ -10,9 +10,9 @@ import {
     JsonConverter, JsonElementType, JsonObject, JsonProperty, OnDeserialized,
 } from "ta-json-x";
 
+import { IWithAdditionalJSON, JsonMap } from "@r2-lcp-js/serializable";
 import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
 
-import { JsonMap } from "../json";
 import { BelongsTo } from "./metadata-belongsto";
 import { Contributor } from "./metadata-contributor";
 import { JsonContributorConverter } from "./metadata-contributor-json-converter";
@@ -21,7 +21,6 @@ import { IStringMap } from "./metadata-multilang";
 import { Properties } from "./metadata-properties";
 import { Subject } from "./metadata-subject";
 import { JsonSubjectConverter } from "./metadata-subject-json-converter";
-import { IWithAdditionalJSON } from "./serializable";
 
 // export interface IMeta {
 //     property: string;

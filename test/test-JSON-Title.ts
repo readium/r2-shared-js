@@ -3,11 +3,10 @@ import * as path from "path";
 
 import { Metadata } from "@models/metadata";
 import { IStringMap } from "@models/metadata-multilang";
-import { TaJsonDeserialize, TaJsonSerialize } from "@models/serializable";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
+import { JsonMap, TaJsonDeserialize, TaJsonSerialize } from "@r2-lcp-js/serializable";
 
 import { initGlobalConverters_GENERIC, initGlobalConverters_SHARED } from "../src/init-globals";
-import { JsonMap } from "../src/json";
 import { checkType_Object, checkType_String, inspect, logJSON } from "./helpers";
 
 initGlobalConverters_SHARED();

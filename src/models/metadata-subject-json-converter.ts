@@ -7,8 +7,9 @@
 
 import { IPropertyConverter, JsonValue } from "ta-json-x";
 
+import { TaJsonDeserialize, TaJsonSerialize } from "@r2-lcp-js/serializable";
+
 import { Subject } from "./metadata-subject";
-import { TaJsonDeserialize, TaJsonSerialize } from "./serializable";
 
 // import { IStringMap } from "./metadata-multilang";
 

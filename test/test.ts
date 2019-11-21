@@ -6,8 +6,8 @@ import * as path from "path";
 
 import { timeStrToSeconds } from "@models/media-overlay";
 import { Publication } from "@models/publication";
-import { TaJsonDeserialize, TaJsonSerialize } from "@models/serializable";
 import { PublicationParsePromise } from "@parser/publication-parser";
+import { TaJsonDeserialize, TaJsonSerialize } from "@r2-lcp-js/serializable";
 
 import { initGlobalConverters_GENERIC, initGlobalConverters_SHARED } from "../src/init-globals";
 

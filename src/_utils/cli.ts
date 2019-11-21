@@ -13,17 +13,16 @@ import * as util from "util";
 
 import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
-import { TaJsonSerialize } from "@models/serializable";
 import { isEPUBlication } from "@parser/epub";
 import { PublicationParsePromise } from "@parser/publication-parser";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
+import { JsonArray, JsonMap, TaJsonSerialize } from "@r2-lcp-js/serializable";
 import { isHTTP } from "@r2-utils-js/_utils/http/UrlUtils";
 import { streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
 import { Transformers } from "@transform/transformer";
 
 import { initGlobalConverters_GENERIC, initGlobalConverters_SHARED } from "../init-globals";
-import { JsonArray, JsonMap } from "../json";
 import { zipHasEntry } from "./zipHasEntry";
 
 // import { initGlobalConverters_OPDS } from "@opds/init-globals";
