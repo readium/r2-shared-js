@@ -1,10 +1,10 @@
 import test, { ExecutionContext } from "ava";
 import * as path from "path";
-import { JSON as TAJSON } from "ta-json-x";
 
 import { BelongsTo } from "@models/metadata-belongsto";
 import { Contributor } from "@models/metadata-contributor";
 import { IStringMap } from "@models/metadata-multilang";
+import { TaJsonDeserialize, TaJsonSerialize } from "@models/serializable";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
 
 import { initGlobalConverters_GENERIC, initGlobalConverters_SHARED } from "../src/init-globals";
@@ -12,6 +12,7 @@ import {
     checkType, checkType_Array, checkType_Number, checkType_Object, checkType_String, inspect,
     logJSON,
 } from "./helpers";
+import { JsonArray } from "./json";
 
 initGlobalConverters_SHARED();
 initGlobalConverters_GENERIC();
@@ -128,14 +129,15 @@ test("JSON SERIALIZE: BelongsTo.Series => Contributor[]", (t) => {
     b.Series.push(contributor2);
     inspect(b);
 
-    const json = TAJSON.serialize(b);
+    const json = TaJsonSerialize(b);
     logJSON(json);
 
     checkType_Array(t, json.series);
-    t.is(json.series.length, 2);
+    const arr = json.series as JsonArray;
+    t.is(arr.length, 2);
 
-    checkJsonContributor1(t, json.series[0]);
-    checkJsonContributor2(t, json.series[1]);
+    checkJsonContributor1(t, arr[0]);
+    checkJsonContributor2(t, arr[1]);
 });
 
 test("JSON SERIALIZE: BelongsTo.Series => Contributor[1] collapse-array", (t) => {
@@ -144,7 +146,7 @@ test("JSON SERIALIZE: BelongsTo.Series => Contributor[1] collapse-array", (t) =>
     b.Series = [contributor1];
     inspect(b);
 
-    const json = TAJSON.serialize(b);
+    const json = TaJsonSerialize(b);
     // // (normalizes single-item array to the item value itself)
     // traverseJsonObjects(json,
     //     (obj, parent, keyInParent) => {
@@ -166,7 +168,7 @@ test("JSON DESERIALIZE: BelongsTo.Series => Contributor[]", (t) => {
     ];
     logJSON(json);
 
-    const b: BelongsTo = TAJSON.deserialize<BelongsTo>(json, BelongsTo);
+    const b: BelongsTo = TaJsonDeserialize<BelongsTo>(json, BelongsTo);
     inspect(b);
 
     checkType_Array(t, b.Series);
@@ -184,7 +186,7 @@ test("JSON DESERIALIZE: BelongsTo.Series => Contributor[1]", (t) => {
     ];
     logJSON(json);
 
-    const b: BelongsTo = TAJSON.deserialize<BelongsTo>(json, BelongsTo);
+    const b: BelongsTo = TaJsonDeserialize<BelongsTo>(json, BelongsTo);
     inspect(b);
 
     checkType_Array(t, b.Series);
@@ -200,7 +202,7 @@ test("JSON DESERIALIZE: BelongsTo.Series => Contributor", (t) => {
     json.series = { name: contributor1NameStr, identifier: contributor1Id, position: contributor1Pos, role: contributor1RoleArr };
     logJSON(json);
 
-    const b: BelongsTo = TAJSON.deserialize<BelongsTo>(json, BelongsTo);
+    const b: BelongsTo = TaJsonDeserialize<BelongsTo>(json, BelongsTo);
     inspect(b);
 
     checkType_Array(t, b.Series);
@@ -215,7 +217,7 @@ test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME []", (t) => {
     json.series = [contributor1NameStr, contributor2NameObj];
     logJSON(json);
 
-    const b: BelongsTo = TAJSON.deserialize<BelongsTo>(json, BelongsTo);
+    const b: BelongsTo = TaJsonDeserialize<BelongsTo>(json, BelongsTo);
     inspect(b);
 
     checkType_Array(t, b.Series);
@@ -234,7 +236,7 @@ test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME [1] A", (t) => {
     json.series = [contributor1NameStr];
     logJSON(json);
 
-    const b: BelongsTo = TAJSON.deserialize<BelongsTo>(json, BelongsTo);
+    const b: BelongsTo = TaJsonDeserialize<BelongsTo>(json, BelongsTo);
     inspect(b);
 
     checkType_Array(t, b.Series);
@@ -250,7 +252,7 @@ test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME [1] B", (t) => {
     json.series = [contributor2NameObj];
     logJSON(json);
 
-    const b: BelongsTo = TAJSON.deserialize<BelongsTo>(json, BelongsTo);
+    const b: BelongsTo = TaJsonDeserialize<BelongsTo>(json, BelongsTo);
     inspect(b);
 
     checkType_Array(t, b.Series);
@@ -266,7 +268,7 @@ test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME A", (t) => {
     json.series = contributor1NameStr;
     logJSON(json);
 
-    const b: BelongsTo = TAJSON.deserialize<BelongsTo>(json, BelongsTo);
+    const b: BelongsTo = TaJsonDeserialize<BelongsTo>(json, BelongsTo);
     inspect(b);
 
     checkType_Array(t, b.Series);
@@ -282,7 +284,7 @@ test("JSON DESERIALIZE: BelongsTo.Series => Contributor NAME B", (t) => {
     json.series = contributor2NameObj;
     logJSON(json);
 
-    const b: BelongsTo = TAJSON.deserialize<BelongsTo>(json, BelongsTo);
+    const b: BelongsTo = TaJsonDeserialize<BelongsTo>(json, BelongsTo);
     inspect(b);
 
     checkType_Array(t, b.Series);

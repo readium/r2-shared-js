@@ -5,9 +5,10 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
-import { IPropertyConverter, JSON as TAJSON, JsonValue } from "ta-json-x";
+import { IPropertyConverter, JsonValue } from "ta-json-x";
 
 import { Subject } from "./metadata-subject";
+import { TaJsonDeserialize, TaJsonSerialize } from "./serializable";
 
 // import { IStringMap } from "./metadata-multilang";
 
@@ -25,7 +26,7 @@ export class JsonSubjectConverter implements IPropertyConverter {
             //     return s.Name; // IStringMap
             // }
         }
-        return TAJSON.serialize(s);
+        return TaJsonSerialize(s);
     }
 
     public deserialize(value: JsonValue): Subject {
@@ -47,7 +48,7 @@ export class JsonSubjectConverter implements IPropertyConverter {
         //     });
         //     return s;
         // }
-        return TAJSON.deserialize<Subject>(value, Subject);
+        return TaJsonDeserialize<Subject>(value, Subject);
     }
 
     public collapseArrayWithSingleItem(): boolean {

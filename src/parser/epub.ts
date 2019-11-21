@@ -12,7 +12,6 @@ import { ISize } from "image-size/dist/types/interface";
 import * as moment from "moment";
 import * as path from "path";
 import * as querystring from "querystring";
-import { JSON as TAJSON } from "ta-json-x";
 import { URL } from "url";
 import * as xmldom from "xmldom";
 import * as xpath from "xpath";
@@ -29,6 +28,7 @@ import {
 import { Subject } from "@models/metadata-subject";
 import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
+import { TaJsonDeserialize } from "@models/serializable";
 import { Encrypted } from "@r2-lcp-js/models/metadata-encrypted";
 import { LCP } from "@r2-lcp-js/parser/epub/lcp";
 import { isHTTP } from "@r2-utils-js/_utils/http/UrlUtils";
@@ -221,7 +221,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
         const lcplStr = lcplZipData.toString("utf8");
         const lcplJson = global.JSON.parse(lcplStr);
         // debug(lcplJson);
-        lcpl = TAJSON.deserialize<LCP>(lcplJson, LCP);
+        lcpl = TaJsonDeserialize<LCP>(lcplJson, LCP);
         lcpl.ZipPath = lcplZipPath;
         lcpl.JsonSource = lcplStr;
         lcpl.init();

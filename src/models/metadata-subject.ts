@@ -8,10 +8,8 @@
 // https://github.com/edcarroll/ta-json
 import { JsonElementType, JsonObject, JsonProperty, OnDeserialized } from "ta-json-x";
 
-import { JsonArray, JsonMap } from "../json";
 import { IStringMap } from "./metadata-multilang";
 import { Link } from "./publication-link";
-import { IWithAdditionalJSON } from "./serializable";
 
 const LINKS_JSON_PROP = "links";
 
@@ -19,7 +17,7 @@ const LINKS_JSON_PROP = "links";
 // tslint:disable-next-line:max-line-length
 // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json
 @JsonObject()
-export class Subject implements IWithAdditionalJSON {
+export class Subject {
 
     @JsonProperty("name")
     public Name!: string | IStringMap;
@@ -47,31 +45,6 @@ export class Subject implements IWithAdditionalJSON {
     @JsonProperty(LINKS_JSON_PROP)
     @JsonElementType(Link)
     public Links!: Link[];
-
-    // BEGIN IWithAdditionalJSON
-    // tslint:disable: member-ordering
-    public AdditionalJSON!: JsonMap; // unused
-    public SupportedKeys!: string[]; // unused
-
-    public parseAdditionalJSON(json: JsonMap) {
-        // parseAdditionalJSON(this, json);
-
-        if (this.Links) {
-            this.Links.forEach((link, i) => {
-                link.parseAdditionalJSON((json[LINKS_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-    }
-    public generateAdditionalJSON(json: JsonMap) {
-        // generateAdditionalJSON(this, json);
-
-        if (this.Links) {
-            this.Links.forEach((link, i) => {
-                link.generateAdditionalJSON((json[LINKS_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-    }
-    // END IWithAdditionalJSON
 
     @OnDeserialized()
     // tslint:disable-next-line:no-unused-variable

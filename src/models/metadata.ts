@@ -12,7 +12,7 @@ import {
 
 import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
 
-import { JsonArray, JsonMap } from "../json";
+import { JsonMap } from "../json";
 import { BelongsTo } from "./metadata-belongsto";
 import { Contributor } from "./metadata-contributor";
 import { JsonContributorConverter } from "./metadata-contributor-json-converter";
@@ -21,7 +21,7 @@ import { IStringMap } from "./metadata-multilang";
 import { Properties } from "./metadata-properties";
 import { Subject } from "./metadata-subject";
 import { JsonSubjectConverter } from "./metadata-subject-json-converter";
-import { IWithAdditionalJSON, generateAdditionalJSON, parseAdditionalJSON } from "./serializable";
+import { IWithAdditionalJSON } from "./serializable";
 
 // export interface IMeta {
 //     property: string;
@@ -39,7 +39,7 @@ export enum DirectionEnum {
 // regexp replace all:
 // $1,
 // tslint:disable-next-line:max-line-length
-export const MetadataSupportedKeys = ["title", "subtitle", "identifier", "author", "translator", "editor", "artist", "illustrator", "letterer", "penciler", "colorist", "inker", "narrator", "contributor", "publisher", "imprint", "language", "modified", "published", "sortAs", "description", "readingProgression", "direction", "belongsTo", "duration", "numberOfPages", "rights", "rendition", "source", "subject"];
+// export const MetadataSupportedKeys = ["title", "subtitle", "identifier", "author", "translator", "editor", "artist", "illustrator", "letterer", "penciler", "colorist", "inker", "narrator", "contributor", "publisher", "imprint", "language", "modified", "published", "sortAs", "description", "readingProgression", "direction", "belongsTo", "duration", "numberOfPages", "rights", "rendition", "source", "subject"];
 
 const SUBJECT_JSON_PROP = "subject";
 const BELONGS_TO_JSON_PROP = "belongs_to";
@@ -322,170 +322,170 @@ export class Metadata implements IWithAdditionalJSON {
 
     // BEGIN IWithAdditionalJSON
     public AdditionalJSON!: JsonMap;
-    public get SupportedKeys() {
-        return MetadataSupportedKeys;
-    }
+    // public get SupportedKeys() {
+    //     return MetadataSupportedKeys;
+    // }
 
-    public parseAdditionalJSON(json: JsonMap) {
-        parseAdditionalJSON(this, json);
+    // public parseAdditionalJSON(json: JsonMap) {
+    //     parseAdditionalJSON(this, json);
 
-        if (this.BelongsTo1) {
-            this.BelongsTo1.parseAdditionalJSON(json[BELONGS_TO_JSON_PROP] as JsonMap); // belongs_to
-        }
-        if (this.BelongsTo2) {
-            this.BelongsTo2.parseAdditionalJSON(json[BELONGSTO_JSON_PROP] as JsonMap); // belongsTo
-        }
-        if (this.Rendition) {
-            this.Rendition.parseAdditionalJSON(json[RENDITION_JSON_PROP] as JsonMap);
-        }
-        if (this.Subject) {
-            this.Subject.forEach((subject, i) => {
-                subject.parseAdditionalJSON((json[SUBJECT_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Author) {
-            this.Author.forEach((cont, i) => {
-                cont.parseAdditionalJSON((json[AUTHOR_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Translator) {
-            this.Translator.forEach((cont, i) => {
-                cont.parseAdditionalJSON((json[TRANSLATOR_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Editor) {
-            this.Editor.forEach((cont, i) => {
-                cont.parseAdditionalJSON((json[EDITOR_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Artist) {
-            this.Artist.forEach((cont, i) => {
-                cont.parseAdditionalJSON((json[ARTIST_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Illustrator) {
-            this.Illustrator.forEach((cont, i) => {
-                cont.parseAdditionalJSON((json[ILLUSTRATOR_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Letterer) {
-            this.Letterer.forEach((cont, i) => {
-                cont.parseAdditionalJSON((json[LETTERER_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Penciler) {
-            this.Penciler.forEach((cont, i) => {
-                cont.parseAdditionalJSON((json[PENCILER_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Colorist) {
-            this.Colorist.forEach((cont, i) => {
-                cont.parseAdditionalJSON((json[COLORIST_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Inker) {
-            this.Inker.forEach((cont, i) => {
-                cont.parseAdditionalJSON((json[INKER_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Narrator) {
-            this.Narrator.forEach((cont, i) => {
-                cont.parseAdditionalJSON((json[NARRATOR_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Contributor) {
-            this.Contributor.forEach((cont, i) => {
-                cont.parseAdditionalJSON((json[CONTRIBUTOR_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Publisher) {
-            this.Publisher.forEach((cont, i) => {
-                cont.parseAdditionalJSON((json[PUBLISHER_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Imprint) {
-            this.Imprint.forEach((cont, i) => {
-                cont.parseAdditionalJSON((json[IMPRINT_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-    }
-    public generateAdditionalJSON(json: JsonMap) {
-        generateAdditionalJSON(this, json);
+    //     if (this.BelongsTo1) {
+    //         this.BelongsTo1.parseAdditionalJSON(json[BELONGS_TO_JSON_PROP] as JsonMap); // belongs_to
+    //     }
+    //     if (this.BelongsTo2) {
+    //         this.BelongsTo2.parseAdditionalJSON(json[BELONGSTO_JSON_PROP] as JsonMap); // belongsTo
+    //     }
+    //     if (this.Rendition) {
+    //         this.Rendition.parseAdditionalJSON(json[RENDITION_JSON_PROP] as JsonMap);
+    //     }
+    //     if (this.Subject) {
+    //         this.Subject.forEach((subject, i) => {
+    //             subject.parseAdditionalJSON((json[SUBJECT_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Author) {
+    //         this.Author.forEach((cont, i) => {
+    //             cont.parseAdditionalJSON((json[AUTHOR_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Translator) {
+    //         this.Translator.forEach((cont, i) => {
+    //             cont.parseAdditionalJSON((json[TRANSLATOR_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Editor) {
+    //         this.Editor.forEach((cont, i) => {
+    //             cont.parseAdditionalJSON((json[EDITOR_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Artist) {
+    //         this.Artist.forEach((cont, i) => {
+    //             cont.parseAdditionalJSON((json[ARTIST_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Illustrator) {
+    //         this.Illustrator.forEach((cont, i) => {
+    //             cont.parseAdditionalJSON((json[ILLUSTRATOR_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Letterer) {
+    //         this.Letterer.forEach((cont, i) => {
+    //             cont.parseAdditionalJSON((json[LETTERER_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Penciler) {
+    //         this.Penciler.forEach((cont, i) => {
+    //             cont.parseAdditionalJSON((json[PENCILER_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Colorist) {
+    //         this.Colorist.forEach((cont, i) => {
+    //             cont.parseAdditionalJSON((json[COLORIST_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Inker) {
+    //         this.Inker.forEach((cont, i) => {
+    //             cont.parseAdditionalJSON((json[INKER_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Narrator) {
+    //         this.Narrator.forEach((cont, i) => {
+    //             cont.parseAdditionalJSON((json[NARRATOR_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Contributor) {
+    //         this.Contributor.forEach((cont, i) => {
+    //             cont.parseAdditionalJSON((json[CONTRIBUTOR_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Publisher) {
+    //         this.Publisher.forEach((cont, i) => {
+    //             cont.parseAdditionalJSON((json[PUBLISHER_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Imprint) {
+    //         this.Imprint.forEach((cont, i) => {
+    //             cont.parseAdditionalJSON((json[IMPRINT_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    // }
+    // public generateAdditionalJSON(json: JsonMap) {
+    //     generateAdditionalJSON(this, json);
 
-        if (this.Rendition) {
-            this.Rendition.generateAdditionalJSON(json[RENDITION_JSON_PROP] as JsonMap);
-        }
-        if (this.Subject) {
-            this.Subject.forEach((subject, i) => {
-                subject.generateAdditionalJSON((json[SUBJECT_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Author) {
-            this.Author.forEach((cont, i) => {
-                cont.generateAdditionalJSON((json[AUTHOR_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Translator) {
-            this.Translator.forEach((cont, i) => {
-                cont.generateAdditionalJSON((json[TRANSLATOR_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Editor) {
-            this.Editor.forEach((cont, i) => {
-                cont.generateAdditionalJSON((json[EDITOR_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Artist) {
-            this.Artist.forEach((cont, i) => {
-                cont.generateAdditionalJSON((json[ARTIST_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Illustrator) {
-            this.Illustrator.forEach((cont, i) => {
-                cont.generateAdditionalJSON((json[ILLUSTRATOR_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Letterer) {
-            this.Letterer.forEach((cont, i) => {
-                cont.generateAdditionalJSON((json[LETTERER_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Penciler) {
-            this.Penciler.forEach((cont, i) => {
-                cont.generateAdditionalJSON((json[PENCILER_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Colorist) {
-            this.Colorist.forEach((cont, i) => {
-                cont.generateAdditionalJSON((json[COLORIST_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Inker) {
-            this.Inker.forEach((cont, i) => {
-                cont.generateAdditionalJSON((json[INKER_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Narrator) {
-            this.Narrator.forEach((cont, i) => {
-                cont.generateAdditionalJSON((json[NARRATOR_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Contributor) {
-            this.Contributor.forEach((cont, i) => {
-                cont.generateAdditionalJSON((json[CONTRIBUTOR_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Publisher) {
-            this.Publisher.forEach((cont, i) => {
-                cont.generateAdditionalJSON((json[PUBLISHER_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Imprint) {
-            this.Imprint.forEach((cont, i) => {
-                cont.generateAdditionalJSON((json[IMPRINT_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-    }
+    //     if (this.Rendition) {
+    //         this.Rendition.generateAdditionalJSON(json[RENDITION_JSON_PROP] as JsonMap);
+    //     }
+    //     if (this.Subject) {
+    //         this.Subject.forEach((subject, i) => {
+    //             subject.generateAdditionalJSON((json[SUBJECT_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Author) {
+    //         this.Author.forEach((cont, i) => {
+    //             cont.generateAdditionalJSON((json[AUTHOR_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Translator) {
+    //         this.Translator.forEach((cont, i) => {
+    //             cont.generateAdditionalJSON((json[TRANSLATOR_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Editor) {
+    //         this.Editor.forEach((cont, i) => {
+    //             cont.generateAdditionalJSON((json[EDITOR_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Artist) {
+    //         this.Artist.forEach((cont, i) => {
+    //             cont.generateAdditionalJSON((json[ARTIST_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Illustrator) {
+    //         this.Illustrator.forEach((cont, i) => {
+    //             cont.generateAdditionalJSON((json[ILLUSTRATOR_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Letterer) {
+    //         this.Letterer.forEach((cont, i) => {
+    //             cont.generateAdditionalJSON((json[LETTERER_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Penciler) {
+    //         this.Penciler.forEach((cont, i) => {
+    //             cont.generateAdditionalJSON((json[PENCILER_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Colorist) {
+    //         this.Colorist.forEach((cont, i) => {
+    //             cont.generateAdditionalJSON((json[COLORIST_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Inker) {
+    //         this.Inker.forEach((cont, i) => {
+    //             cont.generateAdditionalJSON((json[INKER_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Narrator) {
+    //         this.Narrator.forEach((cont, i) => {
+    //             cont.generateAdditionalJSON((json[NARRATOR_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Contributor) {
+    //         this.Contributor.forEach((cont, i) => {
+    //             cont.generateAdditionalJSON((json[CONTRIBUTOR_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Publisher) {
+    //         this.Publisher.forEach((cont, i) => {
+    //             cont.generateAdditionalJSON((json[PUBLISHER_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    //     if (this.Imprint) {
+    //         this.Imprint.forEach((cont, i) => {
+    //             cont.generateAdditionalJSON((json[IMPRINT_JSON_PROP] as JsonArray)[i] as JsonMap);
+    //         });
+    //     }
+    // }
     // END IWithAdditionalJSON
 
     @OnDeserialized()

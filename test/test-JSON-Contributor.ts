@@ -1,11 +1,10 @@
 import test, { ExecutionContext } from "ava";
 import * as path from "path";
-import { JSON as TAJSON } from "ta-json-x";
 
 import { Metadata } from "@models/metadata";
 import { Contributor } from "@models/metadata-contributor";
 import { IStringMap } from "@models/metadata-multilang";
-import { TaJsonDeserialize } from "@models/serializable";
+import { TaJsonDeserialize, TaJsonSerialize } from "@models/serializable";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
 
 import { initGlobalConverters_GENERIC, initGlobalConverters_SHARED } from "../src/init-globals";
@@ -13,6 +12,7 @@ import {
     checkType, checkType_Array, checkType_Number, checkType_Object, checkType_String, inspect,
     logJSON,
 } from "./helpers";
+import { JsonArray } from "./json";
 
 initGlobalConverters_SHARED();
 initGlobalConverters_GENERIC();
@@ -129,14 +129,15 @@ test("JSON SERIALIZE: Metadata.Imprint => Contributor[]", (t) => {
     b.Imprint.push(contributor2);
     inspect(b);
 
-    const json = TAJSON.serialize(b);
+    const json = TaJsonSerialize(b);
     logJSON(json);
 
     checkType_Array(t, json.imprint);
-    t.is(json.imprint.length, 2);
+    const arr = json.imprint as JsonArray;
+    t.is(arr.length, 2);
 
-    checkJsonContributor1(t, json.imprint[0]);
-    checkJsonContributor2(t, json.imprint[1]);
+    checkJsonContributor1(t, arr[0]);
+    checkJsonContributor2(t, arr[1]);
 });
 
 test("JSON SERIALIZE: Metadata.Imprint => Contributor[1] collapse-array", (t) => {
@@ -145,7 +146,7 @@ test("JSON SERIALIZE: Metadata.Imprint => Contributor[1] collapse-array", (t) =>
     b.Imprint = [contributor1];
     inspect(b);
 
-    const json = TAJSON.serialize(b);
+    const json = TaJsonSerialize(b);
     // // (normalizes single-item array to the item value itself)
     // traverseJsonObjects(json,
     //     (obj, parent, keyInParent) => {

@@ -12,17 +12,15 @@ import {
 
 import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
 
-import { JsonArray, JsonMap } from "../json";
 import { IStringMap } from "./metadata-multilang";
 import { Link } from "./publication-link";
-import { IWithAdditionalJSON } from "./serializable";
 
 const LINKS_JSON_PROP = "links";
 
 // tslint:disable-next-line:max-line-length
 // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/contributor-object.schema.json
 @JsonObject()
-export class Contributor implements IWithAdditionalJSON {
+export class Contributor {
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/contributor-object.schema.json#L7
@@ -66,34 +64,9 @@ export class Contributor implements IWithAdditionalJSON {
     // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/contributor-object.schema.json#L44
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/ca6d887caa2d0495200fef4695f41aacb5fed2e9/schema/link.schema.json
-    @JsonProperty("links")
+    @JsonProperty(LINKS_JSON_PROP)
     @JsonElementType(Link)
     public Links!: Link[];
-
-    // BEGIN IWithAdditionalJSON
-    // tslint:disable: member-ordering
-    public AdditionalJSON!: JsonMap; // unused
-    public SupportedKeys!: string[]; // unused
-
-    public parseAdditionalJSON(json: JsonMap) {
-        // parseAdditionalJSON(this, json);
-
-        if (this.Links) {
-            this.Links.forEach((link, i) => {
-                link.parseAdditionalJSON((json[LINKS_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-    }
-    public generateAdditionalJSON(json: JsonMap) {
-        // generateAdditionalJSON(this, json);
-
-        if (this.Links) {
-            this.Links.forEach((link, i) => {
-                link.generateAdditionalJSON((json[LINKS_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-    }
-    // END IWithAdditionalJSON
 
     @OnDeserialized()
     // tslint:disable-next-line:no-unused-variable

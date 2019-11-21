@@ -14,11 +14,9 @@ import { LCP } from "@r2-lcp-js/parser/epub/lcp";
 import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
 import { IZip } from "@r2-utils-js/_utils/zip/zip";
 
-import { JsonArray, JsonMap } from "../json";
 import { IInternal } from "./internal";
 import { Metadata } from "./metadata";
 import { Link } from "./publication-link";
-import { IWithAdditionalJSON } from "./serializable";
 
 // import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
 // import { IPublicationCollection } from "./publication-collection";
@@ -39,7 +37,7 @@ const LOT_JSON_PROP = "lot";
 // tslint:disable-next-line:max-line-length
 // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json
 @JsonObject()
-export class Publication implements IWithAdditionalJSON {
+export class Publication {
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json#L6
@@ -131,136 +129,6 @@ export class Publication implements IWithAdditionalJSON {
     // public Images!: Link[];
 
     public LCP: LCP | undefined;
-
-    // BEGIN IWithAdditionalJSON
-    public AdditionalJSON!: JsonMap; // unused
-    public SupportedKeys!: string[]; // unused
-
-    public parseAdditionalJSON(json: JsonMap) {
-        // parseAdditionalJSON(this, json);
-
-        if (this.Metadata) {
-            this.Metadata.parseAdditionalJSON(json[METADATA_JSON_PROP] as JsonMap);
-        }
-        if (this.Links) {
-            this.Links.forEach((link, i) => {
-                link.parseAdditionalJSON((json[LINKS_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Resources) {
-            this.Resources.forEach((link, i) => {
-                link.parseAdditionalJSON((json[RESOURCES_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.TOC) {
-            this.TOC.forEach((link, i) => {
-                link.parseAdditionalJSON((json[TOC_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.PageList) {
-            this.PageList.forEach((link, i) => {
-                link.parseAdditionalJSON((json[PAGELIST_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Landmarks) {
-            this.Landmarks.forEach((link, i) => {
-                link.parseAdditionalJSON((json[LANDMARKS_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.LOI) {
-            this.LOI.forEach((link, i) => {
-                link.parseAdditionalJSON((json[LOI_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.LOA) {
-            this.LOA.forEach((link, i) => {
-                link.parseAdditionalJSON((json[LOA_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.LOV) {
-            this.LOV.forEach((link, i) => {
-                link.parseAdditionalJSON((json[LOV_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.LOT) {
-            this.LOT.forEach((link, i) => {
-                link.parseAdditionalJSON((json[LOT_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Spine1) {
-            this.Spine1.forEach((link, i) => {
-                link.parseAdditionalJSON((json[SPINE_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Spine2) {
-            this.Spine2.forEach((link, i) => {
-                link.parseAdditionalJSON((json[READINGORDER_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-    }
-    public generateAdditionalJSON(json: JsonMap) {
-        // generateAdditionalJSON(this, json);
-
-        if (this.Metadata) {
-            this.Metadata.generateAdditionalJSON(json[METADATA_JSON_PROP] as JsonMap);
-        }
-        if (this.Links) {
-            this.Links.forEach((link, i) => {
-                link.generateAdditionalJSON((json[LINKS_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Resources) {
-            this.Resources.forEach((link, i) => {
-                link.generateAdditionalJSON((json[RESOURCES_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.TOC) {
-            this.TOC.forEach((link, i) => {
-                link.generateAdditionalJSON((json[TOC_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.PageList) {
-            this.PageList.forEach((link, i) => {
-                link.generateAdditionalJSON((json[PAGELIST_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Landmarks) {
-            this.Landmarks.forEach((link, i) => {
-                link.generateAdditionalJSON((json[LANDMARKS_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.LOI) {
-            this.LOI.forEach((link, i) => {
-                link.generateAdditionalJSON((json[LOI_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.LOA) {
-            this.LOA.forEach((link, i) => {
-                link.generateAdditionalJSON((json[LOA_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.LOV) {
-            this.LOV.forEach((link, i) => {
-                link.generateAdditionalJSON((json[LOV_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.LOT) {
-            this.LOT.forEach((link, i) => {
-                link.generateAdditionalJSON((json[LOT_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Spine1) {
-            this.Spine1.forEach((link, i) => {
-                link.generateAdditionalJSON((json[SPINE_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-        if (this.Spine2) {
-            this.Spine2.forEach((link, i) => {
-                link.generateAdditionalJSON((json[READINGORDER_JSON_PROP] as JsonArray)[i] as JsonMap);
-            });
-        }
-    }
-    // END IWithAdditionalJSON
 
     public freeDestroy() {
         console.log("freeDestroy: Publication");

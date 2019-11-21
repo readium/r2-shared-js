@@ -1,12 +1,13 @@
 import test from "ava";
 import * as path from "path";
-import { JSON as TAJSON } from "ta-json-x";
 
 import { Link } from "@models/publication-link";
+import { TaJsonDeserialize, TaJsonSerialize } from "@models/serializable";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
 
 import { initGlobalConverters_GENERIC, initGlobalConverters_SHARED } from "../src/init-globals";
 import { checkType_Array, checkType_String, inspect, logJSON } from "./helpers";
+import { JsonArray } from "./json";
 
 initGlobalConverters_SHARED();
 initGlobalConverters_GENERIC();
@@ -27,17 +28,18 @@ test("JSON SERIALIZE: Publication Link.Rel => string[]", (t) => {
     link.AddRel(relStr2);
     inspect(link);
 
-    const json = TAJSON.serialize(link);
+    const json = TaJsonSerialize(link);
     logJSON(json);
 
     checkType_Array(t, json.rel);
-    t.is(json.rel.length, 2);
+    const arr = json.rel as JsonArray;
+    t.is(arr.length, 2);
 
-    checkType_String(t, json.rel[0]);
-    t.is(json.rel[0], relStr1);
+    checkType_String(t, arr[0]);
+    t.is(arr[0], relStr1);
 
-    checkType_String(t, json.rel[1]);
-    t.is(json.rel[1], relStr2);
+    checkType_String(t, arr[1]);
+    t.is(arr[1], relStr2);
 });
 
 test("JSON SERIALIZE: Publication Link.Rel => string", (t) => {
@@ -46,7 +48,7 @@ test("JSON SERIALIZE: Publication Link.Rel => string", (t) => {
     link.AddRel(relStr1);
     inspect(link);
 
-    const json = TAJSON.serialize(link);
+    const json = TaJsonSerialize(link);
     logJSON(json);
 
     checkType_String(t, json.rel);
@@ -59,7 +61,7 @@ test("JSON DESERIALIZE: Publication Link.Rel => string[]", (t) => {
     json.rel = [relStr1, relStr2];
     logJSON(json);
 
-    const link: Link = TAJSON.deserialize<Link>(json, Link);
+    const link: Link = TaJsonDeserialize<Link>(json, Link);
     inspect(link);
 
     checkType_Array(t, link.Rel);
@@ -78,7 +80,7 @@ test("JSON DESERIALIZE: Publication Link.Rel => string[1]", (t) => {
     json.rel = [relStr1];
     logJSON(json);
 
-    const link: Link = TAJSON.deserialize<Link>(json, Link);
+    const link: Link = TaJsonDeserialize<Link>(json, Link);
     inspect(link);
 
     checkType_Array(t, link.Rel);
@@ -94,7 +96,7 @@ test("JSON DESERIALIZE: Publication Link.Rel => string", (t) => {
     json.rel = relStr1;
     logJSON(json);
 
-    const link: Link = TAJSON.deserialize<Link>(json, Link);
+    const link: Link = TaJsonDeserialize<Link>(json, Link);
     inspect(link);
 
     checkType_Array(t, link.Rel);
