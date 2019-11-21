@@ -14,17 +14,21 @@ import { LCP } from "@r2-lcp-js/parser/epub/lcp";
 import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
 import { IZip } from "@r2-utils-js/_utils/zip/zip";
 
+import { JsonMap } from "../json";
 import { IInternal } from "./internal";
 import { Metadata } from "./metadata";
 import { Link } from "./publication-link";
+import { IWithAdditionalJSON } from "./serializable";
 
 // import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
 // import { IPublicationCollection } from "./publication-collection";
 
+const METADATA_JSON_PROP = "metadata";
+
 // tslint:disable-next-line:max-line-length
 // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json
 @JsonObject()
-export class Publication {
+export class Publication implements IWithAdditionalJSON {
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json#L6
@@ -35,7 +39,7 @@ export class Publication {
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0ac78ab5c270a608c39b4b04fc90bd9b1d281896/schema/publication.schema.json#L13
-    @JsonProperty("metadata")
+    @JsonProperty(METADATA_JSON_PROP)
     public Metadata!: Metadata;
 
     // tslint:disable-next-line:max-line-length
@@ -117,7 +121,21 @@ export class Publication {
 
     public LCP: LCP | undefined;
 
-    private Internal: IInternal[] | undefined;
+    // BEGIN IWithAdditionalJSON
+    public AdditionalJSON!: JsonMap; // unused
+    public SupportedKeys!: string[]; // unused
+
+    public parseAdditionalJSON(json: JsonMap) {
+        if (this.Metadata) {
+            this.Metadata.parseAdditionalJSON(json[METADATA_JSON_PROP] as JsonMap);
+        }
+    }
+    public generateAdditionalJSON(json: JsonMap) {
+        if (this.Metadata) {
+            this.Metadata.generateAdditionalJSON(json[METADATA_JSON_PROP] as JsonMap);
+        }
+    }
+    // END IWithAdditionalJSON
 
     public freeDestroy() {
         console.log("freeDestroy: Publication");
@@ -250,4 +268,7 @@ export class Publication {
         //     console.log("Publication.Links is not set!");
         // }
     }
+
+    // tslint:disable-next-line: member-ordering
+    private Internal: IInternal[] | undefined;
 }

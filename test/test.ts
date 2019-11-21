@@ -3,10 +3,10 @@ import * as debug_ from "debug";
 import * as filehound from "filehound";
 import * as jsonDiff from "json-diff";
 import * as path from "path";
-import { JSON as TAJSON } from "ta-json-x";
 
 import { timeStrToSeconds } from "@models/media-overlay";
 import { Publication } from "@models/publication";
+import { TaJsonDeserialize, TaJsonSerialize } from "@models/serializable";
 import { PublicationParsePromise } from "@parser/publication-parser";
 
 import { initGlobalConverters_GENERIC, initGlobalConverters_SHARED } from "../src/init-globals";
@@ -83,9 +83,9 @@ test("EPUB parsing (de)serialize roundtrip", async (t) => {
             console.log(err);
             continue;
         }
-        const publicationJson1 = TAJSON.serialize(pub);
-        const publication = TAJSON.deserialize<Publication>(publicationJson1, Publication);
-        const publicationJson2 = TAJSON.serialize(publication);
+        const publicationJson1 = TaJsonSerialize(pub);
+        const publication = TaJsonDeserialize<Publication>(publicationJson1, Publication);
+        const publicationJson2 = TaJsonSerialize(publication);
 
         const str1 = JSON.stringify(publicationJson1, null, 2);
         const str2 = JSON.stringify(publicationJson2, null, 2);

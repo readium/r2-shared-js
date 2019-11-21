@@ -8,12 +8,12 @@
 import * as crypto from "crypto";
 import * as fs from "fs";
 import * as path from "path";
-import { JSON as TAJSON } from "ta-json-x";
 import { URL } from "url";
 import * as util from "util";
 
 import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
+import { TaJsonSerialize } from "@models/serializable";
 import { isEPUBlication } from "@parser/epub";
 import { PublicationParsePromise } from "@parser/publication-parser";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
@@ -23,6 +23,7 @@ import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
 import { Transformers } from "@transform/transformer";
 
 import { initGlobalConverters_GENERIC, initGlobalConverters_SHARED } from "../init-globals";
+import { JsonArray, JsonMap } from "../json";
 import { zipHasEntry } from "./zipHasEntry";
 
 // import { initGlobalConverters_OPDS } from "@opds/init-globals";
@@ -148,14 +149,14 @@ if (args[2]) {
 
 function extractEPUB_ManifestJSON(pub: Publication, outDir: string, keys: string[] | undefined) {
 
-    const manifestJson = TAJSON.serialize(pub);
+    const manifestJson = TaJsonSerialize(pub);
 
     const arrLinks = [];
     if (manifestJson.readingOrder) {
-        arrLinks.push(...manifestJson.readingOrder);
+        arrLinks.push(...(manifestJson.readingOrder as JsonArray));
     }
     if (manifestJson.resources) {
-        arrLinks.push(...manifestJson.resources);
+        arrLinks.push(...(manifestJson.resources as JsonArray));
     }
 
     if (keys) {
@@ -181,9 +182,10 @@ function extractEPUB_ManifestJSON(pub: Publication, outDir: string, keys: string
             }
         });
         if (manifestJson.links) {
+            const lks = (manifestJson.links as JsonArray);
             let index = -1;
-            for (let i = 0; i < manifestJson.links.length; i++) {
-                const link = manifestJson.links[i];
+            for (let i = 0; i < lks.length; i++) {
+                const link = lks[i] as JsonMap;
                 if (link.type === "application/vnd.readium.lcp.license.v1.0+json"
                     && link.rel === "license") {
                         index = i;
@@ -191,9 +193,9 @@ function extractEPUB_ManifestJSON(pub: Publication, outDir: string, keys: string
                     }
             }
             if (index >= 0) {
-                manifestJson.links.splice(index, 1);
+                lks.splice(index, 1);
             }
-            if (manifestJson.links.length === 0) {
+            if (lks.length === 0) {
                 delete manifestJson.links;
             }
         }

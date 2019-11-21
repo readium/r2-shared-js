@@ -1,12 +1,13 @@
 import test from "ava";
 import * as path from "path";
-import { JSON as TAJSON } from "ta-json-x";
 
 import { Metadata } from "@models/metadata";
 import { IStringMap } from "@models/metadata-multilang";
+import { TaJsonDeserialize, TaJsonSerialize } from "@models/serializable";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
 
 import { initGlobalConverters_GENERIC, initGlobalConverters_SHARED } from "../src/init-globals";
+import { JsonMap } from "../src/json";
 import { checkType_Object, checkType_String, inspect, logJSON } from "./helpers";
 
 initGlobalConverters_SHARED();
@@ -35,7 +36,7 @@ test("JSON SERIALIZE: Metadata.Title => string", (t) => {
     md.Title = titleStr1;
     inspect(md);
 
-    const json = TAJSON.serialize(md);
+    const json = TaJsonSerialize(md);
     logJSON(json);
 
     checkType_String(t, json.title);
@@ -48,16 +49,17 @@ test("JSON SERIALIZE: Metadata.Title => string-lang", (t) => {
     md.Title = titleLangStr1;
     inspect(md);
 
-    const json = TAJSON.serialize(md);
+    const json = TaJsonSerialize(md);
     logJSON(json);
 
     checkType_Object(t, json.title);
+    const title = json.title as JsonMap;
 
-    checkType_String(t, json.title[titleLang1]);
-    t.is(json.title[titleLang1], titleStr1);
+    checkType_String(t, title[titleLang1]);
+    t.is(title[titleLang1], titleStr1);
 
-    checkType_String(t, json.title[titleLang2]);
-    t.is(json.title[titleLang2], titleStr2);
+    checkType_String(t, title[titleLang2]);
+    t.is(title[titleLang2], titleStr2);
 });
 
 test("JSON DESERIALIZE: Metadata.Title => string", (t) => {
@@ -66,7 +68,7 @@ test("JSON DESERIALIZE: Metadata.Title => string", (t) => {
     json.title = titleStr1;
     logJSON(json);
 
-    const md: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
+    const md: Metadata = TaJsonDeserialize<Metadata>(json, Metadata);
     inspect(md);
 
     checkType_String(t, md.Title);
@@ -79,7 +81,7 @@ test("JSON DESERIALIZE: Metadata.Title => string-lang", (t) => {
     json.title = titleLangStr1;
     logJSON(json);
 
-    const md: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
+    const md: Metadata = TaJsonDeserialize<Metadata>(json, Metadata);
     inspect(md);
 
     checkType_Object(t, md.Title);

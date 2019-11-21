@@ -12,6 +12,7 @@ import {
 
 import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
 
+import { JsonMap } from "../json";
 import { BelongsTo } from "./metadata-belongsto";
 import { Contributor } from "./metadata-contributor";
 import { JsonContributorConverter } from "./metadata-contributor-json-converter";
@@ -20,6 +21,7 @@ import { IStringMap } from "./metadata-multilang";
 import { Properties } from "./metadata-properties";
 import { Subject } from "./metadata-subject";
 import { JsonSubjectConverter } from "./metadata-subject-json-converter";
+import { IWithAdditionalJSON, generateAdditionalJSON, parseAdditionalJSON } from "./serializable";
 
 // export interface IMeta {
 //     property: string;
@@ -36,7 +38,8 @@ export enum DirectionEnum {
 // tslint:disable-next-line:max-line-length
 // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json
 @JsonObject()
-export class Metadata {
+export class Metadata implements IWithAdditionalJSON {
+
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L11
     // tslint:disable-next-line:max-line-length
@@ -279,12 +282,40 @@ export class Metadata {
     @JsonElementType(Subject)
     public Subject!: Subject[];
 
+    // see parseAdditionalJSON()
+    // e.g. https://libraryregistry.librarysimplified.org/libraries
+    // @JsonProperty("updated")
+    // public Updated!: Date;
+    // @JsonProperty("id")
+    // public Id!: string;
+
     // TODO: not in JSON Schema??
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json
     // @JsonProperty("epub-type")
     // @JsonElementType(String)
     // public EpubType!: string[];
+
+    // BEGIN IWithAdditionalJSON
+    public AdditionalJSON!: JsonMap;
+
+    // [\n\s\S]+?^[ ]+@JsonProperty\(("[a-zA-Z]+")\)$
+    // regexp replace all:
+    // $1,
+    // tslint:disable-next-line:max-line-length
+    protected _SupportedKeys = ["title", "subtitle", "identifier", "author", "translator", "editor", "artist", "illustrator", "letterer", "penciler", "colorist", "inker", "narrator", "contributor", "publisher", "imprint", "language", "modified", "published", "sortAs", "description", "readingProgression", "direction", "belongsTo", "duration", "numberOfPages", "rights", "rendition", "source", "subject"];
+    public get SupportedKeys() {
+        return this._SupportedKeys;
+    }
+
+    public parseAdditionalJSON(json: JsonMap) {
+        parseAdditionalJSON(this, json);
+    }
+
+    public generateAdditionalJSON(json: JsonMap) {
+        generateAdditionalJSON(this, json);
+    }
+    // END IWithAdditionalJSON
 
     @OnDeserialized()
     // tslint:disable-next-line:no-unused-variable

@@ -5,6 +5,7 @@ import { JSON as TAJSON } from "ta-json-x";
 import { Metadata } from "@models/metadata";
 import { Contributor } from "@models/metadata-contributor";
 import { IStringMap } from "@models/metadata-multilang";
+import { TaJsonDeserialize } from "@models/serializable";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
 
 import { initGlobalConverters_GENERIC, initGlobalConverters_SHARED } from "../src/init-globals";
@@ -166,7 +167,7 @@ test("JSON DESERIALIZE: Metadata.Imprint => Contributor[]", (t) => {
     ];
     logJSON(json);
 
-    const b: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
+    const b: Metadata = TaJsonDeserialize<Metadata>(json, Metadata);
     inspect(b);
 
     checkType_Array(t, b.Imprint);
@@ -184,7 +185,7 @@ test("JSON DESERIALIZE: Metadata.Imprint => Contributor[1]", (t) => {
     ];
     logJSON(json);
 
-    const b: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
+    const b: Metadata = TaJsonDeserialize<Metadata>(json, Metadata);
     inspect(b);
 
     checkType_Array(t, b.Imprint);
@@ -200,7 +201,7 @@ test("JSON DESERIALIZE: Metadata.Imprint => Contributor", (t) => {
     json.imprint = { name: contributor1NameStr, identifier: contributor1Id, position: contributor1Pos, role: contributor1RoleArr };
     logJSON(json);
 
-    const b: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
+    const b: Metadata = TaJsonDeserialize<Metadata>(json, Metadata);
     inspect(b);
 
     checkType_Array(t, b.Imprint);
@@ -215,7 +216,7 @@ test("JSON DESERIALIZE: Metadata.Imprint => Contributor NAME []", (t) => {
     json.imprint = [contributor1NameStr, contributor2NameObj];
     logJSON(json);
 
-    const b: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
+    const b: Metadata = TaJsonDeserialize<Metadata>(json, Metadata);
     inspect(b);
 
     checkType_Array(t, b.Imprint);
@@ -234,7 +235,7 @@ test("JSON DESERIALIZE: Metadata.Imprint => Contributor NAME [1] A", (t) => {
     json.imprint = [contributor1NameStr];
     logJSON(json);
 
-    const b: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
+    const b: Metadata = TaJsonDeserialize<Metadata>(json, Metadata);
     inspect(b);
 
     checkType_Array(t, b.Imprint);
@@ -250,7 +251,7 @@ test("JSON DESERIALIZE: Metadata.Imprint => Contributor NAME [1] B", (t) => {
     json.imprint = [contributor2NameObj];
     logJSON(json);
 
-    const b: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
+    const b: Metadata = TaJsonDeserialize<Metadata>(json, Metadata);
     inspect(b);
 
     checkType_Array(t, b.Imprint);
@@ -266,7 +267,7 @@ test("JSON DESERIALIZE: Metadata.Imprint => Contributor NAME A", (t) => {
     json.imprint = contributor1NameStr;
     logJSON(json);
 
-    const b: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
+    const b: Metadata = TaJsonDeserialize<Metadata>(json, Metadata);
     inspect(b);
 
     checkType_Array(t, b.Imprint);
@@ -282,7 +283,7 @@ test("JSON DESERIALIZE: Metadata.Imprint => Contributor NAME B", (t) => {
     json.imprint = contributor2NameObj;
     logJSON(json);
 
-    const b: Metadata = TAJSON.deserialize<Metadata>(json, Metadata);
+    const b: Metadata = TaJsonDeserialize<Metadata>(json, Metadata);
     inspect(b);
 
     checkType_Array(t, b.Imprint);
