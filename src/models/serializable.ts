@@ -44,10 +44,10 @@ export function generateAdditionalJSON(obj: IWithAdditionalJSON, json: JsonMap) 
     }
     const keys = Object.keys(obj.AdditionalJSON);
     for (const key of keys) {
-        if (obj.SupportedKeys && obj.SupportedKeys.includes(key)) {
-            return;
-        }
         if (obj.AdditionalJSON.hasOwnProperty(key)) {
+            if (obj.SupportedKeys && obj.SupportedKeys.includes(key)) {
+                continue;
+            }
             // warning: reference copy, not deep clone!
             json[key] = obj.AdditionalJSON[key];
         }
