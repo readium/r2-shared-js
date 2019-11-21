@@ -10,6 +10,9 @@ import { JsonElementType, JsonObject, JsonProperty } from "ta-json-x";
 
 import { Encrypted } from "@r2-lcp-js/models/metadata-encrypted";
 
+import { JsonMap } from "../json";
+import { IWithAdditionalJSON, generateAdditionalJSON, parseAdditionalJSON } from "./serializable";
+
 export enum LayoutEnum {
     Fixed = "fixed",
     Reflowable = "reflowable",
@@ -41,10 +44,16 @@ export enum SpreadEnum {
     Landscape = "landscape",
 }
 
+// [\n\s\S]+?^[ ]+@JsonProperty\(("[a-zA-Z]+")\)$
+// regexp replace all:
+// $1,
+// tslint:disable-next-line:max-line-length
+export const PropertiesSupportedKeys = ["contains", "layout", "orientation", "overflow", "page", "spread", "encrypted", "media-overlay"];
+
 // tslint:disable-next-line:max-line-length
 // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/properties.schema.json
 @JsonObject()
-export class Properties {
+export class Properties implements IWithAdditionalJSON {
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/properties.schema.json#L7
@@ -99,4 +108,18 @@ export class Properties {
     // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/properties.schema.json#L31
     @JsonProperty("media-overlay")
     public MediaOverlay!: string;
+
+    // BEGIN IWithAdditionalJSON
+    public AdditionalJSON!: JsonMap;
+    public get SupportedKeys() {
+        return PropertiesSupportedKeys;
+    }
+
+    public parseAdditionalJSON(json: JsonMap) {
+        parseAdditionalJSON(this, json);
+    }
+    public generateAdditionalJSON(json: JsonMap) {
+        generateAdditionalJSON(this, json);
+    }
+    // END IWithAdditionalJSON
 }

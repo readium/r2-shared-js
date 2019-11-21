@@ -13,13 +13,18 @@ import {
 import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
 
 import { tryDecodeURI } from "../_utils/decodeURI";
+import { JsonArray, JsonMap } from "../json";
 import { MediaOverlayNode } from "./media-overlay";
 import { Properties } from "./metadata-properties";
+import { IWithAdditionalJSON } from "./serializable";
+
+const PROPERTIES_JSON_PROP = "properties";
+const CHILDREN_JSON_PROP = "children";
 
 // tslint:disable-next-line:max-line-length
 // https://github.com/readium/webpub-manifest/blob/ca6d887caa2d0495200fef4695f41aacb5fed2e9/schema/link.schema.json
 @JsonObject()
-export class Link {
+export class Link implements IWithAdditionalJSON {
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/ca6d887caa2d0495200fef4695f41aacb5fed2e9/schema/link.schema.json#L11
@@ -47,7 +52,7 @@ export class Link {
     // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/properties.schema.json
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/properties.schema.json
-    @JsonProperty("properties")
+    @JsonProperty(PROPERTIES_JSON_PROP)
     public Properties!: Properties;
 
     // tslint:disable-next-line:max-line-length
@@ -69,7 +74,7 @@ export class Link {
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/link.schema.json#L57
-    @JsonProperty("children")
+    @JsonProperty(CHILDREN_JSON_PROP)
     @JsonElementType(Link)
     public Children!: Link[];
 
@@ -115,6 +120,37 @@ export class Link {
         this.Href = href;
         this.HrefDecoded = href;
     }
+
+    // BEGIN IWithAdditionalJSON
+    // tslint:disable: member-ordering
+    public AdditionalJSON!: JsonMap; // unused
+    public SupportedKeys!: string[]; // unused
+
+    public parseAdditionalJSON(json: JsonMap) {
+        // parseAdditionalJSON(this, json);
+
+        if (this.Properties) {
+            this.Properties.parseAdditionalJSON(json[PROPERTIES_JSON_PROP] as JsonMap);
+        }
+        if (this.Children) {
+            this.Children.forEach((link, i) => {
+                link.parseAdditionalJSON((json[CHILDREN_JSON_PROP] as JsonArray)[i] as JsonMap);
+            });
+        }
+    }
+    public generateAdditionalJSON(json: JsonMap) {
+        // generateAdditionalJSON(this, json);
+
+        if (this.Properties) {
+            this.Properties.generateAdditionalJSON(json[PROPERTIES_JSON_PROP] as JsonMap);
+        }
+        if (this.Children) {
+            this.Children.forEach((link, i) => {
+                link.generateAdditionalJSON((json[CHILDREN_JSON_PROP] as JsonArray)[i] as JsonMap);
+            });
+        }
+    }
+    // END IWithAdditionalJSON
 
     public AddRels(rels: string[]) {
         rels.forEach((rel) => {
