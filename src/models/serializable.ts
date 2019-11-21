@@ -10,9 +10,12 @@ import { JSON as TAJSON } from "ta-json-x";
 
 import { JsonMap } from "../json";
 
+// import * as debug_ from "debug";
+// const debug = debug_("r2:shared#models/serializable");
+
 export interface IWithAdditionalJSON {
-    AdditionalJSON: JsonMap;
-    SupportedKeys: string[];
+    AdditionalJSON: JsonMap | undefined;
+    SupportedKeys: string[] | undefined;
     parseAdditionalJSON: (json: JsonMap) => void;
     generateAdditionalJSON: (json: JsonMap) => void;
 }
@@ -39,7 +42,8 @@ export function generateAdditionalJSON(obj: IWithAdditionalJSON, json: JsonMap) 
     if (!obj.AdditionalJSON) {
         return;
     }
-    Object.keys(obj.AdditionalJSON).forEach((key) => {
+    const keys = Object.keys(obj.AdditionalJSON);
+    for (const key of keys) {
         if (obj.SupportedKeys && obj.SupportedKeys.includes(key)) {
             return;
         }
@@ -47,7 +51,7 @@ export function generateAdditionalJSON(obj: IWithAdditionalJSON, json: JsonMap) 
             // warning: reference copy, not deep clone!
             json[key] = obj.AdditionalJSON[key];
         }
-    });
+    }
 }
 
 type TConstructor<T> = new(value?: any) => T;
@@ -55,13 +59,25 @@ type TConstructor<T> = new(value?: any) => T;
 
 // tslint:disable-next-line: max-line-length
 export function TaJsonDeserialize<T extends IWithAdditionalJSON>(json: any, type: TConstructor<T>): T {
+    // debug("TaJsonDeserialize 1");
+    // debug(json);
     const obj = TAJSON.deserialize<T>(json, type);
+    // debug("TaJsonDeserialize 2");
+    // debug(obj);
     obj.parseAdditionalJSON(json);
+    // debug("TaJsonDeserialize 3");
+    // debug(obj);
     return obj;
 }
 
 export function TaJsonSerialize<T extends IWithAdditionalJSON>(obj: T): JsonMap {
+    // debug("TaJsonSerialize 1");
+    // debug(obj);
     const json = TAJSON.serialize(obj) as JsonMap;
+    // debug("TaJsonSerialize 2");
+    // debug(json);
     obj.generateAdditionalJSON(json);
+    // debug("TaJsonSerialize 3");
+    // debug(json);
     return json;
 }

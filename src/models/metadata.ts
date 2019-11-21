@@ -35,6 +35,12 @@ export enum DirectionEnum {
     LTR = "ltr",
 }
 
+// [\n\s\S]+?^[ ]+@JsonProperty\(("[a-zA-Z]+")\)$
+// regexp replace all:
+// $1,
+// tslint:disable-next-line:max-line-length
+export const MetadataSupportedKeys = ["title", "subtitle", "identifier", "author", "translator", "editor", "artist", "illustrator", "letterer", "penciler", "colorist", "inker", "narrator", "contributor", "publisher", "imprint", "language", "modified", "published", "sortAs", "description", "readingProgression", "direction", "belongsTo", "duration", "numberOfPages", "rights", "rendition", "source", "subject"];
+
 // tslint:disable-next-line:max-line-length
 // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json
 @JsonObject()
@@ -298,20 +304,13 @@ export class Metadata implements IWithAdditionalJSON {
 
     // BEGIN IWithAdditionalJSON
     public AdditionalJSON!: JsonMap;
-
-    // [\n\s\S]+?^[ ]+@JsonProperty\(("[a-zA-Z]+")\)$
-    // regexp replace all:
-    // $1,
-    // tslint:disable-next-line:max-line-length
-    protected _SupportedKeys = ["title", "subtitle", "identifier", "author", "translator", "editor", "artist", "illustrator", "letterer", "penciler", "colorist", "inker", "narrator", "contributor", "publisher", "imprint", "language", "modified", "published", "sortAs", "description", "readingProgression", "direction", "belongsTo", "duration", "numberOfPages", "rights", "rendition", "source", "subject"];
     public get SupportedKeys() {
-        return this._SupportedKeys;
+        return MetadataSupportedKeys;
     }
 
     public parseAdditionalJSON(json: JsonMap) {
         parseAdditionalJSON(this, json);
     }
-
     public generateAdditionalJSON(json: JsonMap) {
         generateAdditionalJSON(this, json);
     }
