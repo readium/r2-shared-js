@@ -142,7 +142,7 @@ export async function isAudioBookPublication(urlOrPath: string): Promise<AudioBo
     const fileName = path.basename(p);
     const ext = path.extname(fileName).toLowerCase();
 
-    const audio = /\.audiobook?$/.test(ext);
+    const audio = /\.audiobook$/.test(ext);
     if (audio) {
         // return isHttp ? AudioBookis.RemotePacked : AudioBookis.LocalPacked;
         if (!isHttp) {
@@ -155,8 +155,9 @@ export async function isAudioBookPublication(urlOrPath: string): Promise<AudioBo
         if (fs.existsSync(p)) {
             const manStr = fs.readFileSync(p, { encoding: "utf8" });
             const manJson = JSON.parse(manStr);
-            if (manJson.metadata &&
-                manJson.metadata["@type"] === "https://schema.org/Audiobook") {
+            if (manJson.metadata && manJson.metadata["@type"] &&
+                /http[s]?:\/\/schema\.org\/Audiobook$/.test(manJson.metadata["@type"])
+            ) {
                 return AudioBookis.LocalExploded;
             }
         }
@@ -186,7 +187,7 @@ export async function isAudioBookPublication(urlOrPath: string): Promise<AudioBo
                     protocol: url.protocol,
                 };
                 debug(JSON.stringify(options));
-                const req = (secure ? https : http).request(options, (res) => {
+                (secure ? https : http).request(options, (res) => {
                     if (!res) {
                         reject(`HTTP no response ${u}`);
                         return;
@@ -213,16 +214,43 @@ export async function isAudioBookPublication(urlOrPath: string): Promise<AudioBo
                         return;
                     }
                     const type = res.headers["Content-Type"] || res.headers["content-type"];
-                    if (type && type.includes("application/audiobook+json")) {
-                        resolve(AudioBookis.RemoteExploded);
-                        return;
+                    if (type) {
+                        if (type.includes("application/audiobook+json")) {
+                            resolve(AudioBookis.RemoteExploded);
+                            return;
+                        }
+                        if (type.includes("application/json")) {
+                            res.setEncoding("utf8");
+
+                            let responseBody = "";
+                            res.on("data", (chunk) => {
+                                responseBody += chunk;
+                            });
+                            res.on("end", () => {
+                                try {
+                                    const manJson = JSON.parse(responseBody);
+                                    if (manJson.metadata && manJson.metadata["@type"] &&
+                                        /http[s]?:\/\/schema\.org\/Audiobook$/.test(manJson.metadata["@type"])
+                                        ) {
+                                        resolve(AudioBookis.RemoteExploded);
+                                        return;
+                                    } else {
+                                        reject(`HTTP JSON not audiobook ${u}`);
+                                    }
+                                } catch (ex) {
+                                    debug(ex);
+                                    reject(`HTTP audiobook invalid JSON?! ${u} ${ex}`);
+                                }
+                            });
+
+                            return;
+                        }
                     }
                     reject(`Not HTTP audiobook type ${u}`);
                 }).on("error", (err) => {
                     debug(err);
                     reject(`HTTP error ${u} ${err}`);
-                });
-                req.end();
+                }).end();
             });
         }
         return doRequest(urlOrPath);
