@@ -14,6 +14,7 @@ import * as path from "path";
 import { Publication } from "@models/publication";
 import { TaJsonDeserialize } from "@r2-lcp-js/serializable";
 import { isHTTP } from "@r2-utils-js/_utils/http/UrlUtils";
+import { traverseJsonObjects } from "@r2-utils-js/_utils/JsonUtils";
 import { streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
 import { zipLoadPromise } from "@r2-utils-js/_utils/zip/zipFactory";
@@ -21,6 +22,17 @@ import { zipLoadPromise } from "@r2-utils-js/_utils/zip/zipFactory";
 import { zipHasEntry } from "../_utils/zipHasEntry";
 
 const debug = debug_("r2:shared#parser/audiobook");
+
+function absolutizeURLs(rootUrl: string, jsonObj: any) {
+    traverseJsonObjects(jsonObj,
+        (obj) => {
+            if (obj.href && typeof obj.href === "string"
+                && !isHTTP(obj.href)) {
+                // obj.href_ = obj.href;
+                obj.href = rootUrl + "/" + obj.href;
+            }
+        });
+}
 
 export async function AudioBookParsePromise(filePath: string): Promise<Publication> {
 
@@ -112,6 +124,12 @@ export async function AudioBookParsePromise(filePath: string): Promise<Publicati
 
     const manifestJsonStr = manifestZipData.toString("utf8");
     const manifestJson = JSON.parse(manifestJsonStr);
+
+    if (isAnAudioBook === AudioBookis.RemoteExploded) {
+        const url = new URL(filePath);
+        url.pathname = path.dirname(url.pathname);
+        absolutizeURLs(url.toString(), manifestJson);
+    }
 
     const publication = TaJsonDeserialize<Publication>(manifestJson, Publication);
 
