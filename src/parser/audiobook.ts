@@ -137,16 +137,8 @@ export async function isAudioBookPublication(urlOrPath: string): Promise<AudioBo
     if (isHttp) {
         const url = new URL(urlOrPath);
         p = url.pathname;
-    } else {
-        const manPath = path.join(urlOrPath, "manifest.json");
-        if (fs.existsSync(manPath)) {
-            const manStr = fs.readFileSync(manPath, { encoding: "utf8" });
-            const manJson = JSON.parse(manStr);
-            if (manJson["@type"] === "https://schema.org/Audiobook") {
-                return AudioBookis.LocalExploded;
-            }
-        }
     }
+
     const fileName = path.basename(p);
     const ext = path.extname(fileName).toLowerCase();
 
@@ -155,6 +147,18 @@ export async function isAudioBookPublication(urlOrPath: string): Promise<AudioBo
         // return isHttp ? AudioBookis.RemotePacked : AudioBookis.LocalPacked;
         if (!isHttp) {
             return AudioBookis.LocalPacked;
+        }
+    }
+
+    if (!isHttp && fileName === "manifest.json") {
+        // const manPath = fileName === "manifest.json" ? p : path.join(p, "manifest.json");
+        if (fs.existsSync(p)) {
+            const manStr = fs.readFileSync(p, { encoding: "utf8" });
+            const manJson = JSON.parse(manStr);
+            if (manJson.metadata &&
+                manJson.metadata["@type"] === "https://schema.org/Audiobook") {
+                return AudioBookis.LocalExploded;
+            }
         }
     }
 
