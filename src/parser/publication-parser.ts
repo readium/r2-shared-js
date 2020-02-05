@@ -6,9 +6,12 @@
 // ==LICENSE-END==
 
 import { Publication } from "@models/publication";
+import { AudioBookParsePromise, isAudioBookPublication } from "@parser/audiobook";
 import { CbzParsePromise } from "@parser/cbz";
 import { EpubParsePromise, isEPUBlication } from "@parser/epub";
 
 export async function PublicationParsePromise(filePath: string): Promise<Publication> {
-    return isEPUBlication(filePath) ? EpubParsePromise(filePath) : CbzParsePromise(filePath);
+    return isEPUBlication(filePath) ? EpubParsePromise(filePath) :
+        (isAudioBookPublication(filePath) ? AudioBookParsePromise(filePath) :
+        CbzParsePromise(filePath));
 }
