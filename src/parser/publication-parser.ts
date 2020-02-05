@@ -12,6 +12,6 @@ import { EpubParsePromise, isEPUBlication } from "@parser/epub";
 
 export async function PublicationParsePromise(filePath: string): Promise<Publication> {
     return isEPUBlication(filePath) ? EpubParsePromise(filePath) :
-        (isAudioBookPublication(filePath) ? AudioBookParsePromise(filePath) :
+        (await isAudioBookPublication(filePath) ? AudioBookParsePromise(filePath) :
         CbzParsePromise(filePath));
 }
