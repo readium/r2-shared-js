@@ -26,7 +26,7 @@ import { addCoverDimensions } from "./epub";
 
 export async function CbzParsePromise(filePath: string): Promise<Publication> {
 
-    let zip: any;
+    let zip: IZip;
     try {
         zip = await zipLoadPromise(filePath);
     } catch (err) {
