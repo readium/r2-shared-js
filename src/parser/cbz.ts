@@ -24,6 +24,15 @@ import { zipHasEntry } from "../_utils/zipHasEntry";
 import { ComicInfo } from "./comicrack/comicrack";
 import { addCoverDimensions } from "./epub";
 
+export function isCBZPublication(filePath: string): boolean {
+
+    const fileName = path.basename(filePath);
+    const ext = path.extname(fileName).toLowerCase();
+
+    const cbz = /\.cbz$/.test(ext);
+    return cbz;
+}
+
 export async function CbzParsePromise(filePath: string): Promise<Publication> {
 
     let zip: IZip;
