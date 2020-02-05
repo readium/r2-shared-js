@@ -2162,12 +2162,12 @@ const fillTOCFromNavDoc = async (publication: Publication, _rootfile: Rootfile, 
 
         navs.forEach((navElement: Element) => {
 
-            const typeNav = select("@epub:type", navElement);
+            const typeNav = select("@epub:type", navElement) as Attr[];
             if (typeNav && typeNav.length) {
 
                 const olElem = select("xhtml:ol", navElement) as Element[];
 
-                const roles = (typeNav[0] as Attr).value;
+                const roles = typeNav[0].value;
                 const role = roles.trim().split(" ")[0]; // TODO assumes only single epub:type in space-separated value?
                 switch (role) {
 
@@ -2215,24 +2215,24 @@ const fillTOCFromNavDoc = async (publication: Publication, _rootfile: Rootfile, 
     }
 };
 
-const fillTOCFromNavDocWithOL = (select: any, olElems: Element[], node: Link[], navDocPath: string) => {
+const fillTOCFromNavDocWithOL = (select: xpath.XPathSelect, olElems: Element[], node: Link[], navDocPath: string) => {
 
     olElems.forEach((olElem: Element) => {
 
-        const liElems = select("xhtml:li", olElem);
+        const liElems = select("xhtml:li", olElem) as Element[];
         if (liElems && liElems.length) {
 
-            liElems.forEach((liElem: Element) => {
+            liElems.forEach((liElem) => {
 
                 const link = new Link();
                 node.push(link);
 
-                const aElems = select("xhtml:a", liElem);
+                const aElems = select("xhtml:a", liElem) as Element[];
                 if (aElems && aElems.length > 0) {
 
-                    const aHref = select("@href", aElems[0]);
+                    const aHref = select("@href", aElems[0]) as Attr[];
                     if (aHref && aHref.length) {
-                        const val = (aHref[0] as Attr).value;
+                        const val = aHref[0].value;
                         let valDecoded = tryDecodeURI(val);
                         if (!valDecoded) {
                             console.log("!?valDecoded");
@@ -2255,13 +2255,13 @@ const fillTOCFromNavDocWithOL = (select: any, olElems: Element[], node: Link[], 
                         link.Title = aText;
                     }
                 } else {
-                    const liFirstChild = select("xhtml:*[1]", liElem);
+                    const liFirstChild = select("xhtml:*[1]", liElem) as Element[];
                     if (liFirstChild && liFirstChild.length && liFirstChild[0].textContent) {
                         link.Title = liFirstChild[0].textContent.trim();
                     }
                 }
 
-                const olElemsNext = select("xhtml:ol", liElem);
+                const olElemsNext = select("xhtml:ol", liElem) as Element[];
                 if (olElemsNext && olElemsNext.length) {
                     if (!link.Children) {
                         link.Children = [];
