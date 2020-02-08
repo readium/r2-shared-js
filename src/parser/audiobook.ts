@@ -34,9 +34,9 @@ function absolutizeURLs(rootUrl: string, jsonObj: any) {
         });
 }
 
-export async function AudioBookParsePromise(filePath: string): Promise<Publication> {
+export async function AudioBookParsePromise(filePath: string, isAudio?: AudioBookis): Promise<Publication> {
 
-    const isAnAudioBook = await isAudioBookPublication(filePath);
+    const isAnAudioBook = isAudio || await isAudioBookPublication(filePath);
 
     // // excludes AudioBookis.RemoteExploded
     // const canLoad = isAnAudioBook === AudioBookis.LocalExploded ||

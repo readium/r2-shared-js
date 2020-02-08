@@ -6,13 +6,15 @@
 // ==LICENSE-END==
 
 import { Publication } from "@models/publication";
-import { AudioBookParsePromise, isAudioBookPublication } from "@parser/audiobook";
+import { AudioBookParsePromise, AudioBookis, isAudioBookPublication } from "@parser/audiobook";
 import { CbzParsePromise, isCBZPublication } from "@parser/cbz";
 import { EpubParsePromise, isEPUBlication } from "@parser/epub";
 
 export async function PublicationParsePromise(filePath: string): Promise<Publication> {
+    let isAudio: AudioBookis | undefined;
     return isEPUBlication(filePath) ? EpubParsePromise(filePath) :
         (isCBZPublication(filePath) ? CbzParsePromise(filePath) :
-            await isAudioBookPublication(filePath) ? AudioBookParsePromise(filePath) :
+        // tslint:disable-next-line: no-conditional-assignment
+        (isAudio = await isAudioBookPublication(filePath)) ? AudioBookParsePromise(filePath, isAudio) :
                 Promise.reject(`Unrecognized publication type ${filePath}`));
 }
