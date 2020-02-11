@@ -149,6 +149,92 @@ export enum AudioBookis {
     RemoteExploded = "RemoteExploded",
     // RemotePacked = "RemotePacked",
 }
+
+async function doRequest(u: string): Promise<AudioBookis> {
+    return new Promise((resolve, reject) => {
+        const url = new URL(u);
+        const secure = url.protocol === "https:";
+        const options = {
+            headers: {
+                "Accept": "*/*,application/audiobook+json",
+                "Accept-Language": "en-UK,en-US;q=0.7,en;q=0.5",
+                "Host": url.host,
+                "User-Agent": "Readium2-AudioBooks",
+            },
+            host: url.host,
+            method: "GET",
+            path: url.pathname + url.search,
+            port: secure ? 443 : 80,
+            protocol: url.protocol,
+        };
+        debug(JSON.stringify(options));
+        (secure ? https : http).request(options, (res) => {
+            if (!res) {
+                reject(`HTTP no response ${u}`);
+                return;
+            }
+
+            debug(res.statusCode);
+            debug(JSON.stringify(res.headers));
+
+            if (res.statusCode && (res.statusCode >= 300 && res.statusCode < 400)) {
+                const loc = res.headers.Location || res.headers.location;
+                if (loc && loc.length) {
+                    const l = Array.isArray(loc) ? loc[0] : loc;
+                    process.nextTick(async () => {
+                        try {
+                            const redirectRes = await doRequest(l);
+                            resolve(redirectRes);
+                        } catch (err) {
+                            reject(`HTTP audiobook redirect, then fail ${u} ${err}`);
+                        }
+                    });
+                } else {
+                    reject(`HTTP audiobook redirect without location?! ${u}`);
+                }
+                return;
+            }
+            const type = res.headers["Content-Type"] || res.headers["content-type"];
+            if (type) {
+                if (type.includes("application/audiobook+json")) {
+                    resolve(AudioBookis.RemoteExploded);
+                    return;
+                }
+                if (type.includes("application/json")) {
+                    res.setEncoding("utf8");
+
+                    let responseBody = "";
+                    res.on("data", (chunk) => {
+                        responseBody += chunk;
+                    });
+                    res.on("end", () => {
+                        try {
+                            const manJson = JSON.parse(responseBody);
+                            if (manJson.metadata && manJson.metadata["@type"] &&
+                                /http[s]?:\/\/schema\.org\/Audiobook$/.test(manJson.metadata["@type"])
+                                ) {
+                                resolve(AudioBookis.RemoteExploded);
+                                return;
+                            } else {
+                                reject(`HTTP JSON not audiobook ${u}`);
+                            }
+                        } catch (ex) {
+                            debug(ex);
+                            reject(`HTTP audiobook invalid JSON?! ${u} ${ex}`);
+                        }
+                    });
+
+                    return;
+                }
+            }
+            reject(`Not HTTP audiobook type ${u}`);
+        }).on("error", (err) => {
+            debug(err);
+            reject(`HTTP error ${u} ${err}`);
+        }).end();
+    });
+}
+
 export async function isAudioBookPublication(urlOrPath: string): Promise<AudioBookis> {
     let p = urlOrPath;
     const isHttp = isHTTP(urlOrPath);
@@ -187,90 +273,6 @@ export async function isAudioBookPublication(urlOrPath: string): Promise<AudioBo
     // }
 
     if (isHttp) {
-        async function doRequest(u: string): Promise<AudioBookis> {
-            return new Promise((resolve, reject) => {
-                const url = new URL(u);
-                const secure = url.protocol === "https:";
-                const options = {
-                    headers: {
-                        "Accept": "*/*,application/audiobook+json",
-                        "Accept-Language": "en-UK,en-US;q=0.7,en;q=0.5",
-                        "Host": url.host,
-                        "User-Agent": "Readium2-AudioBooks",
-                    },
-                    host: url.host,
-                    method: "GET",
-                    path: url.pathname + url.search,
-                    port: secure ? 443 : 80,
-                    protocol: url.protocol,
-                };
-                debug(JSON.stringify(options));
-                (secure ? https : http).request(options, (res) => {
-                    if (!res) {
-                        reject(`HTTP no response ${u}`);
-                        return;
-                    }
-
-                    debug(res.statusCode);
-                    debug(JSON.stringify(res.headers));
-
-                    if (res.statusCode && (res.statusCode >= 300 && res.statusCode < 400)) {
-                        const loc = res.headers.Location || res.headers.location;
-                        if (loc && loc.length) {
-                            const l = Array.isArray(loc) ? loc[0] : loc;
-                            process.nextTick(async () => {
-                                try {
-                                    const redirectRes = await doRequest(l);
-                                    resolve(redirectRes);
-                                } catch (err) {
-                                    reject(`HTTP audiobook redirect, then fail ${u} ${err}`);
-                                }
-                            });
-                        } else {
-                            reject(`HTTP audiobook redirect without location?! ${u}`);
-                        }
-                        return;
-                    }
-                    const type = res.headers["Content-Type"] || res.headers["content-type"];
-                    if (type) {
-                        if (type.includes("application/audiobook+json")) {
-                            resolve(AudioBookis.RemoteExploded);
-                            return;
-                        }
-                        if (type.includes("application/json")) {
-                            res.setEncoding("utf8");
-
-                            let responseBody = "";
-                            res.on("data", (chunk) => {
-                                responseBody += chunk;
-                            });
-                            res.on("end", () => {
-                                try {
-                                    const manJson = JSON.parse(responseBody);
-                                    if (manJson.metadata && manJson.metadata["@type"] &&
-                                        /http[s]?:\/\/schema\.org\/Audiobook$/.test(manJson.metadata["@type"])
-                                        ) {
-                                        resolve(AudioBookis.RemoteExploded);
-                                        return;
-                                    } else {
-                                        reject(`HTTP JSON not audiobook ${u}`);
-                                    }
-                                } catch (ex) {
-                                    debug(ex);
-                                    reject(`HTTP audiobook invalid JSON?! ${u} ${ex}`);
-                                }
-                            });
-
-                            return;
-                        }
-                    }
-                    reject(`Not HTTP audiobook type ${u}`);
-                }).on("error", (err) => {
-                    debug(err);
-                    reject(`HTTP error ${u} ${err}`);
-                }).end();
-            });
-        }
         return doRequest(urlOrPath);
     }
 
