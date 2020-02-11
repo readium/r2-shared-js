@@ -1,10 +1,30 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.24...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.25...develop
 
 Changes:
 * TODO
+
+# 1.0.25
+
+> Build environment: NodeJS `12.15.0`, NPM `6.13.7`
+
+Changes:
+* NPM package updates
+* Minor Typescript fixes: typing for XPath Select, and removed rogue "any"
+* Content transformers now pass "session info" semantic-agnostic data (serialized string) so that anonymous HTTP requests can be correlated with specific publications and with their reading session (multiple readers scenario). Also see changes in streamer, and of course navigator.
+* Support for AudioBook parsing, local-packed (zipped), local-exploded (unzipped), and remote-exploded.
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.25/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.25/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.25
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.24...v1.0.25
 
 # 1.0.24
 
