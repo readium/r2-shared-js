@@ -17,11 +17,18 @@ import { ITransformer } from "./transformer";
 
 const debug = debug_("r2:shared#transform/transformer-html");
 
+export type TTransformFunction = (
+    publication: Publication,
+    link: Link,
+    data: string,
+    sessionInfo: string | undefined,
+) => string;
+
 export class TransformerHTML implements ITransformer {
 
-    private readonly transformString: (publication: Publication, link: Link, data: string) => string;
+    private readonly transformString: TTransformFunction;
 
-    constructor(transformerFunction: (publication: Publication, link: Link, data: string) => string) {
+    constructor(transformerFunction: TTransformFunction) {
         this.transformString = transformerFunction;
     }
 
@@ -51,10 +58,14 @@ export class TransformerHTML implements ITransformer {
     }
 
     public async transformStream(
-        publication: Publication, link: Link,
+        publication: Publication,
+        link: Link,
         stream: IStreamAndLength,
         _isPartialByteRangeRequest: boolean,
-        _partialByteBegin: number, _partialByteEnd: number): Promise<IStreamAndLength> {
+        _partialByteBegin: number,
+        _partialByteEnd: number,
+        sessionInfo: string | undefined,
+        ): Promise<IStreamAndLength> {
 
         let data: Buffer;
         try {
@@ -65,7 +76,7 @@ export class TransformerHTML implements ITransformer {
 
         let buff: Buffer;
         try {
-            buff = await this.transformBuffer(publication, link, data);
+            buff = await this.transformBuffer(publication, link, data, sessionInfo);
         } catch (err) {
             return Promise.reject(err);
         }
@@ -80,11 +91,16 @@ export class TransformerHTML implements ITransformer {
         return Promise.resolve(sal);
     }
 
-    private async transformBuffer(publication: Publication, link: Link, data: Buffer): Promise<Buffer> {
+    private async transformBuffer(
+        publication: Publication,
+        link: Link,
+        data: Buffer,
+        sessionInfo: string | undefined,
+    ): Promise<Buffer> {
 
         try {
             const str = data.toString("utf8");
-            const str_ = this.transformString(publication, link, str);
+            const str_ = this.transformString(publication, link, str, sessionInfo);
             return Promise.resolve(Buffer.from(str_));
         } catch (err) {
             debug("TransformerHTML fail => no change");

@@ -21,10 +21,14 @@ export class TransformerObfIDPF implements ITransformer {
     }
 
     public async transformStream(
-        publication: Publication, link: Link,
+        publication: Publication,
+        link: Link,
         stream: IStreamAndLength,
         _isPartialByteRangeRequest: boolean,
-        _partialByteBegin: number, _partialByteEnd: number): Promise<IStreamAndLength> {
+        _partialByteBegin: number,
+        _partialByteEnd: number,
+        _sessionInfo: string | undefined,
+    ): Promise<IStreamAndLength> {
 
         let data: Buffer;
         try {

@@ -19,10 +19,15 @@ export interface ITransformer {
     supports(publication: Publication, link: Link): boolean;
 
     transformStream(
-        publication: Publication, link: Link,
+        publication: Publication,
+        link: Link,
         stream: IStreamAndLength,
         isPartialByteRangeRequest: boolean,
-        partialByteBegin: number, partialByteEnd: number): Promise<IStreamAndLength>;
+        partialByteBegin: number,
+        partialByteEnd: number,
+        sessionInfo: string | undefined,
+    ): Promise<IStreamAndLength>;
+
     // getDecryptedSizeStream(
     //     publication: Publication, link: Link,
     //     stream: IStreamAndLength): Promise<number>;
@@ -42,14 +47,22 @@ export class Transformers {
     // }
 
     public static async tryStream(
-        publication: Publication, link: Link,
+        publication: Publication,
+        link: Link,
         stream: IStreamAndLength,
         isPartialByteRangeRequest: boolean,
-        partialByteBegin: number, partialByteEnd: number): Promise<IStreamAndLength> {
+        partialByteBegin: number, partialByteEnd: number,
+        sessionInfo: string | undefined,
+        ): Promise<IStreamAndLength> {
+
         return Transformers.instance()._tryStream(
             publication, link,
             stream,
-            isPartialByteRangeRequest, partialByteBegin, partialByteEnd);
+            isPartialByteRangeRequest,
+            partialByteBegin,
+            partialByteEnd,
+            sessionInfo,
+        );
     }
 
     private static _instance: Transformers = new Transformers();
@@ -88,7 +101,10 @@ export class Transformers {
         publication: Publication, link: Link,
         stream: IStreamAndLength,
         isPartialByteRangeRequest: boolean,
-        partialByteBegin: number, partialByteEnd: number): Promise<IStreamAndLength> {
+        partialByteBegin: number, partialByteEnd: number,
+        sessionInfo: string | undefined,
+        ): Promise<IStreamAndLength> {
+
         let transformedData: Promise<IStreamAndLength> | undefined;
         let atLeastOne = false;
 
@@ -129,9 +145,14 @@ export class Transformers {
                     }
                 }
                 transformedData = t.transformStream(
-                    publication, link,
+                    publication,
+                    link,
                     s,
-                    isPartialByteRangeRequest, partialByteBegin, partialByteEnd);
+                    isPartialByteRangeRequest,
+                    partialByteBegin,
+                    partialByteEnd,
+                    sessionInfo,
+                );
             }
         }
         if (transformedData) {

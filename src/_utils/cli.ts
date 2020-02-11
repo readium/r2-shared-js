@@ -371,7 +371,11 @@ async function extractEPUB_Link(pub: Publication, zip: IZip, outDir: string, lin
         transformedStream = await Transformers.tryStream(
             pub, link,
             zipStream_,
-            false, 0, 0);
+            false,
+            0,
+            0,
+            undefined,
+        );
     } catch (err) {
         console.log(hrefDecoded);
         console.log(err);

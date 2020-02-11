@@ -734,7 +734,11 @@ const fillMediaOverlayParse =
             transformedStream = await Transformers.tryStream(
                 publication, link,
                 smilZipStream_,
-                false, 0, 0);
+                false,
+                0,
+                0,
+                undefined,
+            );
         } catch (err) {
             debug(err);
             return Promise.reject(err);

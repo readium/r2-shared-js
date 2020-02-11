@@ -32,7 +32,9 @@ export class TransformerLCP implements ITransformer {
         stream: IStreamAndLength,
         isPartialByteRangeRequest: boolean,
         partialByteBegin: number,
-        partialByteEnd: number): Promise<IStreamAndLength> {
+        partialByteEnd: number,
+        _sessionInfo: string | undefined,
+    ): Promise<IStreamAndLength> {
 
         return transformStream_(publication.LCP as LCP, link.Href, link.Properties.Encrypted,
                 stream, isPartialByteRangeRequest, partialByteBegin, partialByteEnd);
