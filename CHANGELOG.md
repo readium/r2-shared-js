@@ -1,10 +1,28 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.25...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.26...develop
 
 Changes:
 * TODO
+
+# 1.0.25
+
+> Build environment: NodeJS `12.16.1`, NPM `6.13.7`
+
+Changes:
+* NPM package updates
+* Fixed bug with decodeURIComponent for link.Href parsing (syntax normalization)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.26/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.26/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.26
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.25...v1.0.26
 
 # 1.0.25
 
