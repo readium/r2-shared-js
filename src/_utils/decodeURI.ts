@@ -10,7 +10,12 @@ export function tryDecodeURI(url: string | undefined): string | null {
         return null;
     }
     try {
-        return decodeURI(url);
+        // note that with decodeURI(),
+        // %20 becomes space character, but %2C (for example) does not become comma ","
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/decodeURIComponent
+        // vs.
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/decodeURI
+        return decodeURIComponent(url);
     } catch (err) { // can occur with "%" literal char inside non-escaped URL
         console.log(url);
         console.log(err);
