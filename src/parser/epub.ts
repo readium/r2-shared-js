@@ -67,6 +67,9 @@ const epub31 = "3.1";
 export const mediaOverlayURLPath = "media-overlay.json";
 export const mediaOverlayURLParam = "resource";
 
+// https://github.com/readium/webpub-manifest/issues/52#issuecomment-601686135
+export const BCP47_UNKNOWN_LANG = "und";
+
 function parseSpaceSeparatedString(str: string | undefined | null): string[] {
     return str ? str.trim().split(" ").map((role) => {
         return role.trim();
@@ -1120,7 +1123,7 @@ const addContributor = (
                 contributor.Name[publication.Metadata.Language[0].toLowerCase()] = cont.Data;
             } else {
                 // tslint:disable-next-line: no-string-literal
-                contributor.Name["_"] = cont.Data;
+                contributor.Name[BCP47_UNKNOWN_LANG] = cont.Data;
             }
         } else {
             contributor.Name = cont.Data;
@@ -1337,7 +1340,7 @@ const addTitle = (publication: Publication, rootfile: Rootfile, opf: OPF) => {
                     publication.Metadata.Title[publication.Metadata.Language[0].toLowerCase()] = mainTitle.Data;
                 } else {
                     // tslint:disable-next-line: no-string-literal
-                    publication.Metadata.Title["_"] = mainTitle.Data;
+                    publication.Metadata.Title[BCP47_UNKNOWN_LANG] = mainTitle.Data;
                 }
 
             } else {
@@ -1366,7 +1369,7 @@ const addTitle = (publication: Publication, rootfile: Rootfile, opf: OPF) => {
                     publication.Metadata.SubTitle[publication.Metadata.Language[0].toLowerCase()] = subTitle.Data;
                 } else {
                     // tslint:disable-next-line: no-string-literal
-                    publication.Metadata.SubTitle["_"] = subTitle.Data;
+                    publication.Metadata.SubTitle[BCP47_UNKNOWN_LANG] = subTitle.Data;
                 }
 
             } else {
