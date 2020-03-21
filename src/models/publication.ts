@@ -28,6 +28,7 @@ const SPINE_JSON_PROP = "spine";
 const RESOURCES_JSON_PROP = "resources";
 const TOC_JSON_PROP = "toc";
 const PAGELIST_JSON_PROP = "page-list";
+const PAGELIST_CAMEL_JSON_PROP = "pageList";
 const LANDMARKS_JSON_PROP = "landmarks";
 const LOI_JSON_PROP = "loi";
 const LOA_JSON_PROP = "loa";
@@ -89,9 +90,21 @@ export class Publication {
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/subcollections.schema.json#L7
+    @JsonProperty(PAGELIST_CAMEL_JSON_PROP)
+    @JsonElementType(Link)
+    public PageList2!: Link[];
     @JsonProperty(PAGELIST_JSON_PROP)
     @JsonElementType(Link)
-    public PageList!: Link[];
+    public PageList1!: Link[] | undefined;
+    get PageList(): Link[] | undefined {
+        return this.PageList2 ? this.PageList2 : this.PageList1;
+    }
+    set PageList(pagelist: Link[] | undefined) {
+        if (pagelist) {
+            this.PageList1 = undefined;
+            this.PageList2 = pagelist;
+        }
+    }
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/917c83e798e3eda42b3e9d0dc92f0fef31b16211/schema/extensions/epub/subcollections.schema.json#L13
