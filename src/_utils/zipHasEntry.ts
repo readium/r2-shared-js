@@ -5,7 +5,11 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
+import * as debug_ from "debug";
+
 import { IZip } from "@r2-utils-js/_utils/zip/zip";
+
+const debug = debug_("r2:shared#utils/zipHasEntry");
 
 export async function zipHasEntry(zip: IZip, zipPath: string, zipPathOther: string | undefined): Promise<boolean> {
     let has = zip.hasEntry(zipPath);
@@ -17,11 +21,12 @@ export async function zipHasEntry(zip: IZip, zipPath: string, zipPathOther: stri
         }
     }
     if (!has && zipPathOther && zipPathOther !== zipPath) {
-        console.log(`zipHasEntry: ${zipPath} => ${zipPathOther}`);
-        has = zip.hasEntry(zipPath);
+        debug(`zipHasEntry: ${zipPath} => ${zipPathOther}`);
+
+        has = zip.hasEntry(zipPathOther);
         if ((zip as any).hasEntryAsync) { // hacky!!! (HTTP fetch)
             try {
-                has = await (zip as any).hasEntryAsync(zipPath);
+                has = await (zip as any).hasEntryAsync(zipPathOther);
             } catch (err) {
                 console.log(err);
             }
