@@ -369,7 +369,7 @@ async function extractEPUB_Link(pub: Publication, zip: IZip, outDir: string, lin
     let transformedStream: IStreamAndLength;
     try {
         transformedStream = await Transformers.tryStream(
-            pub, link,
+            pub, link, undefined,
             zipStream_,
             false,
             0,

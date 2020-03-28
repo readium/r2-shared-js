@@ -29,6 +29,7 @@ export class TransformerLCP implements ITransformer {
     public async transformStream(
         publication: Publication,
         link: Link,
+        _url: string | undefined,
         stream: IStreamAndLength,
         isPartialByteRangeRequest: boolean,
         partialByteBegin: number,

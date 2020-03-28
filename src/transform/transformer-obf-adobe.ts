@@ -21,6 +21,7 @@ export class TransformerObfAdobe implements ITransformer {
     public async transformStream(
         publication: Publication,
         link: Link,
+        _url: string | undefined,
         stream: IStreamAndLength,
         _isPartialByteRangeRequest: boolean,
         _partialByteBegin: number,

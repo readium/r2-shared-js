@@ -20,6 +20,7 @@ const debug = debug_("r2:shared#transform/transformer-html");
 export type TTransformFunction = (
     publication: Publication,
     link: Link,
+    url: string | undefined,
     data: string,
     sessionInfo: string | undefined,
 ) => string;
@@ -60,6 +61,7 @@ export class TransformerHTML implements ITransformer {
     public async transformStream(
         publication: Publication,
         link: Link,
+        url: string | undefined,
         stream: IStreamAndLength,
         _isPartialByteRangeRequest: boolean,
         _partialByteBegin: number,
@@ -76,7 +78,7 @@ export class TransformerHTML implements ITransformer {
 
         let buff: Buffer;
         try {
-            buff = await this.transformBuffer(publication, link, data, sessionInfo);
+            buff = await this.transformBuffer(publication, link, url, data, sessionInfo);
         } catch (err) {
             return Promise.reject(err);
         }
@@ -94,13 +96,14 @@ export class TransformerHTML implements ITransformer {
     private async transformBuffer(
         publication: Publication,
         link: Link,
+        url: string | undefined,
         data: Buffer,
         sessionInfo: string | undefined,
     ): Promise<Buffer> {
 
         try {
             const str = data.toString("utf8");
-            const str_ = this.transformString(publication, link, str, sessionInfo);
+            const str_ = this.transformString(publication, link, url, str, sessionInfo);
             return Promise.resolve(Buffer.from(str_));
         } catch (err) {
             debug("TransformerHTML fail => no change");

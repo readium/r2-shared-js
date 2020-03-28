@@ -21,6 +21,7 @@ export interface ITransformer {
     transformStream(
         publication: Publication,
         link: Link,
+        url: string | undefined,
         stream: IStreamAndLength,
         isPartialByteRangeRequest: boolean,
         partialByteBegin: number,
@@ -49,6 +50,7 @@ export class Transformers {
     public static async tryStream(
         publication: Publication,
         link: Link,
+        url: string | undefined,
         stream: IStreamAndLength,
         isPartialByteRangeRequest: boolean,
         partialByteBegin: number, partialByteEnd: number,
@@ -56,7 +58,7 @@ export class Transformers {
         ): Promise<IStreamAndLength> {
 
         return Transformers.instance()._tryStream(
-            publication, link,
+            publication, link, url,
             stream,
             isPartialByteRangeRequest,
             partialByteBegin,
@@ -99,6 +101,7 @@ export class Transformers {
 
     private async _tryStream(
         publication: Publication, link: Link,
+        url: string | undefined,
         stream: IStreamAndLength,
         isPartialByteRangeRequest: boolean,
         partialByteBegin: number, partialByteEnd: number,
@@ -117,7 +120,7 @@ export class Transformers {
         //         atLeastOne = true;
         //     }
         //     transformedData = t.transformStream(
-        //         publication, link,
+        //         publication, link, url,
         //         stream,
         //         isPartialByteRangeRequest, partialByteBegin, partialByteEnd);
         //     if (transformedData) {
@@ -147,6 +150,7 @@ export class Transformers {
                 transformedData = t.transformStream(
                     publication,
                     link,
+                    url,
                     s,
                     isPartialByteRangeRequest,
                     partialByteBegin,

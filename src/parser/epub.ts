@@ -743,7 +743,7 @@ const fillMediaOverlayParse =
         let transformedStream: IStreamAndLength;
         try {
             transformedStream = await Transformers.tryStream(
-                publication, link,
+                publication, link, undefined,
                 smilZipStream_,
                 false,
                 0,
