@@ -1,10 +1,31 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.27...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.28...develop
 
 Changes:
 * TODO
+
+# 1.0.28
+
+> Build environment: NodeJS `12.16.1`, NPM `6.14.4`
+
+Changes:
+* NPM package updates
+* camel case pageList JSON property with support for legacy page-list
+* fixes incorrect path in zipHasEntry (fallback to raw authored path, potentially percent-escaped), and replaced console.log() with debug().
+* added resource URL to transformer parameter
+* HTML transformer should not contains FXL vs. reflow heuristics (FXL audio/video patch)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.28/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.28/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.28
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.27...v1.0.28
 
 # 1.0.27
 
