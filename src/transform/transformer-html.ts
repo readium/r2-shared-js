@@ -33,7 +33,7 @@ export class TransformerHTML implements ITransformer {
         this.transformString = transformerFunction;
     }
 
-    public supports(publication: Publication, link: Link): boolean {
+    public supports(_publication: Publication, link: Link): boolean {
 
         let mediaType = mime.lookup(link.Href);
         if (link && link.TypeLink) {
@@ -41,18 +41,19 @@ export class TransformerHTML implements ITransformer {
         }
 
         if (mediaType === "text/html" || mediaType === "application/xhtml+xml") {
-            const pubDefinesLayout = publication.Metadata && publication.Metadata.Rendition
-                && publication.Metadata.Rendition.Layout;
-            const pubIsFixed = pubDefinesLayout && publication.Metadata.Rendition.Layout === "fixed";
+            // const pubDefinesLayout = publication.Metadata && publication.Metadata.Rendition
+            //     && publication.Metadata.Rendition.Layout;
+            // const pubIsFixed = pubDefinesLayout && publication.Metadata.Rendition.Layout === "fixed";
 
-            const linkDefinesLayout = link.Properties && link.Properties.Layout;
-            const linkIsFixed = linkDefinesLayout && link.Properties.Layout === "fixed";
+            // const linkDefinesLayout = link.Properties && link.Properties.Layout;
+            // const linkIsFixed = linkDefinesLayout && link.Properties.Layout === "fixed";
 
-            if (linkIsFixed || pubIsFixed) {
-                return false;
-            }
+            // if (linkIsFixed || pubIsFixed) {
+            //     return false;
+            // }
 
-            return true; // pass: reflow doc
+            // pass: reflow doc or fixed layout (e.g. not for ReadiumCSS, but for audio/video patch)
+            return true;
         }
 
         return false;
