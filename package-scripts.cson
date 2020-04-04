@@ -3,7 +3,7 @@
     sed -E "s/#ECMASCRIPT#/es6-es2015/g" package-scripts-build.cson >> tmp-build.cson &&
     sed -E "s/#ECMASCRIPT#/es7-es2016/g" package-scripts-build.cson >> tmp-build.cson &&
     sed -E "s/#ECMASCRIPT#/es8-es2017/g" package-scripts-build.cson >> tmp-build.cson &&
-    json -I -f package.json -e "this.scripts=$(cat package-scripts.cson tmp-build.cson | node node_modules/cson/bin/cson2json)" &&
+    json -I -f package.json -e "this.scripts=$(cat package-scripts.cson tmp-build.cson | node node_modules/.bin/cson2json)" &&
     rimraf tmp-*.cson
   '
 
