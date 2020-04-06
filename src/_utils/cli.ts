@@ -13,6 +13,7 @@ import * as util from "util";
 
 import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
+import { isAudioBookPublication } from "@parser/audiobook";
 import { isEPUBlication } from "@parser/epub";
 import { PublicationParsePromise } from "@parser/publication-parser";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
@@ -80,8 +81,6 @@ if (isHTTP(filePath)) {
 fileName = fileName.replace(/META-INF[\/|\\]container.xml$/, "");
 fileName = path.basename(fileName);
 
-const isAnEPUB = isEPUBlication(filePath);
-
 let outputDirPath: string | undefined;
 if (args[1]) {
     const argDir = args[1].trim();
@@ -133,9 +132,12 @@ if (args[2]) {
         return;
     }
 
-    if (isAnEPUB && outputDirPath) {
+    const isAnEPUB = isEPUBlication(filePath);
+    const isAnAudioBook = await isAudioBookPublication(filePath);
+
+    if ((isAnEPUB || isAnAudioBook) && outputDirPath) {
         try {
-            await extractEPUB(publication, outputDirPath, decryptKeys);
+            await extractEPUB(isAnEPUB ? true : false, publication, outputDirPath, decryptKeys);
         } catch (err) {
             console.log("== Publication extract FAIL");
             console.log(err);
@@ -239,8 +241,14 @@ async function extractEPUB_Check(zip: IZip, outDir: string) {
     }
     if (zipEntries) {
         for (const zipEntry of zipEntries) {
-            if (zipEntry !== "mimetype" && !zipEntry.startsWith("META-INF/") && !zipEntry.endsWith(".opf") &&
-                !zipEntry.endsWith(".DS_Store")) { // zip entry can actually be exploded EPUB file
+            if (zipEntry !== "mimetype" &&
+                !zipEntry.startsWith("META-INF/") &&
+                !zipEntry.endsWith(".opf") &&
+                zipEntry !== "publication.json" &&
+                zipEntry !== "license.lcpl" &&
+                !zipEntry.endsWith(".DS_Store") &&
+                !zipEntry.startsWith("__MACOSX/")) { // zip entry can actually be exploded EPUB file
+
                 const expectedOutputPath = path.join(outDir, zipEntry);
                 if (!fs.existsSync(expectedOutputPath)) {
                     console.log("Zip entry not extracted??");
@@ -377,6 +385,7 @@ async function extractEPUB_Link(pub: Publication, zip: IZip, outDir: string, lin
             undefined,
         );
     } catch (err) {
+        // Note that the "LCP not ready!" message is a warning, not an error caught here.
         console.log(hrefDecoded);
         console.log(err);
         return;
@@ -402,7 +411,7 @@ async function extractEPUB_Link(pub: Publication, zip: IZip, outDir: string, lin
     fs.writeFileSync(linkOutputPath, zipData);
 }
 
-async function extractEPUB(pub: Publication, outDir: string, keys: string[] | undefined) {
+async function extractEPUB(isEPUB: boolean, pub: Publication, outDir: string, keys: string[] | undefined) {
 
     // automatically handles exploded filesystem too,
     // via the zip-ex.ts abstraction in r2-utils-js
@@ -439,7 +448,7 @@ async function extractEPUB(pub: Publication, outDir: string, keys: string[] | un
     //     links.push(l);
     // }
     if (!keys) {
-        const lic = "META-INF/license.lcpl";
+        const lic = (isEPUB ? "META-INF/" : "") + "license.lcpl";
         const has = await zipHasEntry(zip, lic, undefined);
         if (has) {
             const l = new Link();
