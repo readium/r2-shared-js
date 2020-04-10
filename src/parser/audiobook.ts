@@ -295,7 +295,9 @@ export async function isAudioBookPublication(urlOrPath: string): Promise<AudioBo
     const ext = path.extname(fileName).toLowerCase();
 
     const audio = /\.audiobook$/.test(ext);
-    if (audio) {
+    const audioLcp = /\.lcpa$/.test(ext);
+    const audioLcpAlt = /\.lcpaudiobook$/.test(ext);
+    if (audio || audioLcp || audioLcpAlt) {
         // return isHttp ? AudioBookis.RemotePacked : AudioBookis.LocalPacked;
         if (!isHttp) {
             return AudioBookis.LocalPacked;
