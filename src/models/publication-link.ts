@@ -18,6 +18,7 @@ import { Properties } from "./metadata-properties";
 
 const PROPERTIES_JSON_PROP = "properties";
 const CHILDREN_JSON_PROP = "children";
+const ALTERNATE_JSON_PROP = "alternate";
 
 // tslint:disable-next-line:max-line-length
 // https://github.com/readium/webpub-manifest/blob/ca6d887caa2d0495200fef4695f41aacb5fed2e9/schema/link.schema.json
@@ -75,6 +76,12 @@ export class Link {
     @JsonProperty(CHILDREN_JSON_PROP)
     @JsonElementType(Link)
     public Children!: Link[];
+
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/2bc1241901fabec746ce11193c71f7339c016a87/schema/link.schema.json#L73
+    @JsonProperty(ALTERNATE_JSON_PROP)
+    @JsonElementType(Link)
+    public Alternate!: Link[];
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/ca6d887caa2d0495200fef4695f41aacb5fed2e9/schema/link.schema.json#L19
