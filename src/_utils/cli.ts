@@ -13,7 +13,7 @@ import * as util from "util";
 
 import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
-import { isAudioBookPublication } from "@parser/audiobook";
+import { AudioBookis, isAudioBookPublication } from "@parser/audiobook";
 import { isEPUBlication } from "@parser/epub";
 import { PublicationParsePromise } from "@parser/publication-parser";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
@@ -133,7 +133,13 @@ if (args[2]) {
     }
 
     const isAnEPUB = isEPUBlication(filePath);
-    const isAnAudioBook = await isAudioBookPublication(filePath);
+    let isAnAudioBook: AudioBookis | undefined;
+    try {
+        isAnAudioBook = await isAudioBookPublication(filePath);
+    } catch (_err) {
+        // console.log(err);
+        // ignore
+    }
 
     if ((isAnEPUB || isAnAudioBook) && outputDirPath) {
         try {
