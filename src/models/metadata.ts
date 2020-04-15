@@ -643,6 +643,29 @@ export class Metadata implements IWithAdditionalJSON {
     // }
     // END IWithAdditionalJSON
 
+    // tslint:disable-next-line: max-line-length
+    // node -e 'const parse = (AccessModeSufficient) => console.log(JSON.stringify(AccessModeSufficient.map((ams) => ams.split(",").map((token) => token.trim()).filter((token) => token.length).reduce((pv, cv) => pv.includes(cv) ? pv : pv.concat(cv), [])).filter((arr) => arr.length))); parse([]); parse([""]); parse(["visual,textual"]); parse(["  visual   , textual  "]); parse(["  visual   , textual , visual "]); parse(["  visual   , textual , visual ", "auditory, auditory"]); parse(["", "  visual   , textual ,, visual ", "auditory, auditory,,"]);'
+    // ====>
+    // []
+    // []
+    // [["visual","textual"]]
+    // [["visual","textual"]]
+    // [["visual","textual"]]
+    // [["visual","textual"],["auditory"]]
+    // [["visual","textual"],["auditory"]]
+    public ParseAccessModeSufficient(): (string[])[] {
+        if (this.AccessModeSufficient) {
+            return this.AccessModeSufficient.map((ams) =>
+                ams.split(",").
+                map((token) => token.trim()).
+                filter((token) => token.length).
+                reduce((pv, cv) => pv.includes(cv) ? pv : pv.concat(cv), [] as string[]).
+                filter((arr) => arr.length),
+            );
+        }
+        return [];
+    }
+
     @OnDeserialized()
     // tslint:disable-next-line:no-unused-variable
     // @ts-ignore: TS6133 (is declared but its value is never read.)
