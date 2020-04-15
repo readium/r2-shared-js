@@ -10,6 +10,7 @@ import { XmlItemType, XmlObject, XmlXPathSelector } from "@r2-utils-js/_utils/xm
 import { Author } from "./opf-author";
 import { MetaDate } from "./opf-date";
 import { Identifier } from "./opf-identifier";
+import { MetaLink } from "./opf-link";
 import { Metafield } from "./opf-metafield";
 import { Subject } from "./opf-subject";
 import { Title } from "./opf-title";
@@ -21,6 +22,10 @@ import { Title } from "./opf-title";
 export class Metadata {
 
     // XPATH ROOT: /opf:package/opf:metadata
+
+    @XmlXPathSelector("link")
+    @XmlItemType(MetaLink)
+    public Link!: MetaLink[];
 
     @XmlXPathSelector("dc:title")
     @XmlItemType(Title)

@@ -498,6 +498,129 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
         }
 
         if (opf.Metadata.Meta) {
+
+            opf.Metadata.Link.forEach((metaLink) => {
+                if (metaLink.Property === "a11y:certifierCredential") {
+                    if (!metaLink.Href) {
+                        return; // continue
+                    }
+                    if (!publication.Metadata.CertifierCredential) {
+                        publication.Metadata.CertifierCredential = [];
+                    }
+                    publication.Metadata.CertifierCredential.push(metaLink.Href);
+                } else if (metaLink.Property === "a11y:certifierReport") {
+                    if (!metaLink.Href) {
+                        return; // continue
+                    }
+                    if (!publication.Metadata.CertifierReport) {
+                        publication.Metadata.CertifierReport = [];
+                    }
+                    publication.Metadata.CertifierReport.push(metaLink.Href);
+                } else if (metaLink.Property === "dcterms:conformsTo") {
+                    if (!metaLink.Href) {
+                        return; // continue
+                    }
+                    if (!publication.Metadata.ConformsTo) {
+                        publication.Metadata.ConformsTo = [];
+                    }
+                    publication.Metadata.ConformsTo.push(metaLink.Href);
+                }
+            });
+
+            opf.Metadata.Meta.forEach((metaTag) => {
+                if (metaTag.Name === "schema:accessMode" ||
+                    metaTag.Property === "schema:accessMode") {
+                    const val = metaTag.Property ? metaTag.Data : metaTag.Content;
+                    if (!val) {
+                        return; // continue
+                    }
+                    if (!publication.Metadata.AccessMode) {
+                        publication.Metadata.AccessMode = [];
+                    }
+                    publication.Metadata.AccessMode.push(val);
+                } else if (metaTag.Name === "schema:accessibilityFeature" ||
+                    metaTag.Property === "schema:accessibilityFeature") {
+                    const val = metaTag.Property ? metaTag.Data : metaTag.Content;
+                    if (!val) {
+                        return; // continue
+                    }
+                    if (!publication.Metadata.AccessibilityFeature) {
+                        publication.Metadata.AccessibilityFeature = [];
+                    }
+                    publication.Metadata.AccessibilityFeature.push(val);
+                } else if (metaTag.Name === "schema:accessibilityHazard" ||
+                    metaTag.Property === "schema:accessibilityHazard") {
+                    const val = metaTag.Property ? metaTag.Data : metaTag.Content;
+                    if (!val) {
+                        return; // continue
+                    }
+                    if (!publication.Metadata.AccessibilityHazard) {
+                        publication.Metadata.AccessibilityHazard = [];
+                    }
+                    publication.Metadata.AccessibilityHazard.push(val);
+                } else if (metaTag.Name === "schema:accessibilitySummary" ||
+                    metaTag.Property === "schema:accessibilitySummary") {
+                    const val = metaTag.Property ? metaTag.Data : metaTag.Content;
+                    if (!val) {
+                        return; // continue
+                    }
+                    if (!publication.Metadata.AccessibilitySummary) {
+                        publication.Metadata.AccessibilitySummary = [];
+                    }
+                    publication.Metadata.AccessibilitySummary.push(val);
+                } else if (metaTag.Name === "schema:accessModeSufficient" ||
+                    metaTag.Property === "schema:accessModeSufficient") {
+                    const val = metaTag.Property ? metaTag.Data : metaTag.Content;
+                    if (!val) {
+                        return; // continue
+                    }
+                    if (!publication.Metadata.AccessModeSufficient) {
+                        publication.Metadata.AccessModeSufficient = [];
+                    }
+                    publication.Metadata.AccessModeSufficient.push(val);
+                } else if (metaTag.Name === "schema:accessibilityAPI" ||
+                    metaTag.Property === "schema:accessibilityAPI") {
+                    const val = metaTag.Property ? metaTag.Data : metaTag.Content;
+                    if (!val) {
+                        return; // continue
+                    }
+                    if (!publication.Metadata.AccessibilityAPI) {
+                        publication.Metadata.AccessibilityAPI = [];
+                    }
+                    publication.Metadata.AccessibilityAPI.push(val);
+                } else if (metaTag.Name === "schema:accessibilityControl" ||
+                    metaTag.Property === "schema:accessibilityControl") {
+                    const val = metaTag.Property ? metaTag.Data : metaTag.Content;
+                    if (!val) {
+                        return; // continue
+                    }
+                    if (!publication.Metadata.AccessibilityControl) {
+                        publication.Metadata.AccessibilityControl = [];
+                    }
+                    publication.Metadata.AccessibilityControl.push(val);
+                } else if (metaTag.Name === "a11y:certifiedBy" ||
+                    metaTag.Property === "a11y:certifiedBy") {
+                    const val = metaTag.Property ? metaTag.Data : metaTag.Content;
+                    if (!val) {
+                        return; // continue
+                    }
+                    if (!publication.Metadata.CertifiedBy) {
+                        publication.Metadata.CertifiedBy = [];
+                    }
+                    publication.Metadata.CertifiedBy.push(val);
+                } else if (metaTag.Name === "a11y:certifierCredential" || // may be link in EPUB3
+                    metaTag.Property === "a11y:certifierCredential") {
+                    const val = metaTag.Property ? metaTag.Data : metaTag.Content;
+                    if (!val) {
+                        return; // continue
+                    }
+                    if (!publication.Metadata.CertifierCredential) {
+                        publication.Metadata.CertifierCredential = [];
+                    }
+                    publication.Metadata.CertifierCredential.push(val);
+                }
+            });
+
             const metasDuration: Metafield[] = [];
             const metasNarrator: Metafield[] = [];
             const metasActiveClass: Metafield[] = [];

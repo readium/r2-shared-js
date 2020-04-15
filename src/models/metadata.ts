@@ -63,6 +63,162 @@ const IMPRINT_JSON_PROP = "imprint";
 @JsonObject()
 export class Metadata implements IWithAdditionalJSON {
 
+    // https://github.com/readium/architecture/issues/94#issuecomment-613965656
+    // https://github.com/JayPanoz/architecture/blob/a11y-metadata-parsing/streamer/parser/a11y-metadata-parsing.md
+    // http://kb.daisy.org/publishing/docs/metadata/schema-org.html
+    // http://kb.daisy.org/publishing/docs/metadata/evaluation.html
+    // https://www.w3.org/wiki/WebSchemas/Accessibility
+
+    // schema:accessMode
+    @JsonProperty("accessMode")
+    @JsonConverter(JsonStringConverter)
+    @JsonElementType(String)
+    public AccessMode!: string[];
+    // 'auditory',
+    // 'tactile',
+    // 'textual',
+    // 'visual',
+    // 'chartOnVisual',
+    // 'chemOnVisual',
+    // 'colorDependent',
+    // 'diagramOnVisual',
+    // 'mathOnVisual',
+    // 'musicOnVisual',
+    // 'textOnVisual',
+
+    // schema:accessibilityFeature
+    @JsonProperty("accessibilityFeature")
+    @JsonConverter(JsonStringConverter)
+    @JsonElementType(String)
+    public AccessibilityFeature!: string[];
+    // 'alternativeText',
+    // 'annotations',
+    // 'audioDescription',
+    // 'bookmarks',
+    // 'braille',
+    // 'captions',
+    // 'ChemML',
+    // 'describedMath',
+    // 'displayTransformability',
+    // 'displayTransformability/font-size',
+    // 'displayTransformability/font-family',
+    // 'displayTransformability/line-height',
+    // 'displayTransformability/word-spacing',
+    // 'displayTransformability/letter-spacing',
+    // 'displayTransformability/color',
+    // 'displayTransformability/background-color',
+    // 'highContrastAudio',
+    // 'highContrastAudio/noBackground',
+    // 'highContrastAudio/reducedBackground',
+    // 'highContrastAudio/switchableBackground',
+    // 'highContrastDisplay',
+    // 'index',
+    // 'largePrint',
+    // 'latex',
+    // 'longDescription',
+    // 'MathML',
+    // 'none',
+    // 'printPageNumbers',
+    // 'readingOrder',
+    // 'rubyAnnotations',
+    // 'signLanguage',
+    // 'structuralNavigation',
+    // 'synchronizedAudioText',
+    // 'tableOfContents',
+    // 'taggedPDF',
+    // 'tactileGraphic',
+    // 'tactileObject',
+    // 'timingControl',
+    // 'transcript',
+    // 'ttsMarkup',
+    // 'unlocked',
+
+    // schema:accessibilityHazard
+    @JsonProperty("accessibilityHazard")
+    @JsonConverter(JsonStringConverter)
+    @JsonElementType(String)
+    public AccessibilityHazard!: string[];
+    // 'flashing',
+    // 'noFlashingHazard',
+    // 'motionSimulation',
+    // 'noMotionSimulationHazard',
+    // 'sound',
+    // 'noSoundHazard',
+    // 'unknown',
+    // 'none',
+
+    // schema:accessibilitySummary
+    @JsonProperty("accessibilitySummary")
+    @JsonConverter(JsonStringConverter)
+    @JsonElementType(String)
+    public AccessibilitySummary!: string[];
+
+    // schema:accessModeSufficient
+    // NOTE: the only field that accepts comma-separated values from the enumeration,
+    // but this model preserves the original string, no attempt to break down the tokens.
+    @JsonProperty("accessModeSufficient")
+    @JsonConverter(JsonStringConverter)
+    @JsonElementType(String)
+    public AccessModeSufficient!: string[];
+    // 'auditory',
+    // 'tactile',
+    // 'textual',
+    // 'visual',
+    // 'chartOnVisual',
+    // 'chemOnVisual',
+    // 'colorDependent',
+    // 'diagramOnVisual',
+    // 'mathOnVisual',
+    // 'musicOnVisual',
+    // 'textOnVisual',
+
+    // schema:accessibilityAPI
+    @JsonProperty("accessibilityAPI")
+    @JsonConverter(JsonStringConverter)
+    @JsonElementType(String)
+    public AccessibilityAPI!: string[];
+    // ARIA etc.
+
+    // schema:accessibilityControl
+    @JsonProperty("accessibilityControl")
+    @JsonConverter(JsonStringConverter)
+    @JsonElementType(String)
+    public AccessibilityControl!: string[];
+    // 'fullKeyboardControl',
+    // 'fullMouseControl',
+    // 'fullSwitchControl',
+    // 'fullTouchControl',
+    // 'fullVideoControl',
+    // 'fullAudioControl',
+    // 'fullVoiceControl',
+
+    // a11y:certifiedBy
+    @JsonProperty("certifiedBy")
+    @JsonConverter(JsonStringConverter)
+    @JsonElementType(String)
+    public CertifiedBy!: string[];
+
+    // a11y:certifierCredential
+    @JsonProperty("certifierCredential")
+    @JsonConverter(JsonStringConverter)
+    @JsonElementType(String)
+    public CertifierCredential!: string[]; // may be link in EPUB3
+
+    // a11y:certifierReport
+    @JsonProperty("certifierReport")
+    @JsonConverter(JsonStringConverter)
+    @JsonElementType(String)
+    public CertifierReport!: string[]; // link in EPUB3
+
+    // dcterms:conformsTo
+    @JsonProperty("conformsTo")
+    @JsonConverter(JsonStringConverter)
+    @JsonElementType(String)
+    public ConformsTo!: string[]; // link in EPUB3
+    // http://www.idpf.org/epub/a11y/accessibility-20170105.html#wcag-a
+    // http://www.idpf.org/epub/a11y/accessibility-20170105.html#wcag-aa
+    // http://www.idpf.org/epub/a11y/accessibility-20170105.html#wcag-aaa
+
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L11
     // tslint:disable-next-line:max-line-length
