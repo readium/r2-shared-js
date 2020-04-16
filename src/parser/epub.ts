@@ -497,8 +497,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
             });
         }
 
-        if (opf.Metadata.Meta) {
-
+        if (opf.Metadata.Link) {
             opf.Metadata.Link.forEach((metaLink) => {
                 if (metaLink.Property === "a11y:certifierCredential") {
                     let val = metaLink.Href;
@@ -541,7 +540,8 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
                     publication.Metadata.ConformsTo.push(val);
                 }
             });
-
+        }
+        if (opf.Metadata.Meta) {
             opf.Metadata.Meta.forEach((metaTag) => {
                 if (metaTag.Name === "schema:accessMode" ||
                     metaTag.Property === "schema:accessMode") {

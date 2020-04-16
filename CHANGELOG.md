@@ -1,10 +1,27 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.33...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.34...develop
 
 Changes:
 * TODO
+
+# 1.0.34
+
+> Build environment: NodeJS `12.16.1`, NPM `6.14.4`
+
+Changes:
+* Fixed crash when opening EPUBs with no Metadata Links (code typo)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.34/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.34/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.34
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.33...v1.0.34
 
 # 1.0.33
 
