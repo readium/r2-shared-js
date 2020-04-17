@@ -542,6 +542,12 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
             });
         }
         if (opf.Metadata.Meta) {
+            interface IMetaTagValue {
+                metaTag: Metafield;
+                val: string;
+            }
+            const AccessibilitySummarys: IMetaTagValue[] = [];
+
             opf.Metadata.Meta.forEach((metaTag) => {
                 if (metaTag.Name === "schema:accessMode" ||
                     metaTag.Property === "schema:accessMode") {
@@ -595,10 +601,10 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
                     if (!val) {
                         return; // continue
                     }
-                    if (!publication.Metadata.AccessibilitySummary) {
-                        publication.Metadata.AccessibilitySummary = [];
-                    }
-                    publication.Metadata.AccessibilitySummary.push(val);
+                    AccessibilitySummarys.push({
+                        metaTag,
+                        val,
+                    });
                 } else if (metaTag.Name === "schema:accessModeSufficient" ||
                     metaTag.Property === "schema:accessModeSufficient") {
                     let val = metaTag.Property ? metaTag.Data : metaTag.Content;
@@ -671,6 +677,36 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
                     publication.Metadata.CertifierCredential.push(val);
                 }
             });
+            if (AccessibilitySummarys.length === 1) {
+                const tuple = AccessibilitySummarys[0];
+                if (tuple.metaTag.Lang) {
+                    publication.Metadata.AccessibilitySummary = {} as IStringMap;
+                    // tslint:disable-next-line: max-line-length
+                    (publication.Metadata.AccessibilitySummary as IStringMap)[tuple.metaTag.Lang.toLowerCase()] = tuple.val;
+                } else {
+                    publication.Metadata.AccessibilitySummary = tuple.val;
+                }
+            } else {
+                publication.Metadata.AccessibilitySummary = {} as IStringMap;
+
+                AccessibilitySummarys.forEach((tuple) => {
+                    // https://github.com/readium/architecture/blob/master/streamer/parser/metadata.md#title
+                    const xmlLang: string = tuple.metaTag.Lang || opf.Lang;
+                    if (xmlLang) {
+                        // tslint:disable-next-line: max-line-length
+                        (publication.Metadata.AccessibilitySummary as IStringMap)[xmlLang.toLowerCase()] = tuple.val;
+                    } else if (publication.Metadata.Language &&
+                        publication.Metadata.Language.length &&
+                        // tslint:disable-next-line: max-line-length
+                        !(publication.Metadata.AccessibilitySummary as IStringMap)[publication.Metadata.Language[0].toLowerCase()]) {
+                        // tslint:disable-next-line: max-line-length
+                        (publication.Metadata.AccessibilitySummary as IStringMap)[publication.Metadata.Language[0].toLowerCase()] = tuple.val;
+                    } else {
+                        // tslint:disable-next-line: no-string-literal, max-line-length
+                        (publication.Metadata.AccessibilitySummary as IStringMap)[BCP47_UNKNOWN_LANG] = tuple.val;
+                    }
+                });
+            }
 
             const metasDuration: Metafield[] = [];
             const metasNarrator: Metafield[] = [];

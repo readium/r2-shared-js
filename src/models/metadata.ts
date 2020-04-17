@@ -151,7 +151,7 @@ export class Metadata implements IWithAdditionalJSON {
     @JsonProperty("accessibilitySummary")
     @JsonConverter(JsonStringConverter)
     @JsonElementType(String)
-    public AccessibilitySummary!: string[];
+    public AccessibilitySummary!: string | IStringMap;
 
     // schema:accessModeSufficient
     // NOTE: the only field that accepts comma-separated values from the enumeration,
