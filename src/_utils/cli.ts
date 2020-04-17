@@ -6,7 +6,9 @@
 // ==LICENSE-END==
 
 import * as crypto from "crypto";
+import * as deepEqual from "fast-deep-equal";
 import * as fs from "fs";
+import * as jsonDiff from "json-diff";
 import * as path from "path";
 import { URL } from "url";
 import * as util from "util";
@@ -17,7 +19,7 @@ import { AudioBookis, isAudioBookPublication } from "@parser/audiobook";
 import { isEPUBlication } from "@parser/epub";
 import { PublicationParsePromise } from "@parser/publication-parser";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
-import { JsonArray, JsonMap, TaJsonSerialize } from "@r2-lcp-js/serializable";
+import { JsonArray, JsonMap, TaJsonDeserialize, TaJsonSerialize } from "@r2-lcp-js/serializable";
 import { isHTTP } from "@r2-utils-js/_utils/http/UrlUtils";
 import { streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
@@ -489,20 +491,42 @@ function ensureDirs(fspath: string) {
 function dumpPublication(publication: Publication) {
 
     console.log("#### RAW OBJECT:");
-
     // breakLength: 100  maxArrayLength: undefined
     console.log(util.inspect(publication,
         { showHidden: false, depth: 1000, colors: true, customInspect: true }));
 
-    // console.log("#### RAW JSON:");
-    // const publicationJsonObj = JSON.serialize(publication);
-    // console.log(publicationJsonObj);
+    const publicationJsonObj = TaJsonSerialize(publication);
 
-    // console.log("#### PRETTY JSON:");
-    // const publicationJsonStr = global.JSON.stringify(publicationJsonObj, null, "  ");
-    // console.log(publicationJsonStr);
+    const publicationJsonStr = global.JSON.stringify(publicationJsonObj, null, "  ");
 
-    // console.log("#### CANONICAL JSON:");
     // const publicationJsonStrCanonical = JSON.stringify(sortObject(publicationJsonObj));
-    // console.log(publicationJsonStrCanonical);
+
+    const publicationReverse = TaJsonDeserialize(publicationJsonObj, Publication);
+    // publicationReverse.AddLink("fake type", ["fake rel"], "fake url", undefined);
+
+    const publicationJsonObjReverse = TaJsonSerialize(publicationReverse);
+
+    const eq = deepEqual(publicationJsonObj, publicationJsonObjReverse);
+    if (!eq) {
+        console.log("#### TA-JSON SERIALIZED JSON OBJ:");
+        console.log(publicationJsonObj);
+
+        console.log("#### STRINGIFIED JSON OBJ:");
+        console.log(publicationJsonStr);
+
+        // console.log("#### CANONICAL JSON:");
+        // console.log(publicationJsonStrCanonical);
+
+        console.log("#### TA-JSON DESERIALIZED (REVERSE):");
+        console.log(util.inspect(publicationReverse,
+            { showHidden: false, depth: 1000, colors: true, customInspect: true }));
+
+        console.log("#### TA-JSON SERIALIZED JSON OBJ (REVERSE):");
+        console.log(publicationJsonObjReverse);
+
+        console.log("#### REVERSE NOT DEEP EQUAL!\n\n");
+        console.log("#### REVERSE NOT DEEP EQUAL!\n\n");
+        console.log("#### REVERSE NOT DEEP EQUAL!\n\n");
+    }
+    console.log(jsonDiff.diffString(publicationJsonObj, publicationJsonObjReverse));
 }

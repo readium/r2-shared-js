@@ -28,6 +28,7 @@ import {
 import { Subject } from "@models/metadata-subject";
 import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
+import { DelinearizeAccessModeSufficient } from "@models/ta-json-string-tokens-converter";
 import { Encrypted } from "@r2-lcp-js/models/metadata-encrypted";
 import { LCP } from "@r2-lcp-js/parser/epub/lcp";
 import { TaJsonDeserialize } from "@r2-lcp-js/serializable";
@@ -618,7 +619,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
                     if (!publication.Metadata.AccessModeSufficient) {
                         publication.Metadata.AccessModeSufficient = [];
                     }
-                    publication.Metadata.AccessModeSufficient.push(val);
+                    publication.Metadata.AccessModeSufficient.push(DelinearizeAccessModeSufficient(val));
                 } else if (metaTag.Name === "schema:accessibilityAPI" ||
                     metaTag.Property === "schema:accessibilityAPI") {
                     let val = metaTag.Property ? metaTag.Data : metaTag.Content;

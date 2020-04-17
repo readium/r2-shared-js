@@ -47,6 +47,7 @@
   "homepage": "https://github.com/readium/r2-shared-js",
   "dependencies": {
     "debug": "^4.1.1",
+    "fast-deep-equal": "^3.1.1",
     "image-size": "^0.8.3",
     "mime-types": "^2.1.26",
     "moment": "^2.24.0",
