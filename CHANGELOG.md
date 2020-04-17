@@ -1,10 +1,27 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.34...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.35...develop
 
 Changes:
 * TODO
+
+# 1.0.35
+
+> Build environment: NodeJS `12.16.1`, NPM `6.14.4`
+
+Changes:
+* Fixed accessibility metadata: summary is now multilingual string, and access mode sufficient is now de-linearized from comma-separated string (as parsed from EPUB, versus W3C Web Publications which implement the array of string tokens natively)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.35/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.35/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.35
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.34...v1.0.35
 
 # 1.0.34
 
