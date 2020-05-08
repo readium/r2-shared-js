@@ -14,6 +14,10 @@ import { JsonObject, JsonProperty } from "ta-json-x";
 @JsonObject()
 export class MediaOverlay {
 
+    // https://w3c.github.io/sync-media-pub/synchronized-narration.html#playback-styling
+    // sync-media-css-class-active
+    // sync-media-css-class-playing
+
     @JsonProperty("active-class")
     public ActiveClass!: string;
 

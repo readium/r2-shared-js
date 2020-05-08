@@ -84,6 +84,7 @@ export function timeStrToSeconds(timeStr: string): number {
 // TODO: MEDIA OVERLAY not in JSON Schema
 // tslint:disable-next-line:max-line-length
 // https://github.com/readium/webpub-manifest/tree/master/schema
+// https://w3c.github.io/sync-media-pub/synchronized-narration.html#properties
 @JsonObject()
 export class MediaOverlayNode {
     @JsonProperty("text")
@@ -97,7 +98,7 @@ export class MediaOverlayNode {
     @JsonElementType(String)
     public Role!: string[];
 
-    @JsonProperty("children")
+    @JsonProperty("narration")
     @JsonElementType(MediaOverlayNode)
     public Children!: MediaOverlayNode[];
 

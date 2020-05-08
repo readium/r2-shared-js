@@ -687,7 +687,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
                 } else {
                     publication.Metadata.AccessibilitySummary = tuple.val;
                 }
-            } else {
+            } else if (AccessibilitySummarys.length) {
                 publication.Metadata.AccessibilitySummary = {} as IStringMap;
 
                 AccessibilitySummarys.forEach((tuple) => {
@@ -715,7 +715,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
             const metasPlaybackActiveClass: Metafield[] = [];
 
             opf.Metadata.Meta.forEach((metaTag) => {
-                if (metaTag.Property === "media:duration") {
+                if (metaTag.Property === "media:duration" && !metaTag.Refine) {
                     metasDuration.push(metaTag);
                 }
                 if (metaTag.Property === "media:narrator") {
@@ -889,7 +889,7 @@ export async function getMediaOverlay(publication: Publication, spineHref: strin
     return Promise.resolve(mos);
 }
 
-const fillMediaOverlayParse =
+export const fillMediaOverlayParse =
     async (publication: Publication, mo: MediaOverlayNode) => {
 
     if (mo.initialized || !mo.SmilPathInZip) {
@@ -1129,6 +1129,16 @@ const fillMediaOverlay =
                     }
                     link.Properties.MediaOverlay = mediaOverlayURLPath + "?" +
                         mediaOverlayURLParam + "=" + querystring.escape(link.Href);
+
+                    // https://w3c.github.io/sync-media-pub/incorporating-synchronized-narration.html#with-webpub
+                    if (!link.Alternate) {
+                        link.Alternate = [];
+                    }
+                    const moLink = new Link();
+                    moLink.Href = link.Properties.MediaOverlay;
+                    moLink.TypeLink = "application/vnd.syncnarr+json";
+                    moLink.Duration = link.Duration;
+                    link.Alternate.push(moLink);
                 }
             });
 
