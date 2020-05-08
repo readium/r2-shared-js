@@ -542,9 +542,9 @@ async function dumpPublication(publication: Publication): Promise<void> {
             if (spineItem.Alternate) {
                 for (const altLink of spineItem.Alternate) {
                     if (altLink.TypeLink === "application/vnd.syncnarr+json") {
-                        console.log(spineItem.Href);
-                        console.log(spineItem.TypeLink);
-                        console.log(spineItem.Duration);
+                        console.log(altLink.Href);
+                        console.log(altLink.TypeLink);
+                        console.log(altLink.Duration);
                     }
                 }
             }
