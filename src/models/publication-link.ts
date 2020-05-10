@@ -90,7 +90,7 @@ export class Link {
     @JsonElementType(String)
     public Rel!: string[];
 
-    public MediaOverlays: MediaOverlayNode[] | undefined;
+    public MediaOverlays: MediaOverlayNode | undefined;
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/ca6d887caa2d0495200fef4695f41aacb5fed2e9/schema/link.schema.json#L7

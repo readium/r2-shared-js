@@ -11,7 +11,6 @@ import { imageSize } from "image-size";
 import { ISize } from "image-size/dist/types/interface";
 import * as moment from "moment";
 import * as path from "path";
-import * as querystring from "querystring";
 import { URL } from "url";
 import * as xmldom from "xmldom";
 import * as xpath from "xpath";
@@ -32,7 +31,7 @@ import { DelinearizeAccessModeSufficient } from "@models/ta-json-string-tokens-c
 import { Encrypted } from "@r2-lcp-js/models/metadata-encrypted";
 import { LCP } from "@r2-lcp-js/parser/epub/lcp";
 import { TaJsonDeserialize } from "@r2-lcp-js/serializable";
-import { isHTTP } from "@r2-utils-js/_utils/http/UrlUtils";
+import { encodeURIComponent_RFC3986, isHTTP } from "@r2-utils-js/_utils/http/UrlUtils";
 import { streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { XML } from "@r2-utils-js/_utils/xml-js-mapper";
 import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
@@ -91,10 +90,10 @@ export const addCoverDimensions = async (publication: Publication, coverLink: Li
         }
         const has = await zipHasEntry(zip, coverLinkHrefDecoded, coverLink.Href);
         if (!has) {
-            console.log(`NOT IN ZIP (addCoverDimensions): ${coverLink.Href} --- ${coverLinkHrefDecoded}`);
+            debug(`NOT IN ZIP (addCoverDimensions): ${coverLink.Href} --- ${coverLinkHrefDecoded}`);
             const zipEntries = await zip.getEntries();
             for (const zipEntry of zipEntries) {
-                console.log(zipEntry);
+                debug(zipEntry);
             }
             return;
         }
@@ -239,13 +238,13 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
         lcpl.init();
 
         // breakLength: 100  maxArrayLength: undefined
-        // console.log(util.inspect(lcpl,
+        // debug(util.inspect(lcpl,
         //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
 
         publication.LCP = lcpl;
 
         // // breakLength: 100  maxArrayLength: undefined
-        // console.log(util.inspect(this.LCP,
+        // debug(util.inspect(this.LCP,
         //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
 
         // https://github.com/readium/readium-lcp-specs/issues/15#issuecomment-358247286
@@ -284,7 +283,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
         encryption.ZipPath = encZipPath;
 
         // breakLength: 100  maxArrayLength: undefined
-        // console.log(util.inspect(encryption,
+        // debug(util.inspect(encryption,
         //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
     }
 
@@ -318,7 +317,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
     const container = XML.deserialize<Container>(containerXmlDoc, Container);
     container.ZipPath = containerZipPath;
     // breakLength: 100  maxArrayLength: undefined
-    // console.log(util.inspect(container,
+    // debug(util.inspect(container,
     //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
 
     const rootfile = container.Rootfile[0];
@@ -332,10 +331,10 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
     has = await zipHasEntry(zip, rootfilePathDecoded, rootfile.Path);
     if (!has) {
         const err = `NOT IN ZIP (container OPF rootfile): ${rootfile.Path} --- ${rootfilePathDecoded}`;
-        console.log(err);
+        debug(err);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
-            console.log(zipEntry);
+            debug(zipEntry);
         }
         return Promise.reject(err);
     }
@@ -400,7 +399,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
     opf.ZipPath = rootfilePathDecoded;
 
     // breakLength: 100  maxArrayLength: undefined
-    // console.log(util.inspect(opf,
+    // debug(util.inspect(opf,
     //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
 
     // const epubVersion = getEpubVersion(rootfile, opf);
@@ -421,10 +420,10 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
             has = await zipHasEntry(zip, ncxFilePath, undefined);
             if (!has) {
                 const err = `NOT IN ZIP (NCX): ${ncxManItem.Href} --- ${ncxFilePath}`;
-                console.log(err);
+                debug(err);
                 const zipEntries = await zip.getEntries();
                 for (const zipEntry of zipEntries) {
-                    console.log(zipEntry);
+                    debug(zipEntry);
                 }
                 return Promise.reject(err);
             }
@@ -452,7 +451,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
             ncx.ZipPath = ncxFilePath;
 
             // breakLength: 100  maxArrayLength: undefined
-            // console.log(util.inspect(ncx,
+            // debug(util.inspect(ncx,
             //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
         }
     }
@@ -791,11 +790,11 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
     if (isEpub3OrMore(rootfile, opf)) {
         findContributorInMeta(publication, rootfile, opf);
     }
-    await fillSpineAndResource(publication, rootfile, opf);
+    await fillSpineAndResource(publication, rootfile, opf, zip);
 
     await addRendition(publication, rootfile, opf, zip);
 
-    await addCoverRel(publication, rootfile, opf);
+    await addCoverRel(publication, rootfile, opf, zip);
 
     if (encryption) {
         fillEncryptionInfo(publication, rootfile, opf, encryption, lcpl);
@@ -829,7 +828,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
 
     fillPublicationDate(publication, rootfile, opf);
 
-    await fillMediaOverlay(publication, rootfile, opf, zip);
+    // await fillMediaOverlay(publication, rootfile, opf, zip);
 
     return publication;
 }
@@ -842,54 +841,51 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
 export async function getAllMediaOverlays(publication: Publication): Promise<MediaOverlayNode[]> {
     const mos: MediaOverlayNode[] = [];
 
-    if (publication.Spine) {
-        for (const link of publication.Spine) {
-            // publication.Spine.forEach((link) => {
-            if (link.MediaOverlays) {
-                for (const mo of link.MediaOverlays) {
-                    // link.MediaOverlays.forEach((mo) => {
-                    try {
-                        await fillMediaOverlayParse(publication, mo);
-                    } catch (err) {
-                        return Promise.reject(err);
-                    }
-                    mos.push(mo);
-                    // });
+    const links: Link[] = ([] as Link[]).
+        concat(publication.Spine ? publication.Spine : []).
+        concat(publication.Resources ? publication.Resources : []);
+
+    for (const link of links) {
+        if (link.MediaOverlays) {
+            const mo = link.MediaOverlays;
+            if (!mo.initialized) {
+                try {
+                    await lazyLoadMediaOverlays(publication, mo);
+                } catch (err) {
+                    return Promise.reject(err);
                 }
             }
-            // });
+            mos.push(mo);
         }
     }
 
     return Promise.resolve(mos);
 }
 
-export async function getMediaOverlay(publication: Publication, spineHref: string): Promise<MediaOverlayNode[]> {
-    const mos: MediaOverlayNode[] = [];
+export async function getMediaOverlay(publication: Publication, spineHref: string): Promise<MediaOverlayNode> {
 
-    if (publication.Spine) {
-        for (const link of publication.Spine) {
-            // publication.Spine.forEach((link) => {
-            if (link.MediaOverlays && link.Href.indexOf(spineHref) >= 0) {
-                for (const mo of link.MediaOverlays) {
-                    // link.MediaOverlays.forEach((mo) => {
-                    try {
-                        await fillMediaOverlayParse(publication, mo);
-                    } catch (err) {
-                        return Promise.reject(err);
-                    }
-                    mos.push(mo);
-                    // });
+    const links: Link[] = ([] as Link[]).
+        concat(publication.Spine ? publication.Spine : []).
+        concat(publication.Resources ? publication.Resources : []);
+
+    for (const link of links) {
+        if (link.MediaOverlays && link.Href.indexOf(spineHref) >= 0) {
+            const mo = link.MediaOverlays;
+            if (!mo.initialized) {
+                try {
+                    await lazyLoadMediaOverlays(publication, mo);
+                } catch (err) {
+                    return Promise.reject(err);
                 }
             }
-            // });
+            return Promise.resolve(mo);
         }
     }
 
-    return Promise.resolve(mos);
+    return Promise.reject(`No Media Overlays ${spineHref}`);
 }
 
-export const fillMediaOverlayParse =
+export const lazyLoadMediaOverlays =
     async (publication: Publication, mo: MediaOverlayNode) => {
 
     if (mo.initialized || !mo.SmilPathInZip) {
@@ -899,10 +895,8 @@ export const fillMediaOverlayParse =
     let link: Link | undefined;
     if (publication.Resources) {
 
-        const relativePath = mo.SmilPathInZip;
-
         link = publication.Resources.find((l) => {
-            if (l.Href === relativePath) {
+            if (l.Href === mo.SmilPathInZip) {
                 return true;
             }
             return false;
@@ -910,7 +904,7 @@ export const fillMediaOverlayParse =
         if (!link) {
             if (publication.Spine) {
                 link = publication.Spine.find((l) => {
-                    if (l.Href === relativePath) {
+                    if (l.Href === mo.SmilPathInZip) {
                         return true;
                     }
                     return false;
@@ -918,7 +912,7 @@ export const fillMediaOverlayParse =
             }
         }
         if (!link) {
-            const err = "Asset not declared in publication spine/resources! " + relativePath;
+            const err = "Asset not declared in publication spine/resources! " + mo.SmilPathInZip;
             debug(err);
             return Promise.reject(err);
         }
@@ -932,11 +926,11 @@ export const fillMediaOverlayParse =
 
     const has = await zipHasEntry(zip, mo.SmilPathInZip, undefined);
     if (!has) {
-        const err = `NOT IN ZIP (fillMediaOverlayParse): ${mo.SmilPathInZip}`;
-        console.log(err);
+        const err = `NOT IN ZIP (lazyLoadMediaOverlays): ${mo.SmilPathInZip}`;
+        debug(err);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
-            console.log(zipEntry);
+            debug(zipEntry);
         }
         return Promise.reject(err);
     }
@@ -997,7 +991,7 @@ export const fillMediaOverlayParse =
     debug("PARSED SMIL: " + mo.SmilPathInZip);
 
     // breakLength: 100  maxArrayLength: undefined
-    // console.log(util.inspect(smil,
+    // debug(util.inspect(smil,
     //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
 
     mo.Role = [];
@@ -1018,7 +1012,7 @@ export const fillMediaOverlayParse =
         if (smil.Body.TextRef) {
             const smilBodyTextRefDecoded = smil.Body.TextRefDecoded;
             if (!smilBodyTextRefDecoded) {
-                console.log("!?smilBodyTextRefDecoded");
+                debug("!?smilBodyTextRefDecoded");
             } else {
                 const zipPath = path.join(path.dirname(smil.ZipPath), smilBodyTextRefDecoded)
                     .replace(/\\/g, "/");
@@ -1038,120 +1032,115 @@ export const fillMediaOverlayParse =
     return;
 };
 
-const fillMediaOverlay =
-    async (publication: Publication, rootfile: Rootfile, opf: OPF, zip: IZip) => {
+// const fillMediaOverlay =
+//     async (publication: Publication, rootfile: Rootfile, opf: OPF, zip: IZip) => {
 
-        if (!publication.Resources) {
-            return;
-        }
+//         if (!publication.Resources) {
+//             return;
+//         }
 
-        // no forEach(), because of await/async within the iteration body
-        // publication.Resources.forEach(async (item) => {
-        for (const item of publication.Resources) {
-            if (item.TypeLink !== "application/smil+xml") {
-                continue;
-            }
+//         for (const item of publication.Resources) {
+//             if (item.TypeLink !== "application/smil+xml") {
+//                 continue;
+//             }
 
-            const itemHrefDecoded = item.HrefDecoded;
-            if (!itemHrefDecoded) {
-                console.log("?!item.HrefDecoded");
-                continue;
-            }
-            const has = await zipHasEntry(zip, itemHrefDecoded, item.Href);
-            if (!has) {
-                console.log(`NOT IN ZIP (fillMediaOverlay): ${item.HrefDecoded} --- ${itemHrefDecoded}`);
-                const zipEntries = await zip.getEntries();
-                for (const zipEntry of zipEntries) {
-                    console.log(zipEntry);
-                }
-                continue;
-            }
+//             const itemHrefDecoded = item.HrefDecoded;
+//             if (!itemHrefDecoded) {
+//                 debug("?!item.HrefDecoded");
+//                 continue;
+//             }
+//             const has = await zipHasEntry(zip, itemHrefDecoded, item.Href);
+//             if (!has) {
+//                 debug(`NOT IN ZIP (fillMediaOverlay): ${item.HrefDecoded} --- ${itemHrefDecoded}`);
+//                 const zipEntries = await zip.getEntries();
+//                 for (const zipEntry of zipEntries) {
+//                     debug(zipEntry);
+//                 }
+//                 continue;
+//             }
 
-            const manItemsHtmlWithSmil: Manifest[] = [];
-            opf.Manifest.forEach((manItemHtmlWithSmil) => {
-                if (manItemHtmlWithSmil.MediaOverlay) { // HTML
-                    const manItemSmil = opf.Manifest.find((mi) => {
-                        if (mi.ID === manItemHtmlWithSmil.MediaOverlay) {
-                            return true;
-                        }
-                        return false;
-                    });
-                    if (manItemSmil && opf.ZipPath) {
-                        const manItemSmilHrefDecoded = manItemSmil.HrefDecoded;
-                        if (!manItemSmilHrefDecoded) {
-                            console.log("!?manItemSmil.Href");
-                            return; // foreach
-                        }
-                        const smilFilePath = path.join(path.dirname(opf.ZipPath), manItemSmilHrefDecoded)
-                                .replace(/\\/g, "/");
-                        if (smilFilePath === itemHrefDecoded) {
-                            manItemsHtmlWithSmil.push(manItemHtmlWithSmil);
-                        }
-                    }
-                }
-            });
+//             const manItemsHtmlWithSmil: Manifest[] = [];
+//             opf.Manifest.forEach((manItemHtmlWithSmil) => {
+//                 if (manItemHtmlWithSmil.MediaOverlay) { // HTML
+//                     const manItemSmil = opf.Manifest.find((mi) => {
+//                         if (mi.ID === manItemHtmlWithSmil.MediaOverlay) {
+//                             return true;
+//                         }
+//                         return false;
+//                     });
+//                     if (manItemSmil && opf.ZipPath) {
+//                         const manItemSmilHrefDecoded = manItemSmil.HrefDecoded;
+//                         if (!manItemSmilHrefDecoded) {
+//                             debug("!?manItemSmil.HrefDecoded");
+//                             return; // foreach
+//                         }
+//                         const smilFilePath = path.join(path.dirname(opf.ZipPath), manItemSmilHrefDecoded)
+//                                 .replace(/\\/g, "/");
+//                         if (smilFilePath === itemHrefDecoded) {
+//                             manItemsHtmlWithSmil.push(manItemHtmlWithSmil);
+//                         } else {
+//                             debug(`smilFilePath !== itemHrefDecoded ?! ${smilFilePath} ${itemHrefDecoded}`);
+//                         }
+//                     }
+//                 }
+//             });
 
-            const mo = new MediaOverlayNode();
-            mo.SmilPathInZip = itemHrefDecoded;
-            mo.initialized = false;
+//             const mo = new MediaOverlayNode();
+//             mo.SmilPathInZip = itemHrefDecoded;
+//             mo.initialized = false;
 
-            manItemsHtmlWithSmil.forEach((manItemHtmlWithSmil) => {
+//             manItemsHtmlWithSmil.forEach((manItemHtmlWithSmil) => {
 
-                if (!opf.ZipPath) {
-                    return;
-                }
-                const manItemHtmlWithSmilHrefDecoded = manItemHtmlWithSmil.HrefDecoded;
-                if (!manItemHtmlWithSmilHrefDecoded) {
-                    console.log("?!manItemHtmlWithSmil.Href");
-                    return; // foreach
-                }
-                const htmlPathInZip = path.join(path.dirname(opf.ZipPath), manItemHtmlWithSmilHrefDecoded)
-                    .replace(/\\/g, "/");
+//                 if (!opf.ZipPath) {
+//                     return;
+//                 }
+//                 const manItemHtmlWithSmilHrefDecoded = manItemHtmlWithSmil.HrefDecoded;
+//                 if (!manItemHtmlWithSmilHrefDecoded) {
+//                     debug("?!manItemHtmlWithSmil.HrefDecoded");
+//                     return; // foreach
+//                 }
+//                 const htmlPathInZip = path.join(path.dirname(opf.ZipPath), manItemHtmlWithSmilHrefDecoded)
+//                     .replace(/\\/g, "/");
 
-                const link = findLinKByHref(publication, rootfile, opf, htmlPathInZip);
-                if (link) {
-                    if (!link.MediaOverlays) {
-                        link.MediaOverlays = [];
-                    }
+//                 const link = findLinKByHref(publication, rootfile, opf, htmlPathInZip);
+//                 if (link) {
+//                     if (link.MediaOverlays) {
+//                         debug(`#### MediaOverlays?! ${htmlPathInZip} => ${link.MediaOverlays.SmilPathInZip}`);
+//                         return; // continue for each
+//                     }
 
-                    const alreadyExists = link.MediaOverlays.find((moo) => {
-                        if (item.Href === moo.SmilPathInZip) {
-                            return true;
-                        }
-                        return false;
-                    });
-                    if (!alreadyExists) {
-                        link.MediaOverlays.push(mo);
-                    }
+//                     const moURL = mediaOverlayURLPath + "?" +
+//                         mediaOverlayURLParam + "=" + encodeURIComponent_RFC3986(link.Href);
 
-                    if (!link.Properties) {
-                        link.Properties = new Properties();
-                    }
-                    link.Properties.MediaOverlay = mediaOverlayURLPath + "?" +
-                        mediaOverlayURLParam + "=" + querystring.escape(link.Href);
+//                     // legacy method:
+//                     if (!link.Properties) {
+//                         link.Properties = new Properties();
+//                     }
+//                     link.Properties.MediaOverlay = moURL;
 
-                    // https://w3c.github.io/sync-media-pub/incorporating-synchronized-narration.html#with-webpub
-                    if (!link.Alternate) {
-                        link.Alternate = [];
-                    }
-                    const moLink = new Link();
-                    moLink.Href = link.Properties.MediaOverlay;
-                    moLink.TypeLink = "application/vnd.syncnarr+json";
-                    moLink.Duration = link.Duration;
-                    link.Alternate.push(moLink);
-                }
-            });
+//                     // new method:
+//                     // https://w3c.github.io/sync-media-pub/incorporating-synchronized-narration.html#with-webpub
+//                     if (!link.Alternate) {
+//                         link.Alternate = [];
+//                     }
+//                     const moLink = new Link();
+//                     moLink.Href = moURL;
+//                     moLink.TypeLink = "application/vnd.syncnarr+json";
+//                     moLink.Duration = link.Duration;
+//                     link.Alternate.push(moLink);
+//                 }
+//             });
 
-            if (item.Properties && item.Properties.Encrypted) {
-                debug("ENCRYPTED SMIL MEDIA OVERLAY: " + item.Href);
-                continue;
-            }
-            // LAZY
-            // await fillMediaOverlayParse(publication, mo);
-        }
+//             if (item.Properties && item.Properties.Encrypted) {
+//                 debug("ENCRYPTED SMIL MEDIA OVERLAY: " + item.Href);
+//                 continue;
+//             }
+//             // LAZY
+//             // await lazyLoadMediaOverlays(publication, mo);
+//         }
 
-        return;
-    };
+//         return;
+//     };
 
 const addSeqToMediaOverlay = (
     smil: SMIL, publication: Publication,
@@ -1186,7 +1175,7 @@ const addSeqToMediaOverlay = (
         if (seq.TextRef) {
             const seqTextRefDecoded = seq.TextRefDecoded;
             if (!seqTextRefDecoded) {
-                console.log("!?seqTextRefDecoded");
+                debug("!?seqTextRefDecoded");
             } else {
                 const zipPath = path.join(path.dirname(smil.ZipPath), seqTextRefDecoded)
                     .replace(/\\/g, "/");
@@ -1223,7 +1212,7 @@ const addSeqToMediaOverlay = (
         if (par.Text && par.Text.Src) {
             const parTextSrcDcoded = par.Text.SrcDecoded;
             if (!parTextSrcDcoded) {
-                console.log("?!parTextSrcDcoded");
+                debug("?!parTextSrcDcoded");
             } else {
                 const zipPath = path.join(path.dirname(smil.ZipPath), parTextSrcDcoded)
                     .replace(/\\/g, "/");
@@ -1233,7 +1222,7 @@ const addSeqToMediaOverlay = (
         if (par.Audio && par.Audio.Src) {
             const parAudioSrcDcoded = par.Audio.SrcDecoded;
             if (!parAudioSrcDcoded) {
-                console.log("?!parAudioSrcDcoded");
+                debug("?!parAudioSrcDcoded");
             } else {
                 const zipPath = path.join(path.dirname(smil.ZipPath), parAudioSrcDcoded)
                     .replace(/\\/g, "/");
@@ -1261,7 +1250,7 @@ const fillPublicationDate = (publication: Publication, rootfile: Rootfile, opf: 
                     publication.Metadata.PublicationDate = mom.toDate();
                 }
             } catch (err) {
-                console.log("INVALID DATE/TIME? " + token);
+                debug("INVALID DATE/TIME? " + token);
             }
             return;
         }
@@ -1275,7 +1264,7 @@ const fillPublicationDate = (publication: Publication, rootfile: Rootfile, opf: 
                         publication.Metadata.PublicationDate = mom.toDate();
                     }
                 } catch (err) {
-                    console.log("INVALID DATE/TIME? " + token);
+                    debug("INVALID DATE/TIME? " + token);
                 }
             }
         });
@@ -1627,8 +1616,6 @@ const addToLinkFromProperties = async (publication: Publication, link: Link, pro
 
     // https://idpf.github.io/epub-vocabs/rendition/
 
-    // no forEach(), because of await/async within the iteration body
-    // properties.forEach(async (p) => {
     for (const p of properties) {
         switch (p) {
             case "cover-image": {
@@ -1767,17 +1754,77 @@ const addToLinkFromProperties = async (publication: Publication, link: Link, pro
     }
 };
 
-const addMediaOverlay = (link: Link, linkEpub: Manifest, rootfile: Rootfile, opf: OPF) => {
+const addMediaOverlay = async (link: Link, linkEpub: Manifest, rootfile: Rootfile, opf: OPF, zip: IZip) => {
     if (linkEpub.MediaOverlay) {
         const meta = findMetaByRefineAndProperty(rootfile, opf, linkEpub.MediaOverlay, "media:duration");
         if (meta) {
             link.Duration = timeStrToSeconds(meta.Data);
         }
+
+        const manItemSmil = opf.Manifest.find((mi) => {
+            if (mi.ID === linkEpub.MediaOverlay) {
+                return true;
+            }
+            return false;
+        });
+        if (manItemSmil && manItemSmil.MediaType === "application/smil+xml") {
+            if (opf.ZipPath) {
+                const manItemSmilHrefDecoded = manItemSmil.HrefDecoded;
+                if (!manItemSmilHrefDecoded) {
+                    debug("!?manItemSmil.HrefDecoded");
+                    return;
+                }
+                const smilFilePath = path.join(path.dirname(opf.ZipPath), manItemSmilHrefDecoded)
+                        .replace(/\\/g, "/");
+
+                const has = await zipHasEntry(zip, smilFilePath, smilFilePath);
+                if (!has) {
+                    debug(`NOT IN ZIP (addMediaOverlay): ${smilFilePath}`);
+                    const zipEntries = await zip.getEntries();
+                    for (const zipEntry of zipEntries) {
+                        debug(zipEntry);
+                    }
+                    return;
+                }
+
+                const mo = new MediaOverlayNode();
+                mo.SmilPathInZip = smilFilePath;
+                mo.initialized = false;
+                link.MediaOverlays = mo;
+
+                const moURL = mediaOverlayURLPath + "?" +
+                    mediaOverlayURLParam + "=" +
+                    encodeURIComponent_RFC3986(link.HrefDecoded ? link.HrefDecoded : link.Href);
+
+                // legacy method:
+                if (!link.Properties) {
+                    link.Properties = new Properties();
+                }
+                link.Properties.MediaOverlay = moURL;
+
+                // new method:
+                // https://w3c.github.io/sync-media-pub/incorporating-synchronized-narration.html#with-webpub
+                if (!link.Alternate) {
+                    link.Alternate = [];
+                }
+                const moLink = new Link();
+                moLink.Href = moURL;
+                moLink.TypeLink = "application/vnd.syncnarr+json";
+                moLink.Duration = link.Duration;
+                link.Alternate.push(moLink);
+
+                if (link.Properties && link.Properties.Encrypted) {
+                    debug("ENCRYPTED SMIL MEDIA OVERLAY: " + (link.HrefDecoded ? link.HrefDecoded : link.Href));
+                }
+                // LAZY
+                // await lazyLoadMediaOverlays(publication, mo);
+            }
+        }
     }
 };
 
 const findInManifestByID =
-    async (publication: Publication, rootfile: Rootfile, opf: OPF, ID: string): Promise<Link> => {
+    async (publication: Publication, rootfile: Rootfile, opf: OPF, ID: string, zip: IZip): Promise<Link> => {
 
         if (opf.Manifest && opf.Manifest.length) {
             const item = opf.Manifest.find((manItem) => {
@@ -1798,7 +1845,7 @@ const findInManifestByID =
                     .replace(/\\/g, "/"));
 
                 await addRelAndPropertiesToLink(publication, linkItem, item, rootfile, opf);
-                addMediaOverlay(linkItem, item, rootfile, opf);
+                await addMediaOverlay(linkItem, item, rootfile, opf, zip);
                 return linkItem;
             }
         }
@@ -2003,22 +2050,20 @@ const addRendition = async (publication: Publication, _rootfile: Rootfile, opf: 
     }
 };
 
-const fillSpineAndResource = async (publication: Publication, rootfile: Rootfile, opf: OPF) => {
+const fillSpineAndResource = async (publication: Publication, rootfile: Rootfile, opf: OPF, zip: IZip) => {
 
     if (!opf.ZipPath) {
         return;
     }
 
     if (opf.Spine && opf.Spine.Items && opf.Spine.Items.length) {
-        // no forEach(), because of await/async within the iteration body
-        // opf.Spine.Items.forEach(async (item) => {
         for (const item of opf.Spine.Items) {
 
             if (!item.Linear || item.Linear === "yes") {
 
                 let linkItem: Link;
                 try {
-                    linkItem = await findInManifestByID(publication, rootfile, opf, item.IDref);
+                    linkItem = await findInManifestByID(publication, rootfile, opf, item.IDref, zip);
                 } catch (err) {
                     debug(err);
                     continue;
@@ -2036,13 +2081,11 @@ const fillSpineAndResource = async (publication: Publication, rootfile: Rootfile
 
     if (opf.Manifest && opf.Manifest.length) {
 
-        // no forEach(), because of await/async within the iteration body
-        // opf.Manifest.forEach(async (item) => {
         for (const item of opf.Manifest) {
 
             const itemHrefDecoded = item.HrefDecoded;
             if (!itemHrefDecoded) {
-                console.log("!? item.Href");
+                debug("!? item.Href");
                 continue;
             }
             const zipPath = path.join(path.dirname(opf.ZipPath), itemHrefDecoded)
@@ -2056,7 +2099,7 @@ const fillSpineAndResource = async (publication: Publication, rootfile: Rootfile
                 linkItem.setHrefDecoded(zipPath);
 
                 await addRelAndPropertiesToLink(publication, linkItem, item, rootfile, opf);
-                addMediaOverlay(linkItem, item, rootfile, opf);
+                await addMediaOverlay(linkItem, item, rootfile, opf, zip);
 
                 if (!publication.Resources) {
                     publication.Resources = [];
@@ -2130,7 +2173,7 @@ const fillPageListFromNCX = (publication: Publication, _rootfile: Rootfile, _opf
             const link = new Link();
             const srcDecoded = pageTarget.Content.SrcDecoded;
             if (!srcDecoded) {
-                console.log("!?srcDecoded");
+                debug("!?srcDecoded");
                 return; // foreach
             }
             const zipPath = path.join(path.dirname(ncx.ZipPath), srcDecoded)
@@ -2198,15 +2241,15 @@ const fillPageListFromAdobePageMap = async (
 const createDocStringFromZipPath = async (link: Link, zip: IZip): Promise<string | undefined> => {
     const linkHrefDecoded = link.HrefDecoded;
     if (!linkHrefDecoded) {
-        console.log("!?link.HrefDecoded");
+        debug("!?link.HrefDecoded");
         return undefined;
     }
     const has = await zipHasEntry(zip, linkHrefDecoded, link.Href);
     if (!has) {
-        console.log(`NOT IN ZIP (createDocStringFromZipPath): ${link.Href} --- ${linkHrefDecoded}`);
+        debug(`NOT IN ZIP (createDocStringFromZipPath): ${link.Href} --- ${linkHrefDecoded}`);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
-            console.log(zipEntry);
+            debug(zipEntry);
         }
         return undefined;
     }
@@ -2248,7 +2291,7 @@ const fillLandmarksFromGuide = (publication: Publication, _rootfile: Rootfile, o
             if (ref.Href && opf.ZipPath) {
                 const refHrefDecoded = ref.HrefDecoded;
                 if (!refHrefDecoded) {
-                    console.log("ref.Href?!");
+                    debug("ref.Href?!");
                     return; // foreach
                 }
                 const link = new Link();
@@ -2272,7 +2315,7 @@ const fillTOCFromNavPoint =
 
         const srcDecoded = point.Content.SrcDecoded;
         if (!srcDecoded) {
-            console.log("?!point.Content.Src");
+            debug("?!point.Content.Src");
             return;
         }
         const link = new Link();
@@ -2356,16 +2399,16 @@ const fillTOCFromNavDoc = async (publication: Publication, _rootfile: Rootfile, 
 
     const navLinkHrefDecoded = navLink.HrefDecoded;
     if (!navLinkHrefDecoded) {
-        console.log("!?navLink.HrefDecoded");
+        debug("!?navLink.HrefDecoded");
         return;
     }
 
     const has = await zipHasEntry(zip, navLinkHrefDecoded, navLink.Href);
     if (!has) {
-        console.log(`NOT IN ZIP (fillTOCFromNavDoc): ${navLink.Href} --- ${navLinkHrefDecoded}`);
+        debug(`NOT IN ZIP (fillTOCFromNavDoc): ${navLink.Href} --- ${navLinkHrefDecoded}`);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
-            console.log(zipEntry);
+            debug(zipEntry);
         }
         return;
     }
@@ -2492,7 +2535,7 @@ const fillTOCFromNavDocWithOL = (
                         const val = aHref[0].value;
                         let valDecoded = tryDecodeURI(val);
                         if (!valDecoded) {
-                            console.log("!?valDecoded");
+                            debug("!?valDecoded");
                             return; // foreach
                         }
                         if (val[0] === "#") {
@@ -2530,7 +2573,7 @@ const fillTOCFromNavDocWithOL = (
     });
 };
 
-const addCoverRel = async (publication: Publication, rootfile: Rootfile, opf: OPF) => {
+const addCoverRel = async (publication: Publication, rootfile: Rootfile, opf: OPF, zip: IZip) => {
 
     let coverID: string | undefined;
 
@@ -2547,7 +2590,7 @@ const addCoverRel = async (publication: Publication, rootfile: Rootfile, opf: OP
     if (coverID) {
         let manifestInfo: Link;
         try {
-            manifestInfo = await findInManifestByID(publication, rootfile, opf, coverID);
+            manifestInfo = await findInManifestByID(publication, rootfile, opf, coverID, zip);
         } catch (err) {
             debug(err);
             return;
@@ -2646,18 +2689,19 @@ const isEpub3OrMore = (rootfile: Rootfile, opf: OPF): boolean => {
     return (version === epub3 || version === epub301 || version === epub31);
 };
 
-const findLinKByHref = (publication: Publication, _rootfile: Rootfile, _opf: OPF, href: string): Link | undefined => {
-    if (publication.Spine && publication.Spine.length) {
-        const ll = publication.Spine.find((l) => {
-            if (href === l.HrefDecoded) {
-                return true;
-            }
-            return false;
-        });
-        if (ll) {
-            return ll;
-        }
-    }
+// const findLinKByHref =
+// (publication: Publication, _rootfile: Rootfile, _opf: OPF, href: string): Link | undefined => {
+//     if (publication.Spine && publication.Spine.length) {
+//         const ll = publication.Spine.find((l) => {
+//             if (href === l.HrefDecoded) {
+//                 return true;
+//             }
+//             return false;
+//         });
+//         if (ll) {
+//             return ll;
+//         }
+//     }
 
-    return undefined;
-};
+//     return undefined;
+// };

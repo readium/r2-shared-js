@@ -212,8 +212,6 @@ const comicRackMetadata = async (zip: IZip, entryName: string, publication: Publ
     }
 
     if (comicMeta.Pages) {
-        // no forEach(), because of await/async within the iteration body
-        // comicMeta.Pages.forEach(async (p) => {
         for (const p of comicMeta.Pages) {
             const l = new Link();
             if (p.Type === "FrontCover") {

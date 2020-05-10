@@ -17,7 +17,7 @@ import { MediaOverlayNode } from "@models/media-overlay";
 import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
 import { AudioBookis, isAudioBookPublication } from "@parser/audiobook";
-import { fillMediaOverlayParse, isEPUBlication } from "@parser/epub";
+import { isEPUBlication, lazyLoadMediaOverlays } from "@parser/epub";
 import { PublicationParsePromise } from "@parser/publication-parser";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
 import { JsonArray, JsonMap, TaJsonDeserialize, TaJsonSerialize } from "@r2-lcp-js/serializable";
@@ -493,8 +493,8 @@ async function dumpPublication(publication: Publication): Promise<void> {
 
     console.log("#### RAW OBJECT:");
     // breakLength: 100  maxArrayLength: undefined
-    // console.log(util.inspect(publication,
-    //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
+    console.log(util.inspect(publication,
+        { showHidden: false, depth: 1000, colors: true, customInspect: true }));
 
     const publicationJsonObj = TaJsonSerialize(publication);
     console.log(util.inspect(publicationJsonObj,
@@ -538,6 +538,7 @@ async function dumpPublication(publication: Publication): Promise<void> {
             if (spineItem.Properties && spineItem.Properties.MediaOverlay) {
                 console.log(spineItem.Href);
                 console.log(spineItem.Properties.MediaOverlay);
+                console.log(spineItem.Duration);
             }
             if (spineItem.Alternate) {
                 for (const altLink of spineItem.Alternate) {
@@ -549,53 +550,53 @@ async function dumpPublication(publication: Publication): Promise<void> {
                 }
             }
             if (spineItem.MediaOverlays) {
-                for (const mo of spineItem.MediaOverlays) {
-                    console.log(mo.SmilPathInZip);
-                    // mo.initialized true/false automatically handled
-                    try {
-                        await fillMediaOverlayParse(publication, mo);
-                    } catch (err) {
-                        return Promise.reject(err);
-                    }
-                    // console.log(util.inspect(mo,
-                    //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
-                    const moJsonObj = TaJsonSerialize(mo);
-                    console.log(util.inspect(moJsonObj,
+                const mo = spineItem.MediaOverlays;
+                console.log(mo.SmilPathInZip);
+                // mo.initialized true/false automatically handled
+                try {
+                    await lazyLoadMediaOverlays(publication, mo);
+                } catch (err) {
+                    return Promise.reject(err);
+                }
+                // console.log(util.inspect(mo,
+                //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
+                const moJsonObj = TaJsonSerialize(mo);
+                // console.log(util.inspect(moJsonObj,
+                //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
+
+                const moJsonStr = global.JSON.stringify(moJsonObj, null, "  ");
+                console.log(moJsonStr.substr(0, 1000) + "\n...\n");
+
+                // const moJsonStrCanonical = JSON.stringify(sortObject(moJsonObj));
+
+                const moReverse = TaJsonDeserialize(moJsonObj, MediaOverlayNode);
+                // moReverse.AddLink("fake type", ["fake rel"], "fake url", undefined);
+
+                const moJsonObjReverse = TaJsonSerialize(moReverse);
+
+                const equa = deepEqual(moJsonObj, moJsonObjReverse);
+                if (!equa) {
+                    console.log("#### TA-JSON SERIALIZED JSON OBJ:");
+                    console.log(moJsonObj);
+
+                    console.log("#### STRINGIFIED JSON OBJ:");
+                    console.log(moJsonStr);
+
+                    // console.log("#### CANONICAL JSON:");
+                    // console.log(moJsonStrCanonical);
+
+                    console.log("#### TA-JSON DESERIALIZED (REVERSE):");
+                    console.log(util.inspect(moReverse,
                         { showHidden: false, depth: 1000, colors: true, customInspect: true }));
 
-                    const moJsonStr = global.JSON.stringify(moJsonObj, null, "  ");
+                    console.log("#### TA-JSON SERIALIZED JSON OBJ (REVERSE):");
+                    console.log(moJsonObjReverse);
 
-                    // const moJsonStrCanonical = JSON.stringify(sortObject(moJsonObj));
-
-                    const moReverse = TaJsonDeserialize(moJsonObj, MediaOverlayNode);
-                    // moReverse.AddLink("fake type", ["fake rel"], "fake url", undefined);
-
-                    const moJsonObjReverse = TaJsonSerialize(moReverse);
-
-                    const equa = deepEqual(moJsonObj, moJsonObjReverse);
-                    if (!equa) {
-                        console.log("#### TA-JSON SERIALIZED JSON OBJ:");
-                        console.log(moJsonObj);
-
-                        console.log("#### STRINGIFIED JSON OBJ:");
-                        console.log(moJsonStr);
-
-                        // console.log("#### CANONICAL JSON:");
-                        // console.log(moJsonStrCanonical);
-
-                        console.log("#### TA-JSON DESERIALIZED (REVERSE):");
-                        console.log(util.inspect(moReverse,
-                            { showHidden: false, depth: 1000, colors: true, customInspect: true }));
-
-                        console.log("#### TA-JSON SERIALIZED JSON OBJ (REVERSE):");
-                        console.log(moJsonObjReverse);
-
-                        console.log("#### REVERSE NOT DEEP EQUAL!\n\n");
-                        console.log("#### REVERSE NOT DEEP EQUAL!\n\n");
-                        console.log("#### REVERSE NOT DEEP EQUAL!\n\n");
-                    }
-                    console.log(jsonDiff.diffString(moJsonObj, moJsonObjReverse));
+                    console.log("#### REVERSE NOT DEEP EQUAL!\n\n");
+                    console.log("#### REVERSE NOT DEEP EQUAL!\n\n");
+                    console.log("#### REVERSE NOT DEEP EQUAL!\n\n");
                 }
+                console.log(jsonDiff.diffString(moJsonObj, moJsonObjReverse));
             }
         }
     }
