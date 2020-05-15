@@ -1,10 +1,28 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.35...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.36...develop
 
 Changes:
 * TODO
+
+# 1.0.36
+
+> Build environment: NodeJS `12.16.3`, NPM `6.14.5`
+
+Changes:
+* NPM package updates
+* EPUB Media Overlays / W3C Sync Media alignment
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.36/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.36/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.36
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.35...v1.0.36
 
 # 1.0.35
 
