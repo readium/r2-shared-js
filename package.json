@@ -1,6 +1,6 @@
 {
   "name": "r2-shared-js",
-  "version": "1.0.37",
+  "version": "1.0.38",
   "description": "Readium 2 'shared' for NodeJS (TypeScript)",
   "keywords": [
     "readium",
@@ -51,8 +51,8 @@
     "image-size": "^0.8.3",
     "mime-types": "^2.1.27",
     "moment": "^2.27.0",
-    "r2-lcp-js": "^1.0.28",
-    "r2-utils-js": "^1.0.22",
+    "r2-lcp-js": "^1.0.29",
+    "r2-utils-js": "^1.0.23",
     "slugify": "^1.4.4",
     "ta-json-x": "^2.5.2",
     "tslib": "^2.0.0",
