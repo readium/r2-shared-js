@@ -1,6 +1,6 @@
 {
   "name": "r2-shared-js",
-  "version": "1.0.38",
+  "version": "1.0.39",
   "description": "Readium 2 'shared' for NodeJS (TypeScript)",
   "keywords": [
     "readium",
@@ -63,12 +63,12 @@
     "@types/debug": "^4.1.5",
     "@types/image-size": "^0.8.0",
     "@types/mime-types": "^2.1.0",
-    "@types/node": "^12.12.47",
-    "@types/xmldom": "^0.1.29",
+    "@types/node": "^12.12.51",
+    "@types/xmldom": "^0.1.30",
     "ava": "^2.4.0",
     "cpy-cli": "^3.1.1",
     "cross-env": "^7.0.2",
-    "cson": "^7.12.0",
+    "cson": "^7.17.0",
     "eclint": "^2.8.1",
     "filehound": "^1.17.4",
     "git-rev-sync": "^2.0.0",
@@ -80,7 +80,7 @@
     "tsconfig-paths": "^3.9.0",
     "tslint": "^5.20.1",
     "tslint-language-service": "^0.9.9",
-    "typescript": "^3.9.5"
+    "typescript": "^3.9.7"
   },
   "main": "dist/es6-es2015/src/index.js",
   "types": "dist/es6-es2015/src/index.d.js",

@@ -1,10 +1,28 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.38...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.39...develop
 
 Changes:
 * TODO
+
+# 1.0.39
+
+> Build environment: NodeJS `12.18.2`, NPM `6.14.7`
+
+Changes:
+* NPM package updates
+* Support for Divina Readium webpub manifest
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.39/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.39/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.39
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.38...v1.0.39
 
 # 1.0.38
 
