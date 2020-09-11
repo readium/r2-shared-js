@@ -144,7 +144,7 @@ if (args[2]) {
         // ignore
     }
 
-    if ((isAnEPUB || isAnAudioBook) && outputDirPath) {
+    if ((publication || isAnAudioBook || isAnEPUB) && outputDirPath) {
         try {
             await extractEPUB(isAnEPUB ? true : false, publication, outputDirPath, decryptKeys);
         } catch (err) {
