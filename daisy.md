@@ -41,7 +41,7 @@
 ## Mapping
 ### Webpub Manifest to Daisy 3
 #### Link Element
-| **webpub-manifest element** | **Daisy file** | **element** | **Notes** |
+| **webpub-manifest attribute** | **Daisy file** | **element** | **Notes** |
 | --- | --- | --- | --- |
 | type | | |  |
 | href | | |  |
@@ -87,6 +87,10 @@
 | *links* | | | List of links |
 | *readingOrder* | | | List of links |
 | *resources* | | | List of links |
+| *toc* | | | List of links |
+| *pagelist* | | | List of links |
+| *landmarks* | | | List of links |
+
 
 ## Execution Plan
 ### Phase 1 (Daisy 3)
