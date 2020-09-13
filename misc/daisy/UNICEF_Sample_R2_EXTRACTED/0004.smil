@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE smil PUBLIC "-//NISO//DTD dtbsmil 2005-2//EN" "http://www.daisy.org/z3986/2005/dtbsmil-2005-2.dtd">
+<smil xmlns="http://www.w3.org/2001/SMIL20/">
+	<head>
+		<meta
+			name="dtb:uid"
+			content="DTB11468" />
+		<meta
+			name="dtb:generator"
+			content="Tobi and the Urakawa SDK: the open-source DAISY multimedia authoring toolkit" />
+		<meta
+			name="dtb:totalElapsedTime"
+			content="00:00:00" />
+		<customAttributes>
+			<customTest
+				defaultState="false"
+				id="pagenum"
+				override="visible" />
+		</customAttributes>
+	</head>
+	<body>
+		<seq
+			id="sm_155"
+			dur="00:00:00"
+			fill="remove">
+			<seq
+				id="sm_156"
+				class="pagenum"
+				customTest="pagenum">
+				<par
+					id="sm_157">
+					<text
+						id="sm_158"
+						src="dtbook.xml#dtb_96" />
+				</par>
+			</seq>
+			<seq
+				id="sm_159"
+				class="h1">
+				<par
+					id="sm_160">
+					<text
+						id="sm_161"
+						src="dtbook.xml#dtb_97" />
+				</par>
+			</seq>
+			<par
+				id="sm_162">
+				<text
+					id="sm_163"
+					src="dtbook.xml#dtb_99" />
+			</par>
+			<par
+				id="sm_164">
+				<text
+					id="sm_165"
+					src="dtbook.xml#dtb_101" />
+			</par>
+			<par
+				id="sm_166">
+				<text
+					id="sm_167"
+					src="dtbook.xml#dtb_102" />
+			</par>
+			<par
+				id="sm_168">
+				<text
+					id="sm_169"
+					src="dtbook.xml#dtb_104" />
+			</par>
+			<par
+				id="sm_170">
+				<text
+					id="sm_171"
+					src="dtbook.xml#dtb_105" />
+			</par>
+			<par
+				id="sm_172">
+				<text
+					id="sm_173"
+					src="dtbook.xml#dtb_106" />
+			</par>
+			<par
+				id="sm_174">
+				<text
+					id="sm_175"
+					src="dtbook.xml#dtb_108" />
+			</par>
+			<par
+				id="sm_176">
+				<text
+					id="sm_177"
+					src="dtbook.xml#dtb_109" />
+			</par>
+		</seq>
+	</body>
+</smil>

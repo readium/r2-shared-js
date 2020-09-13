@@ -1,0 +1,1054 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE package PUBLIC "+//ISBN 0-9673008-1-9//DTD OEB 1.2 Package//EN" "http://openebook.org/dtds/oeb-1.2/oebpkg12.dtd">
+<package
+	unique-identifier="uid" xmlns="http://openebook.org/namespaces/oeb-package/1.0/">
+	<metadata>
+		<dc-metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
+			<dc:Identifier
+				id="uid">DTB11468</dc:Identifier>
+			<dc:Format>ANSI/NISO Z39.86-2005</dc:Format>
+			<dc:Title>The state of the world's children 2013 Executive Summary</dc:Title>
+			<dc:Date>2013-04-26</dc:Date>
+			<dc:Publisher>unicef</dc:Publisher>
+			<dc:Language>en</dc:Language>
+			<dc:Rights>N/A</dc:Rights>
+		</dc-metadata>
+		<x-metadata>
+			<meta
+				name="dtb:totalTime"
+				content="00:00:00" />
+			<meta
+				name="dtb:multimediaType"
+				content="textNCX" />
+			<meta
+				name="dtb:multimediaContent"
+				content="text" />
+			<meta
+				name="track:Guidelines"
+				content="2011-2" />
+			<meta
+				name="track:Supplier"
+				content="PrashantVerma" />
+		</x-metadata>
+	</metadata>
+	<manifest>
+		<item
+			href="navigation.ncx"
+			id="ncx"
+			media-type="application/x-dtbncx+xml" />
+		<item
+			href="dtbook.xml"
+			id="opf_1"
+			media-type="application/x-dtbook+xml" />
+		<item
+			href="package.opf"
+			id="opf_2"
+			media-type="text/xml" />
+		<item
+			href="dtbookbasic.css"
+			id="opf_3"
+			media-type="text/css" />
+		<item
+			href="0001.smil"
+			id="opf_4"
+			media-type="application/smil" />
+		<item
+			href="0002.smil"
+			id="opf_5"
+			media-type="application/smil" />
+		<item
+			href="0003.smil"
+			id="opf_6"
+			media-type="application/smil" />
+		<item
+			href="0004.smil"
+			id="opf_7"
+			media-type="application/smil" />
+		<item
+			href="0005.smil"
+			id="opf_8"
+			media-type="application/smil" />
+		<item
+			href="0006.smil"
+			id="opf_9"
+			media-type="application/smil" />
+		<item
+			href="0007.smil"
+			id="opf_10"
+			media-type="application/smil" />
+		<item
+			href="0008.smil"
+			id="opf_11"
+			media-type="application/smil" />
+		<item
+			href="0009.smil"
+			id="opf_12"
+			media-type="application/smil" />
+		<item
+			href="0010.smil"
+			id="opf_13"
+			media-type="application/smil" />
+		<item
+			href="0011.smil"
+			id="opf_14"
+			media-type="application/smil" />
+		<item
+			href="0012.smil"
+			id="opf_15"
+			media-type="application/smil" />
+		<item
+			href="0013.smil"
+			id="opf_16"
+			media-type="application/smil" />
+		<item
+			href="0014.smil"
+			id="opf_17"
+			media-type="application/smil" />
+		<item
+			href="0015.smil"
+			id="opf_18"
+			media-type="application/smil" />
+		<item
+			href="0016.smil"
+			id="opf_19"
+			media-type="application/smil" />
+		<item
+			href="0017.smil"
+			id="opf_20"
+			media-type="application/smil" />
+		<item
+			href="0018.smil"
+			id="opf_21"
+			media-type="application/smil" />
+		<item
+			href="0019.smil"
+			id="opf_22"
+			media-type="application/smil" />
+		<item
+			href="0020.smil"
+			id="opf_23"
+			media-type="application/smil" />
+		<item
+			href="0021.smil"
+			id="opf_24"
+			media-type="application/smil" />
+		<item
+			href="0022.smil"
+			id="opf_25"
+			media-type="application/smil" />
+		<item
+			href="0023.smil"
+			id="opf_26"
+			media-type="application/smil" />
+		<item
+			href="p00i-001.jpg"
+			id="opf_27"
+			media-type="image/jpeg" />
+		<item
+			href="p001-001.jpg"
+			id="opf_28"
+			media-type="image/jpeg" />
+		<item
+			href="p003-001.jpg"
+			id="opf_29"
+			media-type="image/jpeg" />
+		<item
+			href="p005-001.jpg"
+			id="opf_30"
+			media-type="image/jpeg" />
+		<item
+			href="p006-001.jpg"
+			id="opf_31"
+			media-type="image/jpeg" />
+		<item
+			href="p008-001.jpg"
+			id="opf_32"
+			media-type="image/jpeg" />
+		<item
+			href="p011-001.jpg"
+			id="opf_33"
+			media-type="image/jpeg" />
+		<item
+			href="p012-001.jpg"
+			id="opf_34"
+			media-type="image/jpeg" />
+		<item
+			href="p013-001.jpg"
+			id="opf_35"
+			media-type="image/jpeg" />
+		<item
+			href="p015-001.jpg"
+			id="opf_36"
+			media-type="image/jpeg" />
+		<item
+			href="p017-001.jpg"
+			id="opf_37"
+			media-type="image/jpeg" />
+		<item
+			href="p021-001.jpg"
+			id="opf_38"
+			media-type="image/jpeg" />
+		<item
+			href="p022-001.jpg"
+			id="opf_39"
+			media-type="image/jpeg" />
+		<item
+			href="p022-002.jpg"
+			id="opf_40"
+			media-type="image/jpeg" />
+		<item
+			href="p022-003.jpg"
+			id="opf_41"
+			media-type="image/jpeg" />
+		<item
+			href="p022-004.jpg"
+			id="opf_42"
+			media-type="image/jpeg" />
+		<item
+			href="p022-005.jpg"
+			id="opf_43"
+			media-type="image/jpeg" />
+		<item
+			href="p022-006.jpg"
+			id="opf_44"
+			media-type="image/jpeg" />
+		<item
+			href="p022-007.jpg"
+			id="opf_45"
+			media-type="image/jpeg" />
+		<item
+			href="p022-008.jpg"
+			id="opf_46"
+			media-type="image/jpeg" />
+		<item
+			href="p022-009.jpg"
+			id="opf_47"
+			media-type="image/jpeg" />
+		<item
+			href="p022-010.jpg"
+			id="opf_48"
+			media-type="image/jpeg" />
+		<item
+			href="p022-011.jpg"
+			id="opf_49"
+			media-type="image/jpeg" />
+		<item
+			href="p022-012.jpg"
+			id="opf_50"
+			media-type="image/jpeg" />
+		<item
+			href="p022-013.jpg"
+			id="opf_51"
+			media-type="image/jpeg" />
+		<item
+			href="p022-014.jpg"
+			id="opf_52"
+			media-type="image/jpeg" />
+		<item
+			href="p022-015.jpg"
+			id="opf_53"
+			media-type="image/jpeg" />
+		<item
+			href="p022-016.jpg"
+			id="opf_54"
+			media-type="image/jpeg" />
+		<item
+			href="p022-017.jpg"
+			id="opf_55"
+			media-type="image/jpeg" />
+		<item
+			href="p022-018.jpg"
+			id="opf_56"
+			media-type="image/jpeg" />
+		<item
+			href="p022-019.jpg"
+			id="opf_57"
+			media-type="image/jpeg" />
+		<item
+			href="p022-020.jpg"
+			id="opf_58"
+			media-type="image/jpeg" />
+		<item
+			href="p022-021.jpg"
+			id="opf_59"
+			media-type="image/jpeg" />
+		<item
+			href="p022-022.jpg"
+			id="opf_60"
+			media-type="image/jpeg" />
+		<item
+			href="p022-023.jpg"
+			id="opf_61"
+			media-type="image/jpeg" />
+		<item
+			href="p022-024.jpg"
+			id="opf_62"
+			media-type="image/jpeg" />
+		<item
+			href="p022-025.jpg"
+			id="opf_63"
+			media-type="image/jpeg" />
+		<item
+			href="p022-026.jpg"
+			id="opf_64"
+			media-type="image/jpeg" />
+		<item
+			href="p022-027.jpg"
+			id="opf_65"
+			media-type="image/jpeg" />
+		<item
+			href="p022-028.jpg"
+			id="opf_66"
+			media-type="image/jpeg" />
+		<item
+			href="p022-029.jpg"
+			id="opf_67"
+			media-type="image/jpeg" />
+		<item
+			href="p022-030.jpg"
+			id="opf_68"
+			media-type="image/jpeg" />
+		<item
+			href="p022-031.jpg"
+			id="opf_69"
+			media-type="image/jpeg" />
+		<item
+			href="p022-032.jpg"
+			id="opf_70"
+			media-type="image/jpeg" />
+		<item
+			href="p022-033.jpg"
+			id="opf_71"
+			media-type="image/jpeg" />
+		<item
+			href="p022-034.jpg"
+			id="opf_72"
+			media-type="image/jpeg" />
+		<item
+			href="p022-035.jpg"
+			id="opf_73"
+			media-type="image/jpeg" />
+		<item
+			href="p022-036.jpg"
+			id="opf_74"
+			media-type="image/jpeg" />
+		<item
+			href="p022-037.jpg"
+			id="opf_75"
+			media-type="image/jpeg" />
+		<item
+			href="p022-038.jpg"
+			id="opf_76"
+			media-type="image/jpeg" />
+		<item
+			href="p022-039.jpg"
+			id="opf_77"
+			media-type="image/jpeg" />
+		<item
+			href="p022-040.jpg"
+			id="opf_78"
+			media-type="image/jpeg" />
+		<item
+			href="p022-041.jpg"
+			id="opf_79"
+			media-type="image/jpeg" />
+		<item
+			href="p022-042.jpg"
+			id="opf_80"
+			media-type="image/jpeg" />
+		<item
+			href="p022-043.jpg"
+			id="opf_81"
+			media-type="image/jpeg" />
+		<item
+			href="p022-044.jpg"
+			id="opf_82"
+			media-type="image/jpeg" />
+		<item
+			href="p022-045.jpg"
+			id="opf_83"
+			media-type="image/jpeg" />
+		<item
+			href="p022-046.jpg"
+			id="opf_84"
+			media-type="image/jpeg" />
+		<item
+			href="p022-047.jpg"
+			id="opf_85"
+			media-type="image/jpeg" />
+		<item
+			href="p022-048.jpg"
+			id="opf_86"
+			media-type="image/jpeg" />
+		<item
+			href="p022-049.jpg"
+			id="opf_87"
+			media-type="image/jpeg" />
+		<item
+			href="p022-050.jpg"
+			id="opf_88"
+			media-type="image/jpeg" />
+		<item
+			href="p022-051.jpg"
+			id="opf_89"
+			media-type="image/jpeg" />
+		<item
+			href="p022-052.jpg"
+			id="opf_90"
+			media-type="image/jpeg" />
+		<item
+			href="p022-053.jpg"
+			id="opf_91"
+			media-type="image/jpeg" />
+		<item
+			href="p022-054.jpg"
+			id="opf_92"
+			media-type="image/jpeg" />
+		<item
+			href="p022-055.jpg"
+			id="opf_93"
+			media-type="image/jpeg" />
+		<item
+			href="p022-056.jpg"
+			id="opf_94"
+			media-type="image/jpeg" />
+		<item
+			href="p022-057.jpg"
+			id="opf_95"
+			media-type="image/jpeg" />
+		<item
+			href="p022-058.jpg"
+			id="opf_96"
+			media-type="image/jpeg" />
+		<item
+			href="p022-059.jpg"
+			id="opf_97"
+			media-type="image/jpeg" />
+		<item
+			href="p022-060.jpg"
+			id="opf_98"
+			media-type="image/jpeg" />
+		<item
+			href="p022-061.jpg"
+			id="opf_99"
+			media-type="image/jpeg" />
+		<item
+			href="p022-062.jpg"
+			id="opf_100"
+			media-type="image/jpeg" />
+		<item
+			href="p022-063.jpg"
+			id="opf_101"
+			media-type="image/jpeg" />
+		<item
+			href="p022-064.jpg"
+			id="opf_102"
+			media-type="image/jpeg" />
+		<item
+			href="p022-065.jpg"
+			id="opf_103"
+			media-type="image/jpeg" />
+		<item
+			href="p022-066.jpg"
+			id="opf_104"
+			media-type="image/jpeg" />
+		<item
+			href="p022-067.jpg"
+			id="opf_105"
+			media-type="image/jpeg" />
+		<item
+			href="p022-068.jpg"
+			id="opf_106"
+			media-type="image/jpeg" />
+		<item
+			href="p022-069.jpg"
+			id="opf_107"
+			media-type="image/jpeg" />
+		<item
+			href="p022-070.jpg"
+			id="opf_108"
+			media-type="image/jpeg" />
+		<item
+			href="p022-071.jpg"
+			id="opf_109"
+			media-type="image/jpeg" />
+		<item
+			href="p022-072.jpg"
+			id="opf_110"
+			media-type="image/jpeg" />
+		<item
+			href="p022-073.jpg"
+			id="opf_111"
+			media-type="image/jpeg" />
+		<item
+			href="p022-074.jpg"
+			id="opf_112"
+			media-type="image/jpeg" />
+		<item
+			href="p022-075.jpg"
+			id="opf_113"
+			media-type="image/jpeg" />
+		<item
+			href="p022-076.jpg"
+			id="opf_114"
+			media-type="image/jpeg" />
+		<item
+			href="p022-077.jpg"
+			id="opf_115"
+			media-type="image/jpeg" />
+		<item
+			href="p022-078.jpg"
+			id="opf_116"
+			media-type="image/jpeg" />
+		<item
+			href="p022-079.jpg"
+			id="opf_117"
+			media-type="image/jpeg" />
+		<item
+			href="p023-001.jpg"
+			id="opf_118"
+			media-type="image/jpeg" />
+		<item
+			href="p023-002.jpg"
+			id="opf_119"
+			media-type="image/jpeg" />
+		<item
+			href="p023-003.jpg"
+			id="opf_120"
+			media-type="image/jpeg" />
+		<item
+			href="p023-004.jpg"
+			id="opf_121"
+			media-type="image/jpeg" />
+		<item
+			href="p023-005.jpg"
+			id="opf_122"
+			media-type="image/jpeg" />
+		<item
+			href="p023-006.jpg"
+			id="opf_123"
+			media-type="image/jpeg" />
+		<item
+			href="p023-007.jpg"
+			id="opf_124"
+			media-type="image/jpeg" />
+		<item
+			href="p023-008.jpg"
+			id="opf_125"
+			media-type="image/jpeg" />
+		<item
+			href="p023-009.jpg"
+			id="opf_126"
+			media-type="image/jpeg" />
+		<item
+			href="p023-010.jpg"
+			id="opf_127"
+			media-type="image/jpeg" />
+		<item
+			href="p023-011.jpg"
+			id="opf_128"
+			media-type="image/jpeg" />
+		<item
+			href="p023-012.jpg"
+			id="opf_129"
+			media-type="image/jpeg" />
+		<item
+			href="p023-013.jpg"
+			id="opf_130"
+			media-type="image/jpeg" />
+		<item
+			href="p023-014.jpg"
+			id="opf_131"
+			media-type="image/jpeg" />
+		<item
+			href="p023-015.jpg"
+			id="opf_132"
+			media-type="image/jpeg" />
+		<item
+			href="p023-016.jpg"
+			id="opf_133"
+			media-type="image/jpeg" />
+		<item
+			href="p023-017.jpg"
+			id="opf_134"
+			media-type="image/jpeg" />
+		<item
+			href="p023-018.jpg"
+			id="opf_135"
+			media-type="image/jpeg" />
+		<item
+			href="p023-019.jpg"
+			id="opf_136"
+			media-type="image/jpeg" />
+		<item
+			href="p023-020.jpg"
+			id="opf_137"
+			media-type="image/jpeg" />
+		<item
+			href="p023-021.jpg"
+			id="opf_138"
+			media-type="image/jpeg" />
+		<item
+			href="p023-022.jpg"
+			id="opf_139"
+			media-type="image/jpeg" />
+		<item
+			href="p023-023.jpg"
+			id="opf_140"
+			media-type="image/jpeg" />
+		<item
+			href="p023-024.jpg"
+			id="opf_141"
+			media-type="image/jpeg" />
+		<item
+			href="p023-025.jpg"
+			id="opf_142"
+			media-type="image/jpeg" />
+		<item
+			href="p023-026.jpg"
+			id="opf_143"
+			media-type="image/jpeg" />
+		<item
+			href="p023-027.jpg"
+			id="opf_144"
+			media-type="image/jpeg" />
+		<item
+			href="p023-028.jpg"
+			id="opf_145"
+			media-type="image/jpeg" />
+		<item
+			href="p023-029.jpg"
+			id="opf_146"
+			media-type="image/jpeg" />
+		<item
+			href="p023-030.jpg"
+			id="opf_147"
+			media-type="image/jpeg" />
+		<item
+			href="p023-031.jpg"
+			id="opf_148"
+			media-type="image/jpeg" />
+		<item
+			href="p023-032.jpg"
+			id="opf_149"
+			media-type="image/jpeg" />
+		<item
+			href="p023-033.jpg"
+			id="opf_150"
+			media-type="image/jpeg" />
+		<item
+			href="p023-034.jpg"
+			id="opf_151"
+			media-type="image/jpeg" />
+		<item
+			href="p023-035.jpg"
+			id="opf_152"
+			media-type="image/jpeg" />
+		<item
+			href="p023-036.jpg"
+			id="opf_153"
+			media-type="image/jpeg" />
+		<item
+			href="p023-037.jpg"
+			id="opf_154"
+			media-type="image/jpeg" />
+		<item
+			href="p023-038.jpg"
+			id="opf_155"
+			media-type="image/jpeg" />
+		<item
+			href="p023-039.jpg"
+			id="opf_156"
+			media-type="image/jpeg" />
+		<item
+			href="p023-040.jpg"
+			id="opf_157"
+			media-type="image/jpeg" />
+		<item
+			href="p023-041.jpg"
+			id="opf_158"
+			media-type="image/jpeg" />
+		<item
+			href="p023-042.jpg"
+			id="opf_159"
+			media-type="image/jpeg" />
+		<item
+			href="p023-043.jpg"
+			id="opf_160"
+			media-type="image/jpeg" />
+		<item
+			href="p023-044.jpg"
+			id="opf_161"
+			media-type="image/jpeg" />
+		<item
+			href="p023-045.jpg"
+			id="opf_162"
+			media-type="image/jpeg" />
+		<item
+			href="p023-046.jpg"
+			id="opf_163"
+			media-type="image/jpeg" />
+		<item
+			href="p023-047.jpg"
+			id="opf_164"
+			media-type="image/jpeg" />
+		<item
+			href="p023-048.jpg"
+			id="opf_165"
+			media-type="image/jpeg" />
+		<item
+			href="p023-049.jpg"
+			id="opf_166"
+			media-type="image/jpeg" />
+		<item
+			href="p023-050.jpg"
+			id="opf_167"
+			media-type="image/jpeg" />
+		<item
+			href="p023-051.jpg"
+			id="opf_168"
+			media-type="image/jpeg" />
+		<item
+			href="p023-052.jpg"
+			id="opf_169"
+			media-type="image/jpeg" />
+		<item
+			href="p023-053.jpg"
+			id="opf_170"
+			media-type="image/jpeg" />
+		<item
+			href="p023-054.jpg"
+			id="opf_171"
+			media-type="image/jpeg" />
+		<item
+			href="p023-055.jpg"
+			id="opf_172"
+			media-type="image/jpeg" />
+		<item
+			href="p023-056.jpg"
+			id="opf_173"
+			media-type="image/jpeg" />
+		<item
+			href="p023-057.jpg"
+			id="opf_174"
+			media-type="image/jpeg" />
+		<item
+			href="p023-058.jpg"
+			id="opf_175"
+			media-type="image/jpeg" />
+		<item
+			href="p023-059.jpg"
+			id="opf_176"
+			media-type="image/jpeg" />
+		<item
+			href="p023-060.jpg"
+			id="opf_177"
+			media-type="image/jpeg" />
+		<item
+			href="p023-061.jpg"
+			id="opf_178"
+			media-type="image/jpeg" />
+		<item
+			href="p023-062.jpg"
+			id="opf_179"
+			media-type="image/jpeg" />
+		<item
+			href="p023-063.jpg"
+			id="opf_180"
+			media-type="image/jpeg" />
+		<item
+			href="p023-064.jpg"
+			id="opf_181"
+			media-type="image/jpeg" />
+		<item
+			href="p023-065.jpg"
+			id="opf_182"
+			media-type="image/jpeg" />
+		<item
+			href="p023-066.jpg"
+			id="opf_183"
+			media-type="image/jpeg" />
+		<item
+			href="p023-067.jpg"
+			id="opf_184"
+			media-type="image/jpeg" />
+		<item
+			href="p023-068.jpg"
+			id="opf_185"
+			media-type="image/jpeg" />
+		<item
+			href="p023-069.jpg"
+			id="opf_186"
+			media-type="image/jpeg" />
+		<item
+			href="p023-070.jpg"
+			id="opf_187"
+			media-type="image/jpeg" />
+		<item
+			href="p023-071.jpg"
+			id="opf_188"
+			media-type="image/jpeg" />
+		<item
+			href="p023-072.jpg"
+			id="opf_189"
+			media-type="image/jpeg" />
+		<item
+			href="p023-073.jpg"
+			id="opf_190"
+			media-type="image/jpeg" />
+		<item
+			href="p023-074.jpg"
+			id="opf_191"
+			media-type="image/jpeg" />
+		<item
+			href="p023-075.jpg"
+			id="opf_192"
+			media-type="image/jpeg" />
+		<item
+			href="p023-076.jpg"
+			id="opf_193"
+			media-type="image/jpeg" />
+		<item
+			href="p023-077.jpg"
+			id="opf_194"
+			media-type="image/jpeg" />
+		<item
+			href="p023-078.jpg"
+			id="opf_195"
+			media-type="image/jpeg" />
+		<item
+			href="p023-079.jpg"
+			id="opf_196"
+			media-type="image/jpeg" />
+		<item
+			href="p023-080.jpg"
+			id="opf_197"
+			media-type="image/jpeg" />
+		<item
+			href="p023-081.jpg"
+			id="opf_198"
+			media-type="image/jpeg" />
+		<item
+			href="p023-082.jpg"
+			id="opf_199"
+			media-type="image/jpeg" />
+		<item
+			href="p023-083.jpg"
+			id="opf_200"
+			media-type="image/jpeg" />
+		<item
+			href="p023-084.jpg"
+			id="opf_201"
+			media-type="image/jpeg" />
+		<item
+			href="p023-085.jpg"
+			id="opf_202"
+			media-type="image/jpeg" />
+		<item
+			href="p023-086.jpg"
+			id="opf_203"
+			media-type="image/jpeg" />
+		<item
+			href="p023-087.jpg"
+			id="opf_204"
+			media-type="image/jpeg" />
+		<item
+			href="p023-088.jpg"
+			id="opf_205"
+			media-type="image/jpeg" />
+		<item
+			href="p023-089.jpg"
+			id="opf_206"
+			media-type="image/jpeg" />
+		<item
+			href="p023-090.jpg"
+			id="opf_207"
+			media-type="image/jpeg" />
+		<item
+			href="p023-091.jpg"
+			id="opf_208"
+			media-type="image/jpeg" />
+		<item
+			href="p023-092.jpg"
+			id="opf_209"
+			media-type="image/jpeg" />
+		<item
+			href="p023-093.jpg"
+			id="opf_210"
+			media-type="image/jpeg" />
+		<item
+			href="p023-094.jpg"
+			id="opf_211"
+			media-type="image/jpeg" />
+		<item
+			href="p023-095.jpg"
+			id="opf_212"
+			media-type="image/jpeg" />
+		<item
+			href="p023-096.jpg"
+			id="opf_213"
+			media-type="image/jpeg" />
+		<item
+			href="p023-097.jpg"
+			id="opf_214"
+			media-type="image/jpeg" />
+		<item
+			href="p023-098.jpg"
+			id="opf_215"
+			media-type="image/jpeg" />
+		<item
+			href="p023-099.jpg"
+			id="opf_216"
+			media-type="image/jpeg" />
+		<item
+			href="p023-100.jpg"
+			id="opf_217"
+			media-type="image/jpeg" />
+		<item
+			href="p023-101.jpg"
+			id="opf_218"
+			media-type="image/jpeg" />
+		<item
+			href="p023-102.jpg"
+			id="opf_219"
+			media-type="image/jpeg" />
+		<item
+			href="p023-103.jpg"
+			id="opf_220"
+			media-type="image/jpeg" />
+		<item
+			href="p023-104.jpg"
+			id="opf_221"
+			media-type="image/jpeg" />
+		<item
+			href="p023-105.jpg"
+			id="opf_222"
+			media-type="image/jpeg" />
+		<item
+			href="p023-106.jpg"
+			id="opf_223"
+			media-type="image/jpeg" />
+		<item
+			href="p023-107.jpg"
+			id="opf_224"
+			media-type="image/jpeg" />
+		<item
+			href="p023-108.jpg"
+			id="opf_225"
+			media-type="image/jpeg" />
+		<item
+			href="p023-109.jpg"
+			id="opf_226"
+			media-type="image/jpeg" />
+		<item
+			href="p023-110.jpg"
+			id="opf_227"
+			media-type="image/jpeg" />
+		<item
+			href="p023-111.jpg"
+			id="opf_228"
+			media-type="image/jpeg" />
+		<item
+			href="p023-112.jpg"
+			id="opf_229"
+			media-type="image/jpeg" />
+		<item
+			href="p023-113.jpg"
+			id="opf_230"
+			media-type="image/jpeg" />
+		<item
+			href="p023-114.jpg"
+			id="opf_231"
+			media-type="image/jpeg" />
+		<item
+			href="p023-115.jpg"
+			id="opf_232"
+			media-type="image/jpeg" />
+		<item
+			href="p023-116.jpg"
+			id="opf_233"
+			media-type="image/jpeg" />
+		<item
+			href="p023-117.jpg"
+			id="opf_234"
+			media-type="image/jpeg" />
+		<item
+			href="p023-118.jpg"
+			id="opf_235"
+			media-type="image/jpeg" />
+		<item
+			href="p023-119.jpg"
+			id="opf_236"
+			media-type="image/jpeg" />
+		<item
+			href="p023-120.jpg"
+			id="opf_237"
+			media-type="image/jpeg" />
+		<item
+			href="p023-121.jpg"
+			id="opf_238"
+			media-type="image/jpeg" />
+		<item
+			href="p023-122.jpg"
+			id="opf_239"
+			media-type="image/jpeg" />
+		<item
+			href="p024-001.jpg"
+			id="opf_240"
+			media-type="image/jpeg" />
+		
+	<item
+			href="tpbnarrator.res"
+			id="resource"
+			media-type="application/x-dtbresource+xml" />
+		
+	</manifest>
+	<spine>
+		<itemref
+			idref="opf_4" />
+		<itemref
+			idref="opf_5" />
+		<itemref
+			idref="opf_6" />
+		<itemref
+			idref="opf_7" />
+		<itemref
+			idref="opf_8" />
+		<itemref
+			idref="opf_9" />
+		<itemref
+			idref="opf_10" />
+		<itemref
+			idref="opf_11" />
+		<itemref
+			idref="opf_12" />
+		<itemref
+			idref="opf_13" />
+		<itemref
+			idref="opf_14" />
+		<itemref
+			idref="opf_15" />
+		<itemref
+			idref="opf_16" />
+		<itemref
+			idref="opf_17" />
+		<itemref
+			idref="opf_18" />
+		<itemref
+			idref="opf_19" />
+		<itemref
+			idref="opf_20" />
+		<itemref
+			idref="opf_21" />
+		<itemref
+			idref="opf_22" />
+		<itemref
+			idref="opf_23" />
+		<itemref
+			idref="opf_24" />
+		<itemref
+			idref="opf_25" />
+		<itemref
+			idref="opf_26" />
+	</spine>
+</package>

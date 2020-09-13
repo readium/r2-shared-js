@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE smil PUBLIC "-//NISO//DTD dtbsmil 2005-2//EN" "http://www.daisy.org/z3986/2005/dtbsmil-2005-2.dtd">
+<smil xmlns="http://www.w3.org/2001/SMIL20/">
+	<head>
+		<meta
+			name="dtb:uid"
+			content="DTB11468" />
+		<meta
+			name="dtb:generator"
+			content="Tobi and the Urakawa SDK: the open-source DAISY multimedia authoring toolkit" />
+		<meta
+			name="dtb:totalElapsedTime"
+			content="00:00:00" />
+		<customAttributes>
+			<customTest
+				defaultState="false"
+				id="pagenum"
+				override="visible" />
+		</customAttributes>
+	</head>
+	<body>
+		<seq
+			id="sm_178"
+			dur="00:00:00"
+			fill="remove">
+			<seq
+				id="sm_179"
+				class="h2">
+				<par
+					id="sm_180">
+					<text
+						id="sm_181"
+						src="dtbook.xml#dtb_110" />
+				</par>
+			</seq>
+			<par
+				id="sm_182">
+				<text
+					id="sm_183"
+					src="dtbook.xml#dtb_112" />
+			</par>
+			<par
+				id="sm_184">
+				<text
+					id="sm_185"
+					src="dtbook.xml#dtb_113" />
+			</par>
+			<par
+				id="sm_186">
+				<text
+					id="sm_187"
+					src="dtbook.xml#dtb_114" />
+			</par>
+			<par
+				id="sm_188">
+				<text
+					id="sm_189"
+					src="dtbook.xml#dtb_116" />
+			</par>
+			<par
+				id="sm_190">
+				<text
+					id="sm_191"
+					src="dtbook.xml#dtb_117" />
+			</par>
+			<par
+				id="sm_192">
+				<text
+					id="sm_193"
+					src="dtbook.xml#dtb_118" />
+			</par>
+			<par
+				id="sm_194">
+				<text
+					id="sm_195"
+					src="dtbook.xml#dtb_120" />
+			</par>
+			<par
+				id="sm_196">
+				<text
+					id="sm_197"
+					src="dtbook.xml#dtb_121" />
+			</par>
+			<par
+				id="sm_198">
+				<text
+					id="sm_199"
+					src="dtbook.xml#dtb_123" />
+			</par>
+			<par
+				id="sm_200">
+				<text
+					id="sm_201"
+					src="dtbook.xml#dtb_124" />
+			</par>
+			<par
+				id="sm_202">
+				<text
+					id="sm_203"
+					src="dtbook.xml#dtb_125" />
+			</par>
+			<seq
+				id="sm_204"
+				class="pagenum"
+				customTest="pagenum">
+				<par
+					id="sm_205">
+					<text
+						id="sm_206"
+						src="dtbook.xml#dtb_126" />
+				</par>
+			</seq>
+			<par
+				id="sm_207">
+				<text
+					id="sm_208"
+					src="dtbook.xml#dtb_128" />
+			</par>
+			<par
+				id="sm_209">
+				<text
+					id="sm_210"
+					src="dtbook.xml#dtb_129" />
+			</par>
+			<par
+				id="sm_211">
+				<text
+					id="sm_212"
+					src="dtbook.xml#dtb_130" />
+			</par>
+		</seq>
+	</body>
+</smil>

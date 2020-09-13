@@ -1195,10 +1195,9 @@ const addToLinkFromProperties = async (publication: Publication, link: Link, pro
 
 const addMediaOverlay = async (link: Link, linkEpub: Manifest, opf: OPF, zip: IZip) => {
     if (linkEpub.MediaOverlay) {
-        // const meta = findMetaByRefineAndProperty(opf, linkEpub.MediaOverlay, "media:duration");
-        const meta = "";
+        const meta = findMetaByRefineAndProperty(opf, linkEpub.MediaOverlay, "media:duration");
         if (meta) {
-            link.Duration = timeStrToSeconds(meta);
+            link.Duration = timeStrToSeconds(meta.Data);
         }
 
         const manItemSmil = opf.Manifest.find((mi) => {
@@ -1791,27 +1790,28 @@ const findInSpineByHref = (publication: Publication, href: string): Link | undef
     return undefined;
 };
 
-// const findMetaByRefineAndProperty = (opf: OPF, ID: string, property: string): Metafield | undefined => {
+ const findMetaByRefineAndProperty = (opf: OPF, ID: string, property: string): Metafield | undefined => {
 
-//     const ret = findAllMetaByRefineAndProperty(opf, ID, property);
-//     if (ret.length) {
-//         return ret[0];
-//     }
-//     return undefined;
-// };
-// const findAllMetaByRefineAndProperty =
-// (_rootfile: Rootfile, opf: OPF, ID: string, property: string): Metafield[] => {
-//     const metas: Metafield[] = [];
+     const ret = findAllMetaByRefineAndProperty(opf, ID, property);
+     if (ret.length) {
+         return ret[0];
+     }
+     return undefined;
+ };
 
-//     const refineID = "#" + ID;
+ const findAllMetaByRefineAndProperty =
+ (opf: OPF, ID: string, property: string): Metafield[] => {
+     const metas: Metafield[] = [];
 
-//     if (opf.Metadata && opf.Metadata.Meta) {
-//         opf.Metadata.Meta.forEach((metaTag) => {
-//             if (metaTag.Refine === refineID && metaTag.Property === property) {
-//                 metas.push(metaTag);
-//             }
-//         });
-//     }
+     const refineID = "#" + ID;
 
-//     return metas;
-// };
+     if (opf.Metadata && opf.Metadata.XMetadata.Meta) {
+         opf.Metadata.XMetadata.Meta.forEach((metaTag) => {
+             if (metaTag.Refine === refineID && metaTag.Property === property) {
+                 metas.push(metaTag);
+             }
+         });
+     }
+
+     return metas;
+ };

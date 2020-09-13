@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE smil PUBLIC "-//NISO//DTD dtbsmil 2005-2//EN" "http://www.daisy.org/z3986/2005/dtbsmil-2005-2.dtd">
+<smil xmlns="http://www.w3.org/2001/SMIL20/">
+	<head>
+		<meta
+			name="dtb:uid"
+			content="DTB11468" />
+		<meta
+			name="dtb:generator"
+			content="Tobi and the Urakawa SDK: the open-source DAISY multimedia authoring toolkit" />
+		<meta
+			name="dtb:totalElapsedTime"
+			content="00:00:00" />
+		<customAttributes>
+			<customTest
+				defaultState="false"
+				id="pagenum"
+				override="visible" />
+		</customAttributes>
+	</head>
+	<body>
+		<seq
+			id="sm_2049"
+			dur="00:00:00"
+			fill="remove">
+			<seq
+				id="sm_2050"
+				class="h2">
+				<par
+					id="sm_2051">
+					<text
+						id="sm_2052"
+						src="dtbook.xml#dtb_1441" />
+				</par>
+			</seq>
+			<par
+				id="sm_2053">
+				<text
+					id="sm_2054"
+					src="dtbook.xml#dtb_1442" />
+			</par>
+			<par
+				id="sm_2055">
+				<text
+					id="sm_2056"
+					src="dtbook.xml#dtb_1444" />
+			</par>
+			<par
+				id="sm_2057">
+				<text
+					id="sm_2058"
+					src="dtbook.xml#dtb_1445" />
+			</par>
+			<par
+				id="sm_2059">
+				<text
+					id="sm_2060"
+					src="dtbook.xml#dtb_1446" />
+			</par>
+			<par
+				id="sm_2061">
+				<text
+					id="sm_2062"
+					src="dtbook.xml#dtb_1447" />
+			</par>
+			<seq
+				id="sm_2063"
+				class="pagenum"
+				customTest="pagenum">
+				<par
+					id="sm_2064">
+					<text
+						id="sm_2065"
+						src="dtbook.xml#dtb_1448" />
+				</par>
+			</seq>
+			<par
+				id="sm_2066">
+				<text
+					id="sm_2067"
+					src="dtbook.xml#dtb_1452" />
+			</par>
+			<par
+				id="sm_2068">
+				<text
+					id="sm_2069"
+					src="dtbook.xml#dtb_1455" />
+			</par>
+			<par
+				id="sm_2070">
+				<text
+					id="sm_2071"
+					src="dtbook.xml#dtb_1457" />
+			</par>
+			<par
+				id="sm_2072">
+				<text
+					id="sm_2073"
+					src="dtbook.xml#dtb_1458" />
+			</par>
+			<par
+				id="sm_2074">
+				<text
+					id="sm_2075"
+					src="dtbook.xml#dtb_1460" />
+			</par>
+			<par
+				id="sm_2076">
+				<text
+					id="sm_2077"
+					src="dtbook.xml#dtb_1462" />
+			</par>
+			<par
+				id="sm_2078">
+				<text
+					id="sm_2079"
+					src="dtbook.xml#dtb_1464" />
+			</par>
+			<par
+				id="sm_2080">
+				<text
+					id="sm_2081"
+					src="dtbook.xml#dtb_1466" />
+			</par>
+			<par
+				id="sm_2082">
+				<text
+					id="sm_2083"
+					src="dtbook.xml#dtb_1468" />
+			</par>
+			<par
+				id="sm_2084">
+				<text
+					id="sm_2085"
+					src="dtbook.xml#dtb_1470" />
+			</par>
+			<par
+				id="sm_2086">
+				<text
+					id="sm_2087"
+					src="dtbook.xml#dtb_1472" />
+			</par>
+			<par
+				id="sm_2088">
+				<text
+					id="sm_2089"
+					src="dtbook.xml#dtb_1473" />
+			</par>
+			<par
+				id="sm_2090">
+				<text
+					id="sm_2091"
+					src="dtbook.xml#dtb_1475" />
+			</par>
+		</seq>
+	</body>
+</smil>

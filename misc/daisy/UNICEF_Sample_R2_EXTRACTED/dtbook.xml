@@ -1,0 +1,3884 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/css" href="dtbookbasic.css"?>
+<!DOCTYPE dtbook PUBLIC "-//NISO//DTD dtbook 2005-3//EN" "http://www.daisy.org/z3986/2005/dtbook-2005-3.dtd">
+<dtbook
+	version="2005-3"
+	xml:lang="en" xmlns="http://www.daisy.org/z3986/2005/dtbook/">
+	<head>
+		<meta
+			name="dtb:uid"
+			content="DTB11468" />
+		<meta
+			name="dtb:generator"
+			content="Tobi and the Urakawa SDK: the open-source DAISY multimedia authoring toolkit" />
+		<meta
+			name="dc:Title"
+			content="The state of the world's children 2013 Executive Summary" />
+		<meta
+			name="dc:Date"
+			content="2013-04-26" />
+		<meta
+			name="dc:Publisher"
+			content="unicef" />
+		<meta
+			name="dc:Language"
+			content="en" />
+		<meta
+			name="dc:Rights"
+			content="N/A" />
+		<meta
+			name="track:Guidelines"
+			content="2011-2" />
+		<meta
+			name="track:Supplier"
+			content="PrashantVerma" />
+	</head>
+	<book>
+		<frontmatter>
+			<doctitle
+				id="dtb_1"
+				smilref="0001.smil#sm_3">THE STATE OF THE WORLD'S CHILDREN 2013 EXECUTIVE SUMMARY</doctitle>
+			<level1>
+				<h1
+					id="dtb_2"
+					smilref="0002.smil#sm_7">THE STATE OF THE WORLD'S CHILDREN 2013</h1>
+				<p
+					id="dtb_3">
+					<strong
+						id="dtb_4"
+						smilref="0002.smil#sm_9">CHILDREN WITH DISABILITIES</strong>
+				</p>
+				<p
+					id="dtb_5"
+					smilref="0002.smil#sm_11">EXECUTIVE SUMMARY</p>
+				<pagenum
+					id="dtb_6"
+					page="front"
+					smilref="0002.smil#sm_13">i</pagenum>
+				<imggroup
+					id="dtb_7">
+					<img
+						id="dtb_8"
+						src="p00i-001.jpg"
+						alt="Cover photograph: School children queue to enter their classroom in this 2007 photograph from the Syrian Arab Republic"
+						smilref="0002.smil#sm_16" />
+				</imggroup>
+				<p
+					id="dtb_9"
+					smilref="0002.smil#sm_18">unite for children</p>
+				<p
+					id="dtb_10"
+					smilref="0002.smil#sm_20">unicef</p>
+				<pagenum
+					id="dtb_11"
+					page="front"
+					smilref="0002.smil#sm_22">ii</pagenum>
+				<p
+					id="dtb_12">
+					<strong
+						id="dtb_13"
+						smilref="0002.smil#sm_25">Key recommendations</strong>
+				</p>
+				<p
+					id="dtb_14">
+					<sent
+						id="dtb_15">
+						<strong
+							id="dtb_16"
+							smilref="0002.smil#sm_27">International commitment to building more inclusive societies has resulted in improvements in the situation of children with disabilities and their families, but too many of them continue to face barriers to their participation in the civic, social and cultural affairs of their communities. Realizing the promise of equity through inclusion will require action to:</strong>
+					</sent>
+				</p>
+				<list
+					type="ol"
+					id="dtb_17"
+					smilref="0002.smil#sm_29">
+					<li
+						id="dtb_18"
+						smilref="0002.smil#sm_30">Ratify — and implement — the Convention on the Rights of Persons with Disabilities and the Convention on the Rights of the Child.</li>
+					<li
+						id="dtb_19"
+						smilref="0002.smil#sm_32">Fight discrimination and enhance the awareness of disability among the general public, decision-makers, and those who provide essential services for children and adolescents in such fields as health, education and protection.</li>
+					<li
+						id="dtb_20"
+						smilref="0002.smil#sm_34">Dismantle barriers to inclusion so that all children's environments — schools, health facilities, public transport and so on — facilitate access and encourage the participation of children with disabilities alongside their peers.</li>
+					<li
+						id="dtb_21">
+						<sent
+							id="dtb_22"
+							smilref="0002.smil#sm_36">End the institutionalization of children with disabilities, starting with a moratorium on new admissions. </sent>
+						<sent
+							id="dtb_23"
+							smilref="0002.smil#sm_38">This should be accompanied by the promotion of and increased support for family-based care and community-based rehabilitation.</sent>
+					</li>
+					<li
+						id="dtb_24"
+						smilref="0002.smil#sm_40">Support families so they can meet the higher costs of living and lost opportunities to earn income associated with caring for children with disabilities.</li>
+					<li
+						id="dtb_25"
+						smilref="0002.smil#sm_42">Move beyond minimum standards by involving children and adolescents with disabilities and their families in evaluating supports and services designed to meet their needs.</li>
+					<li
+						id="dtb_26"
+						smilref="0002.smil#sm_44">Coordinate services across all sectors so as to address the full range of challenges facing children and adolescents with disabilities and their families.</li>
+					<li
+						id="dtb_27"
+						smilref="0002.smil#sm_46">Involve children and adolescents with disabilities in making decisions that affect them — not just as beneficiaries, but as agents of change.</li>
+					<li
+						id="dtb_28"
+						smilref="0002.smil#sm_48">Promote a concerted global research agenda on disability to generate the reliable and comparable data needed to guide planning and resource allocation, and to place children with disabilities more clearly on the development agenda.</li>
+				</list>
+				<p
+					id="dtb_29">
+					<strong
+						id="dtb_30"
+						smilref="0002.smil#sm_50">The ultimate proof of all global and national efforts will be local, the test being whether every child with a disability enjoys her or his rights — including access to services, support and opportunities — on a par with other children, even in the most remote settings and the most deprived circumstances.</strong>
+				</p>
+			</level1>
+		</frontmatter>
+		<bodymatter>
+			<level1>
+				<pagenum
+					id="dtb_31"
+					page="normal"
+					smilref="0003.smil#sm_53">1</pagenum>
+				<h1
+					id="dtb_32"
+					smilref="0003.smil#sm_57">INTRODUCTION</h1>
+				<imggroup
+					id="dtb_33">
+					<img
+						alt="image"
+						src="p001-001.jpg"
+						id="dtb_34"
+						smilref="0003.smil#sm_59" />
+					<caption
+						id="dtb_35"
+						imgref="dtb_34"
+						smilref="0003.smil#sm_61">Victor, a 13-year-old with cerebral palsy, has fun in the water in Brazil. © Andre Castro/2012</caption>
+				</imggroup>
+				<p
+					id="dtb_36">
+					<sent
+						id="dtb_37"
+						smilref="0003.smil#sm_63">Reports such as this typically begin with a statistic designed to highlight a problem. </sent>
+					<sent
+						id="dtb_38"
+						smilref="0003.smil#sm_65">The girls and boys to whom this edition of <em
+							id="dtb_39">The State of the World's Children</em> is dedicated are not problems. </sent>
+					<sent
+						id="dtb_40"
+						smilref="0003.smil#sm_67">Rather, each is a sister, brother or friend who has a favourite dish, song or game; a daughter or son with dreams and the desire to fulfil them; a child with a disability who has the same rights as any other girl or boy.</sent>
+				</p>
+				<p
+					id="dtb_41">
+					<sent
+						id="dtb_42"
+						smilref="0003.smil#sm_69">Given opportunities to flourish as others might, children with disabilities have the potential to lead fulfilling lives and to contribute to the social, cultural and economic vitality of their communities. </sent>
+					<sent
+						id="dtb_43"
+						smilref="0003.smil#sm_71">Yet surviving and thriving can be especially difficult for children with disabilities. </sent>
+					<sent
+						id="dtb_44"
+						smilref="0003.smil#sm_73">They are at greater risk of being poor than peers without disabilities. </sent>
+					<sent
+						id="dtb_45"
+						smilref="0003.smil#sm_75">Even where children share the same disadvantages, children with disabilities confront additional challenges as a result of their impairments and the many barriers that society throws in their way. </sent>
+					<sent
+						id="dtb_46"
+						smilref="0003.smil#sm_77">Children living in poverty are among the least likely to enjoy the benefits of education and health care, for example, but children who live in poverty and have a disability are even less likely to attend the local school or clinic.</sent>
+				</p>
+				<p
+					id="dtb_47">
+					<sent
+						id="dtb_48"
+						smilref="0003.smil#sm_79">In many countries, responses to the situation of children with disabilities are largely limited to institutionalization, abandonment or neglect. </sent>
+					<sent
+						id="dtb_49"
+						smilref="0003.smil#sm_81">These responses are the problem, and they are rooted in negative or paternalistic assumptions of incapacity, dependency and difference that are perpetuated by ignorance. </sent>
+					<sent
+						id="dtb_50"
+						smilref="0003.smil#sm_83">What is needed is a commitment to these children's rights and their futures, giving priority to the most disadvantaged — as a matter of equity and for the benefit of all.</sent>
+				</p>
+				<p
+					id="dtb_51">
+					<sent
+						id="dtb_52"
+						smilref="0003.smil#sm_85">Children with disabilities encounter different forms of exclusion and are affected by them to varying degrees depending on the type of disability they have, where they live and the culture or class to which they belong. </sent>
+					<sent
+						id="dtb_53"
+						smilref="0003.smil#sm_87">Gender is also a crucial factor: Girls with disabilities are also less likely to get an education, receive vocational training or find employment than are boys with disabilities or girls without disabilities.</sent>
+				</p>
+				<p
+					id="dtb_54">
+					<sent
+						id="dtb_55"
+						smilref="0003.smil#sm_89">Children with disabilities are often regarded as inferior, and this exposes them to increased vulnerability: Discrimination based on disability has manifested itself in marginalization from resources and decisionmaking, and even in infanticide. </sent>
+					<sent
+						id="dtb_56"
+						smilref="0003.smil#sm_91">Exclusion often stems from invisibility. </sent>
+					<sent
+						id="dtb_57"
+						smilref="0003.smil#sm_93">Few countries have reliable information on how many of their citizens are children with disabilities, what disabilities they have or how these disabilities affect their lives. </sent>
+					<sent
+						id="dtb_58"
+						smilref="0003.smil#sm_95">Children thus excluded are unknown to, and therefore cut off from, public services to which they are entitled. </sent>
+					<sent
+						id="dtb_59"
+						smilref="0003.smil#sm_97">These deprivations can have lasting effects — by limiting access to gainful employment or participation in civic affairs later in life, for example. </sent>
+					<sent
+						id="dtb_60"
+						smilref="0003.smil#sm_99">But access to and use of supportive services and technology can position a child with a disability to take her or his place in the community and contribute to it.</sent>
+				</p>
+				<pagenum
+					page="normal"
+					id="dtb_61"
+					smilref="0003.smil#sm_101">2</pagenum>
+				<p
+					id="dtb_62">
+					<sent
+						id="dtb_63"
+						smilref="0003.smil#sm_104">The future is far from grim. </sent>
+					<sent
+						id="dtb_64"
+						smilref="0003.smil#sm_106">By their commitment to upholding the Convention on the Rights of the Child (CRC) and the Convention on the Rights of Persons with Disabilities (CRPD), governments around the world have taken upon themselves the responsibility of ensuring that all children, irrespective of ability or disability, enjoy their rights without discrimination of any kind. </sent>
+					<sent
+						id="dtb_65"
+						smilref="0003.smil#sm_108">The Conventions bear witness to a growing global movement dedicated to the inclusion of children with disabilities in community life. </sent>
+					<sent
+						id="dtb_66"
+						smilref="0003.smil#sm_110">They establish that children with disabilities have the same rights as others.</sent>
+				</p>
+				<p
+					id="dtb_67">
+					<sent
+						id="dtb_68"
+						smilref="0003.smil#sm_112">Inclusion goes beyond integration. </sent>
+					<sent
+						id="dtb_69"
+						smilref="0003.smil#sm_114">To take an example from the field of education, integration might be attempted simply by admitting children with disabilities to ‘regular’ schools. </sent>
+					<sent
+						id="dtb_70"
+						smilref="0003.smil#sm_116">Inclusion, however, is possible only when schools are designed and administered so that all children can learn and play together. </sent>
+					<sent
+						id="dtb_71"
+						smilref="0003.smil#sm_118">This would entail providing such needed accommodations as access to Braille, sign language and adapted curricula.</sent>
+				</p>
+				<p
+					id="dtb_72">
+					<sent
+						id="dtb_73"
+						smilref="0003.smil#sm_120">Inclusion benefits everyone. </sent>
+					<sent
+						id="dtb_74"
+						smilref="0003.smil#sm_122">To continue with the example of education, ramps and wide doorways can enhance access and safety for all children, teachers, parents and visitors, not just those who use wheelchairs.</sent>
+				</p>
+				<p
+					id="dtb_75">
+					<sent
+						id="dtb_76"
+						smilref="0003.smil#sm_124">In efforts to promote inclusion and fairness, children with disabilities should be able to enlist the support of their families, disabled people's organizations, parents' associations and community groups. </sent>
+					<sent
+						id="dtb_77"
+						smilref="0003.smil#sm_126">They should also be able to count on allies further afield. </sent>
+					<sent
+						id="dtb_78"
+						smilref="0003.smil#sm_128">Governments have the power to help by aligning their policies and programmes with the CRPD and CRC. </sent>
+					<sent
+						id="dtb_79"
+						smilref="0003.smil#sm_130">International partners can provide assistance compatible with the Conventions. </sent>
+					<sent
+						id="dtb_80"
+						smilref="0003.smil#sm_132">Corporations and other private sector entities can advance inclusion — and attract the best talent — by embracing diversity in hiring.</sent>
+				</p>
+				<p
+					id="dtb_81">
+					<sent
+						id="dtb_82"
+						smilref="0003.smil#sm_134">Many of the deprivations endured by children with disabilities stem from and are perpetuated by their invisibility. </sent>
+					<sent
+						id="dtb_83"
+						smilref="0003.smil#sm_136">The research community is working to render more children visible by improving data collection and analysis. </sent>
+					<sent
+						id="dtb_84"
+						smilref="0003.smil#sm_138">Their work will help to overcome ignorance and discrimination, to target resources and interventions and gauge their effects. </sent>
+					<sent
+						id="dtb_85"
+						smilref="0003.smil#sm_140">But decision-makers need not wait for better data to begin building more inclusive infrastructure and services: All that is needed is for these efforts to remain flexible so they can be adapted as new data come to light.</sent>
+				</p>
+				<sidebar
+					render="optional"
+					id="dtb_86"
+					smilref="0003.smil#sm_142"> <p
+						id="dtb_87"><strong
+							id="dtb_88"
+							smilref="0003.smil#sm_143">On the numbers</strong></p> <p
+						id="dtb_89"
+						smilref="0003.smil#sm_145">By one widely used estimate, some 93 million children — or 1 in 20 of those aged 14 or younger — live with a moderate or severe disability of some kind.</p> <p
+						id="dtb_90"><sent
+							id="dtb_91"
+							smilref="0003.smil#sm_147">Such global estimates are essentially speculative. </sent><sent
+							id="dtb_92"
+							smilref="0003.smil#sm_149">They are dated — this one has been in circulation since 2004 — and derived from data of quality too varied and methods too inconsistent to be reliable. </sent><sent
+							id="dtb_93"
+							smilref="0003.smil#sm_151">In order to provide a context for and illustrate the issues under discussion, <em
+								id="dtb_94">The State of the World's Children 2013</em> presents the results of national surveys and independent studies, but even these must be interpreted with caution and should not be compared to one another. </sent><sent
+							id="dtb_95"
+							smilref="0003.smil#sm_153">This is because definitions of disability differ by place and time, as do study design, methodology and analysis.</sent></p> </sidebar>
+			</level1>
+			<level1>
+				<pagenum
+					page="normal"
+					id="dtb_96"
+					smilref="0004.smil#sm_156">3</pagenum>
+				<h1
+					id="dtb_97"
+					smilref="0004.smil#sm_160">FUNDAMENTALS OF INCLUSION</h1>
+				<imggroup
+					id="dtb_98">
+					<img
+						src="p003-001.jpg"
+						alt="image"
+						id="dtb_99"
+						smilref="0004.smil#sm_162" />
+					<caption
+						imgref="dtb_99"
+						id="dtb_100">
+						<sent
+							id="dtb_101"
+							smilref="0004.smil#sm_164">Six-year-old Nemanja (far left) sits with classmates in Novi Sad, Serbia. </sent>
+						<sent
+							id="dtb_102"
+							smilref="0004.smil#sm_166">His primary school was the first to integrate children with disabilities under a law aimed at reducing institutionalization. © UNICEF/HQ2011-1156/Holt</sent>
+					</caption>
+				</imggroup>
+				<p
+					id="dtb_103">
+					<sent
+						id="dtb_104"
+						smilref="0004.smil#sm_168">The CRC and CRPD challenge charitable approaches that regard children with disabilities as passive recipients of care and protection. </sent>
+					<sent
+						id="dtb_105"
+						smilref="0004.smil#sm_170">Instead, the Conventions demand recognition of each child as a full member of her or his family, community and society. </sent>
+					<sent
+						id="dtb_106"
+						smilref="0004.smil#sm_172">This entails a focus not on traditional notions of ‘rescuing’ the child, but on investment in removing the physical, cultural, economic, communication, mobility and attitudinal barriers that impede the realization of the child's rights — including the right to active involvement in making decisions that affect children's daily lives.</sent>
+				</p>
+				<p
+					id="dtb_107">
+					<sent
+						id="dtb_108"
+						smilref="0004.smil#sm_174">The underestimation of the abilities of people with disabilities is a major obstacle to their inclusion and to the provision of equal opportunities. </sent>
+					<sent
+						id="dtb_109"
+						smilref="0004.smil#sm_176">Dismissive attitudes exist throughout society — from professionals, politicians and other decisionmakers to families and peers as well as people with disabilities themselves, who in the absence of evidence that they are valued and supported will often underestimate their own abilities.</sent>
+				</p>
+				<level2>
+					<h2
+						id="dtb_110"
+						smilref="0005.smil#sm_180">Changing attitudes</h2>
+					<p
+						id="dtb_111">
+						<sent
+							id="dtb_112"
+							smilref="0005.smil#sm_182">Little will change in the lives of children with disabilities unless attitudes change. </sent>
+						<sent
+							id="dtb_113"
+							smilref="0005.smil#sm_184">Ignorance about the nature and causes of impairments, invisibility of the children themselves, serious underestimation of their potential and capacities, and other impediments to equal opportunity and treatment all conspire to keep children with disabilities silenced and marginalized. </sent>
+						<sent
+							id="dtb_114"
+							smilref="0005.smil#sm_186">But bringing disability into political and social discourse makes it possible to sensitize decision-makers and service providers as well as demonstrate to society at large that disability is part of the human condition.</sent>
+					</p>
+					<p
+						id="dtb_115">
+						<sent
+							id="dtb_116"
+							smilref="0005.smil#sm_188">The importance of involving children with disabilities cannot be overstated. </sent>
+						<sent
+							id="dtb_117"
+							smilref="0005.smil#sm_190">Prejudice can be reduced through interaction, as demonstrated by activities that bring together children with and without disabilities.</sent>
+					</p>
+					<p
+						id="dtb_118"
+						smilref="0005.smil#sm_192">Social integration benefits everyone, and children who have experienced inclusion — in education, for example — can then be society's best teachers in reducing inequalities and building an inclusive society.</p>
+					<p
+						id="dtb_119">
+						<sent
+							id="dtb_120"
+							smilref="0005.smil#sm_194">Inclusive media also have a key part to play. </sent>
+						<sent
+							id="dtb_121"
+							smilref="0005.smil#sm_196">By including nuanced portrayals of children and adults with disabilities, media can send out positive messages that they are members of families and neighbourhoods and can also counter misrepresentations and stereotypes that reinforce social prejudices.</sent>
+					</p>
+					<p
+						id="dtb_122">
+						<sent
+							id="dtb_123"
+							smilref="0005.smil#sm_198">Similarly, participation in social activities helps to promote a positive view of disability. </sent>
+						<sent
+							id="dtb_124"
+							smilref="0005.smil#sm_200">Sport, in particular, has helped overcome many societal prejudices. </sent>
+						<sent
+							id="dtb_125"
+							smilref="0005.smil#sm_202">Seeing a child surmount the physical and psychological barriers to participation can be inspirational and can promote respect — although care must be taken not to make children with disabilities who do not perform such physical feats feel inferior to those who do.</sent>
+					</p>
+					<pagenum
+						id="dtb_126"
+						page="normal"
+						smilref="0005.smil#sm_204">4</pagenum>
+					<p
+						id="dtb_127">
+						<sent
+							id="dtb_128"
+							smilref="0005.smil#sm_207">Sport has also been helpful in campaigns to reduce stigma, and athletes with disabilities are often among the most recognized representatives of people with disabilities. </sent>
+						<sent
+							id="dtb_129"
+							smilref="0005.smil#sm_209">Experiences in a number of countries have shown that access to sport and recreation is not only of direct benefit to children with disabilities, but also helps to improve their standing in the community as they are seen to participate alongside other children in activities valued by society.</sent>
+					</p>
+					<p
+						id="dtb_130"
+						smilref="0005.smil#sm_211">Because the CRPD recognizes the family as the natural unit of society and puts the State in the role of supporting it, the process of fulfilling the rights of children with disabilities begins with supporting their families and establishing a home setting conducive to early intervention.</p>
+				</level2>
+				<level2>
+					<h2
+						id="dtb_131"
+						smilref="0006.smil#sm_215">Supporting children and families</h2>
+					<p
+						id="dtb_132">
+						<sent
+							id="dtb_133"
+							smilref="0006.smil#sm_217">Under the CRPD, children with disabilities and their families have the right to an adequate standard of living and are also entitled to such subsidized or free support services as day care, respite care and access to self-help groups. </sent>
+						<sent
+							id="dtb_134"
+							smilref="0006.smil#sm_219">Social protection for children with disabilities and their families is especially important because these families often face a higher cost of living and lost opportunities to earn income. </sent>
+						<sent
+							id="dtb_135"
+							smilref="0006.smil#sm_221">Estimates of the additional costs of disability borne by families range from 9 per cent of income in Viet Nam to 11–69 per cent in the United Kingdom. </sent>
+						<sent
+							id="dtb_136"
+							smilref="0006.smil#sm_223">In addition to medical, rehabilitation and other direct expenses, families also face opportunity costs, as parents and family members must often give up or limit their employment in order to care for children with disabilities.</sent>
+					</p>
+					<p
+						id="dtb_137">
+						<sent
+							id="dtb_138"
+							smilref="0006.smil#sm_225">A review of 14 developing countries found that people with disabilities were more likely to experience poverty than those without disabilities. </sent>
+						<sent
+							id="dtb_139"
+							smilref="0006.smil#sm_227">People with disabilities tended to be less well off in terms of education, employment, living conditions, consumption and health. </sent>
+						<sent
+							id="dtb_140"
+							smilref="0006.smil#sm_229">Higher health-care costs than those of households without members with disabilities can further reduce a household's standard of living.</sent>
+					</p>
+					<p
+						id="dtb_141">
+						<sent
+							id="dtb_142"
+							smilref="0006.smil#sm_231">States can tackle the increased risk of child poverty with such social protection initiatives as cash transfer programmes, which have been shown to benefit children. </sent>
+						<sent
+							id="dtb_143"
+							smilref="0006.smil#sm_233">A growing number of low- and middle-income countries are building on promising results from broader efforts and have launched targeted social protection initiatives that include cash transfers specifically for children with disabilities. </sent>
+						<sent
+							id="dtb_144"
+							smilref="0006.smil#sm_235">Routine monitoring and evaluation of the transfers' effects on the health, educational and recreational attainment of children with disabilities will be essential to make sure these programmes achieve their objectives.</sent>
+					</p>
+					<p
+						id="dtb_145">
+						<sent
+							id="dtb_146"
+							smilref="0006.smil#sm_237">Another tool governments can use is disability-specific budgeting, whereby a government sets specific goals for children with disabilities within a broader initiative and allocates a sufficient portion of the available resources towards them. </sent>
+						<sent
+							id="dtb_147"
+							smilref="0006.smil#sm_239">Effective access to services including education, health care, habilitation, rehabilitation and recreation should be provided free of change and in a manner that promotes the fullest possible social integration and individual development of the child.</sent>
+					</p>
+				</level2>
+				<level2>
+					<h2
+						id="dtb_148"
+						smilref="0007.smil#sm_243">Community-based rehabilitation</h2>
+					<p
+						id="dtb_149"
+						smilref="0007.smil#sm_245">Community-based rehabilitation (CBR) programmes — which seek to ensure that people with disabilities have equal access to services and opportunities relating to health, education and livelihoods — are an example of an intervention that is designed and run by local communities — critically, with the active participation of children and adults with disabilities.</p>
+					<pagenum
+						page="normal"
+						id="dtb_150"
+						smilref="0007.smil#sm_247">5</pagenum>
+					<p
+						id="dtb_151">
+						<sent
+							id="dtb_152"
+							smilref="0007.smil#sm_250">CBR can prove effective in addressing multiple deprivations, such as those facing children with disabilities who live in rural and indigenous communities. </sent>
+						<sent
+							id="dtb_153"
+							smilref="0007.smil#sm_252">In an outreach initiative for indigenous children in Oaxaca, Mexico, for example, CBR teams from the Centre for Research and Post-Secondary Studies in Social Anthropology, in collaboration with UNICEF, promoted the formation of local support networks among the families of children with disabilities. </sent>
+						<sent
+							id="dtb_154"
+							smilref="0007.smil#sm_254">Over three years (2007–2010), the initiative saw the increased acceptance of children with disabilities by their own families and communities, improved provision of social services, community-led construction of wheelchair ramps to public spaces, arrangements for free services from state and federal hospitals, and 32 new enrolments of children with disabilities in mainstream schools.</sent>
+					</p>
+					<p
+						id="dtb_155">
+						<sent
+							id="dtb_156"
+							smilref="0007.smil#sm_256">Inclusive approaches are built around the concept of accessibility, with the aim of making the mainstream work for everyone rather than creating parallel systems. </sent>
+						<sent
+							id="dtb_157"
+							smilref="0007.smil#sm_258">An accessible environment is essential if children with disabilities are to enjoy their right to participate in the community and to have the chance to realize their full potential. </sent>
+						<sent
+							id="dtb_158"
+							smilref="0007.smil#sm_260">So, for instance, children with disabilities need access to all schools to reap the maximum benefits of education. </sent>
+						<sent
+							id="dtb_159"
+							smilref="0007.smil#sm_262">Children who are educated alongside their peers have a much better chance of becoming productive members of their societies and of being integrated in the lives of their communities.</sent>
+					</p>
+					<p
+						id="dtb_160">
+						<sent
+							id="dtb_161"
+							smilref="0007.smil#sm_264">Depending on the type of disability, a child may need an assistive device (a prosthesis, for example) or service (such as a sign language interpreter) to function fully in various aspects of life. </sent>
+						<sent
+							id="dtb_162"
+							smilref="0007.smil#sm_266">According to WHO, however, in many low-income countries only 5–15 per cent of those who need assistive technology are able to obtain it. </sent>
+						<sent
+							id="dtb_163"
+							smilref="0007.smil#sm_268">The costs of such technology can be prohibitive, especially for children, who need their devices replaced or adjusted as they grow. </sent>
+						<sent
+							id="dtb_164"
+							smilref="0007.smil#sm_270">Access to assistive technology and any other specialized support that children need to facilitate their interaction and participation should be free and available to all.</sent>
+					</p>
+					<p
+						id="dtb_165">
+						<sent
+							id="dtb_166"
+							smilref="0007.smil#sm_272">Universal design is an approach to accessibility that seeks to create products, structures and environments that all people can use — regardless of age, ability or situation — to the greatest extent possible, without the need for adaptation or specialized design. </sent>
+						<sent
+							id="dtb_167"
+							smilref="0007.smil#sm_274">Real-world applications include curb cuts, audio books, Velcro fastenings and low-floor buses.</sent>
+					</p>
+					<p
+						id="dtb_168">
+						<sent
+							id="dtb_169"
+							smilref="0007.smil#sm_276">The cost of integrating accessibility into new buildings and infrastructure can be negligible, amounting to less than 1 per cent of the capital development cost. </sent>
+						<sent
+							id="dtb_170"
+							smilref="0007.smil#sm_278">By contrast, adaptations to completed buildings can reach as much as 20 per cent of the original cost. </sent>
+						<sent
+							id="dtb_171"
+							smilref="0007.smil#sm_280">It therefore makes sense to integrate accessibility considerations into projects at the early stages of the design process. </sent>
+						<sent
+							id="dtb_172"
+							smilref="0007.smil#sm_282">Accessibility should also be a consideration when funding development projects.</sent>
+					</p>
+					<imggroup
+						id="dtb_173">
+						<img
+							alt="image"
+							src="p005-001.jpg"
+							id="dtb_174"
+							smilref="0007.smil#sm_284" />
+						<caption
+							imgref="dtb_174"
+							id="dtb_175"> <p
+								id="dtb_176"
+								smilref="0007.smil#sm_286">Wenjun, 9, walks with her foster mother in China.</p> <p
+								id="dtb_177"
+								smilref="0007.smil#sm_288">© UNICEF/China/2010/Liu</p> </caption>
+					</imggroup>
+				</level2>
+			</level1>
+			<level1>
+				<pagenum
+					id="dtb_178"
+					page="normal"
+					smilref="0008.smil#sm_291">6</pagenum>
+				<h1
+					id="dtb_179"
+					smilref="0008.smil#sm_295">A STRONG FOUNDATION</h1>
+				<imggroup
+					id="dtb_180">
+					<img
+						id="dtb_181"
+						alt="image"
+						src="p006-001.jpg"
+						smilref="0008.smil#sm_297" />
+					<caption
+						imgref="dtb_181"
+						id="dtb_182"> <p
+							id="dtb_183"
+							smilref="0008.smil#sm_299">A teacher with a hearing impairment teaches a class of hearing-impaired children in Gulu, Uganda.</p> <p
+							id="dtb_184"
+							smilref="0008.smil#sm_301">© UNICEF/UGDA2012-00108/Sibiloni</p> </caption>
+				</imggroup>
+				<p
+					id="dtb_185"
+					smilref="0008.smil#sm_303">Inclusive health and education services have a critical role to play in building a solid foundation on which children with disabilities can build fulfilling lives.</p>
+				<level2>
+					<h2
+						id="dtb_186"
+						smilref="0009.smil#sm_307">Inclusive health</h2>
+					<p
+						id="dtb_187">
+						<sent
+							id="dtb_188"
+							smilref="0009.smil#sm_309">Under the CRC and the CRPD, all children have the right to the highest attainable standard of health. </sent>
+						<sent
+							id="dtb_189"
+							smilref="0009.smil#sm_311">Children with disabilities are thus equally entitled to the full spectrum of care — from immunization in infancy to proper nutrition and treatment for childhood ailments and injuries, to confidential sexual and reproductive health information and services during adolescence and into early adulthood. </sent>
+						<sent
+							id="dtb_190"
+							smilref="0009.smil#sm_313">Equally critical are such basic services as water, sanitation and hygiene (WASH).</sent>
+					</p>
+					<p
+						id="dtb_191">
+						<sent
+							id="dtb_192"
+							smilref="0009.smil#sm_315">Ensuring that children with disabilities actually enjoy these rights on a par with others is the objective of an inclusive approach to health. </sent>
+						<sent
+							id="dtb_193"
+							smilref="0009.smil#sm_317">It is a matter of social justice and of respecting the inherent dignity of all human beings, as well as an investment in the future — as healthy children grow into more effective producers and parents.</sent>
+					</p>
+					<p
+						id="dtb_194">
+						<sent
+							id="dtb_195"
+							smilref="0009.smil#sm_319">Immunizations, among the most successful and cost-effective public health interventions, are a key component of global efforts to reduce childhood illness and death. </sent>
+						<sent
+							id="dtb_196"
+							smilref="0009.smil#sm_321">More children than ever before are being reached — but children with disabilities are still not benefiting from increased coverage. </sent>
+						<sent
+							id="dtb_197"
+							smilref="0009.smil#sm_323">Including these children in immunization efforts is not only ethical but also imperative for public health and equity; universal coverage cannot be reached if they remain excluded.</sent>
+					</p>
+					<p
+						id="dtb_198">
+						<sent
+							id="dtb_199"
+							smilref="0009.smil#sm_325">While immunization can pre-empt some diseases that lead to disabilities, it is no less important to immunize children who are already disabled. </sent>
+						<sent
+							id="dtb_200"
+							smilref="0009.smil#sm_327">Denied the full range of immunizations, children with disabilities are at risk of developmental delays, avoidable secondary conditions and preventable death.</sent>
+					</p>
+					<p
+						id="dtb_201"
+						smilref="0009.smil#sm_329">Including children with disabilities in efforts to promote immunization — for example, raising awareness by showing them alongside others in posters and other promotional materials, and reaching out to parents and disabled people's organizations — will help to increase immunization coverage among them.</p>
+					<p
+						id="dtb_202">
+						<sent
+							id="dtb_203"
+							smilref="0009.smil#sm_331">Nutrition is also critical. </sent>
+						<sent
+							id="dtb_204"
+							smilref="0009.smil#sm_333">Insufficient food or a diet short of certain vitamins and minerals can leave infants and children vulnerable to specific conditions and a host of infections that can lead to physical, sensory or intellectual disabilities. </sent>
+						<sent
+							id="dtb_205"
+							smilref="0009.smil#sm_335">For example, between 250,000 and 500,000 children are considered to be at risk of becoming blind each year from vitamin A deficiency. </sent>
+						<sent
+							id="dtb_206"
+							smilref="0009.smil#sm_337">This syndrome is easily prevented by oral supplementation costing just a few cents per child. </sent>
+						<sent
+							id="dtb_207"
+							smilref="0009.smil#sm_339">Similarly, low-cost measures are available to prevent disabilities arising from other nutritional deficiencies.</sent>
+					</p>
+					<pagenum
+						id="dtb_208"
+						page="normal"
+						smilref="0009.smil#sm_341">7</pagenum>
+					<p
+						id="dtb_209">
+						<sent
+							id="dtb_210"
+							smilref="0009.smil#sm_344">Poor nutrition and episodes of diarrhoea in early childhood can lead to stunting, indicated by low height for age, which in turn can result in poor cognitive and educational performance that will have consequences throughout life. </sent>
+						<sent
+							id="dtb_211"
+							smilref="0009.smil#sm_346">Malnutrition in mothers can contribute to a number of preventable childhood disabilities. </sent>
+						<sent
+							id="dtb_212"
+							smilref="0009.smil#sm_348">One of the most prevalent causes of disability in the world is anaemia, which affects approximately 42 per cent of pregnant women in low- and middle-income countries (over half suffer iron deficiency anaemia); it also affects more than half of preschool-aged children in developing countries.</sent>
+					</p>
+					<p
+						id="dtb_213">
+						<sent
+							id="dtb_214"
+							smilref="0009.smil#sm_350">While malnutrition can be a cause of disability, it can also be a consequence. </sent>
+						<sent
+							id="dtb_215"
+							smilref="0009.smil#sm_352">Indeed, children with disabilities are at heightened risk of malnutrition. </sent>
+						<sent
+							id="dtb_216"
+							smilref="0009.smil#sm_354">Physical impairments associated with conditions such as cleft palate or cerebral palsy may interfere with the mechanics of consuming food; certain conditions, such as cystic fibrosis, may impede nutrient absorption; and some infants and children with disabilities may need special diets or increased calorie intake to maintain a healthy weight.</sent>
+					</p>
+					<p
+						id="dtb_217">
+						<sent
+							id="dtb_218"
+							smilref="0009.smil#sm_356">Yet children with disabilities may be hidden away from community screening and feeding initiatives. </sent>
+						<sent
+							id="dtb_219"
+							smilref="0009.smil#sm_358">Those who do not attend school miss out on school feeding programmes. </sent>
+						<sent
+							id="dtb_220"
+							smilref="0009.smil#sm_360">In addition to physical factors, attitudes may also adversely affect a child's nutrition. </sent>
+						<sent
+							id="dtb_221"
+							smilref="0009.smil#sm_362">In some societies, mothers may not be encouraged to breastfeed a child with a disability; disabled children may be fed less, denied food or provided with less nutritious food than siblings without disabilities. </sent>
+						<sent
+							id="dtb_222"
+							smilref="0009.smil#sm_364">Children with some types of physical or intellectual disabilities may have difficulty feeding themselves. </sent>
+						<sent
+							id="dtb_223"
+							smilref="0009.smil#sm_366">It is probable that in some cases what is assumed to be disability-associated ill health and wasting may in fact be connected with feeding problems.</sent>
+					</p>
+					<p
+						id="dtb_224">
+						<sent
+							id="dtb_225"
+							smilref="0009.smil#sm_368">Throughout the developing world, persons with disabilities routinely face particular difficulties in accessing safe drinking water and basic sanitation. </sent>
+						<sent
+							id="dtb_226"
+							smilref="0009.smil#sm_370">Facilities are often physically inaccessible, and in some places, new ones are still being designed and built without adequate concern for children with disabilities. </sent>
+						<sent
+							id="dtb_227"
+							smilref="0009.smil#sm_372">Even though low-cost, low-tech interventions such as step latrines are increasingly available, information about them has yet to be widely disseminated and incorporated into WASH policies and practice.</sent>
+					</p>
+					<p
+						id="dtb_228">
+						<sent
+							id="dtb_229"
+							smilref="0009.smil#sm_374">Social barriers also impede access. </sent>
+						<sent
+							id="dtb_230"
+							smilref="0009.smil#sm_376">Children with disabilities often face stigma and discrimination when using household and public facilities, for example, because of unfounded fears that they will contaminate them. </sent>
+						<sent
+							id="dtb_231"
+							smilref="0009.smil#sm_378">When children with disabilities, especially girls, are forced to use separate facilities, they are at increased risk of accidents and physical attack, including rape.</sent>
+					</p>
+					<p
+						id="dtb_232"
+						smilref="0009.smil#sm_380">Children with disabilities might not attend school for want of an accessible toilet; they often report trying to eat and drink less to cut down on the number of visits to the toilet — thus endangering their nutritional status.</p>
+					<p
+						id="dtb_233">
+						<sent
+							id="dtb_234"
+							smilref="0009.smil#sm_382">Children and young people with disabilities have been almost entirely overlooked in sexual and reproductive health and HIV/AIDS programmes, as they are often incorrectly believed to be sexually inactive, unlikely to use substances and at less risk of violence than their peers without disabilities. </sent>
+						<sent
+							id="dtb_235"
+							smilref="0009.smil#sm_384">Many young people with disabilities do not receive even basic information about how their bodies develop and change, and because they are often taught to be silent and obedient, they are at heightened risk of abuse. </sent>
+						<sent
+							id="dtb_236"
+							smilref="0009.smil#sm_386">In consequence, they are at increased risk of HIV infection.</sent>
+					</p>
+					<p
+						id="dtb_237"
+						smilref="0009.smil#sm_388">People with disabilities of all ages who are HIV-positive are less likely to receive appropriate services than peers without disabilities, as facilities and programmes rarely consider their needs, while health-care personnel lack disability-specific training.</p>
+					<pagenum
+						id="dtb_238"
+						page="normal"
+						smilref="0009.smil#sm_390">8</pagenum>
+					<p
+						id="dtb_239">
+						<sent
+							id="dtb_240"
+							smilref="0009.smil#sm_393">Because children develop rapidly during the first three years of life, early detection and intervention are crucial for those with disabilities. </sent>
+						<sent
+							id="dtb_241"
+							smilref="0009.smil#sm_395">Developmental screening is an effective means of detecting disability in children and referring them to further assessment and intervention — for example to treat iron deficiency, administer anti-epileptic drugs or provide community-based rehabilitation — as well as of providing vital information to family members. </sent>
+						<sent
+							id="dtb_242"
+							smilref="0009.smil#sm_397">Such interventions are becoming increasingly available in low- and middle-income countries.</sent>
+					</p>
+					<p
+						id="dtb_243">
+						<sent
+							id="dtb_244"
+							smilref="0009.smil#sm_399">The detection and treatment of impairments is not a separate area of medicine but an integral aspect of public health. </sent>
+						<sent
+							id="dtb_245"
+							smilref="0009.smil#sm_401">When policymakers and researchers characterize these measures as being in competition for resources with measures to promote the health of people without disabilities, they perpetuate discrimination and inequity.</sent>
+					</p>
+					<p
+						id="dtb_246">
+						<sent
+							id="dtb_247"
+							smilref="0009.smil#sm_403">Health-care services available to children with disabilities may be of poor quality. </sent>
+						<sent
+							id="dtb_248"
+							smilref="0009.smil#sm_405">Health workers and other professionals stand to benefit from being educated about child development and disability and from being trained to deliver integrated services, with the participation of the extended family where possible. </sent>
+						<sent
+							id="dtb_249"
+							smilref="0009.smil#sm_407">Additionally, the feedback of children with disabilities should be solicited so that facilities and services can better meet their needs.</sent>
+					</p>
+					<imggroup
+						id="dtb_250">
+						<img
+							src="p008-001.jpg"
+							id="dtb_251"
+							alt="image"
+							smilref="0009.smil#sm_409" />
+						<caption
+							imgref="dtb_251"
+							id="dtb_252"> <p
+								id="dtb_253"><strong
+									id="dtb_254"><em
+										id="dtb_255"
+										smilref="0009.smil#sm_411">Estimated rates of primary school completion</em></strong> </p> <p
+								id="dtb_256"
+								smilref="0009.smil#sm_413"><strong
+									id="dtb_257">Source:</strong> World Health Organization, based on surveys in 51 countries.</p> </caption>
+						<prodnote
+							id="dtb_258"
+							render="optional"
+							imgref="dtb_251"
+							smilref="0009.smil#sm_415"> <p
+								id="dtb_259"><sent
+									id="dtb_260"
+									smilref="0009.smil#sm_416">The figure shows a circular ring with arrow pointing to the right corner. </sent><sent
+									id="dtb_261"
+									smilref="0009.smil#sm_418">The symbol shows that boys complete primary school with disability at 51% and boys complete primary school without disability at 61%.</sent></p> <p
+								id="dtb_262"><sent
+									id="dtb_263"
+									smilref="0009.smil#sm_420">It shows another circle below the top figure which is also a circular ring with an addition sign attached in the bottom. </sent><sent
+									id="dtb_264"
+									smilref="0009.smil#sm_422">The symbol shows that girls complete primary school with disability at 42% and girls complete primary school without disability at 53%.</sent></p> </prodnote>
+					</imggroup>
+				</level2>
+				<level2>
+					<h2
+						id="dtb_265"
+						smilref="0010.smil#sm_426">Inclusive education</h2>
+					<p
+						id="dtb_266">
+						<sent
+							id="dtb_267"
+							smilref="0010.smil#sm_428">Children with disabilities are disproportionately denied their right to education, which undermines their ability to enjoy the full rights of citizenship, find gainful employment and take up valued roles in society. </sent>
+						<sent
+							id="dtb_268"
+							smilref="0010.smil#sm_430">Household survey data from 13 low- and middle-income countries show that children with disabilities aged 6–17 years are significantly less likely to be enrolled in school than their peers without disabilities.</sent>
+					</p>
+					<p
+						id="dtb_269"
+						smilref="0010.smil#sm_432">As long as children with disabilities are denied equal access to their local schools, governments cannot achieve universal primary education (Millennium Development Goal 2), and States parties to the CRPD cannot fulfil their responsibilities under Article 24.</p>
+					<p
+						id="dtb_270">
+						<sent
+							id="dtb_271"
+							smilref="0010.smil#sm_434">Rather than segregating children with disabilities in special schools, inclusive education entails providing meaningful learning opportunities to all students within the regular school system. </sent>
+						<sent
+							id="dtb_272"
+							smilref="0010.smil#sm_436">Ideally, it allows children with and without disabilities to attend the same age-appropriate classes at the local school, with additional, individually tailored support as needed. </sent>
+						<sent
+							id="dtb_273"
+							smilref="0010.smil#sm_438">It requires physical accommodation as well as a new, child-centred curriculum that includes representations of the full spectrum of people found in society and reflects the needs of all children.</sent>
+					</p>
+					<pagenum
+						id="dtb_274"
+						page="normal"
+						smilref="0010.smil#sm_440">9</pagenum>
+					<p
+						id="dtb_275">
+						<sent
+							id="dtb_276"
+							smilref="0010.smil#sm_443">Studies across countries show a strong link between poverty and disability, which is in turn linked to gender, health and employment issues. </sent>
+						<sent
+							id="dtb_277"
+							smilref="0010.smil#sm_445">Children with disabilities are often caught in a cycle of poverty and exclusion: Girls become caregivers to siblings rather than attend school, for example, or the whole family may be stigmatized, leading to a reluctance to report that a child has a disability or to take the child out in public. </sent>
+						<sent
+							id="dtb_278"
+							smilref="0010.smil#sm_447">Education of those who are excluded or marginalized, however, brings about poverty reduction.</sent>
+					</p>
+					<p
+						id="dtb_279">
+						<sent
+							id="dtb_280"
+							smilref="0010.smil#sm_449">The first steps towards inclusion are taken at home during the early years. </sent>
+						<sent
+							id="dtb_281"
+							smilref="0010.smil#sm_451">Without the love, sensory stimulation, health care and social inclusion to which they are entitled, children can miss important developmental milestones and their potential may be unfairly limited, with significant social and economic implications for themselves, their families and their communities.</sent>
+					</p>
+					<p
+						id="dtb_282">
+						<sent
+							id="dtb_283"
+							smilref="0010.smil#sm_453">A child whose disability or developmental delay is identified at an early stage will have a much better chance of reaching her or his full capacity. </sent>
+						<sent
+							id="dtb_284"
+							smilref="0010.smil#sm_455">Early childhood education is important because 80 per cent of the brain's capacity develops before the age of 3; the period before primary school provides opportunities to tailor developmental education to the child's individual needs. </sent>
+						<sent
+							id="dtb_285"
+							smilref="0010.smil#sm_457">Studies suggest that the children who are at greatest disadvantage stand to benefit most. </sent>
+						<sent
+							id="dtb_286"
+							smilref="0010.smil#sm_459">With family and community support from the earliest days of their lives, children with disabilities are better placed to make the most of their school years and to prepare themselves for adulthood.</sent>
+					</p>
+					<p
+						id="dtb_287">
+						<sent
+							id="dtb_288"
+							smilref="0010.smil#sm_461">In school, creating an inclusive and enabling learning environment for children with disabilities depends in large part on teachers having a clear understanding of inclusive education and a commitment to teaching all children. </sent>
+						<sent
+							id="dtb_289"
+							smilref="0010.smil#sm_463">All too often, teachers lack appropriate preparation and support in teaching children with disabilities in regular schools, and this contributes to their stated unwillingness in many countries to support the inclusion of children with disabilities in their classes.</sent>
+					</p>
+					<p
+						id="dtb_290">
+						<sent
+							id="dtb_291"
+							smilref="0010.smil#sm_465">Resources for children with disabilities tend to be allocated to segregated schools rather than to an inclusive mainstream education system. </sent>
+						<sent
+							id="dtb_292"
+							smilref="0010.smil#sm_467">This is not only inappropriate, but can also prove costly: In Bulgaria, for instance, the budget per child educated in a special school can be up to three times higher than that for a similar child in a regular school.</sent>
+					</p>
+					<p
+						id="dtb_293">
+						<sent
+							id="dtb_294"
+							smilref="0010.smil#sm_469">When teachers and personnel are trained to consider disability-related issues, they look upon inclusion of children with disabilities more positively. </sent>
+						<sent
+							id="dtb_295"
+							smilref="0010.smil#sm_471">The most positive attitudes of all have been found among teachers with actual experience of inclusion. </sent>
+						<sent
+							id="dtb_296"
+							smilref="0010.smil#sm_473">It has been shown that positive attitudes among teachers translate into less restrictive placements for students with disabilities.</sent>
+					</p>
+					<p
+						id="dtb_297">
+						<sent
+							id="dtb_298"
+							smilref="0010.smil#sm_475">Yet pre-service training rarely prepares teachers to teach inclusively, and existing training is of variable quality. </sent>
+						<sent
+							id="dtb_299"
+							smilref="0010.smil#sm_477">The lack of people with disabilities among teaching personnel presents another challenge to inclusive education; adults with disabilities often face considerable obstacles to qualifying as teachers. </sent>
+						<sent
+							id="dtb_300"
+							smilref="0010.smil#sm_479">In Cambodia, for instance, teachers must by law be “free of disabilities.”</sent>
+					</p>
+					<p
+						id="dtb_301">
+						<sent
+							id="dtb_302"
+							smilref="0010.smil#sm_481">Partnerships with civil society are providing encouraging examples of ways to enhance teacher training and diversity. </sent>
+						<sent
+							id="dtb_303"
+							smilref="0010.smil#sm_483">In Mozambique, the national <acronym
+								title="non-governmental organization"
+								pronounce="no"
+								id="dtb_304">NGO</acronym> Ajuda de Desenvolvimento de Povo para Povo has worked with the national disabled persons' organization ADEMO to train student teachers to work with children with disabilities and to train student teachers who have disabilities.</sent>
+					</p>
+					<pagenum
+						page="normal"
+						id="dtb_305"
+						smilref="0010.smil#sm_485">10</pagenum>
+					<p
+						id="dtb_306">
+						<sent
+							id="dtb_307"
+							smilref="0010.smil#sm_488">Inclusive education requires a flexible approach to school organization, curriculum development and pupil assessment. </sent>
+						<sent
+							id="dtb_308"
+							smilref="0010.smil#sm_490">Such flexibility would allow for the development of a more inclusive pedagogy, shifting the focus from teacher-centred to child-centred to embrace diverse learning styles.</sent>
+					</p>
+					<p
+						id="dtb_309">
+						<sent
+							id="dtb_310"
+							smilref="0010.smil#sm_492">Teachers often have inadequate support in the classroom, and they need to be able to call on specialist help — for instance, with Braille or computer-based instruction -when the needs of their students with disabilities are beyond their expertise. </sent>
+						<sent
+							id="dtb_311"
+							smilref="0010.smil#sm_494">Such specialists are in short supply, especially in such low-income areas as sub-Saharan Africa. </sent>
+						<sent
+							id="dtb_312"
+							smilref="0010.smil#sm_496">This presents an opportunity for appropriate support from providers of financial and technical assistance from the international to the local level.</sent>
+					</p>
+					<p
+						id="dtb_313">
+						<sent
+							id="dtb_314"
+							smilref="0010.smil#sm_498">Inclusive education also needs to draw upon resources from outside the classroom. </sent>
+						<sent
+							id="dtb_315"
+							smilref="0010.smil#sm_500">Parents have the potential to contribute in many ways, from providing accessible transport to raising awareness to liaising with the health and social sectors to obtain equipment, support and grants.</sent>
+					</p>
+					<p
+						id="dtb_316">
+						<sent
+							id="dtb_317"
+							smilref="0010.smil#sm_502">The most underused resource in schools and communities all over the world is the children themselves. </sent>
+						<sent
+							id="dtb_318"
+							smilref="0010.smil#sm_504">Although the importance of child agency and child participation is well documented, they sit uncomfortably within existing structures and systems of education. </sent>
+						<sent
+							id="dtb_319"
+							smilref="0010.smil#sm_506">Involving children with disabilities in decisions can be particularly challenging, not least because of ingrained thinking and behaviour that perceives them as passive victims.</sent>
+					</p>
+					<p
+						id="dtb_320">
+						<sent
+							id="dtb_321"
+							smilref="0010.smil#sm_508">In participatory research, children frequently highlight the importance of a clean environment and hygienic toilets; for children with disabilities, privacy and accessibility are paramount. </sent>
+						<sent
+							id="dtb_322"
+							smilref="0010.smil#sm_510">Children with disabilities can and must guide and evaluate efforts to advance accessibility and inclusion. </sent>
+						<sent
+							id="dtb_323"
+							smilref="0010.smil#sm_512">After all, who better to understand the means and impact of exclusion?</sent>
+					</p>
+					<p
+						id="dtb_324">
+						<sent
+							id="dtb_325"
+							smilref="0010.smil#sm_514">Aspirations for inclusive education are more likely to be realized if governments and their partners are clear about who is to do what and how, and to whom they are expected to report. </sent>
+						<sent
+							id="dtb_326"
+							smilref="0010.smil#sm_516">Where policies fail to be implemented, the problem may be one of unclear mandates. </sent>
+						<sent
+							id="dtb_327"
+							smilref="0010.smil#sm_518">In Bangladesh, for example, most aspects of the education of children with disabilities are managed by the Ministry of Social Welfare rather than that of Education. </sent>
+						<sent
+							id="dtb_328"
+							smilref="0010.smil#sm_520">To make inclusive education a reality, Ministries of Education should be encouraged to take responsibility for all children of school age. </sent>
+						<sent
+							id="dtb_329"
+							smilref="0010.smil#sm_522">Coordination with partners and stakeholders can play a strong supporting role in this process.</sent>
+					</p>
+					<p
+						id="dtb_330">
+						<sent
+							id="dtb_331"
+							smilref="0010.smil#sm_524">Exclusion denies children with disabilities the lifelong benefits of education: a better job, social and economic security, and opportunities for full participation in society. </sent>
+						<sent
+							id="dtb_332"
+							smilref="0010.smil#sm_526">In contrast, investment in the education of children with disabilities can contribute to their future effectiveness as members of the labour force. </sent>
+						<sent
+							id="dtb_333"
+							smilref="0010.smil#sm_528">Indeed, a person's potential income can increase by as much as 10 per cent with each additional year of schooling.</sent>
+					</p>
+					<p
+						id="dtb_334"
+						smilref="0010.smil#sm_530">Furthermore, basic reading and writing skills also improve health: A child born to a mother who can read is 50 per cent more likely to survive past the age of 5, and lower maternal education has been linked to higher rates of stunting among children in urban slums in Kenya, Roma settlements in Serbia, and in Cambodia.</p>
+					<p
+						id="dtb_335">
+						<sent
+							id="dtb_336"
+							smilref="0010.smil#sm_532">Education is both a useful instrument and a right. </sent>
+						<sent
+							id="dtb_337"
+							smilref="0010.smil#sm_534">As stated in the CRC, it promotes “the development of the child's personality, talents and mental and physical abilities to their fullest potential.”</sent>
+					</p>
+				</level2>
+			</level1>
+			<level1>
+				<pagenum
+					id="dtb_338"
+					page="normal"
+					smilref="0011.smil#sm_537">11</pagenum>
+				<h1
+					id="dtb_339"
+					smilref="0011.smil#sm_541">ESSENTIALS OF PROTECTION</h1>
+				<imggroup
+					id="dtb_340">
+					<img
+						id="dtb_341"
+						src="p011-001.jpg"
+						alt="image"
+						smilref="0011.smil#sm_543" />
+					<caption
+						imgref="dtb_341"
+						id="dtb_342"> <p
+							id="dtb_343"
+							smilref="0011.smil#sm_545">A young boy with albinism reads Braille at school in the town of Moshi, United Republic of Tanzania.</p> <p
+							id="dtb_344"
+							smilref="0011.smil#sm_547">© UNICEF/HQ2008-1786/Pirozzi</p> </caption>
+				</imggroup>
+				<p
+					id="dtb_345">
+					<sent
+						id="dtb_346"
+						smilref="0011.smil#sm_549">Children with disabilities are among the most vulnerable members of society. </sent>
+					<sent
+						id="dtb_347"
+						smilref="0011.smil#sm_551">They stand to benefit the most from measures to count them, protect them against abuse and guarantee them access to justice.</sent>
+				</p>
+				<p
+					id="dtb_348">
+					<sent
+						id="dtb_349"
+						smilref="0011.smil#sm_553">In societies where they are stigmatized and their families exposed to social or economic exclusion, many children with disabilities are not even able to obtain an identity document. </sent>
+					<sent
+						id="dtb_350"
+						smilref="0011.smil#sm_555">This is a violation of these children's human rights and a fundamental barrier to their participation in society. </sent>
+					<sent
+						id="dtb_351"
+						smilref="0011.smil#sm_557">It can seal their invisibility and increase their vulnerability to the many forms of exploitation that result from not having an official identity.</sent>
+				</p>
+				<p
+					id="dtb_352">
+					<sent
+						id="dtb_353"
+						smilref="0011.smil#sm_559">States parties to the CRPD have the clear obligation to guarantee effective legal protection for children with disabilities. </sent>
+					<sent
+						id="dtb_354"
+						smilref="0011.smil#sm_561">To change discriminatory social norms, States need to make sure existing laws are enforced and that children with disabilities are informed about their right to protection from discrimination, and how to exercise this right. </sent>
+					<sent
+						id="dtb_355"
+						smilref="0011.smil#sm_563">The principle of ‘reasonable accommodation’ dictates that necessary and appropriate adaptations be made so that children with disabilities can enjoy their rights on an equal basis with others. </sent>
+					<sent
+						id="dtb_356"
+						smilref="0011.smil#sm_565">Relegating them to separate systems would be inappropriate; equity through inclusion is the goal.</sent>
+				</p>
+				<p
+					id="dtb_357">
+					<sent
+						id="dtb_358"
+						smilref="0011.smil#sm_567">Discrimination against and exclusion of children with disabilities renders them disproportionately vulnerable to violence, neglect and abuse. </sent>
+					<sent
+						id="dtb_359"
+						smilref="0011.smil#sm_569">Some forms of violence are specific to children with disabilities. </sent>
+					<sent
+						id="dtb_360"
+						smilref="0011.smil#sm_571">It may be perpetrated in the guise of treatment for behaviour modification, for example, using electric shocks or drugs. </sent>
+					<sent
+						id="dtb_361"
+						smilref="0011.smil#sm_573">Girls with disabilities in many countries are subject to forced sterilization or abortion.</sent>
+				</p>
+				<p
+					id="dtb_362">
+					<sent
+						id="dtb_363"
+						smilref="0011.smil#sm_575">In many countries, children with disabilities continue to be placed in institutions. </sent>
+					<sent
+						id="dtb_364"
+						smilref="0011.smil#sm_577">It is rare for these facilities to provide the individual attention that children need to develop to their full capacity. </sent>
+					<sent
+						id="dtb_365"
+						smilref="0011.smil#sm_579">The educational, medical and rehabilitative care they receive in such places is often insufficient, owing to either low standards or inadequate monitoring.</sent>
+				</p>
+				<p
+					id="dtb_366">
+					<sent
+						id="dtb_367"
+						smilref="0011.smil#sm_581">Separating children with disabilities from their families is a violation of their right to be cared for by their parents unless this is deemed by a competent authority to be in the individual child's best interests. </sent>
+					<sent
+						id="dtb_368"
+						smilref="0011.smil#sm_583">If immediate family is unable to care for a child, the CRPD obligates State parties to provide alternative care within the extended family or community, for instance in a foster family.</sent>
+				</p>
+				<p
+					id="dtb_369">
+					<sent
+						id="dtb_370"
+						smilref="0011.smil#sm_585">Where countries have sought to return institutionalized children to their families and communities, children with disabilities have been among the last to be released. </sent>
+					<sent
+						id="dtb_371"
+						smilref="0011.smil#sm_587">Such was the case, for example, in Serbia, although the realization that reforms had bypassed children with disabilities in the past decade has since added vigour to such efforts <em
+							id="dtb_372">(see chart, page 12).</em></sent>
+				</p>
+				<p
+					id="dtb_373">
+					<sent
+						id="dtb_374"
+						smilref="0011.smil#sm_589">A State's responsibility to protect the rights of all children under its jurisdiction also extends to children with disabilities who are in contact with the law — whether as victims, witnesses, suspects or convicts. </sent>
+					<sent
+						id="dtb_375"
+						smilref="0011.smil#sm_591">Specific measures can help: Children can be interviewed in the appropriate signed or spoken languages; all professionals involved in the administration of justice, from law enforcement officers to judges, can be trained to work with children who have disabilities; and regulations and protocols can be established to ensure equal treatment of children with disabilities.</sent>
+				</p>
+				<pagenum
+					id="dtb_376"
+					page="normal"
+					smilref="0011.smil#sm_593">12</pagenum>
+				<p
+					id="dtb_377">
+					<strong
+						id="dtb_378">
+						<em
+							id="dtb_379"
+							smilref="0011.smil#sm_596">Last to benefit</em>
+					</strong> </p>
+				<imggroup
+					id="dtb_380">
+					<img
+						alt="image"
+						src="p012-001.jpg"
+						id="dtb_381"
+						smilref="0011.smil#sm_598" />
+					<caption
+						imgref="dtb_381"
+						id="dtb_382"> <p
+							id="dtb_383"><em
+								id="dtb_384"
+								smilref="0011.smil#sm_600">Under Serbia's welfare reforms, children with disabilities were released from institutions at a slower rate than children without disabilities.</em></p> <p
+							id="dtb_385"
+							smilref="0011.smil#sm_602"><strong
+								id="dtb_386">Source:</strong> Republican Institute for Social Protection, Serbia.</p> <p
+							id="dtb_387"><sent
+								id="dtb_388"
+								smilref="0011.smil#sm_604">Sample sizes: Children and youth (0–26 years old) with disabilities: 2,020 in 2000, 1,280 in 2011. </sent><sent
+								id="dtb_389"
+								smilref="0011.smil#sm_606">Children and youth (0–26 years old) without disabilities: 1,534 in 2000,574 in 2011.</sent></p> </caption>
+					<prodnote
+						id="dtb_390"
+						render="optional"
+						imgref="dtb_381"
+						smilref="0011.smil#sm_608"> <p
+							id="dtb_391"><sent
+								id="dtb_392"
+								smilref="0011.smil#sm_609">The figure shows two graphs. </sent><sent
+								id="dtb_393"
+								smilref="0011.smil#sm_611">The left side graph depicts children and youth (0-26 years old) with disabilities in institutions. </sent><sent
+								id="dtb_394"
+								smilref="0011.smil#sm_613">The X-axis measures the following years: ‘2000, 2005, 2008, 2011’ from left to right respectively. </sent><sent
+								id="dtb_395"
+								smilref="0011.smil#sm_615">The bar graph for the year 2000 is at 100%, the year 2005 at 91%, the year 2008 at 79% and the year 2011 at 63%. </sent><sent
+								id="dtb_396"
+								smilref="0011.smil#sm_617">It shows a 37% decrease.</sent></p> <p
+							id="dtb_397"><sent
+								id="dtb_398"
+								smilref="0011.smil#sm_619">The right side graph depicts children and youth (0-26 years old) without disabilities in institutions. </sent><sent
+								id="dtb_399"
+								smilref="0011.smil#sm_621">The X-axis measures the following years: ‘2000, 2005, 2008, 2011’ from left to right respectively. </sent><sent
+								id="dtb_400"
+								smilref="0011.smil#sm_623">The bar graph for the year 2000 is at 100%, the year 2005 at 83%, the year 2008 at 49% and the year 2011 at 37%. </sent><sent
+								id="dtb_401"
+								smilref="0011.smil#sm_625">It shows a 63% decrease.</sent></p> </prodnote>
+				</imggroup>
+				<p
+					id="dtb_402">
+					<sent
+						id="dtb_403"
+						smilref="0011.smil#sm_627">Furthermore, it is important to develop alternative solutions to formal judicial proceedings, taking into account the range of children's individual capacities. </sent>
+					<sent
+						id="dtb_404"
+						smilref="0011.smil#sm_629">Children with disabilities should also not be placed in regular juvenile detention facilities; rather, they should be provided appropriate treatment to address the issues that led them to commit a crime. </sent>
+					<sent
+						id="dtb_405"
+						smilref="0011.smil#sm_631">Such treatment should be carried out in appropriate facilities with adequately trained staff, with human rights and legal safeguards fully respected.</sent>
+				</p>
+				<sidebar
+					render="optional"
+					id="dtb_406"
+					smilref="0011.smil#sm_633"> <p
+						id="dtb_407"><strong
+							id="dtb_408"
+							smilref="0011.smil#sm_634">Violence against children with disabilities</strong></p> <p
+						id="dtb_409"><sent
+							id="dtb_410"
+							smilref="0011.smil#sm_636">Children with disabilities are three to four times more likely to be victims of violence. </sent><sent
+							id="dtb_411"
+							smilref="0011.smil#sm_638">Research teams at Liverpool John Moores University and the World Health Organization have conducted a systematic review and meta-analysis of existing studies of violence against children with disabilities. </sent><sent
+							id="dtb_412"
+							smilref="0011.smil#sm_640">The review considered 17 studies from high-income countries, in the absence of high-quality studies from low- and middle-income countries.</sent></p> <p
+						id="dtb_413"><sent
+							id="dtb_414"
+							smilref="0011.smil#sm_642">Estimates of risk indicated that children with disabilities were at significantly higher risk of experiencing violence than peers without disabilities: 3.7 times more likely for combined measures of violence, 3.6 times for physical violence and 2.9 times for sexual violence. </sent><sent
+							id="dtb_415"
+							smilref="0011.smil#sm_644">Children with mental or intellectual disabilities were found to be 4.6 times more likely to be victims of sexual violence than peers without disabilities.</sent></p> <p
+						id="dtb_416"><sent
+							id="dtb_417"
+							smilref="0011.smil#sm_646">Why are children with disabilities at greater risk of violence? </sent><sent
+							id="dtb_418"
+							smilref="0011.smil#sm_648">Several explanations have been put forward: First, caring for a child with a disability can put extra strain on caregivers, increasing the risk of abuse. </sent><sent
+							id="dtb_419"
+							smilref="0011.smil#sm_650">Second, significant numbers of children with disabilities are still placed in residential care, a major risk factor for sexual and physical abuse. </sent><sent
+							id="dtb_420"
+							smilref="0011.smil#sm_652">Finally, impairments affecting communication render some children particularly vulnerable, as they may not be able to disclose abusive experiences.</sent></p> <p
+						id="dtb_421"><sent
+							id="dtb_422"
+							smilref="0011.smil#sm_654">All children with disabilities should be viewed as a high-risk group in which it is critical to identify violence. </sent><sent
+							id="dtb_423"
+							smilref="0011.smil#sm_656">They may benefit from interventions — such as home visits and training in parenting skills — that have proven effective in preventing violence or mitigating its consequences among children without disabilities.</sent></p> </sidebar>
+			</level1>
+			<level1>
+				<pagenum
+					id="dtb_424"
+					page="normal"
+					smilref="0012.smil#sm_659">13</pagenum>
+				<h1
+					id="dtb_425"
+					smilref="0012.smil#sm_663">HUMANITARIAN RESPONSE</h1>
+				<imggroup
+					id="dtb_426">
+					<img
+						src="p013-001.jpg"
+						alt="image"
+						id="dtb_427"
+						smilref="0012.smil#sm_665" />
+					<caption
+						imgref="dtb_427"
+						id="dtb_428"> <p
+							id="dtb_429"
+							smilref="0012.smil#sm_667">Vijay, 12, survived a landmine explosion and has gone on to become a mine risk educator in Sri Lanka.</p> <p
+							id="dtb_430"
+							smilref="0012.smil#sm_669">© UNICEF/Sri Lanka/2012/Tuladar</p> </caption>
+				</imggroup>
+				<p
+					id="dtb_431">
+					<sent
+						id="dtb_432"
+						smilref="0012.smil#sm_671">Humanitarian crises, such as those stemming from warfare or natural disasters, pose particular risks for children with disabilities. </sent>
+					<sent
+						id="dtb_433"
+						smilref="0012.smil#sm_673">Inclusive humanitarian response is urgently needed — and feasible.</sent>
+				</p>
+				<p
+					id="dtb_434">
+					<sent
+						id="dtb_435"
+						smilref="0012.smil#sm_675">Armed conflict is a major cause of disability among children, whom it affects in direct and indirect ways. </sent>
+					<sent
+						id="dtb_436"
+						smilref="0012.smil#sm_677">Children sustain physical injuries from attack, artillery fire and landmine explosions — including after conflicts have ended; they also suffer psychological effects from these injuries or from witnessing traumatic events. </sent>
+					<sent
+						id="dtb_437"
+						smilref="0012.smil#sm_679">Indirect effects include illnesses untreated when health services break down and malnutrition that develops when food becomes scarce. </sent>
+					<sent
+						id="dtb_438"
+						smilref="0012.smil#sm_681">Children may also be separated from their families, their homes and their schools, sometimes for years.</sent>
+				</p>
+				<p
+					id="dtb_439"
+					smilref="0012.smil#sm_683">Similar deprivations can ensue as a result of natural disasters, which — particularly as those related to climate change increase in severity and frequency — are expected to affect ever greater numbers of children and adults in coming years.</p>
+				<p
+					id="dtb_440">
+					<sent
+						id="dtb_441"
+						smilref="0012.smil#sm_685">Children with disabilities face particular challenges in emergencies. </sent>
+					<sent
+						id="dtb_442"
+						smilref="0012.smil#sm_687">They may be excluded from or unable to access mainstream support services and assistance programmes, such as health services or food distribution, because of physical barriers posed by inaccessible buildings or negative attitudes. </sent>
+					<sent
+						id="dtb_443"
+						smilref="0012.smil#sm_689">They may be forgotten in the establishment of targeted services and disregarded in early warning systems, which often do not take into account the communication and mobility requirements of those with disabilities.</sent>
+				</p>
+				<p
+					id="dtb_444"
+					smilref="0012.smil#sm_691">Disability-inclusive humanitarian action is informed by and grounded in:</p>
+				<list
+					id="dtb_445"
+					type="pl"
+					smilref="0012.smil#sm_693">
+					<li
+						id="dtb_446">
+						<sent
+							id="dtb_447"
+							smilref="0012.smil#sm_694">A rights-based approach. </sent>
+						<sent
+							id="dtb_448"
+							smilref="0012.smil#sm_696">Article 11 of the CRPD specifically calls on duty bearers to take all necessary measures to protect persons with disabilities in emergencies.</sent>
+					</li>
+					<li
+						id="dtb_449"
+						smilref="0012.smil#sm_698">An inclusive approach that recognizes that in addition to their disability-specific needs, children with disabilities have the same needs as other children, and that also addresses the barriers, physical and otherwise, that impede their participation in regular programmes.</li>
+					<li
+						id="dtb_450"
+						smilref="0012.smil#sm_700">Ensuring accessibility and universal design of infrastructure and information.</li>
+					<li
+						id="dtb_451"
+						smilref="0012.smil#sm_702">Promoting independent living and participation in all aspects of life for children with disabilities.</li>
+					<li
+						id="dtb_452"
+						smilref="0012.smil#sm_704">Integrating age, gender and diversity awareness, with special attention to the discrimination faced by girls and women with disabilities.</li>
+				</list>
+				<p
+					id="dtb_453">
+					<sent
+						id="dtb_454"
+						smilref="0012.smil#sm_706">This approach calls for holistic and inclusive programmes, rather than just isolated projects and policies targeting disabilities. </sent>
+					<sent
+						id="dtb_455"
+						smilref="0012.smil#sm_708">Key interventions include:</sent>
+				</p>
+				<list
+					id="dtb_456"
+					type="pl"
+					smilref="0012.smil#sm_710">
+					<li
+						id="dtb_457"
+						smilref="0012.smil#sm_711">Improving data and assessments in order to have an evidence base for the distinct needs and priorities of children with disabilities.</li>
+					<li
+						id="dtb_458"
+						smilref="0012.smil#sm_713">Making mainstream humanitarian services accessible for children with disabilities and involving them in planning and design.</li>
+					<li
+						id="dtb_459"
+						smilref="0012.smil#sm_715">Designing specialized services for children with disabilities and ensuring that recovery and reintegration processes foster well-being, health, self-respect and dignity.</li>
+					<pagenum
+						id="dtb_460"
+						page="normal"
+						smilref="0012.smil#sm_717">14</pagenum>
+					<li
+						id="dtb_461"
+						smilref="0012.smil#sm_720">Taking measures to prevent injuries and abuse and promote accessibility.</li>
+					<li
+						id="dtb_462"
+						smilref="0012.smil#sm_722">Partnering with community, regional and national actors, including disabled persons' organizations, to challenge discriminatory attitudes and perceptions and promote equity.</li>
+					<li
+						id="dtb_463"
+						smilref="0012.smil#sm_724">Promoting participation of children with disabilities by consulting them and creating opportunities for their voices to be heard.</li>
+				</list>
+				<p
+					id="dtb_464">
+					<sent
+						id="dtb_465"
+						smilref="0012.smil#sm_726">Parties to conflict have an obligation to protect children from the effects of armed violence and to provide them with access to appropriate health and psychosocial care to aid their recovery and reintegration. </sent>
+					<sent
+						id="dtb_466"
+						smilref="0012.smil#sm_728">The Committee on the Rights of the Child has recommended that States parties to the Convention add explicit reference to children with disabilities as part of their broader commitment not to recruit children into armed forces.</sent>
+				</p>
+				<sidebar
+					id="dtb_467"
+					render="optional"
+					smilref="0012.smil#sm_730"> <p
+						id="dtb_468"><strong
+							id="dtb_469"
+							smilref="0012.smil#sm_731">Risk, resilience and inclusive humanitarian action</strong></p> <p
+						id="dtb_470"><sent
+							id="dtb_471"
+							smilref="0012.smil#sm_733">Children with disabilities and their families face particular challenges in emergencies. </sent><sent
+							id="dtb_472"
+							smilref="0012.smil#sm_735">They may have to contend with new environmental barriers such as collapsed ramps; damaged or lost assistive devices; and the loss of such services as sign language interpreters or visiting nurses.</sent></p> <p
+						id="dtb_473"><sent
+							id="dtb_474"
+							smilref="0012.smil#sm_737">If family members die, there may be no one left who knows how to care for a child with a physical disability or who can communicate with a child with a sensory impairment. </sent><sent
+							id="dtb_475"
+							smilref="0012.smil#sm_739">Fleeing families may leave behind children who are unable to walk or are in frail health — or they may abandon a child out of fear that they will be refused asylum in another country that excludes people with disabilities. </sent><sent
+							id="dtb_476"
+							smilref="0012.smil#sm_741">Institutions and residential schools may close or be abandoned by staff, leaving the children in their charge without care.</sent></p> <p
+						id="dtb_477"><sent
+							id="dtb_478"
+							smilref="0012.smil#sm_743">In armed conflict, children with disabilities, especially those with learning disabilities, may be pressed into service as fighters, cooks or porters, because they are considered to be less valuable or less likely to resist than children without disabilities. </sent><sent
+							id="dtb_479"
+							smilref="0012.smil#sm_745">Programmes aimed at the reintegration of child ex-combatants might not serve the needs of children with disabilities, who therefore remain marginalized and excluded, often having to beg, as has been the case in Liberia and Sierra Leone.</sent></p> <p
+						id="dtb_480"><sent
+							id="dtb_481"
+							smilref="0012.smil#sm_747">Children with disabilities should be given the opportunity to take part in the planning and implementation of disaster risk reduction and peace-building strategies as well as in disaster response and recovery processes. </sent><sent
+							id="dtb_482"
+							smilref="0012.smil#sm_749">This has begun to happen as demonstrated by efforts in Pakistan and Haiti.</sent></p> <p
+						id="dtb_483"><sent
+							id="dtb_484"
+							smilref="0012.smil#sm_751">Disability is being mainstreamed into such emergency guidelines as the Sphere Project's <em
+								id="dtb_485">Humanitarian Charter and Minimum Standards in Humanitarian Response.</em> </sent><sent
+							id="dtb_486"
+							smilref="0012.smil#sm_753">Such progress should be extended to such areas as child nutrition and protection, and the extent to which children with disabilities are included in humanitarian response must be audited to monitor and improve results.</sent></p> </sidebar>
+				<pagenum
+					page="normal"
+					id="dtb_487"
+					smilref="0012.smil#sm_755">15</pagenum>
+				<sidebar
+					id="dtb_488"
+					render="optional"
+					smilref="0012.smil#sm_758"> <p
+						id="dtb_489"><strong
+							id="dtb_490"
+							smilref="0012.smil#sm_759">Explosive remnants of war</strong></p> <p
+						id="dtb_491"><sent
+							id="dtb_492"
+							smilref="0012.smil#sm_761">Explosive remnants of war (ERW) and anti-personnel landmines represent a significant contributing factor to child disability. </sent><sent
+							id="dtb_493"
+							smilref="0012.smil#sm_763">Such instruments as the 1997 Mine Ban Treaty have helped to reduce the overall number of people killed or injured by these weapons, but the percentage of children among total casualties has increased.</sent></p> <p
+						id="dtb_494"><sent
+							id="dtb_495"
+							smilref="0012.smil#sm_765">Annually since 2005, children have accounted for approximately 20–30 per cent of casualties, and there have been at least 1,000 child casualties each year since monitoring began in 1999. </sent><sent
+							id="dtb_496"
+							smilref="0012.smil#sm_767">In 2010, children accounted for 55 per cent of all civilian deaths, making them the civilian group for whom landmines and ERW are most deadly. </sent><sent
+							id="dtb_497"
+							smilref="0012.smil#sm_769">In some of the world's most mine-affected countries, such as Afghanistan and Cambodia, the percentage of casualties represented by children is even higher <em
+								id="dtb_498">(see chart).</em></sent></p> <p
+						id="dtb_499"><sent
+							id="dtb_500"
+							smilref="0012.smil#sm_771">Since 2008, boys have made up the single largest casualty group, accounting for about half of all civilian casualties; that year, they represented 73 per cent of child casualties. </sent><sent
+							id="dtb_501"
+							smilref="0012.smil#sm_773">In many contaminated countries, boys are more likely than girls to come across mines or ERW because they are more involved in outdoor activities such as herding livestock, gathering wood or food, or collecting scrap metal.</sent></p> <p
+						id="dtb_502"><strong
+							id="dtb_503"
+							smilref="0012.smil#sm_775"><em
+								id="dtb_504">Child casualties in the most affected countries</em> *</strong> </p> <imggroup
+						id="dtb_505"><img
+							src="p015-001.jpg"
+							alt="image"
+							id="dtb_506"
+							smilref="0012.smil#sm_777" /><caption
+							imgref="dtb_506"
+							id="dtb_507"> <p
+								id="dtb_508"><em
+									id="dtb_509"
+									smilref="0012.smil#sm_779">Percentage of children among civilian casualties (1999–2011)</em></p> <p
+								id="dtb_510"
+								smilref="0012.smil#sm_781">* The three States parties to the Mine Ban Treaty with the highest annual casualty rates.</p> <p
+								id="dtb_511"
+								smilref="0012.smil#sm_783"><strong
+									id="dtb_512">Source:</strong> Landmine and Cluster Munition Monitor.</p> </caption><prodnote
+							id="dtb_513"
+							render="optional"
+							imgref="dtb_506"
+							smilref="0012.smil#sm_785"> <p
+								id="dtb_514"><sent
+									id="dtb_515"
+									smilref="0012.smil#sm_786">The figure is a graph. </sent><sent
+									id="dtb_516"
+									smilref="0012.smil#sm_788">The X-axis measures years from 1999 to 2011 with an increment of 1 unit. </sent><sent
+									id="dtb_517"
+									smilref="0012.smil#sm_790">The Y-axis measures percentages from 0 to 100 with an increment of 10 units. </sent><sent
+									id="dtb_518"
+									smilref="0012.smil#sm_792">The line graphs denote three countries: Afghanistan, Cambodia and Colombia.’</sent></p> <p
+								id="dtb_519"><sent
+									id="dtb_520"
+									smilref="0012.smil#sm_794">Afghanistan starts at 92%, crosses the 90% mark in 2000-1, crosses the 80% mark in 2001-2. </sent><sent
+									id="dtb_521"
+									smilref="0012.smil#sm_796">It declines steadily till 2003 to touch 50%. </sent><sent
+									id="dtb_522"
+									smilref="0012.smil#sm_798">Thereafter it rises and falls between 50% and 60%.</sent></p> <p
+								id="dtb_523"><sent
+									id="dtb_524"
+									smilref="0012.smil#sm_800">Cambodia starts at 70%, abruptly rises and falls from 70% to 75% till 2002. </sent><sent
+									id="dtb_525"
+									smilref="0012.smil#sm_802">It then declines sharply to 40% in 2003. </sent><sent
+									id="dtb_526"
+									smilref="0012.smil#sm_804">The line graph forms an arc from 2003-7 with the corresponding percentages ranging from 40% down to 30% up to 42%. </sent><sent
+									id="dtb_527"
+									smilref="0012.smil#sm_806">It then declines steadily to 29% by 2011.</sent></p> <p
+								id="dtb_528"><sent
+									id="dtb_529"
+									smilref="0012.smil#sm_808">Colombia begins at 42%, declines sharply to 26% by 2000. </sent><sent
+									id="dtb_530"
+									smilref="0012.smil#sm_810">It rises to 39% by 2002. </sent><sent
+									id="dtb_531"
+									smilref="0012.smil#sm_812">The graph is a zig-zag line from 2005-11 fluctuating from 29% to 15%.</sent></p> </prodnote></imggroup> <pagenum
+						id="dtb_532"
+						page="normal"
+						smilref="0012.smil#sm_814">16</pagenum> <p
+						id="dtb_533"
+						smilref="0012.smil#sm_817">They are also more likely than girls to tamper with any devices they find.</p> <p
+						id="dtb_534"><sent
+							id="dtb_535"
+							smilref="0012.smil#sm_819">Children in general are more likely to deliberately handle explosive devices than adults, often unknowingly, out of curiosity or mistaking them for toys. </sent><sent
+							id="dtb_536"
+							smilref="0012.smil#sm_821">Well-planned risk education is therefore especially important for children.</sent></p> <p
+						id="dtb_537"><sent
+							id="dtb_538"
+							smilref="0012.smil#sm_823">More than one third of all blast survivors require amputation; the percentage can be expected to be higher for children, given their smaller size. </sent><sent
+							id="dtb_539"
+							smilref="0012.smil#sm_825">Children's physical rehabilitation is more complex than that of adults: Because their bones grow faster than their soft tissue, they may need several re-amputations. </sent><sent
+							id="dtb_540"
+							smilref="0012.smil#sm_827">Prostheses must be adjusted or replaced as they grow.</sent></p> <p
+						id="dtb_541"><sent
+							id="dtb_542"
+							smilref="0012.smil#sm_829">The psychological consequences of an ERW or landmine blast are often devastating for a child's development. </sent><sent
+							id="dtb_543"
+							smilref="0012.smil#sm_831">They can include feelings of guilt, loss of self-esteem, phobias and fears, sleep disorders and an inability to speak. </sent><sent
+							id="dtb_544"
+							smilref="0012.smil#sm_833">If left untreated, children may develop long-term mental disorders.</sent></p> <p
+						id="dtb_545"><sent
+							id="dtb_546"
+							smilref="0012.smil#sm_835">The social and economic reintegration needs of child survivors also vary considerably from those of adults. </sent><sent
+							id="dtb_547"
+							smilref="0012.smil#sm_837">In many countries, child survivors are forced to cut short their education owing to the time needed for recovery or the financial burden that rehabilitation places on their families. </sent><sent
+							id="dtb_548"
+							smilref="0012.smil#sm_839">They may be physically unable to walk to school and lack access to alternative transportation; classrooms may not be accessible, and teachers may not be trained to consider their needs. </sent><sent
+							id="dtb_549"
+							smilref="0012.smil#sm_841">Access to free education for children with disabilities as a result of landmine or ERW injuries is necessary both to promote a sense of normalcy in their lives and to reintegrate them with their peer group and allow them to fully participate in society.</sent></p> <p
+						id="dtb_550"><sent
+							id="dtb_551"
+							smilref="0012.smil#sm_843">Few victim assistance programmes address age- and gender-specific concerns. </sent><sent
+							id="dtb_552"
+							smilref="0012.smil#sm_845">In a 2009 survey of more than 1,600 survivors from 25 affected countries conducted by Handicap International, almost two thirds of respondents reported that services for children were “never” or “almost never” adapted to their specific needs or age.</sent></p> <p
+						id="dtb_553"><sent
+							id="dtb_554"
+							smilref="0012.smil#sm_847">As children account for an increasing percentage of the total civilian casualties from ERW and landmines, it is essential to implement specific policy and programmatic recommendations that meet their needs. </sent><sent
+							id="dtb_555"
+							smilref="0012.smil#sm_849">These should include measures to disaggregate data on casualties by age and gender; to train health and education professionals to consider the needs of child survivors; and to bolster victim assistance, overall, as a key pillar of response to the impact of ERW, with guidelines that specifically pertain to children.</sent></p> </sidebar>
+			</level1>
+			<level1>
+				<pagenum
+					page="normal"
+					id="dtb_556"
+					smilref="0013.smil#sm_852">17</pagenum>
+				<h1
+					id="dtb_557"
+					smilref="0013.smil#sm_856">MEASURING CHILD DISABILITY</h1>
+				<imggroup
+					id="dtb_558">
+					<img
+						id="dtb_559"
+						alt="image"
+						src="p017-001.jpg"
+						smilref="0013.smil#sm_858" />
+					<caption
+						imgref="dtb_559"
+						id="dtb_560"> <p
+							id="dtb_561"><sent
+								id="dtb_562"
+								smilref="0013.smil#sm_860">A health worker assesses a boy at the Atfaluna Society for Deaf Children, State of Palestine. </sent><sent
+								id="dtb_563"
+								smilref="0013.smil#sm_862">The organization offers education and vocational training, free health care, psychosocial services and job placement.</sent></p> <p
+							id="dtb_564"
+							smilref="0013.smil#sm_864">© UNICEF/HQ2008-0159/Davey</p> </caption>
+				</imggroup>
+				<p
+					id="dtb_565"
+					smilref="0013.smil#sm_866">A society cannot be equitable unless all children are included, and children with disabilities cannot be included unless sound data collection and analysis render them visible.</p>
+				<p
+					id="dtb_566">
+					<sent
+						id="dtb_567"
+						smilref="0013.smil#sm_868">Measuring child disability presents a unique set of challenges. </sent>
+					<sent
+						id="dtb_568"
+						smilref="0013.smil#sm_870">Because children develop and learn to perform basic tasks at different speeds, it can be difficult to assess function and distinguish significant limitations from variations in normal development. </sent>
+					<sent
+						id="dtb_569"
+						smilref="0013.smil#sm_872">The varying nature and severity of disabilities, together with the need to apply age-specific definitions and measures, further complicate data collection efforts.</sent>
+				</p>
+				<p
+					id="dtb_570">
+					<sent
+						id="dtb_571"
+						smilref="0013.smil#sm_874">In addition, the poor quality of data on child disability stems, in some cases, from a limited understanding of what disability is in children, and in other cases, from stigma or insufficient investment in improving measurement. </sent>
+					<sent
+						id="dtb_572"
+						smilref="0013.smil#sm_876">The lack of evidence that results from such difficulties hinders the development of good policies and the delivery of vital services.</sent>
+				</p>
+				<p
+					id="dtb_573"
+					smilref="0013.smil#sm_878">While there is general agreement that definitions of disability should incorporate both medical and social determinants, the measurement of disability is still predominantly medical, with a focus on specific physical and mental impairments.</p>
+				<p
+					id="dtb_574">
+					<sent
+						id="dtb_575"
+						smilref="0013.smil#sm_880">One framework for considering health and disability within a broader context of social barriers is the International Classification of Functioning, Disability and Health (ICF), developed by the World Health Organization. </sent>
+					<sent
+						id="dtb_576"
+						smilref="0013.smil#sm_882">This classification regards disability in two main ways: as a matter of the body's structure and functions, and in terms of the person's activity and participation. </sent>
+					<sent
+						id="dtb_577"
+						smilref="0013.smil#sm_884">Disability, as defined by the ICF, is an ordinary part of human existence — every person can experience some degree of it. </sent>
+					<sent
+						id="dtb_578"
+						smilref="0013.smil#sm_886">The ICF definition also recognizes that functioning and disability occur in context, and therefore it is meaningful to assess not only bodily but also societal and environmental factors.</sent>
+				</p>
+				<p
+					id="dtb_579">
+					<sent
+						id="dtb_580"
+						smilref="0013.smil#sm_888">Derived from the ICF, the International Classification of Functioning, Disability and Health for Children and Youth (ICF-CY) takes a step towards incorporating the social dimension by capturing not only the impairment but also its effect on children's functioning and participation in their environment. </sent>
+					<sent
+						id="dtb_581"
+						smilref="0013.smil#sm_890">It covers four main areas: body structures (<abbr
+							title="for example"
+							id="dtb_582">e.g.</abbr>, organs, limbs), body functions (<abbr
+							title="for example"
+							id="dtb_583">e.g.</abbr>, listening, remembering), limitations on activity (<abbr
+							title="for example"
+							id="dtb_584">e.g.</abbr>, walking, dressing) and restrictions on participation (<abbr
+							title="for example"
+							id="dtb_585">e.g.</abbr>, playing with other children, performing simple chores).</sent>
+				</p>
+				<p
+					id="dtb_586">
+					<sent
+						id="dtb_587"
+						smilref="0013.smil#sm_892">Data on disability should be interpreted in context. </sent>
+					<sent
+						id="dtb_588"
+						smilref="0013.smil#sm_894">Prevalence estimates are a function of both incidence and survival. </sent>
+					<sent
+						id="dtb_589"
+						smilref="0013.smil#sm_896">Where child mortality rates are high, low reported disability prevalence may be the consequence of low survival rates for young children with disabilities — or it may reflect the failure to count children who live in institutions, are hidden away by families, or live and work on the streets.</sent>
+				</p>
+				<pagenum
+					id="dtb_590"
+					page="normal"
+					smilref="0013.smil#sm_898">18</pagenum>
+				<p
+					id="dtb_591">
+					<sent
+						id="dtb_592"
+						smilref="0013.smil#sm_901">Culture also plays an important role. </sent>
+					<sent
+						id="dtb_593"
+						smilref="0013.smil#sm_903">The interpretation of what may be considered ‘normal’ functioning varies across contexts and influences measurement outcomes. </sent>
+					<sent
+						id="dtb_594"
+						smilref="0013.smil#sm_905">The attainment of certain milestones may not only vary among children, but differ also by culture, as children may be encouraged to experiment with new activities at different stages of development. </sent>
+					<sent
+						id="dtb_595"
+						smilref="0013.smil#sm_907">Reference values must therefore be set with consideration of local circumstances and understanding.</sent>
+				</p>
+				<p
+					id="dtb_596">
+					<sent
+						id="dtb_597"
+						smilref="0013.smil#sm_909">For these reasons, assessment tools developed in high-income countries, such as the Wechsler Intelligence Scale for Children, cannot be indiscriminately applied in other countries or communities. </sent>
+					<sent
+						id="dtb_598"
+						smilref="0013.smil#sm_911">Frames of reference may vary, and survey tools may fail to sufficiently capture local customs, cultural understanding, languages and expressions.</sent>
+				</p>
+				<p
+					id="dtb_599">
+					<sent
+						id="dtb_600"
+						smilref="0013.smil#sm_913">Furthermore, the specific objectives of the data collection are likely to influence the definition of what constitutes ‘disability’, the questions asked and the resulting figures. </sent>
+					<sent
+						id="dtb_601"
+						smilref="0013.smil#sm_915">For instance, the criteria used to define eligibility for a disability benefit are likely to be more restrictive than criteria for a survey conducted to identify all persons with a functional limitation, yielding dramatically different numbers.</sent>
+				</p>
+				<p
+					id="dtb_602">
+					<sent
+						id="dtb_603"
+						smilref="0013.smil#sm_917">Many children are identified as having a disability when they come into contact with education or health-care systems. </sent>
+					<sent
+						id="dtb_604"
+						smilref="0013.smil#sm_919">But in low-income countries or communities, school and clinic staff may not be able to routinely recognize or register the presence of children with disabilities. </sent>
+					<sent
+						id="dtb_605"
+						smilref="0013.smil#sm_921">The resulting paucity of information on children with disabilities in low-income countries has contributed to a misconception that disability does not merit global priority.</sent>
+				</p>
+				<p
+					id="dtb_606">
+					<sent
+						id="dtb_607"
+						smilref="0013.smil#sm_923">General data collection instruments — such as census or household surveys — are likely to underestimate the number of children with disabilities, particularly if the surveys do not ask specifically about them. </sent>
+					<sent
+						id="dtb_608"
+						smilref="0013.smil#sm_925">Targeted household surveys that do so have produced more accurate results than those that ask about disability in general, without reference to children. </sent>
+					<sent
+						id="dtb_609"
+						smilref="0013.smil#sm_927">More numerous and detailed questions on the subject tend to produce higher prevalence rates.</sent>
+				</p>
+				<p
+					id="dtb_610"
+					smilref="0013.smil#sm_929">To accurately report child disability, the choice of questions must be tailored to a child's age in order to reflect the developmental stages and evolving capacities of children.</p>
+				<sidebar
+					id="dtb_611"
+					render="optional"
+					smilref="0013.smil#sm_931"> <p
+						id="dtb_612"><strong
+							id="dtb_613"
+							smilref="0013.smil#sm_932">Lessons learned</strong></p> <p
+						id="dtb_614"><sent
+							id="dtb_615"
+							smilref="0013.smil#sm_934">Since 1995, UNICEF has supported more than 100 low- and middle-income countries in conducting Multiple Indicator Cluster Surveys (MICS) to track progress in children's and women's well-being. </sent><sent
+							id="dtb_616"
+							smilref="0013.smil#sm_936">Since 2000–2001, some of these surveys have included a module designed to screen child disability, and this information is now being built upon to design an improved measurement tool.</sent></p> <p
+						id="dtb_617"><sent
+							id="dtb_618"
+							smilref="0013.smil#sm_938">The standard disability module used in MICS between 2000 and 2010 is the Ten Questions Screen (TQ), which was developed in 1984 and reflects how disability was understood at the time. </sent><sent
+							id="dtb_619"
+							smilref="0013.smil#sm_940">The process starts by asking the primary caregivers of children aged 2–9 years for a personal assessment of the physical and mental development and functioning of the children in their care; responses are either positive or negative, with no room for nuances.</sent></p> <p
+						id="dtb_620"><sent
+							id="dtb_621"
+							smilref="0013.smil#sm_942">The validity of the TQ approach has been widely tested, but the results must be interpreted with caution. </sent><sent
+							id="dtb_622"
+							smilref="0013.smil#sm_944">The TQ is a screening tool and requires follow-up medical and developmental assessment in order to yield a reliable estimate of the number of children in a given population who have disabilities. </sent><sent
+							id="dtb_623"
+							smilref="0013.smil#sm_946">Few countries have had the budgets or capacity to conduct the second-stage clinical assessment to validate results, and they have been further hampered by the lack of a standardized methodology for conducting that assessment.</sent></p> <p
+						id="dtb_624"><sent
+							id="dtb_625"
+							smilref="0013.smil#sm_948">Applying the TQ during the 2005–2006 MICS yielded a wide range of results across participating countries. </sent><sent
+							id="dtb_626"
+							smilref="0013.smil#sm_950">The percentage of children screening positive for disability ranged from 3 per cent in Uzbekistan to 48 per cent in the Central African Republic. </sent><sent
+							id="dtb_627"
+							smilref="0013.smil#sm_952">It is not clear whether this variance reflected true differences among the populations sampled or additional factors. </sent><sent
+							id="dtb_628"
+							smilref="0013.smil#sm_954">For instance, the low reported rate in Uzbekistan may have reflected a large population of children with disabilities living in institutions, which are not subject to household surveys.</sent></p> </sidebar>
+				<pagenum
+					id="dtb_629"
+					page="normal"
+					smilref="0013.smil#sm_956">19</pagenum>
+				<sidebar
+					render="optional"
+					id="dtb_630"
+					smilref="0013.smil#sm_959"> <p
+						id="dtb_631"><strong
+							id="dtb_632"
+							smilref="0013.smil#sm_960">From screening to assessment</strong></p> <p
+						id="dtb_633"><sent
+							id="dtb_634"
+							smilref="0013.smil#sm_962">Child disability measurement experts agree that screening efforts must be followed by in-depth assessments. </sent><sent
+							id="dtb_635"
+							smilref="0013.smil#sm_964">Experiences in Bhutan, Cambodia and the former Yugoslav Republic of Macedonia provide important lessons for the measurement of child disability and adaptation of methodology to local context. </sent><sent
+							id="dtb_636"
+							smilref="0013.smil#sm_966">They also testify to the transformative power of data collection.</sent></p> <p
+						id="dtb_637"><sent
+							id="dtb_638"
+							smilref="0013.smil#sm_968">The composition of the core assessment team and the type of tools used were adapted to local capacity. </sent><sent
+							id="dtb_639"
+							smilref="0013.smil#sm_970">At the time of the study, both Bhutan and Cambodia faced a shortage of qualified assessors. </sent><sent
+							id="dtb_640"
+							smilref="0013.smil#sm_972">In Cambodia, mobile assessment teams were employed and a hearing specialist was brought in from abroad, while in Bhutan emphasis was put on training mid-level professionals.</sent></p> <p
+						id="dtb_641"><sent
+							id="dtb_642"
+							smilref="0013.smil#sm_974">The assessments demonstrated that tools such as questionnaires and tests must be locally validated and culturally appropriate. </sent><sent
+							id="dtb_643"
+							smilref="0013.smil#sm_976">Careful attention must be paid to language — for instance, in finding appropriate linguistic equivalents for the concepts of ‘impairment’ and ‘disability’.</sent></p> <p
+						id="dtb_644"><sent
+							id="dtb_645"
+							smilref="0013.smil#sm_978">With assessment comes the potential for immediate intervention. </sent><sent
+							id="dtb_646"
+							smilref="0013.smil#sm_980">In Cambodia, for example, some children who screened positive for hearing impairment were found to have ear infections or a build-up of ear wax. </sent><sent
+							id="dtb_647"
+							smilref="0013.smil#sm_982">Once identified, these conditions were easily treated and more serious secondary infections and longer-term impairments prevented.</sent></p> <p
+						id="dtb_648"><sent
+							id="dtb_649"
+							smilref="0013.smil#sm_984">Assessment can also aid awareness-raising and spark change even while the processes of collecting and analysing data are still under way. </sent><sent
+							id="dtb_650"
+							smilref="0013.smil#sm_986">When assessments in Bhutan showed a higher incidence of mild cognitive disabilities among children from poorer households and with less educated mothers, the government decided to focus on early childhood development and childcare services in rural areas, where income and education levels are lower.</sent></p> <p
+						id="dtb_651"><sent
+							id="dtb_652"
+							smilref="0013.smil#sm_988">A strategy for intervention on behalf of children identified as having a disability should be incorporated in the assessment from the earliest stages of planning. </sent><sent
+							id="dtb_653"
+							smilref="0013.smil#sm_990">Such a strategy should include a mapping of the available services, the development of referral protocols and the preparation of informative materials for families on how to adjust children's surroundings to enhance functioning and participation in home and community life.</sent></p> </sidebar>
+				<pagenum
+					id="dtb_654"
+					page="normal"
+					smilref="0013.smil#sm_992">20</pagenum>
+				<p
+					id="dtb_655"
+					smilref="0013.smil#sm_995">Given the complexity of developmental processes during the first two years of life, it can be difficult to distinguish disability from variations in normal development without specialized tools or assessment.</p>
+				<p
+					id="dtb_656">
+					<sent
+						id="dtb_657"
+						smilref="0013.smil#sm_997">Many data collection instruments are based solely on the responses of parents, who may not have knowledge of the specific benchmarks used to evaluate children at each stage of development. </sent>
+					<sent
+						id="dtb_658"
+						smilref="0013.smil#sm_999">Parents may report difficulties that stem from temporary conditions, such as ear infections, and they may also overlook certain signs, or hesitate to report them because of a lack of acceptance or stigma surrounding disability in their culture.</sent>
+				</p>
+				<p
+					id="dtb_659">
+					<sent
+						id="dtb_660"
+						smilref="0013.smil#sm_1001">Efforts to measure child disability represent an opportunity to link assessment with intervention strategies. </sent>
+					<sent
+						id="dtb_661"
+						smilref="0013.smil#sm_1003">Though early intervention is critical, capacity and resources for follow-up assessment and support for children who screen positive for disability are often scarce.</sent>
+				</p>
+				<p
+					id="dtb_662">
+					<sent
+						id="dtb_663"
+						smilref="0013.smil#sm_1005">Data that capture the type and severity of children's disabilities as well as the barriers to children's functioning and community participation, when combined with relevant socio-economic indicators, help to inform decisions about how to allocate resources, eliminate barriers, design and provide services, and meaningfully evaluate such interventions. </sent>
+					<sent
+						id="dtb_664"
+						smilref="0013.smil#sm_1007">For instance, data can be used to map whether income, gender or minority status affects access to education or immunization for children with disabilities. </sent>
+					<sent
+						id="dtb_665"
+						smilref="0013.smil#sm_1009">Regular monitoring makes it possible to assess whether initiatives designed to benefit children are meeting their goals.</sent>
+				</p>
+				<p
+					id="dtb_666">
+					<sent
+						id="dtb_667"
+						smilref="0013.smil#sm_1011">There is a clear need to harmonize child disability measurement in order to produce estimates that are reliable, valid and internationally comparable. </sent>
+					<sent
+						id="dtb_668"
+						smilref="0013.smil#sm_1013">However, the currently fragmented state of child disability data collection is no excuse to defer meaningful action towards inclusion; as new data and analyses emerge, they will present opportunities to adapt existing and planned programmes for children with disabilities and their families.</sent>
+				</p>
+				<sidebar
+					render="optional"
+					id="dtb_669"
+					smilref="0013.smil#sm_1015"> <p
+						id="dtb_670"><strong
+							id="dtb_671"
+							smilref="0013.smil#sm_1016">A way forward</strong></p> <p
+						id="dtb_672"
+						smilref="0013.smil#sm_1018">UNICEF, in partnership with the Washington Group on Disability Statistics and a broad array of stakeholders, is holding consultations to improve the methodology used to measure child disability in Multiple Indicator Cluster Surveys and other data collection efforts, in order to produce nationally comparable figures and promote the harmonization of data on child functioning and disability internationally.</p> <p
+						id="dtb_673"><sent
+							id="dtb_674"
+							smilref="0013.smil#sm_1020">The screening tool under development covers children aged 2–17 years and uses a rating scale to assess speech and language, hearing, vision, learning (cognition and intellectual development), mobility and motor skills, emotions, and behaviours; it also includes aspects of children's ability to participate in a range of activities and social interactions. </sent><sent
+							id="dtb_675"
+							smilref="0013.smil#sm_1022">Also in development is a standardized overall methodology for a more in-depth assessment of disability in children, with data collection protocols, assessment tools and a framework analysis.</sent></p> <p
+						id="dtb_676"><sent
+							id="dtb_677"
+							smilref="0013.smil#sm_1024">Recognizing that specialists may be in short supply in some areas, a toolkit is being designed to enable teachers, community workers and other trained professionals to administer the new methodology. </sent><sent
+							id="dtb_678"
+							smilref="0013.smil#sm_1026">This will serve to strengthen local capacity to identify and assess children with disabilities who are at risk of social exclusion and reduced participation.</sent></p> </sidebar>
+			</level1>
+			<level1>
+				<pagenum
+					page="normal"
+					id="dtb_679"
+					smilref="0014.smil#sm_1029">21</pagenum>
+				<h1
+					id="dtb_680"
+					smilref="0014.smil#sm_1033">AN AGENDA FOR ACTION</h1>
+				<imggroup
+					id="dtb_681">
+					<img
+						alt="image"
+						id="dtb_682"
+						src="p021-001.jpg"
+						smilref="0014.smil#sm_1035" />
+					<caption
+						imgref="dtb_682"
+						id="dtb_683"> <p
+							id="dtb_684"><sent
+								id="dtb_685"
+								smilref="0014.smil#sm_1037">Nguyen, who has autism, attends a class specifically tailored to his needs at the Da Nang Inclusive Education Resource Centre in Viet Nam. </sent><sent
+								id="dtb_686"
+								smilref="0014.smil#sm_1039">Such centres were set up to help children prepare for admission to inclusive mainstream schools.</sent></p> <p
+							id="dtb_687"
+							smilref="0014.smil#sm_1041">© UNICEF/Viet Nam/2012/Bisin</p> </caption>
+				</imggroup>
+				<p
+					id="dtb_688">
+					<sent
+						id="dtb_689"
+						smilref="0014.smil#sm_1043">As the nations of the world have repeatedly affirmed their commitment to building more inclusive societies, the situation of many children with disabilities and their families has improved. </sent>
+					<sent
+						id="dtb_690"
+						smilref="0014.smil#sm_1045">But progress has varied across countries, and too many children with disabilities continue to face barriers to their participation in the civic, social and cultural affairs of their communities. </sent>
+					<sent
+						id="dtb_691"
+						smilref="0014.smil#sm_1047">Realizing the promise of equity through inclusion will require action in numerous areas and by many actors.</sent>
+				</p>
+				<level2>
+					<h2
+						id="dtb_692"
+						smilref="0015.smil#sm_1051">Ratify and implement the Conventions</h2>
+					<p
+						id="dtb_693"
+						smilref="0015.smil#sm_1053">As 2013 began, 127 countries and the European Union had ratified the CRPD and 193 had ratified the CRC, thereby showing a commitment to all their citizens.</p>
+					<p
+						id="dtb_694">
+						<sent
+							id="dtb_695"
+							smilref="0015.smil#sm_1055">Ratification alone will not be enough; honouring commitments in practice will require not only diligent enforcement but also rigorous monitoring, accountability and adaptation. </sent>
+						<sent
+							id="dtb_696"
+							smilref="0015.smil#sm_1057">The process will require effort on the part of national governments, local authorities, employers, disabled people's organizations and parents' associations. </sent>
+						<sent
+							id="dtb_697"
+							smilref="0015.smil#sm_1059">International organizations and donors can align their assistance with these international instruments.</sent>
+					</p>
+				</level2>
+				<level2>
+					<h2
+						id="dtb_698"
+						smilref="0016.smil#sm_1063">Fight discrimination</h2>
+					<p
+						id="dtb_699">
+						<sent
+							id="dtb_700"
+							smilref="0016.smil#sm_1065">Discrimination lies at the root of many of the challenges confronted by children with disabilities and their families. </sent>
+						<sent
+							id="dtb_701"
+							smilref="0016.smil#sm_1067">Affirmations of equal rights and non-discrimination in law and policy need to be complemented by efforts to enhance awareness of disability among the general public, starting with those who provide essential services for children in such fields as health, education and protection.</sent>
+					</p>
+					<p
+						id="dtb_702"
+						smilref="0016.smil#sm_1069">States parties to the CRPD and the United Nations and its agencies have committed themselves to conducting awareness-raising campaigns, and they are also required to provide information to children and their families on how to prevent and report exploitation, violence and abuse.</p>
+					<p
+						id="dtb_703">
+						<sent
+							id="dtb_704"
+							smilref="0016.smil#sm_1071">International agencies and their government and community partners can help overcome prejudice by providing officials and public servants with a deeper understanding of the rights, capacities and challenges of children with disabilities. </sent>
+						<sent
+							id="dtb_705"
+							smilref="0016.smil#sm_1073">Parents' organizations can play a pivotal role and should be reinforced so that children with disabilities are valued, cherished and supported by their families and communities.</sent>
+					</p>
+					<p
+						id="dtb_706">
+						<sent
+							id="dtb_707"
+							smilref="0016.smil#sm_1075">Discrimination on the grounds of disability is a form of oppression. </sent>
+						<sent
+							id="dtb_708"
+							smilref="0016.smil#sm_1077">The establishment of a clear, legal entitlement to protection from discrimination is vital in reducing the vulnerability of children with disabilities. </sent>
+						<sent
+							id="dtb_709"
+							smilref="0016.smil#sm_1079">Where legislation banning discrimination does not exist, disabled people's organizations and civil society as a whole will continue to have a crucial role to play in pressing for such laws.</sent>
+					</p>
+				</level2>
+				<level2>
+					<pagenum
+						id="dtb_710"
+						page="normal"
+						smilref="0017.smil#sm_1082">22</pagenum>
+					<h2
+						id="dtb_711"
+						smilref="0017.smil#sm_1086">Dismantle barriers to inclusion</h2>
+					<p
+						id="dtb_712">
+						<sent
+							id="dtb_713"
+							smilref="0017.smil#sm_1088">All children's environments — schools, health facilities, public transport and so on — can be built to facilitate access and encourage the participation of children with disabilities alongside their peers. </sent>
+						<sent
+							id="dtb_714"
+							smilref="0017.smil#sm_1090">When children interact and understand each other across levels of ability, they all benefit. </sent>
+						<sent
+							id="dtb_715"
+							smilref="0017.smil#sm_1092">Universal design -which promotes usability by all people to the greatest extent possible — should be applied to the construction of all public and private infrastructure, as well as to the development of inclusive school curricula, vocational training programmes, and child protection laws, policies and services.</sent>
+					</p>
+					<p
+						id="dtb_716">
+						<sent
+							id="dtb_717"
+							smilref="0017.smil#sm_1094">Governments have the decisive role to play in introducing and implementing the legislative, administrative and educational measures necessary to protect children with disabilities from all forms of exploitation, violence and abuse. </sent>
+						<sent
+							id="dtb_718"
+							smilref="0017.smil#sm_1096">It is not appropriate to create separate systems for children with disabilities — the goal must be inclusive, high-quality protection mechanisms suitable and accessible to all children.</sent>
+					</p>
+					<p
+						id="dtb_719">
+						<sent
+							id="dtb_720"
+							smilref="0017.smil#sm_1098">One such mechanism is birth registration, an essential element of protection. </sent>
+						<sent
+							id="dtb_721"
+							smilref="0017.smil#sm_1100">Efforts to register children with disabilities — and thereby render them visible — deserve priority.</sent>
+					</p>
+					<p
+						id="dtb_722">
+						<strong
+							id="dtb_723">
+							<em
+								id="dtb_724"
+								smilref="0017.smil#sm_1102">Convention on the Rights of Persons with Disabilities and Optional Protocol: Signatures and ratifications</em>
+						</strong> </p>
+					<imggroup
+						id="dtb_725">
+						<img
+							alt="image"
+							src="p022-001.jpg"
+							id="dtb_726"
+							smilref="0017.smil#sm_1104" />
+						<caption
+							imgref="dtb_726"
+							id="dtb_727"> <p
+								id="dtb_728"
+								smilref="0017.smil#sm_1106">*Includes the European Union.</p> <p
+								id="dtb_729"><sent
+									id="dtb_730"
+									smilref="0017.smil#sm_1108"><strong
+										id="dtb_731">Source:</strong> <acronym
+										pronounce="no"
+										title="United Nations"
+										id="dtb_732">UN</acronym> Enable; United Nations Treaty Collection. </sent><sent
+									id="dtb_733"
+									smilref="0017.smil#sm_1110">For notes on terms used, see p. 25.</sent></p> </caption>
+						<prodnote
+							render="optional"
+							id="dtb_734"
+							imgref="dtb_726"
+							smilref="0017.smil#sm_1112">
+							<p
+								id="dtb_735">
+								<sent
+									id="dtb_736"
+									smilref="0017.smil#sm_1113">The figure shows five coloured circles in decreasing size from left to right with a number embossed in them. </sent>
+								<sent
+									id="dtb_737"
+									smilref="0017.smil#sm_1115">The circles from left to right represent: 155 countries have signed the convention, 128 countries have ratified the convention, 91 countries have signed the protocol, 76 countries have ratified the protocol, 27 countries have not signed.</sent>
+							</p>
+						</prodnote>
+					</imggroup>
+					<prodnote
+						id="dtb_738"
+						render="optional"
+						smilref="0017.smil#sm_1117">
+						<p
+							id="dtb_739"
+							smilref="0017.smil#sm_1118">The table below shows the status of different countries with respect to signing and ratification of the convention and the protocol. The status of each country is indicated by coloured dots before country name.</p>
+					</prodnote>
+					<table
+						id="dtb_740"
+						smilref="0017.smil#sm_1120">
+						<tr
+							valign="top"
+							id="dtb_741"
+							smilref="0017.smil#sm_1121">
+							<td
+								rowspan="1"
+								colspan="1"
+								id="dtb_742"> <imggroup
+									id="dtb_743"><img
+										src="p022-002.jpg"
+										alt="RATIFIED THE CONVENTION, RATIFIED THE PROTOCOL"
+										id="dtb_744"
+										smilref="0017.smil#sm_1122" /></imggroup> <p
+									id="dtb_745"
+									smilref="0017.smil#sm_1124">Afghanistan</p> <imggroup
+									id="dtb_746"><img
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION"
+										id="dtb_747"
+										src="p022-003.jpg"
+										smilref="0017.smil#sm_1126" /></imggroup> <p
+									id="dtb_748"
+									smilref="0017.smil#sm_1128">Albania</p> <imggroup
+									id="dtb_749"><img
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL"
+										id="dtb_750"
+										src="p022-004.jpg"
+										smilref="0017.smil#sm_1130" /></imggroup> <p
+									id="dtb_751"
+									smilref="0017.smil#sm_1132">Algeria</p> <imggroup
+									id="dtb_752"><img
+										id="dtb_753"
+										alt="SIGNED THE CONVENTION, SIGNED THE PROTOCOL"
+										src="p022-005.jpg"
+										smilref="0017.smil#sm_1134" /></imggroup> <p
+									id="dtb_754"
+									smilref="0017.smil#sm_1136">Andorra</p> <imggroup
+									id="dtb_755"><img
+										src="p022-006.jpg"
+										alt="NOT SIGNED"
+										id="dtb_756"
+										smilref="0017.smil#sm_1138" /></imggroup> <p
+									id="dtb_757"
+									smilref="0017.smil#sm_1140">Angola</p> <imggroup
+									id="dtb_758"><img
+										src="p022-007.jpg"
+										id="dtb_759"
+										alt="SIGNED THE CONVENTION, SIGNED THE PROTOCOL"
+										smilref="0017.smil#sm_1142" /></imggroup> <p
+									id="dtb_760"
+									smilref="0017.smil#sm_1144">Antigua and Barbuda</p> <imggroup
+									id="dtb_761"><img
+										src="p022-008.jpg"
+										id="dtb_762"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										smilref="0017.smil#sm_1146" /></imggroup> <p
+									id="dtb_763"
+									smilref="0017.smil#sm_1148">Argentina</p> <imggroup
+									id="dtb_764"><img
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL"
+										id="dtb_765"
+										src="p022-009.jpg"
+										smilref="0017.smil#sm_1150" /></imggroup> <p
+									id="dtb_766"
+									smilref="0017.smil#sm_1152">Armenia</p> <imggroup
+									id="dtb_767"><img
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, RATIFIED THE PROTOCOL"
+										src="p022-010.jpg"
+										id="dtb_768"
+										smilref="0017.smil#sm_1154" /></imggroup> <p
+									id="dtb_769"
+									smilref="0017.smil#sm_1156">Australia</p> <imggroup
+									id="dtb_770"><img
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										id="dtb_771"
+										src="p022-011.jpg"
+										smilref="0017.smil#sm_1158" /></imggroup> <p
+									id="dtb_772"
+									smilref="0017.smil#sm_1160">Austria</p> <imggroup
+									id="dtb_773"><img
+										src="p022-012.jpg"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										id="dtb_774"
+										smilref="0017.smil#sm_1162" /></imggroup> <p
+									id="dtb_775"
+									smilref="0017.smil#sm_1164">Azerbaijan</p> <imggroup
+									id="dtb_776"><img
+										id="dtb_777"
+										alt="NOT SIGNED"
+										src="p022-013.jpg"
+										smilref="0017.smil#sm_1166" /></imggroup> <p
+									id="dtb_778"
+									smilref="0017.smil#sm_1168">Bahamas</p> <imggroup
+									id="dtb_779"><img
+										src="p022-014.jpg"
+										id="dtb_780"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION"
+										smilref="0017.smil#sm_1170" /></imggroup> <p
+									id="dtb_781"
+									smilref="0017.smil#sm_1172">Bahrain</p> <imggroup
+									id="dtb_782"><img
+										id="dtb_783"
+										src="p022-015.jpg"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, RATIFIED THE PROTOCOL"
+										smilref="0017.smil#sm_1174" /></imggroup> <p
+									id="dtb_784"
+									smilref="0017.smil#sm_1176">Bangladesh</p> <imggroup
+									id="dtb_785"><img
+										src="p022-016.jpg"
+										alt="SIGNED THE CONVENTION"
+										id="dtb_786"
+										smilref="0017.smil#sm_1178" /></imggroup> <p
+									id="dtb_787"
+									smilref="0017.smil#sm_1180">Barbados</p> <imggroup
+									id="dtb_788"><img
+										id="dtb_789"
+										alt="NOT SIGNED"
+										src="p022-017.jpg"
+										smilref="0017.smil#sm_1182" /></imggroup> <p
+									id="dtb_790"
+									smilref="0017.smil#sm_1184">Belarus</p> <imggroup
+									id="dtb_791"><img
+										id="dtb_792"
+										src="p022-018.jpg"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										smilref="0017.smil#sm_1186" /></imggroup> <p
+									id="dtb_793"
+									smilref="0017.smil#sm_1188">Belgium</p> <imggroup
+									id="dtb_794"><img
+										src="p022-019.jpg"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION"
+										id="dtb_795"
+										smilref="0017.smil#sm_1190" /></imggroup> <p
+									id="dtb_796"
+									smilref="0017.smil#sm_1192">Belize</p> <imggroup
+									id="dtb_797"><img
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										id="dtb_798"
+										src="p022-020.jpg"
+										smilref="0017.smil#sm_1194" /></imggroup> <p
+									id="dtb_799"
+									smilref="0017.smil#sm_1196">Benin</p> <imggroup
+									id="dtb_800"><img
+										src="p022-021.jpg"
+										alt="SIGNED THE CONVENTION"
+										id="dtb_801"
+										smilref="0017.smil#sm_1198" /></imggroup> <p
+									id="dtb_802"
+									smilref="0017.smil#sm_1200">Bhutan</p> </td>
+							<td
+								colspan="1"
+								rowspan="1"
+								id="dtb_803"> <imggroup
+									id="dtb_804"><img
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										id="dtb_805"
+										src="p022-022.jpg"
+										smilref="0017.smil#sm_1202" /></imggroup> <p
+									id="dtb_806"
+									smilref="0017.smil#sm_1204">Bolivia (Plurinational State of)</p> <imggroup
+									id="dtb_807"><img
+										src="p022-023.jpg"
+										id="dtb_808"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										smilref="0017.smil#sm_1206" /></imggroup> <p
+									id="dtb_809"
+									smilref="0017.smil#sm_1208">Bosnia and Herzegovina</p> <imggroup
+									id="dtb_810"><img
+										alt="NOT SIGNED"
+										id="dtb_811"
+										src="p022-024.jpg"
+										smilref="0017.smil#sm_1210" /></imggroup> <p
+									id="dtb_812"
+									smilref="0017.smil#sm_1212">Botswana</p> <imggroup
+									id="dtb_813"><img
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										src="p022-025.jpg"
+										id="dtb_814"
+										smilref="0017.smil#sm_1214" /></imggroup> <p
+									id="dtb_815"
+									smilref="0017.smil#sm_1216">Brazil</p> <imggroup
+									id="dtb_816"><img
+										alt="SIGNED THE CONVENTION"
+										id="dtb_817"
+										src="p022-026.jpg"
+										smilref="0017.smil#sm_1218" /></imggroup> <p
+									id="dtb_818"
+									smilref="0017.smil#sm_1220">Brunei Darussalam</p> <imggroup
+									id="dtb_819"><img
+										id="dtb_820"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL"
+										src="p022-027.jpg"
+										smilref="0017.smil#sm_1222" /></imggroup> <p
+									id="dtb_821"
+									smilref="0017.smil#sm_1224">Bulgaria</p> <imggroup
+									id="dtb_822"><img
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										id="dtb_823"
+										src="p022-028.jpg"
+										smilref="0017.smil#sm_1226" /></imggroup> <p
+									id="dtb_824"
+									smilref="0017.smil#sm_1228">Burkina Faso</p> <imggroup
+									id="dtb_825"><img
+										src="p022-029.jpg"
+										alt="SIGNED THE CONVENTION, SIGNED THE PROTOCOL"
+										id="dtb_826"
+										smilref="0017.smil#sm_1230" /></imggroup> <p
+									id="dtb_827"
+									smilref="0017.smil#sm_1232">Burundi</p> <imggroup
+									id="dtb_828"><img
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL"
+										id="dtb_829"
+										src="p022-030.jpg"
+										smilref="0017.smil#sm_1234" /></imggroup> <p
+									id="dtb_830"
+									smilref="0017.smil#sm_1236">Cambodia</p> <imggroup
+									id="dtb_831"><img
+										alt="SIGNED THE CONVENTION, SIGNED THE PROTOCOL"
+										id="dtb_832"
+										src="p022-031.jpg"
+										smilref="0017.smil#sm_1238" /></imggroup> <p
+									id="dtb_833"
+									smilref="0017.smil#sm_1240">Cameroon</p> <imggroup
+									id="dtb_834"><img
+										src="p022-032.jpg"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION"
+										id="dtb_835"
+										smilref="0017.smil#sm_1242" /></imggroup> <p
+									id="dtb_836"
+									smilref="0017.smil#sm_1244">Canada</p> <imggroup
+									id="dtb_837"><img
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION"
+										id="dtb_838"
+										src="p022-033.jpg"
+										smilref="0017.smil#sm_1246" /></imggroup> <p
+									id="dtb_839"
+									smilref="0017.smil#sm_1248">Cape Verde</p> <imggroup
+									id="dtb_840"><img
+										src="p022-034.jpg"
+										id="dtb_841"
+										alt="SIGNED THE CONVENTION, SIGNED THE PROTOCOL"
+										smilref="0017.smil#sm_1250" /></imggroup> <p
+									id="dtb_842"
+									smilref="0017.smil#sm_1252">Central African Republic</p> <imggroup
+									id="dtb_843"><img
+										alt="SIGNED THE CONVENTION, SIGNED THE PROTOCOL"
+										src="p022-035.jpg"
+										id="dtb_844"
+										smilref="0017.smil#sm_1254" /></imggroup> <p
+									id="dtb_845"
+									smilref="0017.smil#sm_1256">Chad</p> <imggroup
+									id="dtb_846"><img
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										src="p022-036.jpg"
+										id="dtb_847"
+										smilref="0017.smil#sm_1258" /></imggroup> <p
+									id="dtb_848"
+									smilref="0017.smil#sm_1260">Chile</p> <imggroup
+									id="dtb_849"><img
+										src="p022-037.jpg"
+										id="dtb_850"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION"
+										smilref="0017.smil#sm_1262" /></imggroup> <p
+									id="dtb_851"
+									smilref="0017.smil#sm_1264">China</p> <imggroup
+									id="dtb_852"><img
+										src="p022-038.jpg"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION"
+										id="dtb_853"
+										smilref="0017.smil#sm_1266" /></imggroup> <p
+									id="dtb_854"
+									smilref="0017.smil#sm_1268">Colombia</p> <imggroup
+									id="dtb_855"><img
+										src="p022-039.jpg"
+										id="dtb_856"
+										alt="SIGNED THE CONVENTION"
+										smilref="0017.smil#sm_1270" /></imggroup> <p
+									id="dtb_857"
+									smilref="0017.smil#sm_1272">Comoros</p> <imggroup
+									id="dtb_858"><img
+										alt="SIGNED THE CONVENTION, SIGNED THE PROTOCOL"
+										src="p022-040.jpg"
+										id="dtb_859"
+										smilref="0017.smil#sm_1274" /></imggroup> <p
+									id="dtb_860"
+									smilref="0017.smil#sm_1276">Congo</p> <imggroup
+									id="dtb_861"><img
+										alt="RATIFIED THE CONVENTION, RATIFIED THE PROTOCOL"
+										id="dtb_862"
+										src="p022-041.jpg"
+										smilref="0017.smil#sm_1278" /></imggroup> <p
+									id="dtb_863"
+									smilref="0017.smil#sm_1280">Cook Islands</p> </td>
+							<td
+								colspan="1"
+								rowspan="1"
+								id="dtb_864"> <imggroup
+									id="dtb_865"><img
+										id="dtb_866"
+										src="p022-042.jpg"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										smilref="0017.smil#sm_1282" /></imggroup> <p
+									id="dtb_867"
+									smilref="0017.smil#sm_1284">Costa Rica</p> <imggroup
+									id="dtb_868"><img
+										id="dtb_869"
+										alt="SIGNED THE CONVENTION, SIGNED THE PROTOCOL"
+										src="p022-043.jpg"
+										smilref="0017.smil#sm_1286" /></imggroup> <p
+									id="dtb_870"
+									smilref="0017.smil#sm_1288">Côte d'Ivoire</p> <imggroup
+									id="dtb_871"><img
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										src="p022-044.jpg"
+										id="dtb_872"
+										smilref="0017.smil#sm_1290" /></imggroup> <p
+									id="dtb_873"
+									smilref="0017.smil#sm_1292">Croatia</p> <imggroup
+									id="dtb_874"><img
+										id="dtb_875"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION"
+										src="p022-045.jpg"
+										smilref="0017.smil#sm_1294" /></imggroup> <p
+									id="dtb_876"
+									smilref="0017.smil#sm_1296">Cuba</p> <imggroup
+									id="dtb_877"><img
+										src="p022-046.jpg"
+										id="dtb_878"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										smilref="0017.smil#sm_1298" /></imggroup> <p
+									id="dtb_879"
+									smilref="0017.smil#sm_1300">Cyprus</p> <imggroup
+									id="dtb_880"><img
+										src="p022-047.jpg"
+										id="dtb_881"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL"
+										smilref="0017.smil#sm_1302" /></imggroup> <p
+									id="dtb_882"
+									smilref="0017.smil#sm_1304">Czech Republic</p> <imggroup
+									id="dtb_883"><img
+										id="dtb_884"
+										src="p022-048.jpg"
+										alt="NOT SIGNED"
+										smilref="0017.smil#sm_1306" /></imggroup> <p
+									id="dtb_885"
+									smilref="0017.smil#sm_1308">Democratic People's Republic of Korea</p> <imggroup
+									id="dtb_886"><img
+										src="p022-049.jpg"
+										id="dtb_887"
+										alt="NOT SIGNED"
+										smilref="0017.smil#sm_1310" /></imggroup> <p
+									id="dtb_888"
+									smilref="0017.smil#sm_1312">Democratic Republic of the Congo</p> <imggroup
+									id="dtb_889"><img
+										src="p022-050.jpg"
+										id="dtb_890"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION"
+										smilref="0017.smil#sm_1314" /></imggroup> <p
+									id="dtb_891"
+									smilref="0017.smil#sm_1316">Denmark</p> <imggroup
+									id="dtb_892"><img
+										id="dtb_893"
+										src="p022-051.jpg"
+										alt="RATIFIED THE CONVENTION, RATIFIED THE PROTOCOL"
+										smilref="0017.smil#sm_1318" /></imggroup> <p
+									id="dtb_894"
+									smilref="0017.smil#sm_1320">Djibouti</p> <imggroup
+									id="dtb_895"><img
+										src="p022-052.jpg"
+										id="dtb_896"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, RATIFIED THE PROTOCOL"
+										smilref="0017.smil#sm_1322" /></imggroup> <p
+									id="dtb_897"
+									smilref="0017.smil#sm_1324">Dominica</p> <imggroup
+									id="dtb_898"><img
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										src="p022-053.jpg"
+										id="dtb_899"
+										smilref="0017.smil#sm_1326" /></imggroup> <p
+									id="dtb_900"
+									smilref="0017.smil#sm_1328">Dominican Republic</p> <imggroup
+									id="dtb_901"><img
+										id="dtb_902"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										src="p022-054.jpg"
+										smilref="0017.smil#sm_1330" /></imggroup> <p
+									id="dtb_903"
+									smilref="0017.smil#sm_1332">Ecuador</p> <imggroup
+									id="dtb_904"><img
+										src="p022-055.jpg"
+										id="dtb_905"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION"
+										smilref="0017.smil#sm_1334" /></imggroup> <p
+									id="dtb_906"
+									smilref="0017.smil#sm_1336">Egypt</p> <imggroup
+									id="dtb_907"><img
+										id="dtb_908"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										src="p022-056.jpg"
+										smilref="0017.smil#sm_1338" /></imggroup> <p
+									id="dtb_909"
+									smilref="0017.smil#sm_1340">El Salvador</p> <imggroup
+									id="dtb_910"><img
+										alt="NOT SIGNED"
+										src="p022-057.jpg"
+										id="dtb_911"
+										smilref="0017.smil#sm_1342" /></imggroup> <p
+									id="dtb_912"
+									smilref="0017.smil#sm_1344">Equatorial Guinea</p> <imggroup
+									id="dtb_913"><img
+										src="p022-058.jpg"
+										id="dtb_914"
+										alt="NOT SIGNED"
+										smilref="0017.smil#sm_1346" /></imggroup> <p
+									id="dtb_915"
+									smilref="0017.smil#sm_1348">Eritrea</p> <imggroup
+									id="dtb_916"><img
+										src="p022-059.jpg"
+										id="dtb_917"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, RATIFIED THE PROTOCOL"
+										smilref="0017.smil#sm_1350" /></imggroup> <p
+									id="dtb_918"
+									smilref="0017.smil#sm_1352">Estonia</p> </td>
+							<td
+								rowspan="1"
+								colspan="1"
+								id="dtb_919"> <imggroup
+									id="dtb_920"><img
+										src="p022-060.jpg"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION"
+										id="dtb_921"
+										smilref="0017.smil#sm_1354" /></imggroup> <p
+									id="dtb_922"
+									smilref="0017.smil#sm_1356">Ethiopia</p> <imggroup
+									id="dtb_923"><img
+										alt="SIGNED THE CONVENTION, SIGNED THE PROTOCOL"
+										src="p022-061.jpg"
+										id="dtb_924"
+										smilref="0017.smil#sm_1358" /></imggroup> <p
+									id="dtb_925"
+									smilref="0017.smil#sm_1360">Fiji</p> <imggroup
+									id="dtb_926"><img
+										src="p022-062.jpg"
+										alt="SIGNED THE CONVENTION, SIGNED THE PROTOCOL"
+										id="dtb_927"
+										smilref="0017.smil#sm_1362" /></imggroup> <p
+									id="dtb_928"
+									smilref="0017.smil#sm_1364">Finland</p> <imggroup
+									id="dtb_929"><img
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										id="dtb_930"
+										src="p022-063.jpg"
+										smilref="0017.smil#sm_1366" /></imggroup> <p
+									id="dtb_931"
+									smilref="0017.smil#sm_1368">France</p> <imggroup
+									id="dtb_932"><img
+										src="p022-064.jpg"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL"
+										id="dtb_933"
+										smilref="0017.smil#sm_1370" /></imggroup> <p
+									id="dtb_934"
+									smilref="0017.smil#sm_1372">Gabon</p> <imggroup
+									id="dtb_935"><img
+										id="dtb_936"
+										src="p022-065.jpg"
+										alt="NOT SIGNED"
+										smilref="0017.smil#sm_1374" /></imggroup> <p
+									id="dtb_937"
+									smilref="0017.smil#sm_1376">Gambia</p> <imggroup
+									id="dtb_938"><img
+										id="dtb_939"
+										alt="SIGNED THE CONVENTION, SIGNED THE PROTOCOL"
+										src="p022-066.jpg"
+										smilref="0017.smil#sm_1378" /></imggroup> <p
+									id="dtb_940"
+									smilref="0017.smil#sm_1380">Georgia</p> <imggroup
+									id="dtb_941"><img
+										src="p022-067.jpg"
+										id="dtb_942"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										smilref="0017.smil#sm_1382" /></imggroup> <p
+									id="dtb_943"
+									smilref="0017.smil#sm_1384">Germany</p> <imggroup
+									id="dtb_944"><img
+										id="dtb_945"
+										src="p022-068.jpg"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										smilref="0017.smil#sm_1386" /></imggroup> <p
+									id="dtb_946"
+									smilref="0017.smil#sm_1388">Ghana</p> <imggroup
+									id="dtb_947"><img
+										src="p022-069.jpg"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										id="dtb_948"
+										smilref="0017.smil#sm_1390" /></imggroup> <p
+									id="dtb_949"
+									smilref="0017.smil#sm_1392">Greece</p> <imggroup
+									id="dtb_950"><img
+										alt="SIGNED THE CONVENTION"
+										id="dtb_951"
+										src="p022-070.jpg"
+										smilref="0017.smil#sm_1394" /></imggroup> <p
+									id="dtb_952"
+									smilref="0017.smil#sm_1396">Grenada</p> <imggroup
+									id="dtb_953"><img
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										src="p022-071.jpg"
+										id="dtb_954"
+										smilref="0017.smil#sm_1398" /></imggroup> <p
+									id="dtb_955"
+									smilref="0017.smil#sm_1400">Guatemala</p> <imggroup
+									id="dtb_956"><img
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										src="p022-072.jpg"
+										id="dtb_957"
+										smilref="0017.smil#sm_1402" /></imggroup> <p
+									id="dtb_958"
+									smilref="0017.smil#sm_1404">Guinea</p> <imggroup
+									id="dtb_959"><img
+										alt="NOT SIGNED"
+										id="dtb_960"
+										src="p022-073.jpg"
+										smilref="0017.smil#sm_1406" /></imggroup> <p
+									id="dtb_961"
+									smilref="0017.smil#sm_1408">Guinea-Bissau</p> <imggroup
+									id="dtb_962"><img
+										id="dtb_963"
+										alt="SIGNED THE CONVENTION"
+										src="p022-074.jpg"
+										smilref="0017.smil#sm_1410" /></imggroup> <p
+									id="dtb_964"
+									smilref="0017.smil#sm_1412">Guyana</p> <imggroup
+									id="dtb_965"><img
+										src="p022-075.jpg"
+										id="dtb_966"
+										alt="RATIFIED THE CONVENTION, RATIFIED THE PROTOCOL"
+										smilref="0017.smil#sm_1414" /></imggroup> <p
+									id="dtb_967"
+									smilref="0017.smil#sm_1416">Haiti</p> <imggroup
+									id="dtb_968"><img
+										src="p022-076.jpg"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										id="dtb_969"
+										smilref="0017.smil#sm_1418" /></imggroup> <p
+									id="dtb_970"
+									smilref="0017.smil#sm_1420">Honduras</p> <imggroup
+									id="dtb_971"><img
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION, SIGNED THE PROTOCOL, RATIFIED THE PROTOCOL"
+										src="p022-077.jpg"
+										id="dtb_972"
+										smilref="0017.smil#sm_1422" /></imggroup> <p
+									id="dtb_973"
+									smilref="0017.smil#sm_1424">Hungary</p> <imggroup
+									id="dtb_974"><img
+										id="dtb_975"
+										src="p022-078.jpg"
+										alt="SIGNED THE CONVENTION, SIGNED THE PROTOCOL"
+										smilref="0017.smil#sm_1426" /></imggroup> <p
+									id="dtb_976"
+									smilref="0017.smil#sm_1428">Iceland</p> <imggroup
+									id="dtb_977"><img
+										src="p022-079.jpg"
+										id="dtb_978"
+										alt="SIGNED THE CONVENTION, RATIFIED THE CONVENTION"
+										smilref="0017.smil#sm_1430" /></imggroup> <p
+									id="dtb_979"
+									smilref="0017.smil#sm_1432">India</p> </td>
+						</tr>
+					</table>
+					<pagenum
+						page="normal"
+						id="dtb_980"
+						smilref="0017.smil#sm_1434">23</pagenum>
+				</level2>
+				<level2>
+					<h2
+						id="dtb_981"
+						smilref="0018.smil#sm_1439">End institutionalization</h2>
+					<p
+						id="dtb_982">
+						<sent
+							id="dtb_983"
+							smilref="0018.smil#sm_1441">Institutions are poor substitutes for a nurturing home life, even if they are well run and monitored. </sent>
+						<sent
+							id="dtb_984"
+							smilref="0018.smil#sm_1443">Immediate measures to reduce overreliance on them could include a moratorium on new admissions. </sent>
+						<sent
+							id="dtb_985"
+							smilref="0018.smil#sm_1445">This should be accompanied by the promotion of and increased support for family-based care and community-based rehabilitation. </sent>
+						<sent
+							id="dtb_986"
+							smilref="0018.smil#sm_1447">Making public services, schools and health systems accessible and responsive to the needs of children with disabilities and their families will reduce the pressure to send children away in the first place.</sent>
+					</p>
+					<table
+						id="dtb_987"
+						smilref="0018.smil#sm_1449">
+						<tr
+							id="dtb_988"
+							smilref="0018.smil#sm_1450">
+							<td
+								rowspan="1"
+								colspan="1"
+								id="dtb_989"> <imggroup
+									id="dtb_990"><img
+										alt="image of green dot"
+										id="dtb_991"
+										src="p023-001.jpg"
+										smilref="0018.smil#sm_1451" /></imggroup> <p
+									id="dtb_992"
+									smilref="0018.smil#sm_1453">Signed Convention</p> </td>
+							<td
+								rowspan="1"
+								colspan="1"
+								id="dtb_993"> <imggroup
+									id="dtb_994"><img
+										alt="image of blue dot"
+										id="dtb_995"
+										src="p023-002.jpg"
+										smilref="0018.smil#sm_1455" /></imggroup> <p
+									id="dtb_996"
+									smilref="0018.smil#sm_1457">Ratified Convention</p> </td>
+							<td
+								colspan="1"
+								rowspan="1"
+								id="dtb_997"> <imggroup
+									id="dtb_998"><img
+										alt="image of orange dot"
+										id="dtb_999"
+										src="p023-003.jpg"
+										smilref="0018.smil#sm_1459" /></imggroup> <p
+									id="dtb_1000"
+									smilref="0018.smil#sm_1461">Signed Protocol</p> </td>
+							<td
+								rowspan="1"
+								colspan="1"
+								id="dtb_1001"> <imggroup
+									id="dtb_1002"><img
+										id="dtb_1003"
+										alt="image of purple dot"
+										src="p023-004.jpg"
+										smilref="0018.smil#sm_1463" /></imggroup> <p
+									id="dtb_1004"
+									smilref="0018.smil#sm_1465">Ratified Protocol</p> </td>
+							<td
+								colspan="1"
+								rowspan="1"
+								id="dtb_1005"> <imggroup
+									id="dtb_1006"><img
+										src="p023-005.jpg"
+										id="dtb_1007"
+										alt="image of red dot"
+										smilref="0018.smil#sm_1467" /></imggroup> <p
+									id="dtb_1008"
+									smilref="0018.smil#sm_1469">Not signed</p> </td>
+						</tr>
+					</table>
+					<prodnote
+						render="optional"
+						id="dtb_1009"
+						smilref="0018.smil#sm_1471">
+						<p
+							id="dtb_1010">
+							<sent
+								id="dtb_1011"
+								smilref="0018.smil#sm_1472">The table below shows the status of different countries with respect to signing and ratification of the convention and the protocol. </sent>
+							<sent
+								id="dtb_1012"
+								smilref="0018.smil#sm_1474">The status of each country is indicated by coloured dots before country name.</sent>
+						</p>
+					</prodnote>
+					<table
+						id="dtb_1013"
+						smilref="0018.smil#sm_1476">
+						<tr
+							valign="top"
+							id="dtb_1014"
+							smilref="0018.smil#sm_1477">
+							<td
+								rowspan="1"
+								colspan="1"
+								id="dtb_1015"> <imggroup
+									id="dtb_1016"><img
+										src="p023-006.jpg"
+										id="dtb_1017"
+										alt="Signed Convention, Ratified Convention"
+										smilref="0018.smil#sm_1478" /></imggroup> <p
+									id="dtb_1018"
+									smilref="0018.smil#sm_1480">Indonesia</p> <imggroup
+									id="dtb_1019"><img
+										alt="Ratified Convention"
+										src="p023-007.jpg"
+										id="dtb_1020"
+										smilref="0018.smil#sm_1482" /></imggroup> <p
+									id="dtb_1021"
+									smilref="0018.smil#sm_1484">Iran (Islamic Republic of)</p> <imggroup
+									id="dtb_1022"><img
+										alt="Not signed"
+										src="p023-008.jpg"
+										id="dtb_1023"
+										smilref="0018.smil#sm_1486" /></imggroup> <p
+									id="dtb_1024"
+									smilref="0018.smil#sm_1488">Iraq</p> <imggroup
+									id="dtb_1025"><img
+										alt="Signed Convention"
+										src="p023-009.jpg"
+										id="dtb_1026"
+										smilref="0018.smil#sm_1490" /></imggroup> <p
+									id="dtb_1027"
+									smilref="0018.smil#sm_1492">Ireland</p> <imggroup
+									id="dtb_1028"><img
+										id="dtb_1029"
+										src="p023-010.jpg"
+										alt="Signed Convention, Ratified Convention"
+										smilref="0018.smil#sm_1494" /></imggroup> <p
+									id="dtb_1030"
+									smilref="0018.smil#sm_1496">Israel</p> <imggroup
+									id="dtb_1031"><img
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										id="dtb_1032"
+										src="p023-011.jpg"
+										smilref="0018.smil#sm_1498" /></imggroup> <p
+									id="dtb_1033"
+									smilref="0018.smil#sm_1500">Italy</p> <imggroup
+									id="dtb_1034"><img
+										id="dtb_1035"
+										alt="Signed Convention, Ratified Convention, Signed Protocol"
+										src="p023-012.jpg"
+										smilref="0018.smil#sm_1502" /></imggroup> <p
+									id="dtb_1036"
+									smilref="0018.smil#sm_1504">Jamaica</p> <imggroup
+									id="dtb_1037"><img
+										alt="Signed Convention"
+										src="p023-013.jpg"
+										id="dtb_1038"
+										smilref="0018.smil#sm_1506" /></imggroup> <p
+									id="dtb_1039"
+									smilref="0018.smil#sm_1508">Japan</p> <imggroup
+									id="dtb_1040"><img
+										id="dtb_1041"
+										src="p023-014.jpg"
+										alt="Signed Convention, Ratified Convention, Signed Protocol"
+										smilref="0018.smil#sm_1510" /></imggroup> <p
+									id="dtb_1042"
+									smilref="0018.smil#sm_1512">Jordan</p> <imggroup
+									id="dtb_1043"><img
+										alt="Signed Convention, Signed Protocol"
+										src="p023-015.jpg"
+										id="dtb_1044"
+										smilref="0018.smil#sm_1514" /></imggroup> <p
+									id="dtb_1045"
+									smilref="0018.smil#sm_1516">Kazakhstan</p> <imggroup
+									id="dtb_1046"><img
+										alt="Signed Convention, Ratified Convention"
+										id="dtb_1047"
+										src="p023-016.jpg"
+										smilref="0018.smil#sm_1518" /></imggroup> <p
+									id="dtb_1048"
+									smilref="0018.smil#sm_1520">Kenya</p> <imggroup
+									id="dtb_1049"><img
+										id="dtb_1050"
+										alt="Not signed"
+										src="p023-017.jpg"
+										smilref="0018.smil#sm_1522" /></imggroup> <p
+									id="dtb_1051"
+									smilref="0018.smil#sm_1524">Kiribati</p> <imggroup
+									id="dtb_1052"><img
+										src="p023-018.jpg"
+										alt="Not signed"
+										id="dtb_1053"
+										smilref="0018.smil#sm_1526" /></imggroup> <p
+									id="dtb_1054"
+									smilref="0018.smil#sm_1528">Kuwait</p> <imggroup
+									id="dtb_1055"><img
+										src="p023-019.jpg"
+										alt="Signed Convention"
+										id="dtb_1056"
+										smilref="0018.smil#sm_1530" /></imggroup> <p
+									id="dtb_1057"
+									smilref="0018.smil#sm_1532">Kyrgyzstan</p> <imggroup
+									id="dtb_1058"><img
+										alt="Signed Convention, Ratified Convention"
+										id="dtb_1059"
+										src="p023-020.jpg"
+										smilref="0018.smil#sm_1534" /></imggroup> <p
+									id="dtb_1060"
+									smilref="0018.smil#sm_1536">Lao People's Democratic Republic</p> <imggroup
+									id="dtb_1061"><img
+										src="p023-021.jpg"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										id="dtb_1062"
+										smilref="0018.smil#sm_1538" /></imggroup> <p
+									id="dtb_1063"
+									smilref="0018.smil#sm_1540">Latvia</p> <imggroup
+									id="dtb_1064"><img
+										src="p023-022.jpg"
+										alt="Signed Convention, Ratified Convention"
+										id="dtb_1065"
+										smilref="0018.smil#sm_1542" /></imggroup> <p
+									id="dtb_1066"
+									smilref="0018.smil#sm_1544">Lebanon</p> <imggroup
+									id="dtb_1067"><img
+										id="dtb_1068"
+										src="p023-023.jpg"
+										alt="Ratified Convention"
+										smilref="0018.smil#sm_1546" /></imggroup> <p
+									id="dtb_1069"
+									smilref="0018.smil#sm_1548">Lesotho</p> <imggroup
+									id="dtb_1070"><img
+										id="dtb_1071"
+										src="p023-024.jpg"
+										alt="Signed Convention, Ratified Convention, Signed Protocol"
+										smilref="0018.smil#sm_1550" /></imggroup> <p
+									id="dtb_1072"
+									smilref="0018.smil#sm_1552">Liberia</p> <imggroup
+									id="dtb_1073"><img
+										alt="Signed Convention"
+										src="p023-025.jpg"
+										id="dtb_1074"
+										smilref="0018.smil#sm_1554" /></imggroup> <p
+									id="dtb_1075"
+									smilref="0018.smil#sm_1556">Libya</p> <imggroup
+									id="dtb_1076"><img
+										src="p023-026.jpg"
+										alt="Not signed"
+										id="dtb_1077"
+										smilref="0018.smil#sm_1558" /></imggroup> <p
+									id="dtb_1078"
+									smilref="0018.smil#sm_1560">Liechtenstein</p> <imggroup
+									id="dtb_1079"><img
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										id="dtb_1080"
+										src="p023-027.jpg"
+										smilref="0018.smil#sm_1562" /></imggroup> <p
+									id="dtb_1081"
+									smilref="0018.smil#sm_1564">Lithuania</p> <imggroup
+									id="dtb_1082"><img
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										id="dtb_1083"
+										src="p023-028.jpg"
+										smilref="0018.smil#sm_1566" /></imggroup> <p
+									id="dtb_1084"
+									smilref="0018.smil#sm_1568">Luxembourg</p> <imggroup
+									id="dtb_1085"><img
+										src="p023-029.jpg"
+										id="dtb_1086"
+										alt="Signed Convention, Signed Protocol"
+										smilref="0018.smil#sm_1570" /></imggroup> <p
+									id="dtb_1087"
+									smilref="0018.smil#sm_1572">Madagascar</p> <imggroup
+									id="dtb_1088"><img
+										alt="Signed Convention, Ratified Convention"
+										src="p023-030.jpg"
+										id="dtb_1089"
+										smilref="0018.smil#sm_1574" /></imggroup> <p
+									id="dtb_1090"
+									smilref="0018.smil#sm_1576">Malawi</p> <imggroup
+									id="dtb_1091"><img
+										src="p023-031.jpg"
+										alt="Signed Convention, Ratified Convention"
+										id="dtb_1092"
+										smilref="0018.smil#sm_1578" /></imggroup> <p
+									id="dtb_1093"
+									smilref="0018.smil#sm_1580">Malaysia</p> <imggroup
+									id="dtb_1094"><img
+										src="p023-032.jpg"
+										alt="Signed Convention, Ratified Convention"
+										id="dtb_1095"
+										smilref="0018.smil#sm_1582" /></imggroup> <p
+									id="dtb_1096"
+									smilref="0018.smil#sm_1584">Maldives</p> <imggroup
+									id="dtb_1097"><img
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										id="dtb_1098"
+										src="p023-033.jpg"
+										smilref="0018.smil#sm_1586" /></imggroup> <p
+									id="dtb_1099"
+									smilref="0018.smil#sm_1588">Mali</p> <imggroup
+									id="dtb_1100"><img
+										src="p023-034.jpg"
+										id="dtb_1101"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										smilref="0018.smil#sm_1590" /></imggroup> <p
+									id="dtb_1102"
+									smilref="0018.smil#sm_1592">Malta</p> <imggroup
+									id="dtb_1103"><img
+										id="dtb_1104"
+										src="p023-035.jpg"
+										alt="Not signed"
+										smilref="0018.smil#sm_1594" /></imggroup> <p
+									id="dtb_1105"
+									smilref="0018.smil#sm_1596">Marshall Islands</p> <imggroup
+									id="dtb_1106"><img
+										src="p023-036.jpg"
+										alt="Ratified Convention, Ratified Protocol"
+										id="dtb_1107"
+										smilref="0018.smil#sm_1598" /></imggroup> <p
+									id="dtb_1108"
+									smilref="0018.smil#sm_1600">Mauritania</p> </td>
+							<td
+								colspan="1"
+								rowspan="1"
+								id="dtb_1109"> <imggroup
+									id="dtb_1110"><img
+										id="dtb_1111"
+										src="p023-037.jpg"
+										alt="Signed Convention, Ratified Convention, Signed Protocol"
+										smilref="0018.smil#sm_1602" /></imggroup> <p
+									id="dtb_1112"
+									smilref="0018.smil#sm_1604">Mauritius</p> <imggroup
+									id="dtb_1113"><img
+										id="dtb_1114"
+										src="p023-038.jpg"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										smilref="0018.smil#sm_1606" /></imggroup> <p
+									id="dtb_1115"
+									smilref="0018.smil#sm_1608">Mexico</p> <imggroup
+									id="dtb_1116"><img
+										src="p023-039.jpg"
+										id="dtb_1117"
+										alt="Signed Convention"
+										smilref="0018.smil#sm_1610" /></imggroup> <p
+									id="dtb_1118"
+									smilref="0018.smil#sm_1612">Micronesia (Federated States of)</p> <imggroup
+									id="dtb_1119"><img
+										src="p023-040.jpg"
+										alt="Signed Convention"
+										id="dtb_1120"
+										smilref="0018.smil#sm_1614" /></imggroup> <p
+									id="dtb_1121"
+									smilref="0018.smil#sm_1616">Monaco</p> <imggroup
+									id="dtb_1122"><img
+										alt="Ratified Convention, Ratified Protocol"
+										id="dtb_1123"
+										src="p023-041.jpg"
+										smilref="0018.smil#sm_1618" /></imggroup> <p
+									id="dtb_1124"
+									smilref="0018.smil#sm_1620">Mongolia</p> <imggroup
+									id="dtb_1125"><img
+										id="dtb_1126"
+										src="p023-042.jpg"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										smilref="0018.smil#sm_1622" /></imggroup> <p
+									id="dtb_1127"
+									smilref="0018.smil#sm_1624">Montenegro</p> <imggroup
+									id="dtb_1128"><img
+										id="dtb_1129"
+										src="p023-043.jpg"
+										alt="Signed Convention, Ratified Convention, Ratified Protocol"
+										smilref="0018.smil#sm_1626" /></imggroup> <p
+									id="dtb_1130"
+									smilref="0018.smil#sm_1628">Morocco</p> <imggroup
+									id="dtb_1131"><img
+										alt="Signed Convention, Ratified Convention, Ratified Protocol"
+										id="dtb_1132"
+										src="p023-044.jpg"
+										smilref="0018.smil#sm_1630" /></imggroup> <p
+									id="dtb_1133"
+									smilref="0018.smil#sm_1632">Mozambique</p> <imggroup
+									id="dtb_1134"><img
+										id="dtb_1135"
+										alt="Ratified Convention"
+										src="p023-045.jpg"
+										smilref="0018.smil#sm_1634" /></imggroup> <p
+									id="dtb_1136"
+									smilref="0018.smil#sm_1636">Myanmar</p> <imggroup
+									id="dtb_1137"><img
+										src="p023-046.jpg"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										id="dtb_1138"
+										smilref="0018.smil#sm_1638" /></imggroup> <p
+									id="dtb_1139"
+									smilref="0018.smil#sm_1640">Namibia</p> <imggroup
+									id="dtb_1140"><img
+										alt="Ratified Convention"
+										src="p023-047.jpg"
+										id="dtb_1141"
+										smilref="0018.smil#sm_1642" /></imggroup> <p
+									id="dtb_1142"
+									smilref="0018.smil#sm_1644">Nauru</p> <imggroup
+									id="dtb_1143"><img
+										id="dtb_1144"
+										src="p023-048.jpg"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										smilref="0018.smil#sm_1646" /></imggroup> <p
+									id="dtb_1145"
+									smilref="0018.smil#sm_1648">Nepal</p> <imggroup
+									id="dtb_1146"><img
+										alt="Signed Convention"
+										src="p023-049.jpg"
+										id="dtb_1147"
+										smilref="0018.smil#sm_1650" /></imggroup> <p
+									id="dtb_1148"
+									smilref="0018.smil#sm_1652">Netherlands</p> <imggroup
+									id="dtb_1149"><img
+										id="dtb_1150"
+										alt="Signed Convention, Ratified Convention"
+										src="p023-050.jpg"
+										smilref="0018.smil#sm_1654" /></imggroup> <p
+									id="dtb_1151"
+									smilref="0018.smil#sm_1656">New Zealand</p> <imggroup
+									id="dtb_1152"><img
+										id="dtb_1153"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										src="p023-051.jpg"
+										smilref="0018.smil#sm_1658" /></imggroup> <p
+									id="dtb_1154"
+									smilref="0018.smil#sm_1660">Nicaragua</p> <imggroup
+									id="dtb_1155"><img
+										id="dtb_1156"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										src="p023-052.jpg"
+										smilref="0018.smil#sm_1662" /></imggroup> <p
+									id="dtb_1157"
+									smilref="0018.smil#sm_1664">Niger</p> <imggroup
+									id="dtb_1158"><img
+										src="p023-053.jpg"
+										id="dtb_1159"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										smilref="0018.smil#sm_1666" /></imggroup> <p
+									id="dtb_1160"
+									smilref="0018.smil#sm_1668">Nigeria</p> <imggroup
+									id="dtb_1161"><img
+										alt="Not signed"
+										src="p023-054.jpg"
+										id="dtb_1162"
+										smilref="0018.smil#sm_1670" /></imggroup> <p
+									id="dtb_1163"
+									smilref="0018.smil#sm_1672">Niue</p> <imggroup
+									id="dtb_1164"><img
+										src="p023-055.jpg"
+										id="dtb_1165"
+										alt="Signed Convention"
+										smilref="0018.smil#sm_1674" /></imggroup> <p
+									id="dtb_1166"
+									smilref="0018.smil#sm_1676">Norway</p> <imggroup
+									id="dtb_1167"><img
+										src="p023-056.jpg"
+										alt="Signed Convention, Ratified Convention"
+										id="dtb_1168"
+										smilref="0018.smil#sm_1678" /></imggroup> <p
+									id="dtb_1169"
+									smilref="0018.smil#sm_1680">Oman</p> <imggroup
+									id="dtb_1170"><img
+										alt="Signed Convention, Ratified Convention"
+										src="p023-057.jpg"
+										id="dtb_1171"
+										smilref="0018.smil#sm_1682" /></imggroup> <p
+									id="dtb_1172"
+									smilref="0018.smil#sm_1684">Pakistan</p> <imggroup
+									id="dtb_1173"><img
+										id="dtb_1174"
+										src="p023-058.jpg"
+										alt="Signed Convention"
+										smilref="0018.smil#sm_1686" /></imggroup> <p
+									id="dtb_1175"
+									smilref="0018.smil#sm_1688">Palau</p> <imggroup
+									id="dtb_1176"><img
+										src="p023-059.jpg"
+										id="dtb_1177"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										smilref="0018.smil#sm_1690" /></imggroup> <p
+									id="dtb_1178"
+									smilref="0018.smil#sm_1692">Panama</p> <imggroup
+									id="dtb_1179"><img
+										alt="Signed Convention"
+										src="p023-060.jpg"
+										id="dtb_1180"
+										smilref="0018.smil#sm_1694" /></imggroup> <p
+									id="dtb_1181"
+									smilref="0018.smil#sm_1696">Papua New Guinea</p> <imggroup
+									id="dtb_1182"><img
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										id="dtb_1183"
+										src="p023-061.jpg"
+										smilref="0018.smil#sm_1698" /></imggroup> <p
+									id="dtb_1184"
+									smilref="0018.smil#sm_1700">Paraguay</p> <imggroup
+									id="dtb_1185"><img
+										src="p023-062.jpg"
+										id="dtb_1186"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										smilref="0018.smil#sm_1702" /></imggroup> <p
+									id="dtb_1187"
+									smilref="0018.smil#sm_1704">Peru</p> <imggroup
+									id="dtb_1188"><img
+										src="p023-063.jpg"
+										alt="Signed Convention, Ratified Convention"
+										id="dtb_1189"
+										smilref="0018.smil#sm_1706" /></imggroup> <p
+									id="dtb_1190"
+									smilref="0018.smil#sm_1708">Philippines</p> <imggroup
+									id="dtb_1191"><img
+										alt="Signed Convention, Ratified Convention"
+										id="dtb_1192"
+										src="p023-064.jpg"
+										smilref="0018.smil#sm_1710" /></imggroup> <p
+									id="dtb_1193"
+									smilref="0018.smil#sm_1712">Poland</p> <imggroup
+									id="dtb_1194"><img
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										src="p023-065.jpg"
+										id="dtb_1195"
+										smilref="0018.smil#sm_1714" /></imggroup> <p
+									id="dtb_1196"
+									smilref="0018.smil#sm_1716">Portugal</p> <imggroup
+									id="dtb_1197"><img
+										src="p023-066.jpg"
+										alt="Signed Convention, Ratified Convention, Signed Protocol"
+										id="dtb_1198"
+										smilref="0018.smil#sm_1718" /></imggroup> <p
+									id="dtb_1199"
+									smilref="0018.smil#sm_1720">Qatar</p> <imggroup
+									id="dtb_1200"><img
+										alt="Signed Convention, Ratified Convention"
+										id="dtb_1201"
+										src="p023-067.jpg"
+										smilref="0018.smil#sm_1722" /></imggroup> <p
+									id="dtb_1202"
+									smilref="0018.smil#sm_1724">Republic of Korea</p> <imggroup
+									id="dtb_1203"><img
+										src="p023-068.jpg"
+										alt="Signed Convention, Ratified Convention"
+										id="dtb_1204"
+										smilref="0018.smil#sm_1726" /></imggroup> <p
+									id="dtb_1205"
+									smilref="0018.smil#sm_1728">Republic of Moldova</p> </td>
+							<td
+								colspan="1"
+								rowspan="1"
+								id="dtb_1206"> <imggroup
+									id="dtb_1207"><img
+										alt="Signed Convention, Ratified Convention, Signed Protocol"
+										src="p023-069.jpg"
+										id="dtb_1208"
+										smilref="0018.smil#sm_1730" /></imggroup> <p
+									id="dtb_1209"
+									smilref="0018.smil#sm_1732">Romania</p> <imggroup
+									id="dtb_1210"><img
+										src="p023-070.jpg"
+										id="dtb_1211"
+										alt="Signed Convention, Ratified Convention"
+										smilref="0018.smil#sm_1734" /></imggroup> <p
+									id="dtb_1212"
+									smilref="0018.smil#sm_1736">Russian Federation</p> <imggroup
+									id="dtb_1213"><img
+										alt="Signed Convention, Signed Protocol"
+										id="dtb_1214"
+										src="p023-071.jpg"
+										smilref="0018.smil#sm_1738" /></imggroup> <p
+									id="dtb_1215"
+									smilref="0018.smil#sm_1740">Rwanda</p> <imggroup
+									id="dtb_1216"><img
+										src="p023-072.jpg"
+										alt="Not signed"
+										id="dtb_1217"
+										smilref="0018.smil#sm_1742" /></imggroup> <p
+									id="dtb_1218"
+									smilref="0018.smil#sm_1744">Saint Kitts and Nevis</p> <imggroup
+									id="dtb_1219"><img
+										src="p023-073.jpg"
+										alt="Signed Convention"
+										id="dtb_1220"
+										smilref="0018.smil#sm_1746" /></imggroup> <p
+									id="dtb_1221"
+									smilref="0018.smil#sm_1748">Saint Lucia</p> <imggroup
+									id="dtb_1222"><img
+										alt="Signed Convention, Signed Protocol"
+										id="dtb_1223"
+										src="p023-074.jpg"
+										smilref="0018.smil#sm_1750" /></imggroup> <p
+									id="dtb_1224"
+									smilref="0018.smil#sm_1752">Saint Vincent and the Grenadines</p> <imggroup
+									id="dtb_1225"><img
+										src="p023-075.jpg"
+										alt="Not signed"
+										id="dtb_1226"
+										smilref="0018.smil#sm_1754" /></imggroup> <p
+									id="dtb_1227"
+									smilref="0018.smil#sm_1756">Samoa</p> <imggroup
+									id="dtb_1228"><img
+										src="p023-076.jpg"
+										id="dtb_1229"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										smilref="0018.smil#sm_1758" /></imggroup> <p
+									id="dtb_1230"
+									smilref="0018.smil#sm_1760">San Marino</p> <imggroup
+									id="dtb_1231"><img
+										src="p023-077.jpg"
+										id="dtb_1232"
+										alt="Not signed"
+										smilref="0018.smil#sm_1762" /></imggroup> <p
+									id="dtb_1233"
+									smilref="0018.smil#sm_1764">Sao Tome and Principe</p> <imggroup
+									id="dtb_1234"><img
+										alt="Ratified Convention, Ratified Protocol"
+										src="p023-078.jpg"
+										id="dtb_1235"
+										smilref="0018.smil#sm_1766" /></imggroup> <p
+									id="dtb_1236"
+									smilref="0018.smil#sm_1768">Saudi Arabia</p> <imggroup
+									id="dtb_1237"><img
+										id="dtb_1238"
+										alt="Signed Convention, Ratified Convention, Signed Protocol"
+										src="p023-079.jpg"
+										smilref="0018.smil#sm_1770" /></imggroup> <p
+									id="dtb_1239"
+									smilref="0018.smil#sm_1772">Senegal</p> <imggroup
+									id="dtb_1240"><img
+										src="p023-080.jpg"
+										id="dtb_1241"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										smilref="0018.smil#sm_1774" /></imggroup> <p
+									id="dtb_1242"
+									smilref="0018.smil#sm_1776">Serbia</p> <imggroup
+									id="dtb_1243"><img
+										src="p023-081.jpg"
+										alt="Signed Convention, Ratified Convention, Signed Protocol"
+										id="dtb_1244"
+										smilref="0018.smil#sm_1778" /></imggroup> <p
+									id="dtb_1245"
+									smilref="0018.smil#sm_1780">Seychelles</p> <imggroup
+									id="dtb_1246"><img
+										alt="Signed Convention, Ratified Convention, Signed Protocol"
+										src="p023-082.jpg"
+										id="dtb_1247"
+										smilref="0018.smil#sm_1782" /></imggroup> <p
+									id="dtb_1248"
+									smilref="0018.smil#sm_1784">Sierra Leone</p> <imggroup
+									id="dtb_1249"><img
+										id="dtb_1250"
+										src="p023-083.jpg"
+										alt="Signed Convention"
+										smilref="0018.smil#sm_1786" /></imggroup> <p
+									id="dtb_1251"
+									smilref="0018.smil#sm_1788">Singapore</p> <imggroup
+									id="dtb_1252"><img
+										src="p023-084.jpg"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										id="dtb_1253"
+										smilref="0018.smil#sm_1790" /></imggroup> <p
+									id="dtb_1254"
+									smilref="0018.smil#sm_1792">Slovakia</p> <imggroup
+									id="dtb_1255"><img
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										id="dtb_1256"
+										src="p023-085.jpg"
+										smilref="0018.smil#sm_1794" /></imggroup> <p
+									id="dtb_1257"
+									smilref="0018.smil#sm_1796">Slovenia</p> <imggroup
+									id="dtb_1258"><img
+										id="dtb_1259"
+										alt="Signed Convention, Signed Protocol"
+										src="p023-086.jpg"
+										smilref="0018.smil#sm_1798" /></imggroup> <p
+									id="dtb_1260"
+									smilref="0018.smil#sm_1800">Solomon Islands</p> <imggroup
+									id="dtb_1261"><img
+										src="p023-087.jpg"
+										id="dtb_1262"
+										alt="Not signed"
+										smilref="0018.smil#sm_1802" /></imggroup> <p
+									id="dtb_1263"
+									smilref="0018.smil#sm_1804">Somalia</p> <imggroup
+									id="dtb_1264"><img
+										src="p023-088.jpg"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										id="dtb_1265"
+										smilref="0018.smil#sm_1806" /></imggroup> <p
+									id="dtb_1266"
+									smilref="0018.smil#sm_1808">South Africa</p> <imggroup
+									id="dtb_1267"><img
+										src="p023-089.jpg"
+										id="dtb_1268"
+										alt="Not signed"
+										smilref="0018.smil#sm_1810" /></imggroup> <p
+									id="dtb_1269"
+									smilref="0018.smil#sm_1812">South Sudan</p> <imggroup
+									id="dtb_1270"><img
+										id="dtb_1271"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										src="p023-090.jpg"
+										smilref="0018.smil#sm_1814" /></imggroup> <p
+									id="dtb_1272"
+									smilref="0018.smil#sm_1816">Spain</p> <imggroup
+									id="dtb_1273"><img
+										alt="Signed Convention"
+										src="p023-091.jpg"
+										id="dtb_1274"
+										smilref="0018.smil#sm_1818" /></imggroup> <p
+									id="dtb_1275"
+									smilref="0018.smil#sm_1820">Sri Lanka</p> <imggroup
+									id="dtb_1276"><img
+										id="dtb_1277"
+										src="p023-092.jpg"
+										alt="Signed Convention, Ratified Convention, Ratified Protocol"
+										smilref="0018.smil#sm_1822" /></imggroup> <p
+									id="dtb_1278"
+									smilref="0018.smil#sm_1824">Sudan</p> <imggroup
+									id="dtb_1279"><img
+										id="dtb_1280"
+										alt="Signed Convention"
+										src="p023-093.jpg"
+										smilref="0018.smil#sm_1826" /></imggroup> <p
+									id="dtb_1281"
+									smilref="0018.smil#sm_1828">Suriname</p> <imggroup
+									id="dtb_1282"><img
+										id="dtb_1283"
+										src="p023-094.jpg"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										smilref="0018.smil#sm_1830" /></imggroup> <p
+									id="dtb_1284"
+									smilref="0018.smil#sm_1832">Swaziland</p> <imggroup
+									id="dtb_1285"><img
+										id="dtb_1286"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										src="p023-095.jpg"
+										smilref="0018.smil#sm_1834" /></imggroup> <p
+									id="dtb_1287"
+									smilref="0018.smil#sm_1836">Sweden</p> <imggroup
+									id="dtb_1288"><img
+										id="dtb_1289"
+										alt="Not signed"
+										src="p023-096.jpg"
+										smilref="0018.smil#sm_1838" /></imggroup> <p
+									id="dtb_1290"
+									smilref="0018.smil#sm_1840">Switzerland</p> <imggroup
+									id="dtb_1291"><img
+										src="p023-097.jpg"
+										alt="Signed Convention, Ratified Convention, Ratified Protocol"
+										id="dtb_1292"
+										smilref="0018.smil#sm_1842" /></imggroup> <p
+									id="dtb_1293"
+									smilref="0018.smil#sm_1844">Syrian Arab Republic</p> <imggroup
+									id="dtb_1294"><img
+										id="dtb_1295"
+										src="p023-098.jpg"
+										alt="Not signed"
+										smilref="0018.smil#sm_1846" /></imggroup> <p
+									id="dtb_1296"
+									smilref="0018.smil#sm_1848">Tajikistan</p> <imggroup
+									id="dtb_1297"><img
+										src="p023-099.jpg"
+										id="dtb_1298"
+										alt="Signed Convention, Ratified Convention"
+										smilref="0018.smil#sm_1850" /></imggroup> <p
+									id="dtb_1299"
+									smilref="0018.smil#sm_1852">Thailand</p> </td>
+							<td
+								colspan="1"
+								rowspan="1"
+								id="dtb_1300"> <imggroup
+									id="dtb_1301"><img
+										src="p023-100.jpg"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										id="dtb_1302"
+										smilref="0018.smil#sm_1854" /></imggroup> <p
+									id="dtb_1303"
+									smilref="0018.smil#sm_1856">The former Yugoslav Republic of Macedonia</p> <imggroup
+									id="dtb_1304"><img
+										id="dtb_1305"
+										src="p023-101.jpg"
+										alt="Not signed"
+										smilref="0018.smil#sm_1858" /></imggroup> <p
+									id="dtb_1306"
+									smilref="0018.smil#sm_1860">Timor-Leste</p> <imggroup
+									id="dtb_1307"><img
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										id="dtb_1308"
+										src="p023-102.jpg"
+										smilref="0018.smil#sm_1862" /></imggroup> <p
+									id="dtb_1309"
+									smilref="0018.smil#sm_1864">Togo</p> <imggroup
+									id="dtb_1310"><img
+										src="p023-103.jpg"
+										id="dtb_1311"
+										alt="Signed Convention"
+										smilref="0018.smil#sm_1866" /></imggroup> <p
+									id="dtb_1312"
+									smilref="0018.smil#sm_1868">Tonga</p> <imggroup
+									id="dtb_1313"><img
+										src="p023-104.jpg"
+										alt="Signed Convention"
+										id="dtb_1314"
+										smilref="0018.smil#sm_1870" /></imggroup> <p
+									id="dtb_1315"
+									smilref="0018.smil#sm_1872">Trinidad and Tobago</p> <imggroup
+									id="dtb_1316"><img
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										src="p023-105.jpg"
+										id="dtb_1317"
+										smilref="0018.smil#sm_1874" /></imggroup> <p
+									id="dtb_1318"
+									smilref="0018.smil#sm_1876">Tunisia</p> <imggroup
+									id="dtb_1319"><img
+										alt="Signed Convention, Ratified Convention, Signed Protocol"
+										src="p023-106.jpg"
+										id="dtb_1320"
+										smilref="0018.smil#sm_1878" /></imggroup> <p
+									id="dtb_1321"
+									smilref="0018.smil#sm_1880">Turkey</p> <imggroup
+									id="dtb_1322"><img
+										id="dtb_1323"
+										src="p023-107.jpg"
+										alt="Ratified Convention, Ratified Protocol"
+										smilref="0018.smil#sm_1882" /></imggroup> <p
+									id="dtb_1324"
+									smilref="0018.smil#sm_1884">Turkmenistan</p> <imggroup
+									id="dtb_1325"><img
+										src="p023-108.jpg"
+										alt="Not signed"
+										id="dtb_1326"
+										smilref="0018.smil#sm_1886" /></imggroup> <p
+									id="dtb_1327"
+									smilref="0018.smil#sm_1888">Tuvalu</p> <imggroup
+									id="dtb_1328"><img
+										src="p023-109.jpg"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										id="dtb_1329"
+										smilref="0018.smil#sm_1890" /></imggroup> <p
+									id="dtb_1330"
+									smilref="0018.smil#sm_1892">Uganda</p> <imggroup
+									id="dtb_1331"><img
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										src="p023-110.jpg"
+										id="dtb_1332"
+										smilref="0018.smil#sm_1894" /></imggroup> <p
+									id="dtb_1333"
+									smilref="0018.smil#sm_1896">Ukraine</p> <imggroup
+									id="dtb_1334"><img
+										src="p023-111.jpg"
+										alt="Signed Convention, Ratified Convention, Signed Protocol"
+										id="dtb_1335"
+										smilref="0018.smil#sm_1898" /></imggroup> <p
+									id="dtb_1336"
+									smilref="0018.smil#sm_1900">United Arab Emirates</p> <imggroup
+									id="dtb_1337"><img
+										src="p023-112.jpg"
+										id="dtb_1338"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										smilref="0018.smil#sm_1902" /></imggroup> <p
+									id="dtb_1339"
+									smilref="0018.smil#sm_1904">United Kingdom</p> <imggroup
+									id="dtb_1340"><img
+										src="p023-113.jpg"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										id="dtb_1341"
+										smilref="0018.smil#sm_1906" /></imggroup> <p
+									id="dtb_1342"
+									smilref="0018.smil#sm_1908">United Republic of Tanzania</p> <imggroup
+									id="dtb_1343"><img
+										src="p023-114.jpg"
+										alt="Signed Convention"
+										id="dtb_1344"
+										smilref="0018.smil#sm_1910" /></imggroup> <p
+									id="dtb_1345"
+									smilref="0018.smil#sm_1912">United States</p> <imggroup
+									id="dtb_1346"><img
+										src="p023-115.jpg"
+										id="dtb_1347"
+										alt="Signed Convention, Ratified Convention, Ratified Protocol"
+										smilref="0018.smil#sm_1914" /></imggroup> <p
+									id="dtb_1348"
+									smilref="0018.smil#sm_1916">Uruguay</p> <imggroup
+									id="dtb_1349"><img
+										id="dtb_1350"
+										alt="Signed Convention"
+										src="p023-116.jpg"
+										smilref="0018.smil#sm_1918" /></imggroup> <p
+									id="dtb_1351"
+									smilref="0018.smil#sm_1920">Uzbekistan</p> <imggroup
+									id="dtb_1352"><img
+										src="p023-117.jpg"
+										id="dtb_1353"
+										alt="Signed Convention, Ratified Convention"
+										smilref="0018.smil#sm_1922" /></imggroup> <p
+									id="dtb_1354"
+									smilref="0018.smil#sm_1924">Vanuatu</p> <imggroup
+									id="dtb_1355"><img
+										id="dtb_1356"
+										src="p023-118.jpg"
+										alt="Not signed"
+										smilref="0018.smil#sm_1926" /></imggroup> <p
+									id="dtb_1357"
+									smilref="0018.smil#sm_1928">Venezuela (Bolivarian Republic of)</p> <imggroup
+									id="dtb_1358"><img
+										alt="Signed Convention"
+										src="p023-119.jpg"
+										id="dtb_1359"
+										smilref="0018.smil#sm_1930" /></imggroup> <p
+									id="dtb_1360"
+									smilref="0018.smil#sm_1932">Viet Nam</p> <imggroup
+									id="dtb_1361"><img
+										id="dtb_1362"
+										src="p023-120.jpg"
+										alt="Signed Convention, Ratified Convention, Signed Protocol, Ratified Protocol"
+										smilref="0018.smil#sm_1934" /></imggroup> <p
+									id="dtb_1363"
+									smilref="0018.smil#sm_1936">Yemen</p> <imggroup
+									id="dtb_1364"><img
+										alt="Signed Convention, Ratified Convention, Signed Protocol"
+										src="p023-121.jpg"
+										id="dtb_1365"
+										smilref="0018.smil#sm_1938" /></imggroup> <p
+									id="dtb_1366"
+									smilref="0018.smil#sm_1940">Zambia</p> <imggroup
+									id="dtb_1367"><img
+										src="p023-122.jpg"
+										alt="Not signed"
+										id="dtb_1368"
+										smilref="0018.smil#sm_1942" /></imggroup> <p
+									id="dtb_1369"
+									smilref="0018.smil#sm_1944">Zimbabwe</p> </td>
+						</tr>
+					</table>
+				</level2>
+				<level2>
+					<pagenum
+						id="dtb_1370"
+						page="normal"
+						smilref="0019.smil#sm_1947">24</pagenum>
+					<h2
+						id="dtb_1371"
+						smilref="0019.smil#sm_1951">Support families</h2>
+					<p
+						id="dtb_1372">
+						<sent
+							id="dtb_1373"
+							smilref="0019.smil#sm_1953">Disability in the family is often associated with higher costs of living and lost opportunities to earn income, and thus may increase the risk of becoming or remaining poor. </sent>
+						<sent
+							id="dtb_1374"
+							smilref="0019.smil#sm_1955">Poverty makes it harder for children to obtain needed services and assistive technology.</sent>
+					</p>
+					<p
+						id="dtb_1375">
+						<sent
+							id="dtb_1376"
+							smilref="0019.smil#sm_1957">Social policies should take into account the monetary and time costs associated with disability. </sent>
+						<sent
+							id="dtb_1377"
+							smilref="0019.smil#sm_1959">These can be offset with social grants, subsidies for transportation or funding for personal assistants or respite care. </sent>
+						<sent
+							id="dtb_1378"
+							smilref="0019.smil#sm_1961">Cash benefits are easier to administer, more flexible at meeting particular needs, and also respect the decision-making rights of parents and children. </sent>
+						<sent
+							id="dtb_1379"
+							smilref="0019.smil#sm_1963">Existing cash transfer programmes can be adapted so that families caring for children with disabilities are not excluded or offered insufficient support.</sent>
+					</p>
+					<imggroup
+						id="dtb_1380">
+						<img
+							alt="image"
+							src="p024-001.jpg"
+							id="dtb_1381"
+							smilref="0019.smil#sm_1965" />
+						<caption
+							imgref="dtb_1381"
+							id="dtb_1382"> <p
+								id="dtb_1383"
+								smilref="0019.smil#sm_1967">Children with and without disabilities participate in school festivities in Bangladesh.</p> <p
+								id="dtb_1384"
+								smilref="0019.smil#sm_1969">© UNICEF/BANA2007-00655/Siddique</p> </caption>
+					</imggroup>
+				</level2>
+				<level2>
+					<h2
+						id="dtb_1385"
+						smilref="0020.smil#sm_1973">Move beyond minimum standards</h2>
+					<p
+						id="dtb_1386">
+						<sent
+							id="dtb_1387"
+							smilref="0020.smil#sm_1975">Existing supports and services should be continually assessed with a view to achieving the best possible quality — not just meeting minimum standards. </sent>
+						<sent
+							id="dtb_1388"
+							smilref="0020.smil#sm_1977">Attention needs to focus on serving the individual child as well as transforming entire systems and societies.</sent>
+					</p>
+					<p
+						id="dtb_1389">
+						<sent
+							id="dtb_1390"
+							smilref="0020.smil#sm_1979">In this process of evaluation, the importance of participation by children with disabilities and their families cannot be overstated. </sent>
+						<sent
+							id="dtb_1391"
+							smilref="0020.smil#sm_1981">Children and young people with disabilities are among the most authoritative sources of information on what they need and whether their needs are being met.</sent>
+					</p>
+				</level2>
+				<level2>
+					<h2
+						id="dtb_1392"
+						smilref="0021.smil#sm_1985">Coordinate services to support the child</h2>
+					<p
+						id="dtb_1393">
+						<sent
+							id="dtb_1394"
+							smilref="0021.smil#sm_1987">The effects of disability cut across sectors, requiring coordinated services to address the full range of challenges facing children with disabilities and their families. </sent>
+						<sent
+							id="dtb_1395"
+							smilref="0021.smil#sm_1989">A coordinated programme of early intervention across the health, education and welfare sectors would help to promote the early identification and management of childhood disabilities. </sent>
+						<sent
+							id="dtb_1396"
+							smilref="0021.smil#sm_1991">Earlier interventions have been shown to lead to larger gains in functional capacity, and removing barriers earlier in life lessens the compounding effect of the multiple barriers faced by children with disabilities.</sent>
+					</p>
+					<p
+						id="dtb_1397"
+						smilref="0021.smil#sm_1993">Improvements in ability will have greater impact if school systems are willing and able to accept children with disabilities and meet their needs, while inclusive school-to-work programmes as well as economy-wide efforts to promote the employment of people with disabilities will make acquiring an education more meaningful for them.</p>
+					<pagenum
+						page="normal"
+						id="dtb_1398"
+						smilref="0021.smil#sm_1995">25</pagenum>
+					<sidebar
+						render="optional"
+						id="dtb_1399"
+						smilref="0021.smil#sm_1998"> <p
+							id="dtb_1400"><strong
+								id="dtb_1401"
+								smilref="0021.smil#sm_1999">Conventions, optional protocols, signatures and ratifications</strong></p> <p
+							id="dtb_1402"
+							smilref="0021.smil#sm_2001"><strong
+								id="dtb_1403">A Convention</strong> is a formal, multilateral agreement between many States parties.</p> <p
+							id="dtb_1404"><sent
+								id="dtb_1405"
+								smilref="0021.smil#sm_2003">An <strong
+									id="dtb_1406">Optional Protocol</strong> to a Convention is a legal instrument intended to supplement the original agreement by establishing additional rights or obligations. </sent><sent
+								id="dtb_1407"
+								smilref="0021.smil#sm_2005">Such a protocol is optional in the sense that States parties to a Convention are not automatically bound by its provisions, but must ratify it independently. </sent><sent
+								id="dtb_1408"
+								smilref="0021.smil#sm_2007">Thus, a State may be party to a Convention but not to its Optional Protocols.</sent></p> <p
+							id="dtb_1409"
+							smilref="0021.smil#sm_2009">In most cases, a State becomes party to a Convention by following two steps: signature and ratification.</p> <p
+							id="dtb_1410"><sent
+								id="dtb_1411"
+								smilref="0021.smil#sm_2011">By <strong
+									id="dtb_1412">signing a Convention,</strong> a State indicates its intention to take steps to examine the Convention and its compatibility with domestic law. </sent><sent
+								id="dtb_1413"
+								smilref="0021.smil#sm_2013">A signature does not create a legal obligation to be bound by a Convention's provisions, but it indicates that a State will not take actions that would undermine the purpose of the Convention.</sent></p> <p
+							id="dtb_1414"><sent
+								id="dtb_1415"
+								smilref="0021.smil#sm_2015"><strong
+									id="dtb_1416">Ratification</strong> is the concrete action by which a State agrees to be legally bound by the terms of a Convention. </sent><sent
+								id="dtb_1417"
+								smilref="0021.smil#sm_2017">The procedure varies according to each country's particular legislative structure. </sent><sent
+								id="dtb_1418"
+								smilref="0021.smil#sm_2019">In some cases, a state will <strong
+									id="dtb_1419">accede</strong> to a Convention or Optional Protocol. </sent><sent
+								id="dtb_1420"
+								smilref="0021.smil#sm_2021">Essentially, <strong
+									id="dtb_1421">accession</strong> is like ratifying without first having to sign.</sent></p> <p
+							id="dtb_1422"><sent
+								id="dtb_1423"
+								smilref="0021.smil#sm_2023"><em
+									id="dtb_1424">More detailed definitions are available at</em> &lt;http://treaties.un.org/Pages/Overview.aspx?</sent><sent
+								id="dtb_1425"
+								smilref="0021.smil#sm_2025">path=overview/definition/page 1_en.xml&gt;.</sent></p> <p
+							id="dtb_1426"
+							smilref="0021.smil#sm_2027"><em
+								id="dtb_1427">The Convention on the Rights of Persons with Disabilities is available at</em> &lt;http://treaties.un.org/doc/Publication/CTC/Ch_IV_15.pdf&gt;.</p> <p
+							id="dtb_1428"
+							smilref="0021.smil#sm_2029"><em
+								id="dtb_1429">The Optional Protocol is available at</em> &lt;http://treaties.un.org/doc/Publication/CTC/Ch-15-a.pdf&gt;.</p> </sidebar>
+				</level2>
+				<level2>
+					<h2
+						id="dtb_1430"
+						smilref="0022.smil#sm_2033">Involve children with disabilities in making decisions</h2>
+					<p
+						id="dtb_1431">
+						<sent
+							id="dtb_1432"
+							smilref="0022.smil#sm_2035">Children and adolescents with disabilities belong at the centre of efforts to build inclusive societies — not just as beneficiaries, but as agents of change. </sent>
+						<sent
+							id="dtb_1433"
+							smilref="0022.smil#sm_2037">They are uniquely qualified to provide information on whether their needs are being met.</sent>
+					</p>
+					<p
+						id="dtb_1434">
+						<sent
+							id="dtb_1435"
+							smilref="0022.smil#sm_2039">States parties to the CRC and CRPD have affirmed the right of children with disabilities to express their views on matters concerning them and to be consulted when legislation and policies concerning them are developed and implemented. </sent>
+						<sent
+							id="dtb_1436"
+							smilref="0022.smil#sm_2041">To that end, decision-makers will need to communicate in ways and using means that are easily accessed and used by children and young people with disabilities.</sent>
+					</p>
+					<p
+						id="dtb_1437">
+						<sent
+							id="dtb_1438"
+							smilref="0022.smil#sm_2043">The right to be heard applies to all children. </sent>
+						<sent
+							id="dtb_1439"
+							smilref="0022.smil#sm_2045">A child who is able to express herself or himself is much less likely to be abused or exploited. </sent>
+						<sent
+							id="dtb_1440"
+							smilref="0022.smil#sm_2047">Participation is especially important for such marginalized groups as children who live in institutions.</sent>
+					</p>
+				</level2>
+				<level2>
+					<h2
+						id="dtb_1441"
+						smilref="0023.smil#sm_2051">Global promise, local test</h2>
+					<p
+						id="dtb_1442"
+						smilref="0023.smil#sm_2053">In order to fulfil the promises of the CRPD and the CRC, international agencies and donors and their national and local partners can include children with disabilities in the objectives, targets and monitoring of all development programmes.</p>
+					<p
+						id="dtb_1443">
+						<sent
+							id="dtb_1444"
+							smilref="0023.smil#sm_2055">Reliable and objective data are important to assist in planning and resource allocation and to place children with disabilities more clearly on the development agenda. </sent>
+						<sent
+							id="dtb_1445"
+							smilref="0023.smil#sm_2057">To give impetus to the necessary statistical work, international donors can promote a concerted global research agenda on disability. </sent>
+						<sent
+							id="dtb_1446"
+							smilref="0023.smil#sm_2059">In the meantime, programmes and budgets can be designed to allow for modifications as additional information is made available.</sent>
+					</p>
+					<p
+						id="dtb_1447"
+						smilref="0023.smil#sm_2061">The ultimate proof of all global and national efforts will be local, the test being whether every child with a disability enjoys her or his rights — including access to services, support and opportunities — on a par with other children, even in the most remote settings and the most deprived circumstances.</p>
+					<pagenum
+						id="dtb_1448"
+						page="normal"
+						smilref="0023.smil#sm_2063">26</pagenum>
+					<blockquote
+						id="dtb_1449">
+						<p
+							id="dtb_1450">
+							<sent
+								id="dtb_1451">
+								<strong
+									id="dtb_1452"
+									smilref="0023.smil#sm_2066">“Somewhere, a child is being told he cannot play because he cannot walk, or another that she cannot learn because she cannot see. That boy deserves a chance to play. And we all benefit when that girl, and all children, can read, learn and contribute.</strong>
+							</sent>
+						</p>
+						<p
+							id="dtb_1453">
+							<sent
+								id="dtb_1454">
+								<strong
+									id="dtb_1455"
+									smilref="0023.smil#sm_2068">The path forward will be challenging. But children do not accept unnecessary limits. Neither should we.”</strong>
+							</sent>
+						</p>
+						<p
+							id="dtb_1456">
+							<strong
+								id="dtb_1457"
+								smilref="0023.smil#sm_2070">Anthony Lake</strong>
+						</p>
+						<p
+							id="dtb_1458"
+							smilref="0023.smil#sm_2072">Executive Director, UNICEF</p>
+					</blockquote>
+					<p
+						id="dtb_1459">
+						<strong
+							id="dtb_1460"
+							smilref="0023.smil#sm_2074">Cover photograph:</strong>
+					</p>
+					<p
+						id="dtb_1461">
+						<strong
+							id="dtb_1462"
+							smilref="0023.smil#sm_2076">School children queue to enter their classroom in this 2007 photograph from the Syrian Arab Republic. © UNICEF/HQ2007-0745/Noorani</strong>
+					</p>
+					<p
+						id="dtb_1463">
+						<strong
+							id="dtb_1464"
+							smilref="0023.smil#sm_2078">Design by Prographics, Inc.</strong>
+					</p>
+					<p
+						id="dtb_1465">
+						<strong
+							id="dtb_1466"
+							smilref="0023.smil#sm_2080">United Nations Children's Fund</strong>
+					</p>
+					<p
+						id="dtb_1467">
+						<strong
+							id="dtb_1468"
+							smilref="0023.smil#sm_2082">3 United Nations Plaza</strong>
+					</p>
+					<p
+						id="dtb_1469">
+						<strong
+							id="dtb_1470"
+							smilref="0023.smil#sm_2084">New York, NY 10017</strong>
+					</p>
+					<p
+						id="dtb_1471">
+						<strong
+							id="dtb_1472"
+							smilref="0023.smil#sm_2086">pubdoc@unicef.org www.unicef.org/sowc2013</strong>
+					</p>
+					<p
+						id="dtb_1473"
+						smilref="0023.smil#sm_2088">© <strong
+							id="dtb_1474">United Nations Children's Fund (UNICEF) May 2013</strong></p>
+					<p
+						id="dtb_1475"
+						smilref="0023.smil#sm_2090">To read this report online, go to www.unicef.org/sowc2013</p>
+				</level2>
+			</level1>
+		</bodymatter>
+	</book>
+</dtbook>

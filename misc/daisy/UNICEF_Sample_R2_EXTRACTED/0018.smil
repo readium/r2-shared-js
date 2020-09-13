@@ -1,0 +1,1569 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE smil PUBLIC "-//NISO//DTD dtbsmil 2005-2//EN" "http://www.daisy.org/z3986/2005/dtbsmil-2005-2.dtd">
+<smil xmlns="http://www.w3.org/2001/SMIL20/">
+	<head>
+		<meta
+			name="dtb:uid"
+			content="DTB11468" />
+		<meta
+			name="dtb:generator"
+			content="Tobi and the Urakawa SDK: the open-source DAISY multimedia authoring toolkit" />
+		<meta
+			name="dtb:totalElapsedTime"
+			content="00:00:00" />
+		<customAttributes>
+			<customTest
+				defaultState="false"
+				id="prodnote"
+				override="visible" />
+		</customAttributes>
+	</head>
+	<body>
+		<seq
+			id="sm_1437"
+			dur="00:00:00"
+			fill="remove">
+			<seq
+				id="sm_1438"
+				class="h2">
+				<par
+					id="sm_1439">
+					<text
+						id="sm_1440"
+						src="dtbook.xml#dtb_981" />
+				</par>
+			</seq>
+			<par
+				id="sm_1441">
+				<text
+					id="sm_1442"
+					src="dtbook.xml#dtb_983" />
+			</par>
+			<par
+				id="sm_1443">
+				<text
+					id="sm_1444"
+					src="dtbook.xml#dtb_984" />
+			</par>
+			<par
+				id="sm_1445">
+				<text
+					id="sm_1446"
+					src="dtbook.xml#dtb_985" />
+			</par>
+			<par
+				id="sm_1447">
+				<text
+					id="sm_1448"
+					src="dtbook.xml#dtb_986" />
+			</par>
+			<seq
+				id="sm_1449"
+				class="table"
+				end="DTBuserEscape;sm_1476.end"
+				fill="remove">
+				<seq
+					id="sm_1450"
+					class="tr"
+					end="DTBuserEscape;sm_1469.end"
+					fill="remove">
+					<par
+						id="sm_1451">
+						<text
+							id="sm_1452"
+							src="dtbook.xml#dtb_991" />
+					</par>
+					<par
+						id="sm_1453">
+						<text
+							id="sm_1454"
+							src="dtbook.xml#dtb_992" />
+					</par>
+					<par
+						id="sm_1455">
+						<text
+							id="sm_1456"
+							src="dtbook.xml#dtb_995" />
+					</par>
+					<par
+						id="sm_1457">
+						<text
+							id="sm_1458"
+							src="dtbook.xml#dtb_996" />
+					</par>
+					<par
+						id="sm_1459">
+						<text
+							id="sm_1460"
+							src="dtbook.xml#dtb_999" />
+					</par>
+					<par
+						id="sm_1461">
+						<text
+							id="sm_1462"
+							src="dtbook.xml#dtb_1000" />
+					</par>
+					<par
+						id="sm_1463">
+						<text
+							id="sm_1464"
+							src="dtbook.xml#dtb_1003" />
+					</par>
+					<par
+						id="sm_1465">
+						<text
+							id="sm_1466"
+							src="dtbook.xml#dtb_1004" />
+					</par>
+					<par
+						id="sm_1467">
+						<text
+							id="sm_1468"
+							src="dtbook.xml#dtb_1007" />
+					</par>
+					<par
+						id="sm_1469">
+						<text
+							id="sm_1470"
+							src="dtbook.xml#dtb_1008" />
+					</par>
+				</seq>
+				<seq
+					id="sm_1471"
+					class="prodnote"
+					end="DTBuserEscape;sm_1474.end"
+					fill="remove"
+					customTest="prodnote">
+					<par
+						id="sm_1472">
+						<text
+							id="sm_1473"
+							src="dtbook.xml#dtb_1011" />
+					</par>
+					<par
+						id="sm_1474">
+						<text
+							id="sm_1475"
+							src="dtbook.xml#dtb_1012" />
+					</par>
+				</seq>
+				<seq
+					id="sm_1476"
+					class="table"
+					end="DTBuserEscape;sm_1477.end"
+					fill="remove">
+					<seq
+						id="sm_1477"
+						class="tr"
+						end="DTBuserEscape;sm_1944.end"
+						fill="remove">
+						<par
+							id="sm_1478">
+							<text
+								id="sm_1479"
+								src="dtbook.xml#dtb_1017" />
+						</par>
+						<par
+							id="sm_1480">
+							<text
+								id="sm_1481"
+								src="dtbook.xml#dtb_1018" />
+						</par>
+						<par
+							id="sm_1482">
+							<text
+								id="sm_1483"
+								src="dtbook.xml#dtb_1020" />
+						</par>
+						<par
+							id="sm_1484">
+							<text
+								id="sm_1485"
+								src="dtbook.xml#dtb_1021" />
+						</par>
+						<par
+							id="sm_1486">
+							<text
+								id="sm_1487"
+								src="dtbook.xml#dtb_1023" />
+						</par>
+						<par
+							id="sm_1488">
+							<text
+								id="sm_1489"
+								src="dtbook.xml#dtb_1024" />
+						</par>
+						<par
+							id="sm_1490">
+							<text
+								id="sm_1491"
+								src="dtbook.xml#dtb_1026" />
+						</par>
+						<par
+							id="sm_1492">
+							<text
+								id="sm_1493"
+								src="dtbook.xml#dtb_1027" />
+						</par>
+						<par
+							id="sm_1494">
+							<text
+								id="sm_1495"
+								src="dtbook.xml#dtb_1029" />
+						</par>
+						<par
+							id="sm_1496">
+							<text
+								id="sm_1497"
+								src="dtbook.xml#dtb_1030" />
+						</par>
+						<par
+							id="sm_1498">
+							<text
+								id="sm_1499"
+								src="dtbook.xml#dtb_1032" />
+						</par>
+						<par
+							id="sm_1500">
+							<text
+								id="sm_1501"
+								src="dtbook.xml#dtb_1033" />
+						</par>
+						<par
+							id="sm_1502">
+							<text
+								id="sm_1503"
+								src="dtbook.xml#dtb_1035" />
+						</par>
+						<par
+							id="sm_1504">
+							<text
+								id="sm_1505"
+								src="dtbook.xml#dtb_1036" />
+						</par>
+						<par
+							id="sm_1506">
+							<text
+								id="sm_1507"
+								src="dtbook.xml#dtb_1038" />
+						</par>
+						<par
+							id="sm_1508">
+							<text
+								id="sm_1509"
+								src="dtbook.xml#dtb_1039" />
+						</par>
+						<par
+							id="sm_1510">
+							<text
+								id="sm_1511"
+								src="dtbook.xml#dtb_1041" />
+						</par>
+						<par
+							id="sm_1512">
+							<text
+								id="sm_1513"
+								src="dtbook.xml#dtb_1042" />
+						</par>
+						<par
+							id="sm_1514">
+							<text
+								id="sm_1515"
+								src="dtbook.xml#dtb_1044" />
+						</par>
+						<par
+							id="sm_1516">
+							<text
+								id="sm_1517"
+								src="dtbook.xml#dtb_1045" />
+						</par>
+						<par
+							id="sm_1518">
+							<text
+								id="sm_1519"
+								src="dtbook.xml#dtb_1047" />
+						</par>
+						<par
+							id="sm_1520">
+							<text
+								id="sm_1521"
+								src="dtbook.xml#dtb_1048" />
+						</par>
+						<par
+							id="sm_1522">
+							<text
+								id="sm_1523"
+								src="dtbook.xml#dtb_1050" />
+						</par>
+						<par
+							id="sm_1524">
+							<text
+								id="sm_1525"
+								src="dtbook.xml#dtb_1051" />
+						</par>
+						<par
+							id="sm_1526">
+							<text
+								id="sm_1527"
+								src="dtbook.xml#dtb_1053" />
+						</par>
+						<par
+							id="sm_1528">
+							<text
+								id="sm_1529"
+								src="dtbook.xml#dtb_1054" />
+						</par>
+						<par
+							id="sm_1530">
+							<text
+								id="sm_1531"
+								src="dtbook.xml#dtb_1056" />
+						</par>
+						<par
+							id="sm_1532">
+							<text
+								id="sm_1533"
+								src="dtbook.xml#dtb_1057" />
+						</par>
+						<par
+							id="sm_1534">
+							<text
+								id="sm_1535"
+								src="dtbook.xml#dtb_1059" />
+						</par>
+						<par
+							id="sm_1536">
+							<text
+								id="sm_1537"
+								src="dtbook.xml#dtb_1060" />
+						</par>
+						<par
+							id="sm_1538">
+							<text
+								id="sm_1539"
+								src="dtbook.xml#dtb_1062" />
+						</par>
+						<par
+							id="sm_1540">
+							<text
+								id="sm_1541"
+								src="dtbook.xml#dtb_1063" />
+						</par>
+						<par
+							id="sm_1542">
+							<text
+								id="sm_1543"
+								src="dtbook.xml#dtb_1065" />
+						</par>
+						<par
+							id="sm_1544">
+							<text
+								id="sm_1545"
+								src="dtbook.xml#dtb_1066" />
+						</par>
+						<par
+							id="sm_1546">
+							<text
+								id="sm_1547"
+								src="dtbook.xml#dtb_1068" />
+						</par>
+						<par
+							id="sm_1548">
+							<text
+								id="sm_1549"
+								src="dtbook.xml#dtb_1069" />
+						</par>
+						<par
+							id="sm_1550">
+							<text
+								id="sm_1551"
+								src="dtbook.xml#dtb_1071" />
+						</par>
+						<par
+							id="sm_1552">
+							<text
+								id="sm_1553"
+								src="dtbook.xml#dtb_1072" />
+						</par>
+						<par
+							id="sm_1554">
+							<text
+								id="sm_1555"
+								src="dtbook.xml#dtb_1074" />
+						</par>
+						<par
+							id="sm_1556">
+							<text
+								id="sm_1557"
+								src="dtbook.xml#dtb_1075" />
+						</par>
+						<par
+							id="sm_1558">
+							<text
+								id="sm_1559"
+								src="dtbook.xml#dtb_1077" />
+						</par>
+						<par
+							id="sm_1560">
+							<text
+								id="sm_1561"
+								src="dtbook.xml#dtb_1078" />
+						</par>
+						<par
+							id="sm_1562">
+							<text
+								id="sm_1563"
+								src="dtbook.xml#dtb_1080" />
+						</par>
+						<par
+							id="sm_1564">
+							<text
+								id="sm_1565"
+								src="dtbook.xml#dtb_1081" />
+						</par>
+						<par
+							id="sm_1566">
+							<text
+								id="sm_1567"
+								src="dtbook.xml#dtb_1083" />
+						</par>
+						<par
+							id="sm_1568">
+							<text
+								id="sm_1569"
+								src="dtbook.xml#dtb_1084" />
+						</par>
+						<par
+							id="sm_1570">
+							<text
+								id="sm_1571"
+								src="dtbook.xml#dtb_1086" />
+						</par>
+						<par
+							id="sm_1572">
+							<text
+								id="sm_1573"
+								src="dtbook.xml#dtb_1087" />
+						</par>
+						<par
+							id="sm_1574">
+							<text
+								id="sm_1575"
+								src="dtbook.xml#dtb_1089" />
+						</par>
+						<par
+							id="sm_1576">
+							<text
+								id="sm_1577"
+								src="dtbook.xml#dtb_1090" />
+						</par>
+						<par
+							id="sm_1578">
+							<text
+								id="sm_1579"
+								src="dtbook.xml#dtb_1092" />
+						</par>
+						<par
+							id="sm_1580">
+							<text
+								id="sm_1581"
+								src="dtbook.xml#dtb_1093" />
+						</par>
+						<par
+							id="sm_1582">
+							<text
+								id="sm_1583"
+								src="dtbook.xml#dtb_1095" />
+						</par>
+						<par
+							id="sm_1584">
+							<text
+								id="sm_1585"
+								src="dtbook.xml#dtb_1096" />
+						</par>
+						<par
+							id="sm_1586">
+							<text
+								id="sm_1587"
+								src="dtbook.xml#dtb_1098" />
+						</par>
+						<par
+							id="sm_1588">
+							<text
+								id="sm_1589"
+								src="dtbook.xml#dtb_1099" />
+						</par>
+						<par
+							id="sm_1590">
+							<text
+								id="sm_1591"
+								src="dtbook.xml#dtb_1101" />
+						</par>
+						<par
+							id="sm_1592">
+							<text
+								id="sm_1593"
+								src="dtbook.xml#dtb_1102" />
+						</par>
+						<par
+							id="sm_1594">
+							<text
+								id="sm_1595"
+								src="dtbook.xml#dtb_1104" />
+						</par>
+						<par
+							id="sm_1596">
+							<text
+								id="sm_1597"
+								src="dtbook.xml#dtb_1105" />
+						</par>
+						<par
+							id="sm_1598">
+							<text
+								id="sm_1599"
+								src="dtbook.xml#dtb_1107" />
+						</par>
+						<par
+							id="sm_1600">
+							<text
+								id="sm_1601"
+								src="dtbook.xml#dtb_1108" />
+						</par>
+						<par
+							id="sm_1602">
+							<text
+								id="sm_1603"
+								src="dtbook.xml#dtb_1111" />
+						</par>
+						<par
+							id="sm_1604">
+							<text
+								id="sm_1605"
+								src="dtbook.xml#dtb_1112" />
+						</par>
+						<par
+							id="sm_1606">
+							<text
+								id="sm_1607"
+								src="dtbook.xml#dtb_1114" />
+						</par>
+						<par
+							id="sm_1608">
+							<text
+								id="sm_1609"
+								src="dtbook.xml#dtb_1115" />
+						</par>
+						<par
+							id="sm_1610">
+							<text
+								id="sm_1611"
+								src="dtbook.xml#dtb_1117" />
+						</par>
+						<par
+							id="sm_1612">
+							<text
+								id="sm_1613"
+								src="dtbook.xml#dtb_1118" />
+						</par>
+						<par
+							id="sm_1614">
+							<text
+								id="sm_1615"
+								src="dtbook.xml#dtb_1120" />
+						</par>
+						<par
+							id="sm_1616">
+							<text
+								id="sm_1617"
+								src="dtbook.xml#dtb_1121" />
+						</par>
+						<par
+							id="sm_1618">
+							<text
+								id="sm_1619"
+								src="dtbook.xml#dtb_1123" />
+						</par>
+						<par
+							id="sm_1620">
+							<text
+								id="sm_1621"
+								src="dtbook.xml#dtb_1124" />
+						</par>
+						<par
+							id="sm_1622">
+							<text
+								id="sm_1623"
+								src="dtbook.xml#dtb_1126" />
+						</par>
+						<par
+							id="sm_1624">
+							<text
+								id="sm_1625"
+								src="dtbook.xml#dtb_1127" />
+						</par>
+						<par
+							id="sm_1626">
+							<text
+								id="sm_1627"
+								src="dtbook.xml#dtb_1129" />
+						</par>
+						<par
+							id="sm_1628">
+							<text
+								id="sm_1629"
+								src="dtbook.xml#dtb_1130" />
+						</par>
+						<par
+							id="sm_1630">
+							<text
+								id="sm_1631"
+								src="dtbook.xml#dtb_1132" />
+						</par>
+						<par
+							id="sm_1632">
+							<text
+								id="sm_1633"
+								src="dtbook.xml#dtb_1133" />
+						</par>
+						<par
+							id="sm_1634">
+							<text
+								id="sm_1635"
+								src="dtbook.xml#dtb_1135" />
+						</par>
+						<par
+							id="sm_1636">
+							<text
+								id="sm_1637"
+								src="dtbook.xml#dtb_1136" />
+						</par>
+						<par
+							id="sm_1638">
+							<text
+								id="sm_1639"
+								src="dtbook.xml#dtb_1138" />
+						</par>
+						<par
+							id="sm_1640">
+							<text
+								id="sm_1641"
+								src="dtbook.xml#dtb_1139" />
+						</par>
+						<par
+							id="sm_1642">
+							<text
+								id="sm_1643"
+								src="dtbook.xml#dtb_1141" />
+						</par>
+						<par
+							id="sm_1644">
+							<text
+								id="sm_1645"
+								src="dtbook.xml#dtb_1142" />
+						</par>
+						<par
+							id="sm_1646">
+							<text
+								id="sm_1647"
+								src="dtbook.xml#dtb_1144" />
+						</par>
+						<par
+							id="sm_1648">
+							<text
+								id="sm_1649"
+								src="dtbook.xml#dtb_1145" />
+						</par>
+						<par
+							id="sm_1650">
+							<text
+								id="sm_1651"
+								src="dtbook.xml#dtb_1147" />
+						</par>
+						<par
+							id="sm_1652">
+							<text
+								id="sm_1653"
+								src="dtbook.xml#dtb_1148" />
+						</par>
+						<par
+							id="sm_1654">
+							<text
+								id="sm_1655"
+								src="dtbook.xml#dtb_1150" />
+						</par>
+						<par
+							id="sm_1656">
+							<text
+								id="sm_1657"
+								src="dtbook.xml#dtb_1151" />
+						</par>
+						<par
+							id="sm_1658">
+							<text
+								id="sm_1659"
+								src="dtbook.xml#dtb_1153" />
+						</par>
+						<par
+							id="sm_1660">
+							<text
+								id="sm_1661"
+								src="dtbook.xml#dtb_1154" />
+						</par>
+						<par
+							id="sm_1662">
+							<text
+								id="sm_1663"
+								src="dtbook.xml#dtb_1156" />
+						</par>
+						<par
+							id="sm_1664">
+							<text
+								id="sm_1665"
+								src="dtbook.xml#dtb_1157" />
+						</par>
+						<par
+							id="sm_1666">
+							<text
+								id="sm_1667"
+								src="dtbook.xml#dtb_1159" />
+						</par>
+						<par
+							id="sm_1668">
+							<text
+								id="sm_1669"
+								src="dtbook.xml#dtb_1160" />
+						</par>
+						<par
+							id="sm_1670">
+							<text
+								id="sm_1671"
+								src="dtbook.xml#dtb_1162" />
+						</par>
+						<par
+							id="sm_1672">
+							<text
+								id="sm_1673"
+								src="dtbook.xml#dtb_1163" />
+						</par>
+						<par
+							id="sm_1674">
+							<text
+								id="sm_1675"
+								src="dtbook.xml#dtb_1165" />
+						</par>
+						<par
+							id="sm_1676">
+							<text
+								id="sm_1677"
+								src="dtbook.xml#dtb_1166" />
+						</par>
+						<par
+							id="sm_1678">
+							<text
+								id="sm_1679"
+								src="dtbook.xml#dtb_1168" />
+						</par>
+						<par
+							id="sm_1680">
+							<text
+								id="sm_1681"
+								src="dtbook.xml#dtb_1169" />
+						</par>
+						<par
+							id="sm_1682">
+							<text
+								id="sm_1683"
+								src="dtbook.xml#dtb_1171" />
+						</par>
+						<par
+							id="sm_1684">
+							<text
+								id="sm_1685"
+								src="dtbook.xml#dtb_1172" />
+						</par>
+						<par
+							id="sm_1686">
+							<text
+								id="sm_1687"
+								src="dtbook.xml#dtb_1174" />
+						</par>
+						<par
+							id="sm_1688">
+							<text
+								id="sm_1689"
+								src="dtbook.xml#dtb_1175" />
+						</par>
+						<par
+							id="sm_1690">
+							<text
+								id="sm_1691"
+								src="dtbook.xml#dtb_1177" />
+						</par>
+						<par
+							id="sm_1692">
+							<text
+								id="sm_1693"
+								src="dtbook.xml#dtb_1178" />
+						</par>
+						<par
+							id="sm_1694">
+							<text
+								id="sm_1695"
+								src="dtbook.xml#dtb_1180" />
+						</par>
+						<par
+							id="sm_1696">
+							<text
+								id="sm_1697"
+								src="dtbook.xml#dtb_1181" />
+						</par>
+						<par
+							id="sm_1698">
+							<text
+								id="sm_1699"
+								src="dtbook.xml#dtb_1183" />
+						</par>
+						<par
+							id="sm_1700">
+							<text
+								id="sm_1701"
+								src="dtbook.xml#dtb_1184" />
+						</par>
+						<par
+							id="sm_1702">
+							<text
+								id="sm_1703"
+								src="dtbook.xml#dtb_1186" />
+						</par>
+						<par
+							id="sm_1704">
+							<text
+								id="sm_1705"
+								src="dtbook.xml#dtb_1187" />
+						</par>
+						<par
+							id="sm_1706">
+							<text
+								id="sm_1707"
+								src="dtbook.xml#dtb_1189" />
+						</par>
+						<par
+							id="sm_1708">
+							<text
+								id="sm_1709"
+								src="dtbook.xml#dtb_1190" />
+						</par>
+						<par
+							id="sm_1710">
+							<text
+								id="sm_1711"
+								src="dtbook.xml#dtb_1192" />
+						</par>
+						<par
+							id="sm_1712">
+							<text
+								id="sm_1713"
+								src="dtbook.xml#dtb_1193" />
+						</par>
+						<par
+							id="sm_1714">
+							<text
+								id="sm_1715"
+								src="dtbook.xml#dtb_1195" />
+						</par>
+						<par
+							id="sm_1716">
+							<text
+								id="sm_1717"
+								src="dtbook.xml#dtb_1196" />
+						</par>
+						<par
+							id="sm_1718">
+							<text
+								id="sm_1719"
+								src="dtbook.xml#dtb_1198" />
+						</par>
+						<par
+							id="sm_1720">
+							<text
+								id="sm_1721"
+								src="dtbook.xml#dtb_1199" />
+						</par>
+						<par
+							id="sm_1722">
+							<text
+								id="sm_1723"
+								src="dtbook.xml#dtb_1201" />
+						</par>
+						<par
+							id="sm_1724">
+							<text
+								id="sm_1725"
+								src="dtbook.xml#dtb_1202" />
+						</par>
+						<par
+							id="sm_1726">
+							<text
+								id="sm_1727"
+								src="dtbook.xml#dtb_1204" />
+						</par>
+						<par
+							id="sm_1728">
+							<text
+								id="sm_1729"
+								src="dtbook.xml#dtb_1205" />
+						</par>
+						<par
+							id="sm_1730">
+							<text
+								id="sm_1731"
+								src="dtbook.xml#dtb_1208" />
+						</par>
+						<par
+							id="sm_1732">
+							<text
+								id="sm_1733"
+								src="dtbook.xml#dtb_1209" />
+						</par>
+						<par
+							id="sm_1734">
+							<text
+								id="sm_1735"
+								src="dtbook.xml#dtb_1211" />
+						</par>
+						<par
+							id="sm_1736">
+							<text
+								id="sm_1737"
+								src="dtbook.xml#dtb_1212" />
+						</par>
+						<par
+							id="sm_1738">
+							<text
+								id="sm_1739"
+								src="dtbook.xml#dtb_1214" />
+						</par>
+						<par
+							id="sm_1740">
+							<text
+								id="sm_1741"
+								src="dtbook.xml#dtb_1215" />
+						</par>
+						<par
+							id="sm_1742">
+							<text
+								id="sm_1743"
+								src="dtbook.xml#dtb_1217" />
+						</par>
+						<par
+							id="sm_1744">
+							<text
+								id="sm_1745"
+								src="dtbook.xml#dtb_1218" />
+						</par>
+						<par
+							id="sm_1746">
+							<text
+								id="sm_1747"
+								src="dtbook.xml#dtb_1220" />
+						</par>
+						<par
+							id="sm_1748">
+							<text
+								id="sm_1749"
+								src="dtbook.xml#dtb_1221" />
+						</par>
+						<par
+							id="sm_1750">
+							<text
+								id="sm_1751"
+								src="dtbook.xml#dtb_1223" />
+						</par>
+						<par
+							id="sm_1752">
+							<text
+								id="sm_1753"
+								src="dtbook.xml#dtb_1224" />
+						</par>
+						<par
+							id="sm_1754">
+							<text
+								id="sm_1755"
+								src="dtbook.xml#dtb_1226" />
+						</par>
+						<par
+							id="sm_1756">
+							<text
+								id="sm_1757"
+								src="dtbook.xml#dtb_1227" />
+						</par>
+						<par
+							id="sm_1758">
+							<text
+								id="sm_1759"
+								src="dtbook.xml#dtb_1229" />
+						</par>
+						<par
+							id="sm_1760">
+							<text
+								id="sm_1761"
+								src="dtbook.xml#dtb_1230" />
+						</par>
+						<par
+							id="sm_1762">
+							<text
+								id="sm_1763"
+								src="dtbook.xml#dtb_1232" />
+						</par>
+						<par
+							id="sm_1764">
+							<text
+								id="sm_1765"
+								src="dtbook.xml#dtb_1233" />
+						</par>
+						<par
+							id="sm_1766">
+							<text
+								id="sm_1767"
+								src="dtbook.xml#dtb_1235" />
+						</par>
+						<par
+							id="sm_1768">
+							<text
+								id="sm_1769"
+								src="dtbook.xml#dtb_1236" />
+						</par>
+						<par
+							id="sm_1770">
+							<text
+								id="sm_1771"
+								src="dtbook.xml#dtb_1238" />
+						</par>
+						<par
+							id="sm_1772">
+							<text
+								id="sm_1773"
+								src="dtbook.xml#dtb_1239" />
+						</par>
+						<par
+							id="sm_1774">
+							<text
+								id="sm_1775"
+								src="dtbook.xml#dtb_1241" />
+						</par>
+						<par
+							id="sm_1776">
+							<text
+								id="sm_1777"
+								src="dtbook.xml#dtb_1242" />
+						</par>
+						<par
+							id="sm_1778">
+							<text
+								id="sm_1779"
+								src="dtbook.xml#dtb_1244" />
+						</par>
+						<par
+							id="sm_1780">
+							<text
+								id="sm_1781"
+								src="dtbook.xml#dtb_1245" />
+						</par>
+						<par
+							id="sm_1782">
+							<text
+								id="sm_1783"
+								src="dtbook.xml#dtb_1247" />
+						</par>
+						<par
+							id="sm_1784">
+							<text
+								id="sm_1785"
+								src="dtbook.xml#dtb_1248" />
+						</par>
+						<par
+							id="sm_1786">
+							<text
+								id="sm_1787"
+								src="dtbook.xml#dtb_1250" />
+						</par>
+						<par
+							id="sm_1788">
+							<text
+								id="sm_1789"
+								src="dtbook.xml#dtb_1251" />
+						</par>
+						<par
+							id="sm_1790">
+							<text
+								id="sm_1791"
+								src="dtbook.xml#dtb_1253" />
+						</par>
+						<par
+							id="sm_1792">
+							<text
+								id="sm_1793"
+								src="dtbook.xml#dtb_1254" />
+						</par>
+						<par
+							id="sm_1794">
+							<text
+								id="sm_1795"
+								src="dtbook.xml#dtb_1256" />
+						</par>
+						<par
+							id="sm_1796">
+							<text
+								id="sm_1797"
+								src="dtbook.xml#dtb_1257" />
+						</par>
+						<par
+							id="sm_1798">
+							<text
+								id="sm_1799"
+								src="dtbook.xml#dtb_1259" />
+						</par>
+						<par
+							id="sm_1800">
+							<text
+								id="sm_1801"
+								src="dtbook.xml#dtb_1260" />
+						</par>
+						<par
+							id="sm_1802">
+							<text
+								id="sm_1803"
+								src="dtbook.xml#dtb_1262" />
+						</par>
+						<par
+							id="sm_1804">
+							<text
+								id="sm_1805"
+								src="dtbook.xml#dtb_1263" />
+						</par>
+						<par
+							id="sm_1806">
+							<text
+								id="sm_1807"
+								src="dtbook.xml#dtb_1265" />
+						</par>
+						<par
+							id="sm_1808">
+							<text
+								id="sm_1809"
+								src="dtbook.xml#dtb_1266" />
+						</par>
+						<par
+							id="sm_1810">
+							<text
+								id="sm_1811"
+								src="dtbook.xml#dtb_1268" />
+						</par>
+						<par
+							id="sm_1812">
+							<text
+								id="sm_1813"
+								src="dtbook.xml#dtb_1269" />
+						</par>
+						<par
+							id="sm_1814">
+							<text
+								id="sm_1815"
+								src="dtbook.xml#dtb_1271" />
+						</par>
+						<par
+							id="sm_1816">
+							<text
+								id="sm_1817"
+								src="dtbook.xml#dtb_1272" />
+						</par>
+						<par
+							id="sm_1818">
+							<text
+								id="sm_1819"
+								src="dtbook.xml#dtb_1274" />
+						</par>
+						<par
+							id="sm_1820">
+							<text
+								id="sm_1821"
+								src="dtbook.xml#dtb_1275" />
+						</par>
+						<par
+							id="sm_1822">
+							<text
+								id="sm_1823"
+								src="dtbook.xml#dtb_1277" />
+						</par>
+						<par
+							id="sm_1824">
+							<text
+								id="sm_1825"
+								src="dtbook.xml#dtb_1278" />
+						</par>
+						<par
+							id="sm_1826">
+							<text
+								id="sm_1827"
+								src="dtbook.xml#dtb_1280" />
+						</par>
+						<par
+							id="sm_1828">
+							<text
+								id="sm_1829"
+								src="dtbook.xml#dtb_1281" />
+						</par>
+						<par
+							id="sm_1830">
+							<text
+								id="sm_1831"
+								src="dtbook.xml#dtb_1283" />
+						</par>
+						<par
+							id="sm_1832">
+							<text
+								id="sm_1833"
+								src="dtbook.xml#dtb_1284" />
+						</par>
+						<par
+							id="sm_1834">
+							<text
+								id="sm_1835"
+								src="dtbook.xml#dtb_1286" />
+						</par>
+						<par
+							id="sm_1836">
+							<text
+								id="sm_1837"
+								src="dtbook.xml#dtb_1287" />
+						</par>
+						<par
+							id="sm_1838">
+							<text
+								id="sm_1839"
+								src="dtbook.xml#dtb_1289" />
+						</par>
+						<par
+							id="sm_1840">
+							<text
+								id="sm_1841"
+								src="dtbook.xml#dtb_1290" />
+						</par>
+						<par
+							id="sm_1842">
+							<text
+								id="sm_1843"
+								src="dtbook.xml#dtb_1292" />
+						</par>
+						<par
+							id="sm_1844">
+							<text
+								id="sm_1845"
+								src="dtbook.xml#dtb_1293" />
+						</par>
+						<par
+							id="sm_1846">
+							<text
+								id="sm_1847"
+								src="dtbook.xml#dtb_1295" />
+						</par>
+						<par
+							id="sm_1848">
+							<text
+								id="sm_1849"
+								src="dtbook.xml#dtb_1296" />
+						</par>
+						<par
+							id="sm_1850">
+							<text
+								id="sm_1851"
+								src="dtbook.xml#dtb_1298" />
+						</par>
+						<par
+							id="sm_1852">
+							<text
+								id="sm_1853"
+								src="dtbook.xml#dtb_1299" />
+						</par>
+						<par
+							id="sm_1854">
+							<text
+								id="sm_1855"
+								src="dtbook.xml#dtb_1302" />
+						</par>
+						<par
+							id="sm_1856">
+							<text
+								id="sm_1857"
+								src="dtbook.xml#dtb_1303" />
+						</par>
+						<par
+							id="sm_1858">
+							<text
+								id="sm_1859"
+								src="dtbook.xml#dtb_1305" />
+						</par>
+						<par
+							id="sm_1860">
+							<text
+								id="sm_1861"
+								src="dtbook.xml#dtb_1306" />
+						</par>
+						<par
+							id="sm_1862">
+							<text
+								id="sm_1863"
+								src="dtbook.xml#dtb_1308" />
+						</par>
+						<par
+							id="sm_1864">
+							<text
+								id="sm_1865"
+								src="dtbook.xml#dtb_1309" />
+						</par>
+						<par
+							id="sm_1866">
+							<text
+								id="sm_1867"
+								src="dtbook.xml#dtb_1311" />
+						</par>
+						<par
+							id="sm_1868">
+							<text
+								id="sm_1869"
+								src="dtbook.xml#dtb_1312" />
+						</par>
+						<par
+							id="sm_1870">
+							<text
+								id="sm_1871"
+								src="dtbook.xml#dtb_1314" />
+						</par>
+						<par
+							id="sm_1872">
+							<text
+								id="sm_1873"
+								src="dtbook.xml#dtb_1315" />
+						</par>
+						<par
+							id="sm_1874">
+							<text
+								id="sm_1875"
+								src="dtbook.xml#dtb_1317" />
+						</par>
+						<par
+							id="sm_1876">
+							<text
+								id="sm_1877"
+								src="dtbook.xml#dtb_1318" />
+						</par>
+						<par
+							id="sm_1878">
+							<text
+								id="sm_1879"
+								src="dtbook.xml#dtb_1320" />
+						</par>
+						<par
+							id="sm_1880">
+							<text
+								id="sm_1881"
+								src="dtbook.xml#dtb_1321" />
+						</par>
+						<par
+							id="sm_1882">
+							<text
+								id="sm_1883"
+								src="dtbook.xml#dtb_1323" />
+						</par>
+						<par
+							id="sm_1884">
+							<text
+								id="sm_1885"
+								src="dtbook.xml#dtb_1324" />
+						</par>
+						<par
+							id="sm_1886">
+							<text
+								id="sm_1887"
+								src="dtbook.xml#dtb_1326" />
+						</par>
+						<par
+							id="sm_1888">
+							<text
+								id="sm_1889"
+								src="dtbook.xml#dtb_1327" />
+						</par>
+						<par
+							id="sm_1890">
+							<text
+								id="sm_1891"
+								src="dtbook.xml#dtb_1329" />
+						</par>
+						<par
+							id="sm_1892">
+							<text
+								id="sm_1893"
+								src="dtbook.xml#dtb_1330" />
+						</par>
+						<par
+							id="sm_1894">
+							<text
+								id="sm_1895"
+								src="dtbook.xml#dtb_1332" />
+						</par>
+						<par
+							id="sm_1896">
+							<text
+								id="sm_1897"
+								src="dtbook.xml#dtb_1333" />
+						</par>
+						<par
+							id="sm_1898">
+							<text
+								id="sm_1899"
+								src="dtbook.xml#dtb_1335" />
+						</par>
+						<par
+							id="sm_1900">
+							<text
+								id="sm_1901"
+								src="dtbook.xml#dtb_1336" />
+						</par>
+						<par
+							id="sm_1902">
+							<text
+								id="sm_1903"
+								src="dtbook.xml#dtb_1338" />
+						</par>
+						<par
+							id="sm_1904">
+							<text
+								id="sm_1905"
+								src="dtbook.xml#dtb_1339" />
+						</par>
+						<par
+							id="sm_1906">
+							<text
+								id="sm_1907"
+								src="dtbook.xml#dtb_1341" />
+						</par>
+						<par
+							id="sm_1908">
+							<text
+								id="sm_1909"
+								src="dtbook.xml#dtb_1342" />
+						</par>
+						<par
+							id="sm_1910">
+							<text
+								id="sm_1911"
+								src="dtbook.xml#dtb_1344" />
+						</par>
+						<par
+							id="sm_1912">
+							<text
+								id="sm_1913"
+								src="dtbook.xml#dtb_1345" />
+						</par>
+						<par
+							id="sm_1914">
+							<text
+								id="sm_1915"
+								src="dtbook.xml#dtb_1347" />
+						</par>
+						<par
+							id="sm_1916">
+							<text
+								id="sm_1917"
+								src="dtbook.xml#dtb_1348" />
+						</par>
+						<par
+							id="sm_1918">
+							<text
+								id="sm_1919"
+								src="dtbook.xml#dtb_1350" />
+						</par>
+						<par
+							id="sm_1920">
+							<text
+								id="sm_1921"
+								src="dtbook.xml#dtb_1351" />
+						</par>
+						<par
+							id="sm_1922">
+							<text
+								id="sm_1923"
+								src="dtbook.xml#dtb_1353" />
+						</par>
+						<par
+							id="sm_1924">
+							<text
+								id="sm_1925"
+								src="dtbook.xml#dtb_1354" />
+						</par>
+						<par
+							id="sm_1926">
+							<text
+								id="sm_1927"
+								src="dtbook.xml#dtb_1356" />
+						</par>
+						<par
+							id="sm_1928">
+							<text
+								id="sm_1929"
+								src="dtbook.xml#dtb_1357" />
+						</par>
+						<par
+							id="sm_1930">
+							<text
+								id="sm_1931"
+								src="dtbook.xml#dtb_1359" />
+						</par>
+						<par
+							id="sm_1932">
+							<text
+								id="sm_1933"
+								src="dtbook.xml#dtb_1360" />
+						</par>
+						<par
+							id="sm_1934">
+							<text
+								id="sm_1935"
+								src="dtbook.xml#dtb_1362" />
+						</par>
+						<par
+							id="sm_1936">
+							<text
+								id="sm_1937"
+								src="dtbook.xml#dtb_1363" />
+						</par>
+						<par
+							id="sm_1938">
+							<text
+								id="sm_1939"
+								src="dtbook.xml#dtb_1365" />
+						</par>
+						<par
+							id="sm_1940">
+							<text
+								id="sm_1941"
+								src="dtbook.xml#dtb_1366" />
+						</par>
+						<par
+							id="sm_1942">
+							<text
+								id="sm_1943"
+								src="dtbook.xml#dtb_1368" />
+						</par>
+						<par
+							id="sm_1944">
+							<text
+								id="sm_1945"
+								src="dtbook.xml#dtb_1369" />
+						</par>
+					</seq>
+				</seq>
+			</seq>
+		</seq>
+	</body>
+</smil>
