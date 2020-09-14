@@ -1790,28 +1790,28 @@ const findInSpineByHref = (publication: Publication, href: string): Link | undef
     return undefined;
 };
 
- const findMetaByRefineAndProperty = (opf: OPF, ID: string, property: string): Metafield | undefined => {
+const findMetaByRefineAndProperty = (opf: OPF, ID: string, property: string): Metafield | undefined => {
 
-     const ret = findAllMetaByRefineAndProperty(opf, ID, property);
-     if (ret.length) {
-         return ret[0];
-     }
-     return undefined;
- };
+    const ret = findAllMetaByRefineAndProperty(opf, ID, property);
+    if (ret.length) {
+        return ret[0];
+    }
+    return undefined;
+};
 
- const findAllMetaByRefineAndProperty =
- (opf: OPF, ID: string, property: string): Metafield[] => {
-     const metas: Metafield[] = [];
+const findAllMetaByRefineAndProperty =
+    (opf: OPF, ID: string, property: string): Metafield[] => {
+        const metas: Metafield[] = [];
 
-     const refineID = "#" + ID;
+        const refineID = "#" + ID;
 
-     if (opf.Metadata && opf.Metadata.XMetadata.Meta) {
-         opf.Metadata.XMetadata.Meta.forEach((metaTag) => {
-             if (metaTag.Refine === refineID && metaTag.Property === property) {
-                 metas.push(metaTag);
-             }
-         });
-     }
+        if (opf.Metadata && opf.Metadata.XMetadata.Meta) {
+            opf.Metadata.XMetadata.Meta.forEach((metaTag) => {
+                if (metaTag.Refine === refineID && metaTag.Property === property) {
+                    metas.push(metaTag);
+                }
+            });
+        }
 
-     return metas;
- };
+        return metas;
+    };
