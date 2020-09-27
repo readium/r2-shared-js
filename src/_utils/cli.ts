@@ -358,9 +358,15 @@ async function extractEPUB_ProcessKeys(pub: Publication, keys: string[] | undefi
 async function extractEPUB_Link(pub: Publication, zip: IZip, outDir: string, link: Link) {
 
     const hrefDecoded = link.HrefDecoded;
-    console.log("===== " + hrefDecoded);
+    // console.log("====" + hrefDecoded);
     if (!hrefDecoded) {
         console.log("!?link.HrefDecoded");
+        return;
+    }
+
+    const inputPath = path.join(filePath, hrefDecoded);
+
+    if (!fs.existsSync(inputPath)) {
         return;
     }
 
@@ -478,6 +484,14 @@ async function extractEPUB(isEPUB: boolean, pub: Publication, outDir: string, ke
     } catch (err) {
         console.log(err);
     }
+
+    for (const link of links) {
+        try {
+            await removeTempFiles(link);
+        } catch (err) {
+            console.log(err);
+        }
+    }
 }
 
 function ensureDirs(fspath: string) {
@@ -486,6 +500,27 @@ function ensureDirs(fspath: string) {
     if (!fs.existsSync(dirname)) {
         ensureDirs(dirname);
         fs.mkdirSync(dirname);
+    }
+}
+
+async function removeTempFiles(link: Link) {
+    const hrefDecoded = link.HrefDecoded;
+    if (!hrefDecoded) {
+        console.log("!?link.HrefDecoded");
+        return;
+    }
+
+    const inputPath = path.join(filePath, hrefDecoded);
+    // Remove temp files for daisy
+    if (link.isTemp) {
+        const stats = fs.lstatSync(inputPath);
+        if (stats.isFile() && fs.existsSync(inputPath) ) {
+            try {
+                fs.unlinkSync(inputPath);
+            } catch (e) {
+                console.log(e);
+            }
+        }
     }
 }
 

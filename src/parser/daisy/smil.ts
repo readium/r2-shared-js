@@ -11,7 +11,7 @@ import { Body } from "./smil-body";
 import { Par } from "./smil-par";
 
 @XmlObject({
-    epub: "http://www.idpf.org/2007/ops",
+    dtbsmil: "http://www.w3.org/2001/SMIL20/",
     smil: "http://www.w3.org/ns/SMIL",
 })
 export class SMIL {

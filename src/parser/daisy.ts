@@ -39,6 +39,7 @@ import { NCX } from "./daisy/ncx";
 import { NavPoint } from "./daisy/ncx-navpoint";
 import { OPF } from "./daisy/opf";
 import { Author } from "./daisy/opf-author";
+import { SpineItem } from "./daisy/opf-spineitem";
 import { Manifest } from "./daisy/opf-manifest";
 import { Metafield } from "./daisy/opf-metafield";
 import { Title } from "./daisy/opf-title";
@@ -126,8 +127,8 @@ export function isDaisyPublication(urlOrPath: string): Daisyis | undefined {
     const http = isHTTP(urlOrPath);
     if (http) {
         return Daisyis.RemoteExploded;
-
-    } else if (fs.existsSync(path.join(urlOrPath, "package.opf"))) {
+    // } else if (fs.existsSync(path.join(urlOrPath, "package.opf"))) {
+    } else if (getOPFFileName(urlOrPath)) {
         return Daisyis.LocalExploded;
     }
     return undefined;
@@ -160,7 +161,21 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
     publication.AddToInternal("type", "daisy");
     publication.AddToInternal("zip", zip);
 
-    const rootfilePathDecoded = "package.opf"; // rootfile.PathDecoded;
+    const files = await getFileNames(filePath);
+
+    const [valid, message] = isFileValid(files);
+
+    if (!valid) {
+        return Promise.reject(message || "File validation failed.");
+    }
+
+    const opfFileName = findOpfFile(files);
+
+    if (!opfFileName) {
+        return Promise.reject("Opf File doesn't exists");
+    }
+
+    const rootfilePathDecoded = opfFileName || "package.opf"; // rootfile.PathDecoded;
     if (!rootfilePathDecoded) {
         return Promise.reject("?!rootfile.PathDecoded");
     }
@@ -403,6 +418,7 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
     }
 
     findContributorInMeta(publication, opf);
+    await parseDtBook(filePath, files, opf);
     await fillSpineAndResource(publication, opf, zip);
 
     //  await addRendition(publication, opf, zip);
@@ -1275,7 +1291,7 @@ const findInManifestByID =
             if (item && opf.ZipPath) {
                 const linkItem = new Link();
                 linkItem.TypeLink = item.MediaType;
-
+                linkItem.isTemp = item.isTemp;
                 const itemHrefDecoded = item.HrefDecoded;
                 if (!itemHrefDecoded) {
                     return Promise.reject("item.Href?!");
@@ -1815,3 +1831,161 @@ const findAllMetaByRefineAndProperty =
 
         return metas;
     };
+
+const parseDtBook = async (urlOrPath: string, files: string[], opf: OPF) => {
+    const fileName = findEntryFile(files) || "dtbook.xml";
+    const filePath = path.join(urlOrPath, fileName);
+    if (fs.existsSync(filePath)) {
+        const dtBookStr = fs.readFileSync(filePath, { encoding: "utf8" });
+        const dtBookDoc = new xmldom.DOMParser().parseFromString(dtBookStr, "application/xml");
+        console.log("XML FILE EXISTS");
+        convertXml(dtBookDoc, urlOrPath, opf);
+    } else {
+        console.log("DTBOOK XML FILE EXISTS");
+    }
+};
+
+const getFileNames = async (directory: string) => {
+    return fs.readdirSync(directory);
+};
+
+const getOPFFileName = (directory: string) => {
+    const files =  fs.readdirSync(directory);
+    return findOpfFile(files);
+};
+
+const isFileValid = (files: string[]) => {
+    // const keys = Object.keys(files);
+
+    if (files.some((file) => file.match(/\.xml$/)) === false) {
+        return [false, "No xml file found."];
+    }
+
+    if (files.some((file) => file.match(/\/ncc\.html$/))) {
+        return [false, "DAISY 2 format is not supported."];
+    }
+
+    // if (files.some((file) => file.match(/\.mp3$/)) === false) {
+    //   console.log("mp3");
+    //   return [false];
+    // }
+    // if (files.some((file) => file.match(/\.smil$/)) === false) {
+    //   console.log("smil");
+    //   return [false];
+    // }
+
+    return [true];
+};
+
+const findOpfFile = (files: string[]) => {
+    return files.find((file) => file.match(/\.opf$/));
+};
+
+const findEntryFile = (files: string[]) => {
+    return files.find((file) => file.match(/\.xml$/));
+};
+
+const convertXml = (xmlDom: any, urlOrPath: string, opf: OPF) => {
+    const title = xmlDom.getElementsByTagName("doctitle")[0].textContent;
+    const serializer = new xmldom.XMLSerializer();
+    transformList(xmlDom);
+
+    const stylesheets = xpath.select("/processing-instruction('xml-stylesheet')", xmlDom);
+    const links: string[] = [];
+    stylesheets.forEach((stylesheet: any) => {
+        const href = stylesheet.nodeValue.match(/href=("|')(.*?)("|')/)[0];
+        if (href) {
+            const src = href.split("=")[1];
+            links.push(`<link rel="stylesheet" href=${src} />`);
+        }
+    });
+
+    const levelDoms = xmlDom.getElementsByTagName("level1");
+    opf.Spine.Items = [];
+
+    Array.from(levelDoms).forEach((element: any, i: number) => {
+
+        let docTitle = "";
+
+        if (element.parentNode.nodeName === "frontmatter") {
+            docTitle = element.parentNode.getElementsByTagName("doctitle")[0];
+        }
+
+        const bodyContent = element.parentNode.cloneNode();
+        if (docTitle) {
+            bodyContent.appendChild(docTitle);
+        }
+        bodyContent.appendChild(element);
+        const bodyContentStr = serializer.serializeToString(bodyContent);
+        const content = parseDtBookXml(bodyContentStr);
+
+        const xhtmlContent = `
+            <?xml version="1.0" encoding="utf-8"?>
+            <!DOCTYPE xhtml>
+            <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+            <head>
+                <meta charset="UTF-8" />
+                <title>${title}</title>
+                ${links.join(" ")}
+            </head>
+            <body>
+                <book>
+                    ${content}
+                </book>
+            </body>
+            </html>
+        `;
+        const pageName = `page${i + 1}.xhtml`;
+        try {
+            fs.writeFileSync(path.join(urlOrPath, pageName) , xhtmlContent.trim());
+            console.log("Saved!");
+            const tempManifest = new Manifest();
+            tempManifest.ID = `dtb_page${i + 1}`;
+            tempManifest.setHrefDecoded(pageName);
+            tempManifest.MediaType = "application/xhtml+xml";
+            tempManifest.isTemp = true;
+            opf.Manifest.push(tempManifest);
+
+            const tempSpineItem = new SpineItem();
+            tempSpineItem.IDref = tempManifest.ID;
+            opf.Spine.Items.push(tempSpineItem);
+
+        } catch (err) {
+            console.log(err);
+        }
+
+        // console.log("opf", opf.Manifest.slice(-8));
+    });
+
+};
+
+const parseDtBookXml = (xml: any) => {
+    return xml
+        .replace('xmlns="', 'xmlns:conf="')
+        .replace(/<frontmatter/g, '<div class="frontmatter"')
+        .replace(/<bodymatter/g, '<div class="bodymatter"')
+        .replace(/<rearmatter/g, '<div class="rearmatter">')
+        .replace(/<\/frontmatter>/g, "</div>")
+        .replace(/<\/bodymatter>/g, "</div>")
+        .replace(/<\/rearmatter>/g, "</div>")
+        .replace(/<level(\d)>/g, '<div class="level level-$1">')
+        .replace(/<\/level\d>/g, "</div>")
+        .replace(/<doctitle/g, "<h1 class='doctitle'")
+        .replace(/<\/doctitle>/g, "</h1>")
+        .replace(/<pagenum/g, "<span class='pagenum'")
+        .replace(/<\/pagenum>/g, "</span>")
+        .replace(/<sent/g, "<span")
+        .replace(/<\/sent>/g, "</span>")
+        .replace(/(<\/?)imggroup/g, "$1figure")
+        .replace(/<caption/g, "<figcaption")
+        .replace(/<\/caption>/g, "</figcaption>");
+};
+
+const transformList = (xmlDom: any) => {
+    const elDoms = xmlDom.getElementsByTagName("list");
+
+    for (let i = 0; i < elDoms.length; i++) {
+        const elem = elDoms.item(i);
+        elem.tagName = elem.getAttribute("type");
+    }
+};

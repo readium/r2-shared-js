@@ -25,6 +25,7 @@ const ALTERNATE_JSON_PROP = "alternate";
 @JsonObject()
 export class Link {
 
+    public isTemp: boolean = false;
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/ca6d887caa2d0495200fef4695f41aacb5fed2e9/schema/link.schema.json#L11
     @JsonProperty("type")
