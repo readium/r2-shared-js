@@ -1892,11 +1892,26 @@ const convertXml = (xmlDom: any, urlOrPath: string, opf: OPF) => {
 
     const stylesheets = xpath.select("/processing-instruction('xml-stylesheet')", xmlDom);
     const links: string[] = [];
-    stylesheets.forEach((stylesheet: any) => {
+    stylesheets.forEach((stylesheet: any, i: number) => {
         const href = stylesheet.nodeValue.match(/href=("|')(.*?)("|')/)[0];
         if (href) {
-            const src = href.split("=")[1];
-            links.push(`<link rel="stylesheet" href=${src} />`);
+            const src = href.split("=")[1].replace(/"/g, "");
+            const filePath = path.join(urlOrPath, src);
+            const newFileName = `style_${i}.css`;
+            const newFilePath = path.join(urlOrPath, newFileName);
+            if (fs.existsSync(filePath) && !fs.existsSync(newFilePath)) {
+                let cssText = fs.readFileSync(filePath, { encoding: "utf8" });
+                cssText = parseCss(cssText);
+                fs.writeFileSync(newFilePath , cssText.trim());
+                console.log("CSS File Saved!");
+                const tempManifest = new Manifest();
+                tempManifest.ID = `dtb_css${i + 1}`;
+                tempManifest.setHrefDecoded(newFileName);
+                tempManifest.MediaType = "text/css";
+                tempManifest.isTemp = true;
+                opf.Manifest.push(tempManifest);
+            }
+            links.push(`<link rel="stylesheet" href="${newFileName}" />`);
         }
     });
 
@@ -1929,9 +1944,9 @@ const convertXml = (xmlDom: any, urlOrPath: string, opf: OPF) => {
                 ${links.join(" ")}
             </head>
             <body>
-                <book>
+                <div class="book">
                     ${content}
-                </book>
+                </div>
             </body>
             </html>
         `;
@@ -1979,6 +1994,18 @@ const parseDtBookXml = (xml: any) => {
         .replace(/(<\/?)imggroup/g, "$1figure")
         .replace(/<caption/g, "<figcaption")
         .replace(/<\/caption>/g, "</figcaption>");
+};
+
+const parseCss = (cssText: any): string => {
+    cssText = cssText.replace(/\/\*[^\/\*]+\*\//g, ""); // remove comments
+    const cssTags = ["annoref", "annotation", "author", "bdo", "bodymatter", "book", "bridgehead", "byline", "caption", "cite", "col", "covertitle", "dateline", "dfn", "docauthor", "doctitle", "dtbook", "epigraph", "frontmatter", "hd", "imggroup", "kbd", "level", "level1", "level2", "level3", "level4", "level5", "level6", "lic", "line", "linegroup", "link", "list", "meta", "note", "noteref", "pagenum", "poem", "prodnote", "rearmatter", "samp", "sent", "sub", "sup"];
+    cssTags.forEach((cssTag) => {
+        const regex = new RegExp(`${cssTag}`, "g");
+        cssText = cssText
+            .replace(regex, `.${cssTag}`);
+    });
+
+    return cssText;
 };
 
 const transformList = (xmlDom: any) => {
