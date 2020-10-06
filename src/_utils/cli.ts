@@ -14,6 +14,7 @@ import { URL } from "url";
 import * as util from "util";
 
 import { MediaOverlayNode } from "@models/media-overlay";
+import { ParsedFile } from "@models/parsed-file";
 import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
 import { AudioBookis, isAudioBookPublication } from "@parser/audiobook";
@@ -485,13 +486,7 @@ async function extractEPUB(isEPUB: boolean, pub: Publication, outDir: string, ke
         console.log(err);
     }
 
-    for (const link of links) {
-        try {
-            await removeTempFiles(link);
-        } catch (err) {
-            console.log(err);
-        }
-    }
+    createParsedFiles(pub, outDir);
 }
 
 function ensureDirs(fspath: string) {
@@ -503,25 +498,32 @@ function ensureDirs(fspath: string) {
     }
 }
 
-async function removeTempFiles(link: Link) {
-    const hrefDecoded = link.HrefDecoded;
-    if (!hrefDecoded) {
-        console.log("!?link.HrefDecoded");
-        return;
-    }
+// async function removeTempFiles(link: Link) {
+//     const hrefDecoded = link.HrefDecoded;
+//     if (!hrefDecoded) {
+//         console.log("!?link.HrefDecoded");
+//         return;
+//     }
 
-    const inputPath = path.join(filePath, hrefDecoded);
-    // Remove temp files for daisy
-    if (link.isTemp) {
-        const stats = fs.lstatSync(inputPath);
-        if (stats.isFile() && fs.existsSync(inputPath) ) {
-            try {
-                fs.unlinkSync(inputPath);
-            } catch (e) {
-                console.log(e);
-            }
-        }
-    }
+//     const inputPath = path.join(filePath, hrefDecoded);
+//     // Remove temp files for daisy
+//     if (link.isTemp) {
+//         const stats = fs.lstatSync(inputPath);
+//         if (stats.isFile() && fs.existsSync(inputPath) ) {
+//             try {
+//                 fs.unlinkSync(inputPath);
+//             } catch (e) {
+//                 console.log(e);
+//             }
+//         }
+//     }
+// }
+
+function createParsedFiles(pub: Publication, outDir: string) {
+    pub.ParsedFiles.forEach((file: ParsedFile) => {
+        const linkOutputPath = path.join(outDir, file.Name);
+        fs.writeFileSync(linkOutputPath, file.Value);
+    });
 }
 
 async function dumpPublication(publication: Publication): Promise<void> {

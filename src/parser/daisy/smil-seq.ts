@@ -10,6 +10,7 @@ import {
 } from "@r2-utils-js/_utils/xml-js-mapper";
 
 import { tryDecodeURI } from "../../_utils/decodeURI";
+import { Par } from "./smil-par";
 import { SeqOrPar } from "./smil-seq-or-par";
 
 @XmlObject({
@@ -22,17 +23,17 @@ export class Seq extends SeqOrPar {
     // XPATH ROOT: /smil:smil/smil:body
     // XPATH ROOT: /smil:smil/smil:body/**/smil:seq
 
-    @XmlXPathSelector("smil:par|smil:seq")
+    @XmlXPathSelector("par|seq")
     @XmlItemType(SeqOrPar)
     public Children!: SeqOrPar[];
 
-    // @XmlXPathSelector("smil:seq")
-    // @XmlItemType(Seq)
-    // public Seq: Seq[];
+    @XmlXPathSelector("seq")
+    @XmlItemType(Seq)
+    public Seq: Seq[] = [];
 
-    // @XmlXPathSelector("smil:par")
-    // @XmlItemType(Par)
-    // public Par: Par[];
+    @XmlXPathSelector("par")
+    @XmlItemType(Par)
+    public Par: Par[] = [];
 
     @XmlXPathSelector("@epub:textref")
     public TextRef1!: string;

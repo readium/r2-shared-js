@@ -24,6 +24,7 @@ import {
     LayoutEnum, OrientationEnum, OverflowEnum, PageEnum, Properties, SpreadEnum,
 } from "@models/metadata-properties";
 import { Subject } from "@models/metadata-subject";
+import { ParsedFile } from "@models/parsed-file";
 import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
 import { encodeURIComponent_RFC3986, isHTTP } from "@r2-utils-js/_utils/http/UrlUtils";
@@ -41,7 +42,7 @@ import { OPF } from "./daisy/opf";
 import { Author } from "./daisy/opf-author";
 import { Manifest } from "./daisy/opf-manifest";
 import { Metafield } from "./daisy/opf-metafield";
-import { SpineItem } from "./daisy/opf-spineitem";
+// import { SpineItem } from "./daisy/opf-spineitem";
 import { Title } from "./daisy/opf-title";
 import { SMIL } from "./daisy/smil";
 import { Par } from "./daisy/smil-par";
@@ -182,34 +183,41 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
 
     // let timeBegin = process.hrtime();
     let has = await zipHasEntry(zip, rootfilePathDecoded, undefined);
-    if (!has) {
-        const err = `NOT IN ZIP (container OPF rootfile): --- ${rootfilePathDecoded}`;
-        debug(err);
-        const zipEntries = await zip.getEntries();
-        for (const zipEntry of zipEntries) {
-            debug(zipEntry);
-        }
-        return Promise.reject(err);
-    }
+    // if (!has) {
+    //     const err = `NOT IN ZIP (container OPF rootfile): --- ${rootfilePathDecoded}`;
+    //     debug(err);
+    //     const zipEntries = await zip.getEntries();
+    //     for (const zipEntry of zipEntries) {
+    //         debug(zipEntry);
+    //     }
+    //     return Promise.reject(err);
+    // }
 
-    let opfZipStream_: IStreamAndLength;
+    // let opfZipStream_: IStreamAndLength;
+    // try {
+    //     opfZipStream_ = await zip.entryStreamPromise(rootfilePathDecoded);
+    // } catch (err) {
+    //     debug(err);
+    //     return Promise.reject(err);
+    // }
+    // const opfZipStream = opfZipStream_.stream;
+
+    // let opfZipData: Buffer;
+    // try {
+    //     opfZipData = await streamToBufferPromise(opfZipStream);
+    // } catch (err) {
+    //     debug(err);
+    //     return Promise.reject(err);
+    // }
+
+    // const opfStr = opfZipData.toString("utf8");
+    let opfStr = "";
     try {
-        opfZipStream_ = await zip.entryStreamPromise(rootfilePathDecoded);
+        opfStr = await readFilesAsString(zip, rootfilePathDecoded);
     } catch (err) {
         debug(err);
         return Promise.reject(err);
     }
-    const opfZipStream = opfZipStream_.stream;
-
-    let opfZipData: Buffer;
-    try {
-        opfZipData = await streamToBufferPromise(opfZipStream);
-    } catch (err) {
-        debug(err);
-        return Promise.reject(err);
-    }
-
-    const opfStr = opfZipData.toString("utf8");
 
     const opfDoc = new xmldom.DOMParser().parseFromString(opfStr);
 
@@ -418,7 +426,7 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
     }
 
     findContributorInMeta(publication, opf);
-    await parseDtBook(filePath, files, opf);
+    await parseDtBook(publication, files, zip);
     await fillSpineAndResource(publication, opf, zip);
 
     //  await addRendition(publication, opf, zip);
@@ -433,7 +441,7 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
 
     if (!publication.TOC || !publication.TOC.length) {
         if (ncx) {
-            fillTOCFromNCX(publication, opf, ncx);
+            fillTOCFromNCX(publication, opf, ncx, filePath);
             if (!publication.PageList) {
                 fillPageListFromNCX(publication, opf, ncx);
             }
@@ -1291,7 +1299,6 @@ const findInManifestByID =
             if (item && opf.ZipPath) {
                 const linkItem = new Link();
                 linkItem.TypeLink = item.MediaType;
-                linkItem.isTemp = item.isTemp;
                 const itemHrefDecoded = item.HrefDecoded;
                 if (!itemHrefDecoded) {
                     return Promise.reject("item.Href?!");
@@ -1473,13 +1480,13 @@ const createDocStringFromZipPath = async (link: Link, zip: IZip): Promise<string
     return zipData.toString("utf8");
 };
 
-const fillTOCFromNCX = (publication: Publication, opf: OPF, ncx: NCX) => {
+const fillTOCFromNCX = (publication: Publication, opf: OPF, ncx: NCX, filePath: string) => {
     if (ncx.Points && ncx.Points.length) {
         ncx.Points.forEach((point) => {
             if (!publication.TOC) {
                 publication.TOC = [];
             }
-            fillTOCFromNavPoint(publication, opf, ncx, point, publication.TOC);
+            fillTOCFromNavPoint(publication, opf, ncx, point, publication.TOC, filePath);
         });
     }
 };
@@ -1510,7 +1517,7 @@ const fillLandmarksFromGuide = (publication: Publication, opf: OPF) => {
 };
 
 const fillTOCFromNavPoint =
-    (publication: Publication, opf: OPF, ncx: NCX, point: NavPoint, node: Link[]) => {
+    (publication: Publication, opf: OPF, ncx: NCX, point: NavPoint, node: Link[], filePath: string) => {
 
         const srcDecoded = point.Content.SrcDecoded;
         if (!srcDecoded) {
@@ -1521,7 +1528,15 @@ const fillTOCFromNavPoint =
         const zipPath = path.join(path.dirname(ncx.ZipPath), srcDecoded)
             .replace(/\\/g, "/");
 
-        link.setHrefDecoded(zipPath);
+        let smilXmlPath = "";
+        if (opf.ZipPath) {
+            smilXmlPath = getSmilLinkReference(filePath, srcDecoded);
+        } else {
+            debug("?!point.Content.Src");
+            return;
+        }
+
+        link.setHrefDecoded(smilXmlPath || zipPath);
 
         link.Title = point.Text;
 
@@ -1530,7 +1545,7 @@ const fillTOCFromNavPoint =
                 if (!link.Children) {
                     link.Children = [];
                 }
-                fillTOCFromNavPoint(publication, opf, ncx, p, link.Children);
+                fillTOCFromNavPoint(publication, opf, ncx, p, link.Children, filePath);
             });
         }
 
@@ -1832,17 +1847,13 @@ const findAllMetaByRefineAndProperty =
         return metas;
     };
 
-const parseDtBook = async (urlOrPath: string, files: string[], opf: OPF) => {
+const parseDtBook = async (publication: Publication, files: string[], zip: IZip) => {
     const fileName = findEntryFile(files) || "dtbook.xml";
-    const filePath = path.join(urlOrPath, fileName);
-    if (fs.existsSync(filePath)) {
-        const dtBookStr = fs.readFileSync(filePath, { encoding: "utf8" });
-        const dtBookDoc = new xmldom.DOMParser().parseFromString(dtBookStr, "application/xml");
-        console.log("XML FILE EXISTS");
-        convertXml(dtBookDoc, urlOrPath, opf);
-    } else {
-        console.log("DTBOOK XML FILE EXISTS");
-    }
+    // const filePath = path.join(urlOrPath, fileName);
+    const dtBookStr =  await readFilesAsString(zip, fileName);
+    const dtBookDoc = new xmldom.DOMParser().parseFromString(dtBookStr, "application/xml");
+    console.log("XML FILE EXISTS");
+    await convertXml(publication, dtBookDoc, zip);
 };
 
 const getFileNames = async (directory: string) => {
@@ -1885,38 +1896,47 @@ const findEntryFile = (files: string[]) => {
     return files.find((file) => file.match(/\.xml$/));
 };
 
-const convertXml = (xmlDom: any, urlOrPath: string, opf: OPF) => {
+const convertXml = async (publication: Publication, xmlDom: any, zip: IZip) => {
     const title = xmlDom.getElementsByTagName("doctitle")[0].textContent;
     const serializer = new xmldom.XMLSerializer();
     transformList(xmlDom);
 
-    const stylesheets = xpath.select("/processing-instruction('xml-stylesheet')", xmlDom);
+    const stylesheets: any[] = xpath.select("/processing-instruction('xml-stylesheet')", xmlDom);
     const links: string[] = [];
-    stylesheets.forEach((stylesheet: any, i: number) => {
+    let index = 0;
+    // stylesheets.forEach(async (stylesheet: any, i: number) => {
+    for (const stylesheet of stylesheets) {
         const href = stylesheet.nodeValue.match(/href=("|')(.*?)("|')/)[0];
         if (href) {
             const src = href.split("=")[1].replace(/"/g, "");
-            const filePath = path.join(urlOrPath, src);
-            const newFileName = `style_${i}.css`;
-            const newFilePath = path.join(urlOrPath, newFileName);
-            if (fs.existsSync(filePath) && !fs.existsSync(newFilePath)) {
-                let cssText = fs.readFileSync(filePath, { encoding: "utf8" });
-                cssText = parseCss(cssText);
-                fs.writeFileSync(newFilePath , cssText.trim());
-                console.log("CSS File Saved!");
-                const tempManifest = new Manifest();
-                tempManifest.ID = `dtb_css${i + 1}`;
-                tempManifest.setHrefDecoded(newFileName);
-                tempManifest.MediaType = "text/css";
-                tempManifest.isTemp = true;
-                opf.Manifest.push(tempManifest);
-            }
+            // const filePath = path.join(urlOrPath, src);
+            const newFileName = `style_${index}.css`;
+            // const newFilePath = path.join(urlOrPath, newFileName);
+            // if (fs.existsSync(filePath) && !fs.existsSync(newFilePath)) {
+            // let cssText = fs.readFileSync(filePath, { encoding: "utf8" });
+            let cssText = await readFilesAsString(zip, src);
+            cssText = parseCss(cssText);
+            const parsedFile = new ParsedFile();
+            parsedFile.Name = newFileName;
+            parsedFile.Value = cssText.trim();
+            publication.ParsedFiles.push(parsedFile);
+            // fs.writeFileSync(newFilePath , cssText.trim());
+            // console.log("CSS File Saved!");
+            // const tempManifest = new Manifest();
+            // tempManifest.ID = `dtb_css${i + 1}`;
+            // tempManifest.setHrefDecoded(newFileName);
+            // tempManifest.MediaType = "text/css";
+            // tempManifest.isTemp = true;
+            // opf.Manifest.push(tempManifest);
+            // }
             links.push(`<link rel="stylesheet" href="${newFileName}" />`);
+            index++;
         }
-    });
+    // });
+    }
 
     const levelDoms = xmlDom.getElementsByTagName("level1");
-    opf.Spine.Items = [];
+    // opf.Spine.Items = [];
 
     Array.from(levelDoms).forEach((element: any, i: number) => {
 
@@ -1951,23 +1971,28 @@ const convertXml = (xmlDom: any, urlOrPath: string, opf: OPF) => {
             </html>
         `;
         const pageName = `page${i + 1}.xhtml`;
-        try {
-            fs.writeFileSync(path.join(urlOrPath, pageName) , xhtmlContent.trim());
-            console.log("Saved!");
-            const tempManifest = new Manifest();
-            tempManifest.ID = `dtb_page${i + 1}`;
-            tempManifest.setHrefDecoded(pageName);
-            tempManifest.MediaType = "application/xhtml+xml";
-            tempManifest.isTemp = true;
-            opf.Manifest.push(tempManifest);
+        // try {
+        //     fs.writeFileSync(path.join(urlOrPath, pageName) , xhtmlContent.trim());
+        //     console.log("Saved!");
+        //     const tempManifest = new Manifest();
+        //     tempManifest.ID = `dtb_page${i + 1}`;
+        //     tempManifest.setHrefDecoded(pageName);
+        //     tempManifest.MediaType = "application/xhtml+xml";
+        //     tempManifest.isTemp = true;
+        //     opf.Manifest.push(tempManifest);
 
-            const tempSpineItem = new SpineItem();
-            tempSpineItem.IDref = tempManifest.ID;
-            opf.Spine.Items.push(tempSpineItem);
+        //     const tempSpineItem = new SpineItem();
+        //     tempSpineItem.IDref = tempManifest.ID;
+        //     opf.Spine.Items.push(tempSpineItem);
 
-        } catch (err) {
-            console.log(err);
-        }
+        // } catch (err) {
+        //     console.log(err);
+        // }
+
+        const parsedFile = new ParsedFile();
+        parsedFile.Name = pageName;
+        parsedFile.Value = xhtmlContent.trim();
+        publication.ParsedFiles.push(parsedFile);
 
         // console.log("opf", opf.Manifest.slice(-8));
     });
@@ -2015,4 +2040,210 @@ const transformList = (xmlDom: any) => {
         const elem = elDoms.item(i);
         elem.tagName = elem.getAttribute("type");
     }
+};
+
+const getSmilLinkReference = (filePath: string, srcDecoded: string) => {
+    const hashLink = srcDecoded.split("#");
+    const smilLink = hashLink[0];
+    const smilID = hashLink[1];
+
+    const smilFilePath = path.join(filePath, smilLink).replace(/\\/g, "/");
+
+    const smilStr = fs.readFileSync(smilFilePath, { encoding: "utf8" });
+    const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
+    const smil = XML.deserialize<SMIL>(smilXmlDoc, SMIL);
+    // console.log("smil" , findAllByKey(smil, "Par"));
+    const parsInSmil =  findAllByKey(smil, "Par");
+    const linkedPar = parsInSmil.find((par: Par) => par.ID === smilID);
+    if (!linkedPar) {
+        return;
+    }
+    if (linkedPar.Text) {
+        return linkedPar.Text.Src;
+    }
+    return;
+};
+
+// const parseSmilFile = (link: Link, filePath: string, i: number = 0) => {
+//         if (link && link.TypeLink === "application/smil") {
+
+//             const manItemSmilHrefDecoded = link.HrefDecoded;
+//             if (!manItemSmilHrefDecoded) {
+//                 debug("!?manItemSmil.HrefDecoded");
+//                 return;
+//             }
+
+//             // const has = await zipHasEntry(zip, manItemSmilHrefDecoded, link.Href);
+//             // if (!has) {
+//             //     debug(`NOT IN ZIP (parseSmilFiles): ${manItemSmilHrefDecoded}`);
+//             //     const zipEntries = await zip.getEntries();
+//             //     for (const zipEntry of zipEntries) {
+//             //         debug(zipEntry);
+//             //     }
+//             //     return;
+//             // }
+
+//             const smilFilePath = path.join(filePath, manItemSmilHrefDecoded)
+//                 .replace(/\\/g, "/");
+
+//             const smilStr = fs.readFileSync(smilFilePath, { encoding: "utf8" });
+//             const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
+//             const smil = XML.deserialize<SMIL>(smilXmlDoc, SMIL);
+
+//             console.log("smil" , i, findAllByKey(smil, "Par"));
+
+//             // const itemHrefDecoded = item.HrefDecoded;
+//             // if (!itemHrefDecoded) {
+//             //     debug("?!item.HrefDecoded");
+//             //     continue;
+//             // }
+//             // const has = await zipHasEntry(zip, itemHrefDecoded, item.Href);
+//             // if (!has) {
+//             //     debug(`NOT IN ZIP (fillMediaOverlay): ${item.HrefDecoded} --- ${itemHrefDecoded}`);
+//             //     const zipEntries = await zip.getEntries();
+//             //     for (const zipEntry of zipEntries) {
+//             //         debug(zipEntry);
+//             //     }
+//             //     continue;
+//             // }
+
+//             // const smilFilePath = path.join(filePath, itemHrefDecoded).replace(/\\/g, "/");
+//             // console.log(smilFilePath, opf.ZipPath);
+
+//             // const smilStr = fs.readFileSync(smilFilePath, { encoding: "utf8" });
+//             // const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
+//             // const smil = XML.deserialize<SMIL>(smilXmlDoc, SMIL);
+
+//             // console.log("smil", smil);
+
+//             // const manItemsHtmlWithSmil: Manifest[] = [];
+//             // opf.Manifest.forEach((manItemHtmlWithSmil) => {
+//             //     if (manItemHtmlWithSmil.MediaOverlay) { // HTML
+//             //         const manItemSmil = opf.Manifest.find((mi) => {
+//             //             if (mi.ID === manItemHtmlWithSmil.MediaOverlay) {
+//             //                 return true;
+//             //             }
+//             //             return false;
+//             //         });
+//             //         console.log("manItemSmil", manItemSmil);
+//             //         if (manItemSmil && opf.ZipPath) {
+//             //             const manItemSmilHrefDecoded = manItemSmil.HrefDecoded;
+//             //             if (!manItemSmilHrefDecoded) {
+//             //                 debug("!?manItemSmil.HrefDecoded");
+//             //                 return; // foreach
+//             //             }
+//             //             const smilFilePath = path.join(path.dirname(opf.ZipPath), manItemSmilHrefDecoded)
+//             //             .replace(/\\/g, "/");
+//             //             if (smilFilePath === itemHrefDecoded) {
+//             //                 manItemsHtmlWithSmil.push(manItemHtmlWithSmil);
+//             //             } else {
+//             //                 debug(`smilFilePath !== itemHrefDecoded ?! ${smilFilePath} ${itemHrefDecoded}`);
+//             //             }
+//             //         }
+//             //     }
+//             // });
+
+//             // const mo = new MediaOverlayNode();
+//             // mo.SmilPathInZip = itemHrefDecoded;
+//             // mo.initialized = false;
+
+//             // manItemsHtmlWithSmil.forEach((manItemHtmlWithSmil) => {
+
+//             //     if (!opf.ZipPath) {
+//             //         return;
+//             //     }
+//             //     const manItemHtmlWithSmilHrefDecoded = manItemHtmlWithSmil.HrefDecoded;
+//             //     if (!manItemHtmlWithSmilHrefDecoded) {
+//             //         debug("?!manItemHtmlWithSmil.HrefDecoded");
+//             //         return; // foreach
+//             //     }
+//             //     const htmlPathInZip = path.join(path.dirname(opf.ZipPath), manItemHtmlWithSmilHrefDecoded)
+//             //         .replace(/\\/g, "/");
+
+//             //     console.log("htmlPathInZip", htmlPathInZip);
+
+//             //     const link = findLinKByHref(publication, rootfile, opf, htmlPathInZip);
+//             //     if (link) {
+//             //         if (link.MediaOverlays) {
+//             //             debug(`#### MediaOverlays?! ${htmlPathInZip} => ${link.MediaOverlays.SmilPathInZip}`);
+//             //             return; // continue for each
+//             //         }
+
+//             //         const moURL = mediaOverlayURLPath + "?" +
+//             //             mediaOverlayURLParam + "=" + encodeURIComponent_RFC3986(link.Href);
+
+//             //         // legacy method:
+//             //         if (!link.Properties) {
+//             //             link.Properties = new Properties();
+//             //         }
+//             //         link.Properties.MediaOverlay = moURL;
+
+//             //         // new method:
+//             //         // https://w3c.github.io/sync-media-pub/incorporating-synchronized-narration.html#with-webpub
+//             //         if (!link.Alternate) {
+//             //             link.Alternate = [];
+//             //         }
+//             //         const moLink = new Link();
+//             //         moLink.Href = moURL;
+//             //         moLink.TypeLink = "application/vnd.syncnarr+json";
+//             //         moLink.Duration = link.Duration;
+//             //         link.Alternate.push(moLink);
+//             //     }
+//             // });
+
+//             // if (item.Properties && item.Properties.Encrypted) {
+//             //     debug("ENCRYPTED SMIL MEDIA OVERLAY: " + item.Href);
+//             //     continue;
+//             // }
+//             // LAZY
+//             // await lazyLoadMediaOverlays(publication, mo);
+//         }
+
+//         return;
+// };
+
+const findAllByKey = (obj: any, keyToFind: string): any => {
+    return Object.entries(obj)
+        .reduce((acc, data: any[]) => {
+            const key = data[0];
+            const value = data[1];
+            return (key === keyToFind)
+                ? acc.concat(value)
+                : (typeof value === "object")
+                ? acc.concat(findAllByKey(value, keyToFind))
+                : acc;
+        }, []);
+};
+
+const readFilesAsString = async (zip: IZip, filePathDecoded: string) => {
+    const has = await zipHasEntry(zip, filePathDecoded, undefined);
+    if (!has) {
+        const err = `NOT IN ZIP (container OPF rootfile): --- ${filePathDecoded}`;
+        debug(err);
+        const zipEntries = await zip.getEntries();
+        for (const zipEntry of zipEntries) {
+            debug(zipEntry);
+        }
+        return Promise.reject(err);
+    }
+
+    let fileZipStream_: IStreamAndLength;
+    try {
+        fileZipStream_ = await zip.entryStreamPromise(filePathDecoded);
+    } catch (err) {
+        debug(err);
+        return Promise.reject(err);
+    }
+    const fileZipStream = fileZipStream_.stream;
+
+    let opfZipData: Buffer;
+    try {
+        opfZipData = await streamToBufferPromise(fileZipStream);
+    } catch (err) {
+        debug(err);
+        return Promise.reject(err);
+    }
+
+    return opfZipData.toString("utf8");
+
 };

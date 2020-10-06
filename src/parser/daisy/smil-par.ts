@@ -22,10 +22,10 @@ export class Par extends SeqOrPar {
 
     // XPATH ROOT: /smil:smil/smil:body/**/smil:par
 
-    @XmlXPathSelector("smil:text")
+    @XmlXPathSelector("text")
     public Text!: Text;
 
-    @XmlXPathSelector("smil:audio")
+    @XmlXPathSelector("audio")
     public Audio!: Audio;
 
     // constructor() {

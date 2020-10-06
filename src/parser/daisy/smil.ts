@@ -18,7 +18,7 @@ export class SMIL {
 
     // XPATH ROOT: /smil:smil
 
-    @XmlXPathSelector("smil:body")
+    @XmlXPathSelector("body")
     public Body!: Body;
 
     // Bug with Javascript / Typescript @ANNOTATION() !
