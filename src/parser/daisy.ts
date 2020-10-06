@@ -42,7 +42,7 @@ import { OPF } from "./daisy/opf";
 import { Author } from "./daisy/opf-author";
 import { Manifest } from "./daisy/opf-manifest";
 import { Metafield } from "./daisy/opf-metafield";
-// import { SpineItem } from "./daisy/opf-spineitem";
+import { SpineItem } from "./daisy/opf-spineitem";
 import { Title } from "./daisy/opf-title";
 import { SMIL } from "./daisy/smil";
 import { Par } from "./daisy/smil-par";
@@ -426,7 +426,7 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
     }
 
     findContributorInMeta(publication, opf);
-    await parseDtBook(publication, files, zip);
+    await parseDtBook(publication, files, zip, opf);
     await fillSpineAndResource(publication, opf, zip);
 
     //  await addRendition(publication, opf, zip);
@@ -441,9 +441,9 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
 
     if (!publication.TOC || !publication.TOC.length) {
         if (ncx) {
-            fillTOCFromNCX(publication, opf, ncx, filePath);
+            await fillTOCFromNCX(publication, opf, ncx, zip);
             if (!publication.PageList) {
-                fillPageListFromNCX(publication, opf, ncx);
+                await fillPageListFromNCX(publication, opf, ncx, zip);
             }
         }
         fillLandmarksFromGuide(publication, opf);
@@ -1374,9 +1374,10 @@ const fillSpineAndResource = async (publication: Publication, opf: OPF, zip: IZi
     }
 };
 
-const fillPageListFromNCX = (publication: Publication, _opf: OPF, ncx: NCX) => {
+const fillPageListFromNCX = async (publication: Publication, _opf: OPF, ncx: NCX, zip: IZip) => {
     if (ncx.PageList && ncx.PageList.PageTarget && ncx.PageList.PageTarget.length) {
-        ncx.PageList.PageTarget.forEach((pageTarget) => {
+        // ncx.PageList.PageTarget.forEach((pageTarget) => {
+        for (const pageTarget of ncx.PageList.PageTarget) {
             const link = new Link();
             const srcDecoded = pageTarget.Content.SrcDecoded;
             if (!srcDecoded) {
@@ -1386,14 +1387,25 @@ const fillPageListFromNCX = (publication: Publication, _opf: OPF, ncx: NCX) => {
             const zipPath = path.join(path.dirname(ncx.ZipPath), srcDecoded)
                 .replace(/\\/g, "/");
 
-            link.setHrefDecoded(zipPath);
+            let smilXmlPath = "";
+            if (_opf.ZipPath) {
+                smilXmlPath = await getSmilLinkReference(zip, srcDecoded);
+            } else {
+                debug("?!point.Content.Src");
+                return;
+            }
+
+            link.setHrefDecoded(smilXmlPath || zipPath);
+
+            // link.setHrefDecoded(zipPath);
 
             link.Title = pageTarget.Text;
             if (!publication.PageList) {
                 publication.PageList = [];
             }
             publication.PageList.push(link);
-        });
+        // });
+        }
     }
 };
 
@@ -1480,14 +1492,20 @@ const createDocStringFromZipPath = async (link: Link, zip: IZip): Promise<string
     return zipData.toString("utf8");
 };
 
-const fillTOCFromNCX = (publication: Publication, opf: OPF, ncx: NCX, filePath: string) => {
+const fillTOCFromNCX = async (publication: Publication, opf: OPF, ncx: NCX, zip: IZip) => {
     if (ncx.Points && ncx.Points.length) {
-        ncx.Points.forEach((point) => {
+        // ncx.Points.forEach((point) => {
+        //     if (!publication.TOC) {
+        //         publication.TOC = [];
+        //     }
+        //     fillTOCFromNavPoint(publication, opf, ncx, point, publication.TOC, zip);
+        // });
+        for (const point of ncx.Points) {
             if (!publication.TOC) {
                 publication.TOC = [];
             }
-            fillTOCFromNavPoint(publication, opf, ncx, point, publication.TOC, filePath);
-        });
+            await fillTOCFromNavPoint(publication, opf, ncx, point, publication.TOC, zip);
+        }
     }
 };
 
@@ -1517,7 +1535,7 @@ const fillLandmarksFromGuide = (publication: Publication, opf: OPF) => {
 };
 
 const fillTOCFromNavPoint =
-    (publication: Publication, opf: OPF, ncx: NCX, point: NavPoint, node: Link[], filePath: string) => {
+    async (publication: Publication, opf: OPF, ncx: NCX, point: NavPoint, node: Link[], zip: IZip) => {
 
         const srcDecoded = point.Content.SrcDecoded;
         if (!srcDecoded) {
@@ -1530,7 +1548,7 @@ const fillTOCFromNavPoint =
 
         let smilXmlPath = "";
         if (opf.ZipPath) {
-            smilXmlPath = getSmilLinkReference(filePath, srcDecoded);
+            smilXmlPath = await getSmilLinkReference(zip, srcDecoded);
         } else {
             debug("?!point.Content.Src");
             return;
@@ -1541,12 +1559,18 @@ const fillTOCFromNavPoint =
         link.Title = point.Text;
 
         if (point.Points && point.Points.length) {
-            point.Points.forEach((p) => {
+            // point.Points.forEach((p) => {
+            //     if (!link.Children) {
+            //         link.Children = [];
+            //     }
+            //     fillTOCFromNavPoint(publication, opf, ncx, p, link.Children, zip);
+            // });
+            for (const p of point.Points) {
                 if (!link.Children) {
                     link.Children = [];
                 }
-                fillTOCFromNavPoint(publication, opf, ncx, p, link.Children, filePath);
-            });
+                await fillTOCFromNavPoint(publication, opf, ncx, p, link.Children, zip);
+            }
         }
 
         node.push(link);
@@ -1847,13 +1871,13 @@ const findAllMetaByRefineAndProperty =
         return metas;
     };
 
-const parseDtBook = async (publication: Publication, files: string[], zip: IZip) => {
+const parseDtBook = async (publication: Publication, files: string[], zip: IZip, opf: OPF) => {
     const fileName = findEntryFile(files) || "dtbook.xml";
     // const filePath = path.join(urlOrPath, fileName);
     const dtBookStr =  await readFilesAsString(zip, fileName);
     const dtBookDoc = new xmldom.DOMParser().parseFromString(dtBookStr, "application/xml");
     console.log("XML FILE EXISTS");
-    await convertXml(publication, dtBookDoc, zip);
+    await convertXml(publication, dtBookDoc, zip, opf);
 };
 
 const getFileNames = async (directory: string) => {
@@ -1896,7 +1920,7 @@ const findEntryFile = (files: string[]) => {
     return files.find((file) => file.match(/\.xml$/));
 };
 
-const convertXml = async (publication: Publication, xmlDom: any, zip: IZip) => {
+const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf: OPF) => {
     const title = xmlDom.getElementsByTagName("doctitle")[0].textContent;
     const serializer = new xmldom.XMLSerializer();
     transformList(xmlDom);
@@ -1919,15 +1943,16 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip) => {
             const parsedFile = new ParsedFile();
             parsedFile.Name = newFileName;
             parsedFile.Value = cssText.trim();
+            parsedFile.Type = "text/css";
             publication.ParsedFiles.push(parsedFile);
+
             // fs.writeFileSync(newFilePath , cssText.trim());
             // console.log("CSS File Saved!");
-            // const tempManifest = new Manifest();
-            // tempManifest.ID = `dtb_css${i + 1}`;
-            // tempManifest.setHrefDecoded(newFileName);
-            // tempManifest.MediaType = "text/css";
-            // tempManifest.isTemp = true;
-            // opf.Manifest.push(tempManifest);
+            const tempManifest = new Manifest();
+            tempManifest.ID = `dtb_css${index + 1}`;
+            tempManifest.setHrefDecoded(newFileName);
+            tempManifest.MediaType = parsedFile.Type;
+            opf.Manifest.push(tempManifest);
             // }
             links.push(`<link rel="stylesheet" href="${newFileName}" />`);
             index++;
@@ -1936,7 +1961,7 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip) => {
     }
 
     const levelDoms = xmlDom.getElementsByTagName("level1");
-    // opf.Spine.Items = [];
+    opf.Spine.Items = [];
 
     Array.from(levelDoms).forEach((element: any, i: number) => {
 
@@ -1974,16 +1999,16 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip) => {
         // try {
         //     fs.writeFileSync(path.join(urlOrPath, pageName) , xhtmlContent.trim());
         //     console.log("Saved!");
-        //     const tempManifest = new Manifest();
-        //     tempManifest.ID = `dtb_page${i + 1}`;
-        //     tempManifest.setHrefDecoded(pageName);
-        //     tempManifest.MediaType = "application/xhtml+xml";
-        //     tempManifest.isTemp = true;
-        //     opf.Manifest.push(tempManifest);
+        const tempManifest = new Manifest();
+        tempManifest.ID = `dtb_page${i + 1}`;
+        tempManifest.setHrefDecoded(pageName);
+        tempManifest.MediaType = "application/xhtml+xml";
+        tempManifest.isTemp = true;
+        opf.Manifest.push(tempManifest);
 
-        //     const tempSpineItem = new SpineItem();
-        //     tempSpineItem.IDref = tempManifest.ID;
-        //     opf.Spine.Items.push(tempSpineItem);
+        const tempSpineItem = new SpineItem();
+        tempSpineItem.IDref = tempManifest.ID;
+        opf.Spine.Items.push(tempSpineItem);
 
         // } catch (err) {
         //     console.log(err);
@@ -1992,6 +2017,7 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip) => {
         const parsedFile = new ParsedFile();
         parsedFile.Name = pageName;
         parsedFile.Value = xhtmlContent.trim();
+        parsedFile.Type = "application/xhtml+xml";
         publication.ParsedFiles.push(parsedFile);
 
         // console.log("opf", opf.Manifest.slice(-8));
@@ -2042,14 +2068,15 @@ const transformList = (xmlDom: any) => {
     }
 };
 
-const getSmilLinkReference = (filePath: string, srcDecoded: string) => {
+const getSmilLinkReference = async (zip: IZip, srcDecoded: string) => {
     const hashLink = srcDecoded.split("#");
     const smilLink = hashLink[0];
     const smilID = hashLink[1];
 
-    const smilFilePath = path.join(filePath, smilLink).replace(/\\/g, "/");
+    // const smilFilePath = path.join(filePath, smilLink).replace(/\\/g, "/");
 
-    const smilStr = fs.readFileSync(smilFilePath, { encoding: "utf8" });
+    // const smilStr = fs.readFileSync(smilFilePath, { encoding: "utf8" });
+    const smilStr = await readFilesAsString(zip, smilLink);
     const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
     const smil = XML.deserialize<SMIL>(smilXmlDoc, SMIL);
     // console.log("smil" , findAllByKey(smil, "Par"));
