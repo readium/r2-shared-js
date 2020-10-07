@@ -1389,7 +1389,7 @@ const fillPageListFromNCX = async (publication: Publication, _opf: OPF, ncx: NCX
 
             let smilXmlPath = "";
             if (_opf.ZipPath) {
-                smilXmlPath = await getSmilLinkReference(zip, srcDecoded);
+                smilXmlPath = await getSmilLinkReference(publication, zip, srcDecoded);
             } else {
                 debug("?!point.Content.Src");
                 return;
@@ -1548,7 +1548,7 @@ const fillTOCFromNavPoint =
 
         let smilXmlPath = "";
         if (opf.ZipPath) {
-            smilXmlPath = await getSmilLinkReference(zip, srcDecoded);
+            smilXmlPath = await getSmilLinkReference(publication, zip, srcDecoded);
         } else {
             debug("?!point.Content.Src");
             return;
@@ -2068,7 +2068,7 @@ const transformList = (xmlDom: any) => {
     }
 };
 
-const getSmilLinkReference = async (zip: IZip, srcDecoded: string) => {
+const getSmilLinkReference = async (publication: Publication, zip: IZip, srcDecoded: string) => {
     const hashLink = srcDecoded.split("#");
     const smilLink = hashLink[0];
     const smilID = hashLink[1];
@@ -2083,12 +2083,37 @@ const getSmilLinkReference = async (zip: IZip, srcDecoded: string) => {
     const parsInSmil =  findAllByKey(smil, "Par");
     const linkedPar = parsInSmil.find((par: Par) => par.ID === smilID);
     if (!linkedPar) {
-        return;
+        return "";
     }
     if (linkedPar.Text) {
-        return linkedPar.Text.Src;
+        const hashXmlLink = linkedPar.Text.Src.split("#");
+        const xmlID = hashXmlLink[1];
+        const xmlLink = findXhtmlWithID(publication, xmlID);
+        return `${xmlLink}#${xmlID}`;
+        // return linkedPar.Text.Src;
     }
-    return;
+    return "";
+};
+
+const findXhtmlWithID = (publication: Publication, ID: string) => {
+    for (const parsedFile of publication.ParsedFiles) {
+        // const parsedFile: ParsedFile = publication.ParsedFiles[i];
+        if (parsedFile.Type === "application/xhtml+xml") {
+            const xhtmlDoc = new xmldom.DOMParser().parseFromString(parsedFile.Value, "text/html");
+            if (xhtmlDoc.getElementById(ID)) {
+                return parsedFile.Name;
+            }
+        }
+    }
+    return "";
+    // publication.ParsedFiles.forEach((parsedFile: ParsedFile, i: number) => {
+    //     if (parsedFile.Type === "application/xhtml+xml") {
+    //         const xhtmlDoc = new xmldom.DOMParser().parseFromString(parsedFile.Value, "text/html");
+    //         if (xhtmlDoc.getElementById(ID)) {
+    //             console.log("xhtmlDoc" + i, parsedFile.Name);
+    //         }
+    //     }
+    // });
 };
 
 // const parseSmilFile = (link: Link, filePath: string, i: number = 0) => {
