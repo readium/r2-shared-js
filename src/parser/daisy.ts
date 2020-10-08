@@ -6,7 +6,7 @@
 // ==LICENSE-END==
 
 import * as debug_ from "debug";
-import * as fs from "fs";
+// import * as fs from "fs";
 import { imageSize } from "image-size";
 import { ISize } from "image-size/dist/types/interface";
 import * as moment from "moment";
@@ -124,14 +124,17 @@ export enum Daisyis {
     RemotePacked = "RemotePacked",
 }
 
-export function isDaisyPublication(urlOrPath: string): Daisyis | undefined {
+export async function isDaisyPublication(urlOrPath: string): Promise<Daisyis | undefined> {
     const http = isHTTP(urlOrPath);
     if (http) {
         return Daisyis.RemoteExploded;
     // } else if (fs.existsSync(path.join(urlOrPath, "package.opf"))) {
-    } else if (getOPFFileName(urlOrPath)) {
+    } else if (await checkOPFFile(urlOrPath)) {
         return Daisyis.LocalExploded;
     }
+    // else if (getOPFFileName(urlOrPath)) {
+    //     return Daisyis.LocalExploded;
+    // }
     return undefined;
 }
 
@@ -144,6 +147,7 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
         zip = await zipLoadPromise(filePath);
     } catch (err) {
         debug(err);
+        console.log("ZIP FILE", err);
         return Promise.reject(err);
     }
 
@@ -162,7 +166,7 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
     publication.AddToInternal("type", "daisy");
     publication.AddToInternal("zip", zip);
 
-    const files = await getFileNames(filePath);
+    const files = await getFileNames(zip);
 
     const [valid, message] = isFileValid(files);
 
@@ -1389,7 +1393,7 @@ const fillPageListFromNCX = async (publication: Publication, _opf: OPF, ncx: NCX
 
             let smilXmlPath = "";
             if (_opf.ZipPath) {
-                smilXmlPath = await getSmilLinkReference(publication, zip, srcDecoded);
+                smilXmlPath = await getSmilLinkReference(publication, zip, srcDecoded, _opf);
             } else {
                 debug("?!point.Content.Src");
                 return;
@@ -1548,7 +1552,7 @@ const fillTOCFromNavPoint =
 
         let smilXmlPath = "";
         if (opf.ZipPath) {
-            smilXmlPath = await getSmilLinkReference(publication, zip, srcDecoded);
+            smilXmlPath = await getSmilLinkReference(publication, zip, srcDecoded, opf);
         } else {
             debug("?!point.Content.Src");
             return;
@@ -1880,12 +1884,20 @@ const parseDtBook = async (publication: Publication, files: string[], zip: IZip,
     await convertXml(publication, dtBookDoc, zip, opf);
 };
 
-const getFileNames = async (directory: string) => {
-    return fs.readdirSync(directory);
+const getFileNames = async (zip: IZip) => {
+    return  await zip.getEntries();
 };
 
-const getOPFFileName = (directory: string) => {
-    const files =  fs.readdirSync(directory);
+const checkOPFFile = async (directory: string) => {
+    let zip: IZip;
+    try {
+        zip = await zipLoadPromise(directory);
+    } catch (err) {
+        debug(err);
+        console.log("ZIP FILE", err);
+        return Promise.reject(err);
+    }
+    const files = await zip.getEntries();
     return findOpfFile(files);
 };
 
@@ -1938,7 +1950,12 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf:
             // const newFilePath = path.join(urlOrPath, newFileName);
             // if (fs.existsSync(filePath) && !fs.existsSync(newFilePath)) {
             // let cssText = fs.readFileSync(filePath, { encoding: "utf8" });
-            let cssText = await readFilesAsString(zip, src);
+            if (!opf.ZipPath) {
+                return "";
+            }
+            const cssPath = path.join(path.dirname(opf.ZipPath), src)
+                            .replace(/\\/g, "/");
+            let cssText = await readFilesAsString(zip, cssPath);
             cssText = parseCss(cssText);
             const parsedFile = new ParsedFile();
             parsedFile.Name = newFileName;
@@ -2022,7 +2039,7 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf:
 
         // console.log("opf", opf.Manifest.slice(-8));
     });
-
+    return;
 };
 
 const parseDtBookXml = (xml: any) => {
@@ -2068,7 +2085,7 @@ const transformList = (xmlDom: any) => {
     }
 };
 
-const getSmilLinkReference = async (publication: Publication, zip: IZip, srcDecoded: string) => {
+const getSmilLinkReference = async (publication: Publication, zip: IZip, srcDecoded: string, opf: OPF) => {
     const hashLink = srcDecoded.split("#");
     const smilLink = hashLink[0];
     const smilID = hashLink[1];
@@ -2076,7 +2093,12 @@ const getSmilLinkReference = async (publication: Publication, zip: IZip, srcDeco
     // const smilFilePath = path.join(filePath, smilLink).replace(/\\/g, "/");
 
     // const smilStr = fs.readFileSync(smilFilePath, { encoding: "utf8" });
-    const smilStr = await readFilesAsString(zip, smilLink);
+    if (!opf.ZipPath) {
+        return "";
+    }
+    const smilPath = path.join(path.dirname(opf.ZipPath), smilLink)
+                    .replace(/\\/g, "/");
+    const smilStr = await readFilesAsString(zip, smilPath);
     const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
     const smil = XML.deserialize<SMIL>(smilXmlDoc, SMIL);
     // console.log("smil" , findAllByKey(smil, "Par"));
@@ -2270,7 +2292,7 @@ const findAllByKey = (obj: any, keyToFind: string): any => {
 const readFilesAsString = async (zip: IZip, filePathDecoded: string) => {
     const has = await zipHasEntry(zip, filePathDecoded, undefined);
     if (!has) {
-        const err = `NOT IN ZIP (container OPF rootfile): --- ${filePathDecoded}`;
+        const err = `NOT IN ZIP (readFilesAsString): --- ${filePathDecoded}`;
         debug(err);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
