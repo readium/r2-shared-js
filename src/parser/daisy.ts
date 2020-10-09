@@ -931,108 +931,110 @@ const addContributor = (
 
     const dcMetadata = opf.Metadata.DCMetadata;
 
-    dcMetadata.Contributor.forEach((cont) => {
+    if (dcMetadata.Contributor && Array.isArray(dcMetadata.Contributor)) {
+        dcMetadata.Contributor.forEach((cont) => {
 
-        const contributor = new Contributor();
-        contributor.Name = cont.Data;
-        contributor.SortAs = cont.FileAs;
-        contributor.Role[0] = cont.Role;
+            const contributor = new Contributor();
+            contributor.Name = cont.Data;
+            contributor.SortAs = cont.FileAs;
+            contributor.Role[0] = cont.Role;
 
-        let role = cont.Role;
-        if (!role && forcedRole) {
-            role = forcedRole;
-        }
+            let role = cont.Role;
+            if (!role && forcedRole) {
+                role = forcedRole;
+            }
 
-        if (role) {
-            switch (role) {
-                case "aut": {
-                    if (!publication.Metadata.Author) {
-                        publication.Metadata.Author = [];
+            if (role) {
+                switch (role) {
+                    case "aut": {
+                        if (!publication.Metadata.Author) {
+                            publication.Metadata.Author = [];
+                        }
+                        publication.Metadata.Author.push(contributor);
+                        break;
                     }
-                    publication.Metadata.Author.push(contributor);
-                    break;
-                }
-                case "trl": {
-                    if (!publication.Metadata.Translator) {
-                        publication.Metadata.Translator = [];
+                    case "trl": {
+                        if (!publication.Metadata.Translator) {
+                            publication.Metadata.Translator = [];
+                        }
+                        publication.Metadata.Translator.push(contributor);
+                        break;
                     }
-                    publication.Metadata.Translator.push(contributor);
-                    break;
-                }
-                case "art": {
-                    if (!publication.Metadata.Artist) {
-                        publication.Metadata.Artist = [];
+                    case "art": {
+                        if (!publication.Metadata.Artist) {
+                            publication.Metadata.Artist = [];
+                        }
+                        publication.Metadata.Artist.push(contributor);
+                        break;
                     }
-                    publication.Metadata.Artist.push(contributor);
-                    break;
-                }
-                case "edt": {
-                    if (!publication.Metadata.Editor) {
-                        publication.Metadata.Editor = [];
+                    case "edt": {
+                        if (!publication.Metadata.Editor) {
+                            publication.Metadata.Editor = [];
+                        }
+                        publication.Metadata.Editor.push(contributor);
+                        break;
                     }
-                    publication.Metadata.Editor.push(contributor);
-                    break;
-                }
-                case "ill": {
-                    if (!publication.Metadata.Illustrator) {
-                        publication.Metadata.Illustrator = [];
+                    case "ill": {
+                        if (!publication.Metadata.Illustrator) {
+                            publication.Metadata.Illustrator = [];
+                        }
+                        publication.Metadata.Illustrator.push(contributor);
+                        break;
                     }
-                    publication.Metadata.Illustrator.push(contributor);
-                    break;
-                }
-                case "ltr": {
-                    if (!publication.Metadata.Letterer) {
-                        publication.Metadata.Letterer = [];
+                    case "ltr": {
+                        if (!publication.Metadata.Letterer) {
+                            publication.Metadata.Letterer = [];
+                        }
+                        publication.Metadata.Letterer.push(contributor);
+                        break;
                     }
-                    publication.Metadata.Letterer.push(contributor);
-                    break;
-                }
-                case "pen": {
-                    if (!publication.Metadata.Penciler) {
-                        publication.Metadata.Penciler = [];
+                    case "pen": {
+                        if (!publication.Metadata.Penciler) {
+                            publication.Metadata.Penciler = [];
+                        }
+                        publication.Metadata.Penciler.push(contributor);
+                        break;
                     }
-                    publication.Metadata.Penciler.push(contributor);
-                    break;
-                }
-                case "clr": {
-                    if (!publication.Metadata.Colorist) {
-                        publication.Metadata.Colorist = [];
+                    case "clr": {
+                        if (!publication.Metadata.Colorist) {
+                            publication.Metadata.Colorist = [];
+                        }
+                        publication.Metadata.Colorist.push(contributor);
+                        break;
                     }
-                    publication.Metadata.Colorist.push(contributor);
-                    break;
-                }
-                case "ink": {
-                    if (!publication.Metadata.Inker) {
-                        publication.Metadata.Inker = [];
+                    case "ink": {
+                        if (!publication.Metadata.Inker) {
+                            publication.Metadata.Inker = [];
+                        }
+                        publication.Metadata.Inker.push(contributor);
+                        break;
                     }
-                    publication.Metadata.Inker.push(contributor);
-                    break;
-                }
-                case "nrt": {
-                    if (!publication.Metadata.Narrator) {
-                        publication.Metadata.Narrator = [];
+                    case "nrt": {
+                        if (!publication.Metadata.Narrator) {
+                            publication.Metadata.Narrator = [];
+                        }
+                        publication.Metadata.Narrator.push(contributor);
+                        break;
                     }
-                    publication.Metadata.Narrator.push(contributor);
-                    break;
-                }
-                case "pbl": {
-                    if (!publication.Metadata.Publisher) {
-                        publication.Metadata.Publisher = [];
+                    case "pbl": {
+                        if (!publication.Metadata.Publisher) {
+                            publication.Metadata.Publisher = [];
+                        }
+                        publication.Metadata.Publisher.push(contributor);
+                        break;
                     }
-                    publication.Metadata.Publisher.push(contributor);
-                    break;
-                }
-                default: {
-                    contributor.Role = [role];
+                    default: {
+                        contributor.Role = [role];
 
-                    if (!publication.Metadata.Contributor) {
-                        publication.Metadata.Contributor = [];
+                        if (!publication.Metadata.Contributor) {
+                            publication.Metadata.Contributor = [];
+                        }
+                        publication.Metadata.Contributor.push(contributor);
                     }
-                    publication.Metadata.Contributor.push(contributor);
                 }
             }
-        }
-    });
+        });
+    }
 };
 
 const addIdentifier = (publication: Publication, opf: OPF) => {
@@ -1977,24 +1979,16 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf:
     // });
     }
 
-    const levelDoms = xmlDom.getElementsByTagName("level1");
     opf.Spine.Items = [];
+    const data: any[] = [];
+    parseFrontmatterXml(xmlDom, serializer, data);
+    parseBodymatterXml(xmlDom, serializer, data);
+    parseRearmatterXml(xmlDom, serializer, data);
 
-    Array.from(levelDoms).forEach((element: any, i: number) => {
+    console.log("total pages", data.length);
 
-        let docTitle = "";
-
-        if (element.parentNode.nodeName === "frontmatter") {
-            docTitle = element.parentNode.getElementsByTagName("doctitle")[0];
-        }
-
-        const bodyContent = element.parentNode.cloneNode();
-        if (docTitle) {
-            bodyContent.appendChild(docTitle);
-        }
-        bodyContent.appendChild(element);
-        const bodyContentStr = serializer.serializeToString(bodyContent);
-        const content = parseDtBookXml(bodyContentStr);
+    data.forEach((element, i) => {
+        const content = parseDtBookXml(element);
 
         const xhtmlContent = `
             <?xml version="1.0" encoding="utf-8"?>
@@ -2013,9 +2007,6 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf:
             </html>
         `;
         const pageName = `page${i + 1}.xhtml`;
-        // try {
-        //     fs.writeFileSync(path.join(urlOrPath, pageName) , xhtmlContent.trim());
-        //     console.log("Saved!");
         const tempManifest = new Manifest();
         tempManifest.ID = `dtb_page${i + 1}`;
         tempManifest.setHrefDecoded(pageName);
@@ -2027,18 +2018,66 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf:
         tempSpineItem.IDref = tempManifest.ID;
         opf.Spine.Items.push(tempSpineItem);
 
-        // } catch (err) {
-        //     console.log(err);
-        // }
-
         const parsedFile = new ParsedFile();
         parsedFile.Name = pageName;
         parsedFile.Value = xhtmlContent.trim();
         parsedFile.Type = "application/xhtml+xml";
         publication.ParsedFiles.push(parsedFile);
-
-        // console.log("opf", opf.Manifest.slice(-8));
     });
+    // const levelDoms = xmlDom.getElementsByTagName("level1");
+    // opf.Spine.Items = [];
+
+    // Array.from(levelDoms).forEach((element: any, i: number) => {
+
+    //     let docTitle = "";
+
+    //     if (element.parentNode.nodeName === "frontmatter") {
+    //         docTitle = element.parentNode.getElementsByTagName("doctitle")[0];
+    //     }
+
+    //     const bodyContent = element.parentNode.cloneNode();
+    //     if (docTitle) {
+    //         bodyContent.appendChild(docTitle);
+    //     }
+    //     bodyContent.appendChild(element);
+    //     const bodyContentStr = serializer.serializeToString(bodyContent);
+    //     const content = parseDtBookXml(bodyContentStr);
+
+    //     const xhtmlContent = `
+    //         <?xml version="1.0" encoding="utf-8"?>
+    //         <!DOCTYPE xhtml>
+    //         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    //         <head>
+    //             <meta charset="UTF-8" />
+    //             <title>${title}</title>
+    //             ${links.join(" ")}
+    //         </head>
+    //         <body>
+    //             <div class="book">
+    //                 ${content}
+    //             </div>
+    //         </body>
+    //         </html>
+    //     `;
+    //     const pageName = `page${i + 1}.xhtml`;
+
+    //     const tempManifest = new Manifest();
+    //     tempManifest.ID = `dtb_page${i + 1}`;
+    //     tempManifest.setHrefDecoded(pageName);
+    //     tempManifest.MediaType = "application/xhtml+xml";
+    //     tempManifest.isTemp = true;
+    //     opf.Manifest.push(tempManifest);
+
+    //     const tempSpineItem = new SpineItem();
+    //     tempSpineItem.IDref = tempManifest.ID;
+    //     opf.Spine.Items.push(tempSpineItem);
+
+    //     const parsedFile = new ParsedFile();
+    //     parsedFile.Name = pageName;
+    //     parsedFile.Value = xhtmlContent.trim();
+    //     parsedFile.Type = "application/xhtml+xml";
+    //     publication.ParsedFiles.push(parsedFile);
+    // });
     return;
 };
 
@@ -2062,6 +2101,90 @@ const parseDtBookXml = (xml: any) => {
         .replace(/(<\/?)imggroup/g, "$1figure")
         .replace(/<caption/g, "<figcaption")
         .replace(/<\/caption>/g, "</figcaption>");
+};
+
+const parseFrontmatterXml = (xmlDom: any, serializer: xmldom.XMLSerializer, data: any[]) => {
+    let levelDoms = [];
+    const frontmatter = xmlDom.getElementsByTagName("frontmatter")[0];
+    if (frontmatter) {
+        const docTitle = frontmatter.getElementsByTagName("doctitle")[0];
+        const docAuthor = frontmatter.getElementsByTagName("docauthor")[0];
+        const coverTitle = frontmatter.getElementsByTagName("covertitle")[0];
+        const level1s = Array.from(frontmatter.getElementsByTagName("level1"));
+        const levels = Array.from(frontmatter.getElementsByTagName("level"));
+
+        console.log("levels", levels, level1s.length);
+
+        levelDoms = levels.concat(level1s);
+        if (levelDoms.length > 0) {
+            levelDoms.forEach((element: any, i: number) => {
+            const bodyContent = element.parentNode.cloneNode();
+            if (i === 0) {
+                if (docTitle) {
+                    bodyContent.appendChild(docTitle);
+                }
+                if (docAuthor) {
+                    bodyContent.appendChild(docAuthor);
+                }
+                if (coverTitle) {
+                    bodyContent.appendChild(coverTitle);
+                }
+            }
+            bodyContent.appendChild(element);
+            const bodyContentStr = serializer.serializeToString(bodyContent);
+            data.push(bodyContentStr);
+            });
+        } else {
+            const bodyContent = frontmatter.cloneNode();
+            if (docTitle) {
+                bodyContent.appendChild(docTitle);
+            }
+            if (docAuthor) {
+                bodyContent.appendChild(docAuthor);
+            }
+            if (coverTitle) {
+                bodyContent.appendChild(coverTitle);
+            }
+            const bodyContentStr = serializer.serializeToString(bodyContent);
+            data.push(bodyContentStr);
+        }
+    }
+};
+
+const parseBodymatterXml = (xmlDom: any, serializer: xmldom.XMLSerializer, data: any[]) => {
+    let levelDoms = [];
+    const bodymatter = xmlDom.getElementsByTagName("bodymatter")[0];
+    if (bodymatter) {
+        const level1s = Array.from(bodymatter.getElementsByTagName("level1"));
+        const levels = Array.from(bodymatter.getElementsByTagName("level"));
+
+        console.log("levels", levels, level1s.length);
+        levelDoms = levels.concat(level1s);
+        levelDoms.forEach((element: any) => {
+            const bodyContent = element.parentNode.cloneNode();
+            bodyContent.appendChild(element);
+            const bodyContentStr = serializer.serializeToString(bodyContent);
+            data.push(bodyContentStr);
+        });
+    }
+};
+
+const parseRearmatterXml = (xmlDom: any, serializer: xmldom.XMLSerializer, data: any[]) => {
+    let levelDoms = [];
+    const rearmatter = xmlDom.getElementsByTagName("rearmatter")[0];
+    if (rearmatter) {
+        const level1s = Array.from(rearmatter.getElementsByTagName("level1"));
+        const levels = Array.from(rearmatter.getElementsByTagName("level"));
+
+        console.log("levels", levels, level1s.length);
+        levelDoms = levels.concat(level1s);
+        levelDoms.forEach((element: any) => {
+            const bodyContent = element.parentNode.cloneNode();
+            bodyContent.appendChild(element);
+            const bodyContentStr = serializer.serializeToString(bodyContent);
+            data.push(bodyContentStr);
+        });
+    }
 };
 
 const parseCss = (cssText: any): string => {
