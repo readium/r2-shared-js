@@ -1343,6 +1343,7 @@ const fillSpineAndResource = async (publication: Publication, opf: OPF, zip: IZi
                     if (!publication.Spine) {
                         publication.Spine = [];
                     }
+                    console.log("linkItem", linkItem);
                     publication.Spine.push(linkItem);
                 }
             }
@@ -2094,6 +2095,10 @@ const parseDtBookXml = (xml: any) => {
         .replace(/<\/level\d>/g, "</div>")
         .replace(/<doctitle/g, "<h1 class='doctitle'")
         .replace(/<\/doctitle>/g, "</h1>")
+        .replace(/<docauthor/g, "<p class='docauthor'")
+        .replace(/<\/docauthor>/g, "</p>")
+        .replace(/<covertitle/g, "<p class='covertitle'")
+        .replace(/<\/covertitle>/g, "</p>")
         .replace(/<pagenum/g, "<span class='pagenum'")
         .replace(/<\/pagenum>/g, "</span>")
         .replace(/<sent/g, "<span")
