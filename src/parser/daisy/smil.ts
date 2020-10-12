@@ -7,6 +7,7 @@
 
 import { XmlObject, XmlXPathSelector } from "@r2-utils-js/_utils/xml-js-mapper";
 
+import { XMetadata } from "./opf-x-metadata";
 import { Body } from "./smil-body";
 import { Par } from "./smil-par";
 
@@ -17,6 +18,9 @@ import { Par } from "./smil-par";
 export class SMIL {
 
     // XPATH ROOT: /smil:smil
+
+    @XmlXPathSelector("head")
+    public Head!: XMetadata;
 
     @XmlXPathSelector("body")
     public Body!: Body;

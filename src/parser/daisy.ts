@@ -1292,6 +1292,42 @@ const addMediaOverlay = async (link: Link, linkEpub: Manifest, opf: OPF, zip: IZ
     }
 };
 
+const addDaisyMediaOverlay = async (link: Link, linkEpub: Manifest) => {
+    if (linkEpub.MediaOverlay) {
+        // const mo = new MediaOverlayNode();
+        // mo.SmilPathInZip = smilFilePath;
+        // mo.initialized = false;
+        // link.MediaOverlays = mo;
+
+        const moURL = mediaOverlayURLPath + "?" +
+            mediaOverlayURLParam + "=" +
+            encodeURIComponent_RFC3986(link.HrefDecoded ? link.HrefDecoded : link.Href);
+
+        // legacy method:
+        if (!link.Properties) {
+            link.Properties = new Properties();
+        }
+        link.Properties.MediaOverlay = moURL;
+
+        // new method:
+        // https://w3c.github.io/sync-media-pub/incorporating-synchronized-narration.html#with-webpub
+        if (!link.Alternate) {
+            link.Alternate = [];
+        }
+        const moLink = new Link();
+        moLink.Href = moURL;
+        moLink.TypeLink = "application/vnd.syncnarr+json";
+        moLink.Duration = link.Duration;
+        link.Alternate.push(moLink);
+
+        if (link.Properties && link.Properties.Encrypted) {
+            debug("ENCRYPTED SMIL MEDIA OVERLAY: " + (link.HrefDecoded ? link.HrefDecoded : link.Href));
+        }
+        // LAZY
+        // await lazyLoadMediaOverlays(publication, mo);
+    }
+};
+
 const findInManifestByID =
     async (publication: Publication, opf: OPF, ID: string, zip: IZip): Promise<Link> => {
 
@@ -1305,6 +1341,9 @@ const findInManifestByID =
             if (item && opf.ZipPath) {
                 const linkItem = new Link();
                 linkItem.TypeLink = item.MediaType;
+                if (item.Duration) {
+                    linkItem.Duration = item.Duration;
+                }
                 const itemHrefDecoded = item.HrefDecoded;
                 if (!itemHrefDecoded) {
                     return Promise.reject("item.Href?!");
@@ -1314,6 +1353,7 @@ const findInManifestByID =
 
                 await addRelAndPropertiesToLink(publication, linkItem, item, opf);
                 await addMediaOverlay(linkItem, item, opf, zip);
+                await addDaisyMediaOverlay(linkItem, item);
                 return linkItem;
             }
         }
@@ -1965,7 +2005,6 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf:
             parsedFile.Value = cssText.trim();
             parsedFile.Type = "text/css";
             publication.ParsedFiles.push(parsedFile);
-
             // fs.writeFileSync(newFilePath , cssText.trim());
             // console.log("CSS File Saved!");
             const tempManifest = new Manifest();
@@ -1986,9 +2025,9 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf:
     parseBodymatterXml(xmlDom, serializer, data);
     parseRearmatterXml(xmlDom, serializer, data);
 
-    console.log("total pages", data.length);
-
-    data.forEach((element, i) => {
+    let i = 0;
+    // data.forEach((element, i) => {
+    for (const element of data) {
         const content = parseDtBookXml(element);
 
         const xhtmlContent = `
@@ -2024,62 +2063,54 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf:
         parsedFile.Value = xhtmlContent.trim();
         parsedFile.Type = "application/xhtml+xml";
         publication.ParsedFiles.push(parsedFile);
-    });
-    // const levelDoms = xmlDom.getElementsByTagName("level1");
-    // opf.Spine.Items = [];
 
-    // Array.from(levelDoms).forEach((element: any, i: number) => {
+        const xhtmlDoc = new xmldom.DOMParser().parseFromString(xhtmlContent, "text/html");
+        const smilRefs = xpath.select("//@smilref", xhtmlDoc);
+        const refs = smilRefs.map((smilRef: any) => {
+            return smilRef.value.split("#")[0]; // get link only
+        });
+        // const smilRefLinks = [...new Set(refs)]; // remove duplicate
+        const multimediaContent = opf.Metadata.XMetadata.Meta.find((metaTag) => {
+            return metaTag.Name === "dtb:multimediaContent";
+        });
+        if (!multimediaContent || !multimediaContent.Content.includes("audio")) {
+            continue;
+        }
 
-    //     let docTitle = "";
+        const smilRefLinks = refs.filter((ref: string, ind: number) => {
+            return refs.indexOf(ref) === ind;
+        }); // remove duplicate
 
-    //     if (element.parentNode.nodeName === "frontmatter") {
-    //         docTitle = element.parentNode.getElementsByTagName("doctitle")[0];
-    //     }
-
-    //     const bodyContent = element.parentNode.cloneNode();
-    //     if (docTitle) {
-    //         bodyContent.appendChild(docTitle);
-    //     }
-    //     bodyContent.appendChild(element);
-    //     const bodyContentStr = serializer.serializeToString(bodyContent);
-    //     const content = parseDtBookXml(bodyContentStr);
-
-    //     const xhtmlContent = `
-    //         <?xml version="1.0" encoding="utf-8"?>
-    //         <!DOCTYPE xhtml>
-    //         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-    //         <head>
-    //             <meta charset="UTF-8" />
-    //             <title>${title}</title>
-    //             ${links.join(" ")}
-    //         </head>
-    //         <body>
-    //             <div class="book">
-    //                 ${content}
-    //             </div>
-    //         </body>
-    //         </html>
-    //     `;
-    //     const pageName = `page${i + 1}.xhtml`;
-
-    //     const tempManifest = new Manifest();
-    //     tempManifest.ID = `dtb_page${i + 1}`;
-    //     tempManifest.setHrefDecoded(pageName);
-    //     tempManifest.MediaType = "application/xhtml+xml";
-    //     tempManifest.isTemp = true;
-    //     opf.Manifest.push(tempManifest);
-
-    //     const tempSpineItem = new SpineItem();
-    //     tempSpineItem.IDref = tempManifest.ID;
-    //     opf.Spine.Items.push(tempSpineItem);
-
-    //     const parsedFile = new ParsedFile();
-    //     parsedFile.Name = pageName;
-    //     parsedFile.Value = xhtmlContent.trim();
-    //     parsedFile.Type = "application/xhtml+xml";
-    //     publication.ParsedFiles.push(parsedFile);
+        let duration = 0;
+        for (const smilRefLink of smilRefLinks) {
+            const file = await parseSmilFile(zip, smilRefLink, opf);
+            if (!file) {
+                return;
+            }
+            // setMediaInfo(tempManifest, tempSpineItem, file);
+            duration += getMediaDuration(file);
+        }
+        console.log("DURATION", duration);
+        tempManifest.Duration = duration;
+        tempManifest.MediaOverlay = "true";
     // });
+        i++;
+    }
     return;
+};
+
+const getMediaDuration = (smilFile: SMIL ) => {
+    // const setMediaInfo = (manifest: Manifest, link: SpineItem, smilFile: SMIL ) => {
+    // const metasDuration: any[] = [];
+
+    // smilFile.Head.Meta.forEach((metaTag) => {
+    //     if (metaTag.Name === "dtb:totalElapsedTime") {
+    //         metasDuration.push(timeStrToSeconds(metaTag.Content));
+    //     }
+    // });
+
+    // console.log("metasDuration", metasDuration);
+    return timeStrToSeconds(smilFile.Body.Seq[0].Duration);
 };
 
 const parseDtBookXml = (xml: any) => {
@@ -2213,6 +2244,17 @@ const transformList = (xmlDom: any) => {
     }
 };
 
+const parseSmilFile = async (zip: IZip, srcDecoded: string, opf: OPF) => {
+    if (!opf.ZipPath) {
+        return "";
+    }
+    const smilPath = path.join(path.dirname(opf.ZipPath), srcDecoded)
+                    .replace(/\\/g, "/");
+    const smilStr = await readFilesAsString(zip, smilPath);
+    const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
+    return XML.deserialize<SMIL>(smilXmlDoc, SMIL);
+};
+
 const getSmilLinkReference = async (publication: Publication, zip: IZip, srcDecoded: string, opf: OPF) => {
     const hashLink = srcDecoded.split("#");
     const smilLink = hashLink[0];
@@ -2221,14 +2263,7 @@ const getSmilLinkReference = async (publication: Publication, zip: IZip, srcDeco
     // const smilFilePath = path.join(filePath, smilLink).replace(/\\/g, "/");
 
     // const smilStr = fs.readFileSync(smilFilePath, { encoding: "utf8" });
-    if (!opf.ZipPath) {
-        return "";
-    }
-    const smilPath = path.join(path.dirname(opf.ZipPath), smilLink)
-                    .replace(/\\/g, "/");
-    const smilStr = await readFilesAsString(zip, smilPath);
-    const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
-    const smil = XML.deserialize<SMIL>(smilXmlDoc, SMIL);
+    const smil = await parseSmilFile(zip, smilLink, opf);
     // console.log("smil" , findAllByKey(smil, "Par"));
     const parsInSmil =  findAllByKey(smil, "Par");
     const linkedPar = parsInSmil.find((par: Par) => par.ID === smilID);
