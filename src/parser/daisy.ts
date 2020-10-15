@@ -1383,7 +1383,6 @@ const fillSpineAndResource = async (publication: Publication, opf: OPF, zip: IZi
                     if (!publication.Spine) {
                         publication.Spine = [];
                     }
-                    console.log("linkItem", linkItem);
                     publication.Spine.push(linkItem);
                 }
             }
@@ -1923,7 +1922,6 @@ const parseDtBook = async (publication: Publication, files: string[], zip: IZip,
     // const filePath = path.join(urlOrPath, fileName);
     const dtBookStr =  await readFilesAsString(zip, fileName);
     const dtBookDoc = new xmldom.DOMParser().parseFromString(dtBookStr, "application/xml");
-    console.log("XML FILE EXISTS");
     await convertXml(publication, dtBookDoc, zip, opf);
 };
 
@@ -2004,6 +2002,8 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf:
             parsedFile.Name = newFileName;
             parsedFile.Value = cssText.trim();
             parsedFile.Type = "text/css";
+            parsedFile.FilePath = path.join(path.dirname(opf.ZipPath), newFileName)
+                        .replace(/\\/g, "/");
             publication.ParsedFiles.push(parsedFile);
             // fs.writeFileSync(newFilePath , cssText.trim());
             // console.log("CSS File Saved!");
@@ -2028,6 +2028,9 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf:
     let i = 0;
     // data.forEach((element, i) => {
     for (const element of data) {
+        if (!opf.ZipPath) {
+            return "";
+        }
         const content = parseDtBookXml(element);
 
         const xhtmlContent = `
@@ -2062,6 +2065,8 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf:
         parsedFile.Name = pageName;
         parsedFile.Value = xhtmlContent.trim();
         parsedFile.Type = "application/xhtml+xml";
+        parsedFile.FilePath = path.join(path.dirname(opf.ZipPath), pageName)
+                        .replace(/\\/g, "/");
         publication.ParsedFiles.push(parsedFile);
 
         const xhtmlDoc = new xmldom.DOMParser().parseFromString(xhtmlContent, "text/html");
@@ -2149,8 +2154,6 @@ const parseFrontmatterXml = (xmlDom: any, serializer: xmldom.XMLSerializer, data
         const level1s = Array.from(frontmatter.getElementsByTagName("level1"));
         const levels = Array.from(frontmatter.getElementsByTagName("level"));
 
-        console.log("levels", levels, level1s.length);
-
         levelDoms = levels.concat(level1s);
         if (levelDoms.length > 0) {
             levelDoms.forEach((element: any, i: number) => {
@@ -2194,7 +2197,6 @@ const parseBodymatterXml = (xmlDom: any, serializer: xmldom.XMLSerializer, data:
         const level1s = Array.from(bodymatter.getElementsByTagName("level1"));
         const levels = Array.from(bodymatter.getElementsByTagName("level"));
 
-        console.log("levels", levels, level1s.length);
         levelDoms = levels.concat(level1s);
         levelDoms.forEach((element: any) => {
             const bodyContent = element.parentNode.cloneNode();

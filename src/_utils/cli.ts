@@ -365,11 +365,12 @@ async function extractEPUB_Link(pub: Publication, zip: IZip, outDir: string, lin
         return;
     }
 
-    const inputPath = path.join(filePath, hrefDecoded);
+    // const inputPath = path.join(filePath, hrefDecoded);
 
-    if (!fs.existsSync(inputPath)) {
-        return;
-    }
+    // if (!fs.existsSync(inputPath)) {
+    //     console.log("==== NOT EXIST", inputPath);
+    //     return;
+    // }
 
     const has = await zipHasEntry(zip, hrefDecoded, link.Href);
     if (!has) {
@@ -521,7 +522,7 @@ function ensureDirs(fspath: string) {
 
 function createParsedFiles(pub: Publication, outDir: string) {
     pub.ParsedFiles.forEach((file: ParsedFile) => {
-        const linkOutputPath = path.join(outDir, file.Name);
+        const linkOutputPath = path.join(outDir, file.FilePath);
         fs.writeFileSync(linkOutputPath, file.Value);
     });
 }
