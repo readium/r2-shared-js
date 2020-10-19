@@ -488,6 +488,7 @@ async function extractEPUB(isEPUB: boolean, pub: Publication, outDir: string, ke
     }
 
     createParsedFiles(pub, outDir);
+    await dumpPublication(pub);
 }
 
 function ensureDirs(fspath: string) {

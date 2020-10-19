@@ -147,7 +147,6 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
         zip = await zipLoadPromise(filePath);
     } catch (err) {
         debug(err);
-        console.log("ZIP FILE", err);
         return Promise.reject(err);
     }
 
@@ -1935,7 +1934,6 @@ const checkOPFFile = async (directory: string) => {
         zip = await zipLoadPromise(directory);
     } catch (err) {
         debug(err);
-        console.log("ZIP FILE", err);
         return Promise.reject(err);
     }
     const files = await zip.getEntries();
@@ -2095,7 +2093,6 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf:
             // setMediaInfo(tempManifest, tempSpineItem, file);
             duration += getMediaDuration(file);
         }
-        console.log("DURATION", duration);
         tempManifest.Duration = duration;
         tempManifest.MediaOverlay = "true";
     // });
@@ -2214,7 +2211,6 @@ const parseRearmatterXml = (xmlDom: any, serializer: xmldom.XMLSerializer, data:
         const level1s = Array.from(rearmatter.getElementsByTagName("level1"));
         const levels = Array.from(rearmatter.getElementsByTagName("level"));
 
-        console.log("levels", levels, level1s.length);
         levelDoms = levels.concat(level1s);
         levelDoms.forEach((element: any) => {
             const bodyContent = element.parentNode.cloneNode();
