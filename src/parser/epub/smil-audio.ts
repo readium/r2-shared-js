@@ -16,6 +16,20 @@ import { tryDecodeURI } from "../../_utils/decodeURI";
 export class Audio {
 
     // XPATH ROOT: /smil:smil/smil:body/**/smil:audio
+    @XmlXPathSelector("@id")
+    public ID!: string;
+
+    @XmlXPathSelector("@dur")
+    public Duration!: string;
+
+    @XmlXPathSelector("@fill")
+    public Fill!: string;
+
+    @XmlXPathSelector("@class")
+    public Class!: string;
+
+    @XmlXPathSelector("@customTest")
+    public CustomTest!: string;
 
     @XmlXPathSelector("@clipBegin")
     public ClipBegin!: string;

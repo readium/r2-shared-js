@@ -20,6 +20,21 @@ export class Text {
     @XmlXPathSelector("@epub:type")
     public EpubType!: string;
 
+    @XmlXPathSelector("@id")
+    public ID!: string;
+
+    @XmlXPathSelector("@dur")
+    public Duration!: string;
+
+    @XmlXPathSelector("@fill")
+    public Fill!: string;
+
+    @XmlXPathSelector("@class")
+    public Class!: string;
+
+    @XmlXPathSelector("@customTest")
+    public CustomTest!: string;
+
     @XmlXPathSelector("@src")
     public Src1!: string;
     get Src(): string {

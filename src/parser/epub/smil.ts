@@ -7,18 +7,22 @@
 
 import { XmlObject, XmlXPathSelector } from "@r2-utils-js/_utils/xml-js-mapper";
 
+import { XMetadata } from "./opf-x-metadata";
 import { Body } from "./smil-body";
 import { Par } from "./smil-par";
 
 @XmlObject({
-    epub: "http://www.idpf.org/2007/ops",
+    dtbsmil: "http://www.w3.org/2001/SMIL20/",
     smil: "http://www.w3.org/ns/SMIL",
 })
 export class SMIL {
 
     // XPATH ROOT: /smil:smil
 
-    @XmlXPathSelector("smil:body")
+    @XmlXPathSelector("head")
+    public Head!: XMetadata;
+
+    @XmlXPathSelector("body")
     public Body!: Body;
 
     // Bug with Javascript / Typescript @ANNOTATION() !
