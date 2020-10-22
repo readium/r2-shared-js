@@ -2077,6 +2077,7 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf:
             return metaTag.Name === "dtb:multimediaContent";
         });
         if (!multimediaContent || !multimediaContent.Content.includes("audio")) {
+            i++;
             continue;
         }
 
