@@ -26,6 +26,7 @@ import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
 import { zipHasEntry } from "../_utils/zipHasEntry";
 import { Rootfile } from "./epub/container-rootfile";
 import { NCX } from "./epub/ncx";
+import { NavPoint } from "./epub/ncx-navpoint";
 import { OPF } from "./epub/opf";
 import { Author } from "./epub/opf-author";
 import { Manifest } from "./epub/opf-manifest";
@@ -137,31 +138,6 @@ export const fillSubject = (publication: Publication, opf: OPF) => {
                 publication.Metadata.Subject = [];
             }
             publication.Metadata.Subject.push(sub);
-        });
-    }
-};
-
-export const fillLandmarksFromGuide = (publication: Publication, opf: OPF) => {
-    if (opf.Guide && opf.Guide.length) {
-        opf.Guide.forEach((ref) => {
-            if (ref.Href && opf.ZipPath) {
-                const refHrefDecoded = ref.HrefDecoded;
-                if (!refHrefDecoded) {
-                    debug("ref.Href?!");
-                    return; // foreach
-                }
-                const link = new Link();
-                const zipPath = path.join(path.dirname(opf.ZipPath), refHrefDecoded)
-                    .replace(/\\/g, "/");
-
-                link.setHrefDecoded(zipPath);
-
-                link.Title = ref.Title;
-                if (!publication.Landmarks) {
-                    publication.Landmarks = [];
-                }
-                publication.Landmarks.push(link);
-            }
         });
     }
 };
@@ -384,23 +360,6 @@ export const findInSpineByHref = (publication: Publication, href: string): Link 
 
     return undefined;
 };
-
-// const findLinKByHref =
-// (publication: Publication, _rootfile: Rootfile, _opf: OPF, href: string): Link | undefined => {
-//     if (publication.Spine && publication.Spine.length) {
-//         const ll = publication.Spine.find((l) => {
-//             if (href === l.HrefDecoded) {
-//                 return true;
-//             }
-//             return false;
-//         });
-//         if (ll) {
-//             return ll;
-//         }
-//     }
-
-//     return undefined;
-// };
 
 type FuncType = (
     publication: Publication, rootfile: Rootfile | undefined,
@@ -1256,4 +1215,102 @@ export const loadFileStrFromZipPath = async (
     }
 
     return zipData.toString("utf8");
+};
+
+const fillLandmarksFromGuide = (publication: Publication, opf: OPF) => {
+    if (opf.Guide && opf.Guide.length) {
+        opf.Guide.forEach((ref) => {
+            if (ref.Href && opf.ZipPath) {
+                const refHrefDecoded = ref.HrefDecoded;
+                if (!refHrefDecoded) {
+                    debug("ref.Href?!");
+                    return; // foreach
+                }
+                const link = new Link();
+                const zipPath = path.join(path.dirname(opf.ZipPath), refHrefDecoded)
+                    .replace(/\\/g, "/");
+
+                link.setHrefDecoded(zipPath);
+
+                link.Title = ref.Title;
+                if (!publication.Landmarks) {
+                    publication.Landmarks = [];
+                }
+                publication.Landmarks.push(link);
+            }
+        });
+    }
+};
+
+const fillTOCFromNCX = (publication: Publication, ncx: NCX) => {
+    if (ncx.Points && ncx.Points.length) {
+        ncx.Points.forEach((point) => {
+            if (!publication.TOC) {
+                publication.TOC = [];
+            }
+            fillTOCFromNavPoint(publication, ncx, point, publication.TOC);
+        });
+    }
+};
+
+const fillTOCFromNavPoint =
+    (publication: Publication, ncx: NCX, point: NavPoint, node: Link[]) => {
+
+        const srcDecoded = point.Content.SrcDecoded;
+        if (!srcDecoded) {
+            debug("?!point.Content.Src");
+            return;
+        }
+        const link = new Link();
+        const zipPath = path.join(path.dirname(ncx.ZipPath), srcDecoded)
+            .replace(/\\/g, "/");
+
+        link.setHrefDecoded(zipPath);
+
+        link.Title = point.Text;
+
+        if (point.Points && point.Points.length) {
+            point.Points.forEach((p) => {
+                if (!link.Children) {
+                    link.Children = [];
+                }
+                fillTOCFromNavPoint(publication, ncx, p, link.Children);
+            });
+        }
+
+        node.push(link);
+    };
+
+const fillPageListFromNCX = (publication: Publication, ncx: NCX) => {
+    if (ncx.PageList && ncx.PageList.PageTarget && ncx.PageList.PageTarget.length) {
+        ncx.PageList.PageTarget.forEach((pageTarget) => {
+            const link = new Link();
+            const srcDecoded = pageTarget.Content.SrcDecoded;
+            if (!srcDecoded) {
+                debug("!?srcDecoded");
+                return; // foreach
+            }
+            const zipPath = path.join(path.dirname(ncx.ZipPath), srcDecoded)
+                .replace(/\\/g, "/");
+
+            link.setHrefDecoded(zipPath);
+
+            link.Title = pageTarget.Text;
+            if (!publication.PageList) {
+                publication.PageList = [];
+            }
+            publication.PageList.push(link);
+        });
+    }
+};
+
+export const fillTOC = (publication: Publication, opf: OPF, ncx: NCX | undefined) => {
+
+    if (ncx) {
+        fillTOCFromNCX(publication, ncx);
+        if (!publication.PageList) {
+            fillPageListFromNCX(publication, ncx);
+        }
+    }
+    fillLandmarksFromGuide(publication, opf);
 };

@@ -18,6 +18,7 @@ import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
 import { AudioBookis, isAudioBookPublication } from "@parser/audiobook";
 import { DaisyBookis, isDaisyPublication } from "@parser/daisy";
+import { convertDaisyToEpub } from "@parser/daisy-convert-to-epub";
 import { isEPUBlication, lazyLoadMediaOverlays } from "@parser/epub";
 import { PublicationParsePromise } from "@parser/publication-parser";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
@@ -154,7 +155,10 @@ if (args[2]) {
 
     if ((isDaisyBook || isAnAudioBook || isAnEPUB) && outputDirPath) {
         try {
-            await extractEPUB(isAnEPUB ? true : false, publication, outputDirPath, decryptKeys);
+            if (isDaisyBook) {
+                await convertDaisyToEpub(outputDirPath, publication);
+            }
+            await extractEPUB((isAnEPUB || isDaisyBook) ? true : false, publication, outputDirPath, decryptKeys);
         } catch (err) {
             console.log("== Publication extract FAIL");
             console.log(err);
@@ -486,9 +490,6 @@ async function extractEPUB(isEPUB: boolean, pub: Publication, outDir: string, ke
     } catch (err) {
         console.log(err);
     }
-
-    // createParsedFiles(pub, outDir);
-    // await dumpPublication(pub);
 }
 
 function ensureDirs(fspath: string) {
@@ -499,13 +500,6 @@ function ensureDirs(fspath: string) {
         fs.mkdirSync(dirname);
     }
 }
-
-// function createParsedFiles(pub: Publication, outDir: string) {
-//     pub.ParsedFiles.forEach((file) => {
-//         const linkOutputPath = path.join(outDir, file.FilePath);
-//         fs.writeFileSync(linkOutputPath, file.Value);
-//     });
-// }
 
 async function dumpPublication(publication: Publication): Promise<void> {
 
