@@ -5,21 +5,20 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
-import { XmlObject, XmlXPathSelector } from "@r2-utils-js/_utils/xml-js-mapper";
+import { XmlItemType, XmlObject, XmlXPathSelector } from "@r2-utils-js/_utils/xml-js-mapper";
 
-import { XMetadata } from "./opf-x-metadata";
-import { CustomAttributes } from "./smil-custom-attributes";
+import { CustomTest } from "./smil-custom-test";
 
 @XmlObject({
     epub: "http://www.idpf.org/2007/ops",
     smil: "http://www.w3.org/ns/SMIL",
     smil2: "http://www.w3.org/2001/SMIL20/",
 })
-export class Head extends XMetadata {
+export class CustomAttributes {
 
-    // XPATH ROOT: /smil:smil/smil:head
+    // XPATH ROOT: /smil:smil/smil:head/smil:customAttributes
 
-    @XmlXPathSelector("customAttributes")
-    // @XmlItemType(CustomAttributes)
-    public CustomAttributes!: CustomAttributes;
+    @XmlXPathSelector("customTest")
+    @XmlItemType(CustomTest)
+    public CustomTest!: CustomTest[];
 }

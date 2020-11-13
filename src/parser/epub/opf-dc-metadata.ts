@@ -20,7 +20,7 @@ import { Title } from "./opf-title";
 })
 export class DCMetadata {
 
-    // XPATH ROOT: /opf:package/opf:metadata/dc-metadata
+    // XPATH ROOT: /opf:package/opf:metadata/dc-metadata or /opf:package/opf:metadata itself
 
     @XmlXPathSelector("dc:Title | dc:title")
     @XmlItemType(Title)

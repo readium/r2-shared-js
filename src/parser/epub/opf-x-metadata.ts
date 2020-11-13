@@ -15,7 +15,7 @@ import { Metafield } from "./opf-metafield";
     opf2: "http://openebook.org/namespaces/oeb-package/1.0/",
 })
 export class XMetadata {
-    // XPATH ROOT: /opf:package/opf:metadata/dc-metadata or /smil:smil/smil:head/dc-metadata
+    // XPATH ROOT: /opf:package/opf:metadata/x-metadata or /smil:smil/smil:head itself
 
     @XmlXPathSelector("meta")
     @XmlItemType(Metafield)
