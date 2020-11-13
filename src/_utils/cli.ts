@@ -452,7 +452,8 @@ async function extractEPUB(isEPUB: boolean, pub: Publication, outDir: string, ke
         throw err;
     }
 
-    fs.mkdirSync(outDir); // { recursive: false }
+    // fs.mkdirSync
+    ensureDirs(outDir); // { recursive: false }
 
     extractEPUB_ManifestJSON(pub, outDir, keys);
 
@@ -507,10 +508,6 @@ async function dumpPublication(publication: Publication): Promise<void> {
     // breakLength: 100  maxArrayLength: undefined
     console.log(util.inspect(publication,
         { showHidden: false, depth: 1000, colors: true, customInspect: true }));
-
-    if (process.env) {
-        throw new Error("XXXYYY");
-    }
 
     const publicationJsonObj = TaJsonSerialize(publication);
     console.log(util.inspect(publicationJsonObj,

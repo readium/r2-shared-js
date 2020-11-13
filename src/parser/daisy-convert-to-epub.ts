@@ -6,17 +6,19 @@
 // ==LICENSE-END==
 
 import * as debug_ from "debug";
+import * as fs from "fs";
+import * as path from "path";
+import * as xmldom from "xmldom";
+import * as xpath from "xpath";
 
 import { Publication } from "@models/publication";
+import { Link } from "@models/publication-link";
+import { TaJsonDeserialize, TaJsonSerialize } from "@r2-lcp-js/serializable";
 import { IZip } from "@r2-utils-js/_utils/zip/zip";
 
 import { loadFileStrFromZipPath } from "./epub-daisy-common";
 
-// import * as fs from "fs";
 // import * as moment from "moment";
-// import * as path from "path";
-// import * as xmldom from "xmldom";
-// import * as xpath from "xpath";
 
 // import { timeStrToSeconds } from "@models/media-overlay";
 // import { Metadata } from "@models/metadata";
@@ -36,54 +38,278 @@ import { loadFileStrFromZipPath } from "./epub-daisy-common";
 // import { Par } from "./epub/smil-par";
 // import { Seq } from "./epub/smil-seq";
 
-const debug = debug_("r2:shared#parser/daisy");
+const debug = debug_("r2:shared#parser/daisy-convert-to-epub");
 
-interface ParsedFile {
-    Name: string;
-    Type: string;
-    Value: string;
-    FilePath: string;
+// interface ParsedFile {
+//     Name: string;
+//     Type: string;
+//     Value: string;
+//     FilePath: string;
+// }
+
+function ensureDirs(fspath: string) {
+    const dirname = path.dirname(fspath);
+
+    if (!fs.existsSync(dirname)) {
+        ensureDirs(dirname);
+        fs.mkdirSync(dirname);
+    }
 }
 
-export const convertDaisyToEpub = async (_outputDirPath: string, publication: Publication) => {
+export const convertDaisyToEpub = async (outputDirPath: string, publication: Publication) => {
 
     const zipInternal = publication.findFromInternal("zip");
     if (!zipInternal) {
-        console.log("No publication zip!?");
+        debug("No publication zip!?");
         return;
     }
     const zip = zipInternal.Value as IZip;
 
-    const parsedFiles: ParsedFile[] = [];
-
-    // note: does not work in RemoteExploded
-    const entries = await zip.getEntries();
-
-    // "application/x-dtbook+xml" content type
-    // manifest/item@media-type
-    const dtBookZipEntryPath = entries.find((entry) => entry.match(/\.xml$/));
-    if (dtBookZipEntryPath) {
-        const dtBookStr = await loadFileStrFromZipPath(dtBookZipEntryPath, dtBookZipEntryPath, zip);
-        if (!dtBookStr) {
-            console.log("!loadFileStrFromZipPath", dtBookStr);
-        } else {
-            console.log("loadFileStrFromZipPath: ", dtBookStr);
-            // const dtBookDoc = new xmldom.DOMParser().parseFromString(dtBookStr, "application/xml");
-            // parsedFiles = await convertXml(dtBookDoc, zip, opf);
+    const resources = [...publication.Resources]; // reference copy, which is fine
+    for (const resLink of resources) {
+        // relative to publication root (package.opf / ReadiumWebPubManifest.json)
+        if (!resLink.HrefDecoded) {
+            continue;
         }
+        if (resLink.TypeLink === "text/css" || resLink.HrefDecoded.endsWith(".css")) {
+            debug("CSS", resLink.HrefDecoded);
+
+            let cssText = await loadFileStrFromZipPath(resLink.Href, resLink.HrefDecoded, zip);
+            if (!cssText) {
+                debug("!loadFileStrFromZipPath", resLink.HrefDecoded);
+                continue;
+            }
+            // debug(cssText);
+
+            // replace comments
+            cssText = cssText.replace(/\/\*([\s\S]+?)\*\//gm, (_match, p1, _offset, _string) => {
+                const base64 = Buffer.from(p1).toString("base64");
+                return `/*__${base64}__*/`;
+            });
+
+            const elementNames = [
+                "address",
+                "annoref",
+                "annotation",
+                "author",
+                "bdo",
+                "bodymatter",
+                "book",
+                "bridgehead",
+                "byline",
+                "caption",
+                "cite",
+                "col",
+                "colgroup",
+                "covertitle",
+                "dateline",
+                "dfn",
+                "docauthor",
+                "doctitle",
+                "dtbook",
+                "epigraph",
+                "frontmatter",
+                "hd",
+                "imggroup",
+                "kbd",
+                "level",
+                "levelhd",
+                "level1",
+                "level2",
+                "level3",
+                "level4",
+                "level5",
+                "level6",
+                "lic",
+                "line",
+                "linegroup",
+                "linenum",
+                "link",
+                "list",
+                "meta",
+                "note",
+                "noteref",
+                "pagenum",
+                "poem",
+                "prodnote",
+                "rearmatter",
+                "samp",
+                "sent",
+                "sub",
+                "sup",
+                "br",
+                "q",
+                "w",
+                "notice",
+                "sidebar",
+                "blockquote",
+                "abbr",
+                "acronym",
+                "title",
+            ];
+            // const regex = new RegExp(`[^#\.](${elementNames.join("|")})`, "g");
+            for (const elementName of elementNames) {
+                // debug("A ############");
+                // debug(elementName);
+                // debug("B ############");
+                // allows comma, whitespace, colon prefix/suffix chars, which are used in CSS selectors
+                const regex = new RegExp(
+                    `([^#\.a-zA-Z0-9\-_\(\);<>\*~\+])(${elementName})([^a-zA-Z0-9\-_\(\);<>\*~\+])`, "g");
+                // let i = -1;
+                // let match: RegExpExecArray | null;
+                // // tslint:disable-next-line: no-conditional-assignment
+                // while (match = regex.exec(cssText)) {
+                //     i++;
+                //     debug("A -----------");
+                //     debug(i, elementName, `$_$_$${match[0]}$_$_$`, `===${match[1]}^^^${match[2]}^^^${match[3]}===`);
+                //     debug("B -----------");
+                // }
+                cssText = cssText.replace(regex, `$1.$2_R2$3`);
+                cssText = cssText.replace(regex, `$1.$2_R2$3`); // second pass
+                // debug("C ############");
+            }
+
+            // restore comments
+            cssText = cssText.replace(/\/\*__([\s\S]+?)__\*\//g, (_match, p1, _offset, _string) => {
+                const comment = Buffer.from(p1, "base64").toString("utf8");
+                return `/*${comment}*/`;
+            });
+
+            const newCssFilePath = resLink.HrefDecoded.replace(/\.css$/, "__.css");
+            // debug(cssText);
+            const cssOutputFilePath = path.join(outputDirPath, newCssFilePath);
+            ensureDirs(cssOutputFilePath);
+            fs.writeFileSync(cssOutputFilePath, cssText);
+
+            const resLinkJson = TaJsonSerialize(resLink);
+            // resLinkJson.href = newCssFilePath;
+            const resLinkClone = TaJsonDeserialize<Link>(resLinkJson, Link);
+            resLinkClone.setHrefDecoded(newCssFilePath);
+            publication.Resources.push(resLinkClone);
+
+        } else if (resLink.TypeLink === "application/x-dtbook+xml" || resLink.HrefDecoded.endsWith(".xml")) {
+
+            const dtBookStr = await loadFileStrFromZipPath(resLink.Href, resLink.HrefDecoded, zip);
+            if (!dtBookStr) {
+                debug("!loadFileStrFromZipPath", dtBookStr);
+                continue;
+            }
+            const dtBookDoc = new xmldom.DOMParser().parseFromString(dtBookStr, "application/xml");
+
+            const title = dtBookDoc.getElementsByTagName("doctitle")[0].textContent;
+            debug(resLink.HrefDecoded, title);
+
+            const listElements = dtBookDoc.getElementsByTagName("list");
+            for (let i = 0; i < listElements.length; i++) {
+                const listElement = listElements.item(i);
+                if (!listElement) {
+                    continue;
+                }
+                const type = listElement.getAttribute("type");
+                if (type) {
+                    const oldElementName = listElement.tagName;
+                    // read-only property!
+                    (listElement as any).tagName = type;
+                    debug(i, oldElementName, listElement.tagName, type);
+                }
+            }
+
+            // <dtbook xmlns="http://www.daisy.org/z3986/2005/dtbook/" ...
+            const select = xpath.useNamespaces({
+                dtbook: "http://www.daisy.org/z3986/2005/dtbook/",
+                // epub: "http://www.idpf.org/2007/ops",
+                // xhtml: "http://www.w3.org/1999/xhtml",
+            });
+
+            // <?xml-stylesheet type="text/css" href="dtbookbasic.css"?>
+            const stylesheets =
+                select("/processing-instruction('xml-stylesheet')", dtBookDoc) as ProcessingInstruction[];
+            const cssHrefs: string[] = []; // `<link rel="stylesheet" href="${cssHref}" />`
+            let index = -1;
+            for (const stylesheet of stylesheets) {
+                if (!stylesheet.nodeValue) {
+                    continue;
+                }
+                if (!stylesheet.nodeValue.includes("text/css")) {
+                    continue;
+                }
+                const match = stylesheet.nodeValue.match(/href=("|')(.*?)("|')/);
+                if (!match) {
+                    continue;
+                }
+                index++;
+                const href = match[2].trim();
+                if (href) {
+                    debug(index, href);
+                    cssHrefs.push(href);
+                }
+            }
+        }
+
+        // // const newFilePath = path.join(urlOrPath, newFileName);
+        // // if (fs.existsSync(filePath) && !fs.existsSync(newFilePath)) {
+        // // let cssText = fs.readFileSync(filePath, { encoding: "utf8" });
+
+        // const cssPath = path.join(path.dirname(opf.ZipPath), src)
+        //     .replace(/\\/g, "/");
+        // let cssText = await loadFileStrFromZipPath(cssPath, cssPath, zip);
+        // if (!cssText) {
+        //     debug("!loadFileStrFromZipPath", cssPath);
+        //     continue;
+        // }
+        // cssText = transformCss(cssText);
+
+        // const parsedFile: ParsedFile = {
+        //     FilePath: path.join(path.dirname(opf.ZipPath), newFileName)
+        //         .replace(/\\/g, "/"),
+        //     Name: newFileName,
+        //     Type: "text/css",
+        //     Value: cssText.trim(),
+        // };
+        // parsedFiles.push(parsedFile);
+
+        // // fs.writeFileSync(newFilePath , cssText.trim());
+        // // debug("CSS File Saved!");
+        // const tempManifest = new Manifest();
+        // tempManifest.ID = `dtb_css${index + 1}`;
+        // tempManifest.setHrefDecoded(newFileName);
+        // tempManifest.MediaType = parsedFile.Type;
+        // opf.Manifest.push(tempManifest);
+
+        // links.push(`<link rel="stylesheet" href="${newFileName}" />`);
+        // index++;
+
+        // const parsedFiles: ParsedFile[] = [];
+
+        // // note: does not work in RemoteExploded
+        // const entries = await zip.getEntries();
+
+        // // "application/x-dtbook+xml" content type
+        // // manifest/item@media-type
+        // const dtBookZipEntryPath = entries.find((entry) => entry.match(/\.xml$/));
+        // if (dtBookZipEntryPath) {
+        //     const dtBookStr = await loadFileStrFromZipPath(dtBookZipEntryPath, dtBookZipEntryPath, zip);
+        //     if (!dtBookStr) {
+        //         debug("!loadFileStrFromZipPath", dtBookStr);
+        //     } else {
+        //         // debug("loadFileStrFromZipPath: ", dtBookStr);
+        //         // const dtBookDoc = new xmldom.DOMParser().parseFromString(dtBookStr, "application/xml");
+        //         // parsedFiles = await convertXml(dtBookDoc, zip, opf);
+        //     }
+        // }
+
+        // debug("parsedFiles", parsedFiles.map((parsedFile) => {
+        //     return {
+        //         FilePath: parsedFile.FilePath,
+        //         Name: parsedFile.Name,
+        //         Type: parsedFile.Type,
+        //     };
+        // }));
+
+        // parsedFiles.forEach((file) => {
+        //     fs.writeFileSync(path.join(outputDirPath, file.FilePath), file.Value);
+        // });
     }
-
-    debug("parsedFiles", parsedFiles.map((parsedFile) => {
-        return {
-            FilePath: parsedFile.FilePath,
-            Name: parsedFile.Name,
-            Type: parsedFile.Type,
-        };
-    }));
-
-    // parsedFiles.forEach((file) => {
-    //     fs.writeFileSync(path.join(outputDirPath, file.FilePath), file.Value);
-    // });
 };
 
 // const convertXml = async (xmlDom: Document, zip: IZip, opf: OPF): Promise<ParsedFile[]> => {
@@ -126,7 +352,7 @@ export const convertDaisyToEpub = async (_outputDirPath: string, publication: Pu
 //                 .replace(/\\/g, "/");
 //             let cssText = await loadFileStrFromZipPath(cssPath, cssPath, zip);
 //             if (!cssText) {
-//                 console.log("!loadFileStrFromZipPath", cssPath);
+//                 debug("!loadFileStrFromZipPath", cssPath);
 //                 continue;
 //             }
 //             cssText = transformCss(cssText);
@@ -141,7 +367,7 @@ export const convertDaisyToEpub = async (_outputDirPath: string, publication: Pu
 //             parsedFiles.push(parsedFile);
 
 //             // fs.writeFileSync(newFilePath , cssText.trim());
-//             // console.log("CSS File Saved!");
+//             // debug("CSS File Saved!");
 //             const tempManifest = new Manifest();
 //             tempManifest.ID = `dtb_css${index + 1}`;
 //             tempManifest.setHrefDecoded(newFileName);
@@ -372,32 +598,6 @@ export const convertDaisyToEpub = async (_outputDirPath: string, publication: Pu
 //     }
 // };
 
-// const transformCss = (cssText: string): string => {
-//     cssText = cssText.replace(/\/\*[^\/\*]+\*\//g, ""); // remove comments
-// tslint:disable-next-line: max-line-length
-//     const cssTags = ["annoref", "annotation", "author", "bdo", "bodymatter", "book", "bridgehead", "byline", "caption", "cite", "col", "covertitle", "dateline", "dfn", "docauthor", "doctitle", "dtbook", "epigraph", "frontmatter", "hd", "imggroup", "kbd", "level1", "level2", "level3", "level4", "level5", "level6", "level", "lic", "linegroup", "line", "link", "list", "meta", "noteref", "note", "pagenum", "poem", "prodnote", "rearmatter", "samp", "sent", "sub", "sup"];
-//     cssTags.forEach((cssTag) => {
-//         const regex = new RegExp(`[^#\.]${cssTag}`, "g");
-//         cssText = cssText
-//             .replace(regex, `.${cssTag}`);
-//     });
-
-//     return cssText;
-// };
-
-// const transformListElements = (xmlDom: Document) => {
-//     const elDoms = xmlDom.getElementsByTagName("list");
-
-//     for (let i = 0; i < elDoms.length; i++) {
-//         const elem = elDoms.item(i);
-//         if (!elem) {
-//             continue;
-//         }
-//         // read-only property!
-//         (elem as any).tagName = elem.getAttribute("type");
-//     }
-// };
-
 // const parseSmilFile = async (zip: IZip, srcDecoded: string, opf: OPF): Promise<SMIL> => {
 //     if (!opf.ZipPath) {
 //         return Promise.reject("!opf.ZipPath??");
@@ -455,7 +655,7 @@ export const convertDaisyToEpub = async (_outputDirPath: string, publication: Pu
 //     //     if (parsedFile.Type === "application/xhtml+xml") {
 //     //         const xhtmlDoc = new xmldom.DOMParser().parseFromString(parsedFile.Value, "text/html");
 //     //         if (xhtmlDoc.getElementById(ID)) {
-//     //             console.log("xhtmlDoc" + i, parsedFile.Name);
+//     //             debug("xhtmlDoc" + i, parsedFile.Name);
 //     //         }
 //     //     }
 //     // });

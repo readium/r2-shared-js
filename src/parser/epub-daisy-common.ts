@@ -33,7 +33,7 @@ import { Manifest } from "./epub/opf-manifest";
 import { Metafield } from "./epub/opf-metafield";
 import { Title } from "./epub/opf-title";
 
-const debug = debug_("r2:shared#parser/epub-daisy");
+const debug = debug_("r2:shared#parser/epub-daisy-common");
 
 const epub3 = "3.0";
 const epub301 = "3.0.1";
