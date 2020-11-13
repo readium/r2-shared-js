@@ -6,139 +6,104 @@
 // ==LICENSE-END==
 
 import * as debug_ from "debug";
-// import * as fs from "fs";
-import { imageSize } from "image-size";
-import { ISize } from "image-size/dist/types/interface";
+import * as fs from "fs";
 import * as moment from "moment";
 import * as path from "path";
 import * as xmldom from "xmldom";
 import * as xpath from "xpath";
 
-import { MediaOverlayNode, timeStrToSeconds } from "@models/media-overlay";
-import { DirectionEnum, Metadata } from "@models/metadata";
-import { BelongsTo } from "@models/metadata-belongsto";
-import { Contributor } from "@models/metadata-contributor";
-import { MediaOverlay } from "@models/metadata-media-overlay";
-import { IStringMap } from "@models/metadata-multilang";
-import {
-    LayoutEnum, OrientationEnum, OverflowEnum, PageEnum, Properties, SpreadEnum,
-} from "@models/metadata-properties";
-import { Subject } from "@models/metadata-subject";
-import { ParsedFile } from "@models/parsed-file";
+import { timeStrToSeconds } from "@models/media-overlay";
+import { Metadata } from "@models/metadata";
 import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
-import { encodeURIComponent_RFC3986, isHTTP } from "@r2-utils-js/_utils/http/UrlUtils";
+import { isHTTP } from "@r2-utils-js/_utils/http/UrlUtils";
 import { streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { XML } from "@r2-utils-js/_utils/xml-js-mapper";
 import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
 import { zipLoadPromise } from "@r2-utils-js/_utils/zip/zipFactory";
-import { Transformers } from "@transform/transformer";
 
-import { tryDecodeURI } from "../_utils/decodeURI";
 import { zipHasEntry } from "../_utils/zipHasEntry";
-import { NCX } from "./daisy/ncx";
-import { NavPoint } from "./daisy/ncx-navpoint";
-import { OPF } from "./daisy/opf";
-import { Author } from "./daisy/opf-author";
-import { Manifest } from "./daisy/opf-manifest";
-import { Metafield } from "./daisy/opf-metafield";
-import { SpineItem } from "./daisy/opf-spineitem";
-import { Title } from "./daisy/opf-title";
-import { SMIL } from "./daisy/smil";
-import { Par } from "./daisy/smil-par";
-import { Seq } from "./daisy/smil-seq";
-import { SeqOrPar } from "./daisy/smil-seq-or-par";
+import {
+    addIdentifier, addLanguage, addOtherMetadata, addTitle, fillLandmarksFromGuide,
+    fillPublicationDate, fillSpineAndResource, fillSubject, findContributorInMeta, getNcx, getOpf,
+    setPublicationDirection,
+} from "./epub-daisy-common";
+import { Rootfile } from "./epub/container-rootfile";
+import { NCX } from "./epub/ncx";
+import { NavPoint } from "./epub/ncx-navpoint";
+import { OPF } from "./epub/opf";
+import { Manifest } from "./epub/opf-manifest";
+import { SpineItem } from "./epub/opf-spineitem";
+import { SMIL } from "./epub/smil";
+import { Par } from "./epub/smil-par";
+import { Seq } from "./epub/smil-seq";
 
-const debug = debug_("r2:shared#parser/epub");
-
-export const mediaOverlayURLPath = "media-overlay.json";
-export const mediaOverlayURLParam = "resource";
-
-// https://github.com/readium/webpub-manifest/issues/52#issuecomment-601686135
-export const BCP47_UNKNOWN_LANG = "und";
-
-function parseSpaceSeparatedString(str: string | undefined | null): string[] {
-    return str ? str.trim().split(" ").map((role) => {
-        return role.trim();
-    }).filter((role) => {
-        return role.length > 0;
-    }) : [];
+interface ParsedFile {
+    Name: string;
+    Type: string;
+    Value: string;
+    FilePath: string;
 }
 
-export const addCoverDimensions = async (publication: Publication, coverLink: Link) => {
+const debug = debug_("r2:shared#parser/daisy");
 
-    const zipInternal = publication.findFromInternal("zip");
-    if (zipInternal) {
-        const zip = zipInternal.Value as IZip;
-
-        const coverLinkHrefDecoded = coverLink.HrefDecoded;
-        if (!coverLinkHrefDecoded) {
-            return;
-        }
-        const has = await zipHasEntry(zip, coverLinkHrefDecoded, coverLink.Href);
-        if (!has) {
-            debug(`NOT IN ZIP (addCoverDimensions): ${coverLink.Href} --- ${coverLinkHrefDecoded}`);
-            const zipEntries = await zip.getEntries();
-            for (const zipEntry of zipEntries) {
-                debug(zipEntry);
-            }
-            return;
-        }
-        let zipStream: IStreamAndLength;
-        try {
-            zipStream = await zip.entryStreamPromise(coverLinkHrefDecoded);
-        } catch (err) {
-            debug(coverLinkHrefDecoded);
-            debug(coverLink.TypeLink);
-            debug(err);
-            return;
-        }
-
-        let zipData: Buffer;
-        try {
-            zipData = await streamToBufferPromise(zipStream.stream);
-
-            const imageInfo = imageSize(zipData) as ISize;
-            if (imageInfo && imageInfo.width && imageInfo.height) {
-                coverLink.Width = imageInfo.width;
-                coverLink.Height = imageInfo.height;
-
-                if (coverLink.TypeLink &&
-                    coverLink.TypeLink.replace("jpeg", "jpg").replace("+xml", "")
-                    !== ("image/" + imageInfo.type)) {
-                    debug(`Wrong image type? ${coverLink.TypeLink} -- ${imageInfo.type}`);
-                }
-            }
-        } catch (err) {
-            debug(coverLinkHrefDecoded);
-            debug(coverLink.TypeLink);
-            debug(err);
-        }
-    }
-};
-
-export enum Daisyis {
+export enum DaisyBookis {
     LocalExploded = "LocalExploded",
     LocalPacked = "LocalPacked",
     RemoteExploded = "RemoteExploded",
     RemotePacked = "RemotePacked",
 }
 
-export async function isDaisyPublication(urlOrPath: string): Promise<Daisyis | undefined> {
+export async function isDaisyPublication(urlOrPath: string): Promise<DaisyBookis | undefined> {
     const http = isHTTP(urlOrPath);
     if (http) {
-        return Daisyis.RemoteExploded;
-    // } else if (fs.existsSync(path.join(urlOrPath, "package.opf"))) {
-    } else if (await checkOPFFile(urlOrPath)) {
-        return Daisyis.LocalExploded;
+        return undefined; // remote DAISY not supported
+    } else if (fs.existsSync(path.join(urlOrPath, "package.opf"))) {
+        if (!fs.existsSync(path.join(urlOrPath, "META-INF", "container.xml"))) {
+            return DaisyBookis.LocalExploded;
+        }
+    } else {
+        let zip: IZip;
+        try {
+            zip = await zipLoadPromise(urlOrPath);
+        } catch (err) {
+            debug(err);
+            return Promise.reject(err);
+        }
+        if (!await zipHasEntry(zip, "META-INF/container.xml", undefined) &&
+            await zipHasEntry(zip, "package.opf", undefined)) {
+
+            return DaisyBookis.LocalPacked;
+        }
     }
-    // else if (getOPFFileName(urlOrPath)) {
-    //     return Daisyis.LocalExploded;
-    // }
     return undefined;
 }
 
+// const isFileValid = (files: string[]) => {
+//     // const keys = Object.keys(files);
+
+//     if (files.some((file) => file.match(/\.xml$/)) === false) {
+//         return [false, "No xml file found."];
+//     }
+
+//     if (files.some((file) => file.match(/\/ncc\.html$/))) {
+//         return [false, "DAISY 2 format is not supported."];
+//     }
+
+//     // if (files.some((file) => file.match(/\.mp3$/)) === false) {
+//     //   console.log("mp3");
+//     //   return [false];
+//     // }
+//     // if (files.some((file) => file.match(/\.smil$/)) === false) {
+//     //   console.log("smil");
+//     //   return [false];
+//     // }
+
+//     return [true];
+// };
+
 export async function DaisyParsePromise(filePath: string): Promise<Publication> {
+    const parsedFiles: ParsedFile[] = [];
 
     // const isDaisy = isDaisyPublication(filePath);
 
@@ -165,1261 +130,94 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
     publication.AddToInternal("type", "daisy");
     publication.AddToInternal("zip", zip);
 
-    const files = await getFileNames(zip);
+    // note: does not work in RemoteExploded
+    const entries = await zip.getEntries();
 
-    const [valid, message] = isFileValid(files);
+    // const [valid, message] = isFileValid(entries);
+    // if (!valid) {
+    //     return Promise.reject(message || "File validation failed.");
+    // }
 
-    if (!valid) {
-        return Promise.reject(message || "File validation failed.");
-    }
-
-    const opfFileName = findOpfFile(files);
-
-    if (!opfFileName) {
+    // generic "text/xml" content type
+    // manifest/item@media-type
+    const opfZipEntryPath = entries.find((entry) => entry.match(/\.opf$/));
+    if (!opfZipEntryPath) {
         return Promise.reject("Opf File doesn't exists");
     }
 
-    const rootfilePathDecoded = opfFileName || "package.opf"; // rootfile.PathDecoded;
+    const rootfilePathDecoded = opfZipEntryPath; // || "package.opf";
     if (!rootfilePathDecoded) {
         return Promise.reject("?!rootfile.PathDecoded");
     }
 
-    // let timeBegin = process.hrtime();
-    let has = await zipHasEntry(zip, rootfilePathDecoded, undefined);
-    // if (!has) {
-    //     const err = `NOT IN ZIP (container OPF rootfile): --- ${rootfilePathDecoded}`;
-    //     debug(err);
-    //     const zipEntries = await zip.getEntries();
-    //     for (const zipEntry of zipEntries) {
-    //         debug(zipEntry);
-    //     }
-    //     return Promise.reject(err);
-    // }
-
-    // let opfZipStream_: IStreamAndLength;
-    // try {
-    //     opfZipStream_ = await zip.entryStreamPromise(rootfilePathDecoded);
-    // } catch (err) {
-    //     debug(err);
-    //     return Promise.reject(err);
-    // }
-    // const opfZipStream = opfZipStream_.stream;
-
-    // let opfZipData: Buffer;
-    // try {
-    //     opfZipData = await streamToBufferPromise(opfZipStream);
-    // } catch (err) {
-    //     debug(err);
-    //     return Promise.reject(err);
-    // }
-
-    // const opfStr = opfZipData.toString("utf8");
-    let opfStr = "";
-    try {
-        opfStr = await readFilesAsString(zip, rootfilePathDecoded);
-    } catch (err) {
-        debug(err);
-        return Promise.reject(err);
-    }
-
-    const opfDoc = new xmldom.DOMParser().parseFromString(opfStr);
-
-    // const timeElapsed4 = process.hrtime(timeBegin);
-    // debug(`4) ${timeElapsed4[0]} seconds + ${timeElapsed4[1]} nanoseconds`);
-    // const timeBegin = process.hrtime();
-
-    // tslint:disable-next-line:no-string-literal
-    // process.env["OPF_PARSE"] = "true";
-    // TODO: this takes a MASSIVE amount of time with large OPF XML data
-    // (typically: many manifest items)
-    // e.g. BasicTechnicalMathWithCalculus.epub with 2.5MB OPF!
-    // culprit: XPath lib ... so we use our own mini XPath parser/matcher
-    // (=> performance gain in orders of magnitude!)
-    const opf = XML.deserialize<OPF>(opfDoc, OPF);
-    // tslint:disable-next-line:no-string-literal
-    // process.env["OPF_PARSE"] = "false";
-
-    // const timeElapsed5 = process.hrtime(timeBegin);
-    // debug(`5) ${timeElapsed5[0]} seconds + ${timeElapsed5[1]} nanoseconds`);
-
-    opf.ZipPath = rootfilePathDecoded;
-
-    // breakLength: 100  maxArrayLength: undefined
-    // debug(util.inspect(opf,
-    //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
-
-    // const epubVersion = getEpubVersion(rootfile, opf);
+    const opf = await getOpf(zip, rootfilePathDecoded, opfZipEntryPath);
 
     let ncx: NCX | undefined;
-    if (opf.Spine) {
+    if (opf.Manifest) {
         const ncxManItem = opf.Manifest.find((manifestItem) => {
-            return manifestItem.ID === "ncx";
+            return manifestItem.MediaType === "application/x-dtbncx+xml";
         });
         if (ncxManItem) {
-            const dname = path.dirname(opf.ZipPath);
-            const ncxManItemHrefDecoded = ncxManItem.HrefDecoded;
-            if (!ncxManItemHrefDecoded) {
-                return Promise.reject("?!ncxManItem.Href");
-            }
-            const ncxFilePath = path.join(dname, ncxManItemHrefDecoded).replace(/\\/g, "/");
-
-            has = await zipHasEntry(zip, ncxFilePath, undefined);
-            if (!has) {
-                const err = `NOT IN ZIP (NCX): ${ncxManItem.Href} --- ${ncxFilePath}`;
-                debug(err);
-                const zipEntries = await zip.getEntries();
-                for (const zipEntry of zipEntries) {
-                    debug(zipEntry);
-                }
-                return Promise.reject(err);
-            }
-
-            let ncxZipStream_: IStreamAndLength;
-            try {
-                ncxZipStream_ = await zip.entryStreamPromise(ncxFilePath);
-            } catch (err) {
-                debug(err);
-                return Promise.reject(err);
-            }
-            const ncxZipStream = ncxZipStream_.stream;
-
-            let ncxZipData: Buffer;
-            try {
-                ncxZipData = await streamToBufferPromise(ncxZipStream);
-            } catch (err) {
-                debug(err);
-                return Promise.reject(err);
-            }
-
-            const ncxStr = ncxZipData.toString("utf8");
-            const ncxDoc = new xmldom.DOMParser().parseFromString(ncxStr);
-            ncx = XML.deserialize<NCX>(ncxDoc, NCX);
-            ncx.ZipPath = ncxFilePath;
-
-            // breakLength: 100  maxArrayLength: undefined
-            // debug(util.inspect(ncx,
-            //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
+            ncx = await getNcx(ncxManItem, opf, zip);
         }
     }
 
-    const opfMetadata = opf.Metadata;
+    addLanguage(publication, opf);
 
-    if (!opfMetadata) {
-        return Promise.reject("Metadata is not present");
-    }
-
-    if (opfMetadata.DCMetadata) {
-        if (opf.Metadata.DCMetadata.Language) {
-            publication.Metadata.Language = opf.Metadata.DCMetadata.Language;
-        }
-    }
-
-    addTitle(publication, opf);
+    addTitle(publication, undefined, opf);
 
     addIdentifier(publication, opf);
 
-    if (opfMetadata) {
-        const dcMetadata = opfMetadata.DCMetadata;
-        if (dcMetadata.Rights && dcMetadata.Rights.length) {
-            publication.Metadata.Rights = dcMetadata.Rights.join(" ");
-        }
-        if (dcMetadata.Description && dcMetadata.Description.length) {
-            publication.Metadata.Description = dcMetadata.Description[0];
-        }
-        if (dcMetadata.Publisher && dcMetadata.Publisher.length) {
-            publication.Metadata.Publisher = [];
+    addOtherMetadata(publication, undefined, opf);
 
-            dcMetadata.Publisher.forEach((pub) => {
-                const contrib = new Contributor();
-                contrib.Name = pub;
-                publication.Metadata.Publisher.push(contrib);
-            });
-        }
-        if (dcMetadata.Source && dcMetadata.Source.length) {
-            publication.Metadata.Source = dcMetadata.Source[0];
-        }
+    setPublicationDirection(publication, opf);
 
-        if (dcMetadata.Contributor && dcMetadata.Contributor.length) {
-            // dcMetadata.Contributor.forEach((cont) => {
-            addContributor(publication, opf, undefined);
-            // });
-        }
-        if (dcMetadata.Creator && dcMetadata.Creator.length) {
-            //  dcMetadata.Creator.forEach((cont) => {
-            addContributor(publication, opf, "aut");
-            //  });
-        }
-    }
-    const metasDuration: Metafield[] = [];
-    const metasNarrator: Metafield[] = [];
-    const metasActiveClass: Metafield[] = [];
-    const metasPlaybackActiveClass: Metafield[] = [];
+    findContributorInMeta(publication, undefined, opf);
 
-    opf.Metadata.XMetadata.Meta.forEach((metaTag) => {
-        if (metaTag.Name === "dtb:totalTime") {
-            metasDuration.push(metaTag);
-        }
-        if (metaTag.Name === "dtb:multimediaType") {
-            metasNarrator.push(metaTag);
-        }
-        if (metaTag.Name === "dtb:multimediaContent") {
-            metasActiveClass.push(metaTag);
-        }
-        if (metaTag.Name === "media:playback-active-class") {
-            metasPlaybackActiveClass.push(metaTag);
-        }
-    });
-
-    if (metasDuration.length) {
-        publication.Metadata.Duration = timeStrToSeconds(metasDuration[0].Data);
-    }
-    if (metasNarrator.length) {
-        if (!publication.Metadata.Narrator) {
-            publication.Metadata.Narrator = [];
-        }
-        metasNarrator.forEach((metaNarrator) => {
-            const cont = new Contributor();
-            cont.Name = metaNarrator.Data;
-            publication.Metadata.Narrator.push(cont);
-        });
-    }
-    if (metasActiveClass.length) {
-        if (!publication.Metadata.MediaOverlay) {
-            publication.Metadata.MediaOverlay = new MediaOverlay();
-        }
-        publication.Metadata.MediaOverlay.ActiveClass = metasActiveClass[0].Data;
-    }
-    if (metasPlaybackActiveClass.length) {
-        if (!publication.Metadata.MediaOverlay) {
-            publication.Metadata.MediaOverlay = new MediaOverlay();
-        }
-        publication.Metadata.MediaOverlay.PlaybackActiveClass = metasPlaybackActiveClass[0].Data;
-    }
-    // }
-
-    // if (opf.Spine && opf.Spine) {
-    //     switch (opf.Spine.PageProgression) {
-    //         case "auto": {
-    //             publication.Metadata.Direction = DirectionEnum.Auto;
-    //             break;
-    //         }
-    //         case "ltr": {
-    //             publication.Metadata.Direction = DirectionEnum.LTR;
-    //             break;
-    //         }
-    //         case "rtl": {
-    //             publication.Metadata.Direction = DirectionEnum.RTL;
-    //             break;
-    //         }
-    //     }
-    // }
-
-    if (publication.Metadata.Language && publication.Metadata.Language.length &&
-        (!publication.Metadata.Direction || publication.Metadata.Direction === DirectionEnum.Auto)) {
-
-        const lang = publication.Metadata.Language[0].toLowerCase();
-        if ((lang === "ar" || lang.startsWith("ar-") ||
-            lang === "he" || lang.startsWith("he-") ||
-            lang === "fa" || lang.startsWith("fa-")) ||
-            lang === "zh-Hant" ||
-            lang === "zh-TW") {
-
-            publication.Metadata.Direction = DirectionEnum.RTL;
-        }
-    }
-
-    findContributorInMeta(publication, opf);
-    await parseDtBook(publication, files, zip, opf);
-    await fillSpineAndResource(publication, opf, zip);
-
-    //  await addRendition(publication, opf, zip);
-
-    //  await addCoverRel(publication, opf, zip);
-
-    // if (encryption) {
-    //     fillEncryptionInfo(publication, rootfile, opf, encryption, lcpl);
-    // }
-
-    await fillTOCFromNavDoc(publication, opf, zip);
+    await fillSpineAndResource(publication, undefined, opf, zip, addLinkData);
 
     if (!publication.TOC || !publication.TOC.length) {
         if (ncx) {
-            await fillTOCFromNCX(publication, opf, ncx, zip);
+            await fillTOCFromNCX(publication, parsedFiles, opf, ncx, zip);
             if (!publication.PageList) {
-                await fillPageListFromNCX(publication, opf, ncx, zip);
+                await fillPageListFromNCX(publication, parsedFiles, opf, ncx, zip);
             }
         }
         fillLandmarksFromGuide(publication, opf);
     }
 
-    if (!publication.PageList && publication.Resources) {
-        // EPUB extended with Adobe Digital Editions page map
-        //  https://wiki.mobileread.com/wiki/Adobe_Digital_Editions#Page-map
-        const pageMapLink = publication.Resources.find((item: Link): boolean => {
-            return item.TypeLink === "application/oebps-page-map+xml";
-        });
-        if (pageMapLink) {
-            await fillPageListFromAdobePageMap(publication, opf, zip, pageMapLink);
-        }
-    }
-
-    fillCalibreSerieInfo(publication, opf);
     fillSubject(publication, opf);
 
-    fillPublicationDate(publication, opf);
+    fillPublicationDate(publication, undefined, opf);
 
-    // await fillMediaOverlay(publication, rootfile, opf, zip);
+    // "application/x-dtbook+xml" content type
+    // manifest/item@media-type
+    const dtBookZipEntryPath = entries.find((entry) => entry.match(/\.xml$/));
+    if (dtBookZipEntryPath) {
+        const dtBookStr = await readFilesAsString(zip, dtBookZipEntryPath);
+        const dtBookDoc = new xmldom.DOMParser().parseFromString(dtBookStr, "application/xml");
+        await convertXml(parsedFiles, dtBookDoc, zip, opf);
+    }
 
     return publication;
 }
 
-// private filePathToTitle(filePath: string): string {
-//     const fileName = path.basename(filePath);
-//     return slugify(fileName, "_").replace(/[\.]/g, "_");
-// }
+const addLinkData = async (
+    _publication: Publication, _rootfile: Rootfile | undefined,
+    _opf: OPF, _zip: IZip, linkItem: Link, item: Manifest) => {
 
-export async function getAllMediaOverlays(publication: Publication): Promise<MediaOverlayNode[]> {
-    const mos: MediaOverlayNode[] = [];
-
-    const links: Link[] = ([] as Link[]).
-        concat(publication.Spine ? publication.Spine : []).
-        concat(publication.Resources ? publication.Resources : []);
-
-    for (const link of links) {
-        if (link.MediaOverlays) {
-            const mo = link.MediaOverlays;
-            if (!mo.initialized) {
-                try {
-                    await lazyLoadMediaOverlays(publication, mo);
-                } catch (err) {
-                    return Promise.reject(err);
-                }
-            }
-            mos.push(mo);
-        }
-    }
-
-    return Promise.resolve(mos);
-}
-
-export async function getMediaOverlay(publication: Publication, spineHref: string): Promise<MediaOverlayNode> {
-
-    const links: Link[] = ([] as Link[]).
-        concat(publication.Spine ? publication.Spine : []).
-        concat(publication.Resources ? publication.Resources : []);
-
-    for (const link of links) {
-        if (link.MediaOverlays && link.Href.indexOf(spineHref) >= 0) {
-            const mo = link.MediaOverlays;
-            if (!mo.initialized) {
-                try {
-                    await lazyLoadMediaOverlays(publication, mo);
-                } catch (err) {
-                    return Promise.reject(err);
-                }
-            }
-            return Promise.resolve(mo);
-        }
-    }
-
-    return Promise.reject(`No Media Overlays ${spineHref}`);
-}
-
-export const lazyLoadMediaOverlays =
-    async (publication: Publication, mo: MediaOverlayNode) => {
-
-        if (mo.initialized || !mo.SmilPathInZip) {
-            return;
-        }
-
-        let link: Link | undefined;
-        if (publication.Resources) {
-
-            link = publication.Resources.find((l) => {
-                if (l.Href === mo.SmilPathInZip) {
-                    return true;
-                }
-                return false;
-            });
-            if (!link) {
-                if (publication.Spine) {
-                    link = publication.Spine.find((l) => {
-                        if (l.Href === mo.SmilPathInZip) {
-                            return true;
-                        }
-                        return false;
-                    });
-                }
-            }
-            if (!link) {
-                const err = "Asset not declared in publication spine/resources! " + mo.SmilPathInZip;
-                debug(err);
-                return Promise.reject(err);
-            }
-        }
-
-        const zipInternal = publication.findFromInternal("zip");
-        if (!zipInternal) {
-            return;
-        }
-        const zip = zipInternal.Value as IZip;
-
-        const has = await zipHasEntry(zip, mo.SmilPathInZip, undefined);
-        if (!has) {
-            const err = `NOT IN ZIP (lazyLoadMediaOverlays): ${mo.SmilPathInZip}`;
-            debug(err);
-            const zipEntries = await zip.getEntries();
-            for (const zipEntry of zipEntries) {
-                debug(zipEntry);
-            }
-            return Promise.reject(err);
-        }
-
-        let smilZipStream_: IStreamAndLength;
+    if (item.MediaOverlay) {
         try {
-            smilZipStream_ = await zip.entryStreamPromise(mo.SmilPathInZip);
-        } catch (err) {
-            debug(err);
-            return Promise.reject(err);
-        }
-
-        if (link && link.Properties && link.Properties.Encrypted) {
-            let decryptFail = false;
-            let transformedStream: IStreamAndLength;
-            try {
-                transformedStream = await Transformers.tryStream(
-                    publication, link, undefined,
-                    smilZipStream_,
-                    false,
-                    0,
-                    0,
-                    undefined,
-                );
-            } catch (err) {
-                debug(err);
-                return Promise.reject(err);
-            }
-            if (transformedStream) {
-                smilZipStream_ = transformedStream;
-            } else {
-                decryptFail = true;
-            }
-
-            if (decryptFail) {
-                const err = "Encryption scheme not supported.";
-                debug(err);
-                return Promise.reject(err);
-            }
-        }
-
-        const smilZipStream = smilZipStream_.stream;
-
-        let smilZipData: Buffer;
-        try {
-            smilZipData = await streamToBufferPromise(smilZipStream);
-        } catch (err) {
-            debug(err);
-            return Promise.reject(err);
-        }
-
-        const smilStr = smilZipData.toString("utf8");
-        const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
-        const smil = XML.deserialize<SMIL>(smilXmlDoc, SMIL);
-        smil.ZipPath = mo.SmilPathInZip;
-
-        mo.initialized = true;
-        debug("PARSED SMIL: " + mo.SmilPathInZip);
-
-        // breakLength: 100  maxArrayLength: undefined
-        // debug(util.inspect(smil,
-        //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
-
-        mo.Role = [];
-        mo.Role.push("section");
-
-        if (smil.Body) {
-            if (smil.Body.EpubType) {
-                const roles = parseSpaceSeparatedString(smil.Body.EpubType);
-                for (const role of roles) {
-                    if (!role.length) {
-                        return;
-                    }
-                    if (mo.Role.indexOf(role) < 0) {
-                        mo.Role.push(role);
-                    }
-                }
-            }
-            if (smil.Body.TextRef) {
-                const smilBodyTextRefDecoded = smil.Body.TextRefDecoded;
-                if (!smilBodyTextRefDecoded) {
-                    debug("!?smilBodyTextRefDecoded");
-                } else {
-                    const zipPath = path.join(path.dirname(smil.ZipPath), smilBodyTextRefDecoded)
-                        .replace(/\\/g, "/");
-                    mo.Text = zipPath;
-                }
-            }
-            if (smil.Body.Children && smil.Body.Children.length) {
-                smil.Body.Children.forEach((seqChild) => {
-                    if (!mo.Children) {
-                        mo.Children = [];
-                    }
-                    addSeqToMediaOverlay(smil, publication, mo, mo.Children, seqChild);
-                });
-            }
-        }
-
-        return;
-    };
-
-// const fillMediaOverlay =
-//     async (publication: Publication, rootfile: Rootfile, opf: OPF, zip: IZip) => {
-
-//         if (!publication.Resources) {
-//             return;
-//         }
-
-//         for (const item of publication.Resources) {
-//             if (item.TypeLink !== "application/smil+xml") {
-//                 continue;
-//             }
-
-//             const itemHrefDecoded = item.HrefDecoded;
-//             if (!itemHrefDecoded) {
-//                 debug("?!item.HrefDecoded");
-//                 continue;
-//             }
-//             const has = await zipHasEntry(zip, itemHrefDecoded, item.Href);
-//             if (!has) {
-//                 debug(`NOT IN ZIP (fillMediaOverlay): ${item.HrefDecoded} --- ${itemHrefDecoded}`);
-//                 const zipEntries = await zip.getEntries();
-//                 for (const zipEntry of zipEntries) {
-//                     debug(zipEntry);
-//                 }
-//                 continue;
-//             }
-
-//             const manItemsHtmlWithSmil: Manifest[] = [];
-//             opf.Manifest.forEach((manItemHtmlWithSmil) => {
-//                 if (manItemHtmlWithSmil.MediaOverlay) { // HTML
-//                     const manItemSmil = opf.Manifest.find((mi) => {
-//                         if (mi.ID === manItemHtmlWithSmil.MediaOverlay) {
-//                             return true;
-//                         }
-//                         return false;
-//                     });
-//                     if (manItemSmil && opf.ZipPath) {
-//                         const manItemSmilHrefDecoded = manItemSmil.HrefDecoded;
-//                         if (!manItemSmilHrefDecoded) {
-//                             debug("!?manItemSmil.HrefDecoded");
-//                             return; // foreach
-//                         }
-//                         const smilFilePath = path.join(path.dirname(opf.ZipPath), manItemSmilHrefDecoded)
-//                                 .replace(/\\/g, "/");
-//                         if (smilFilePath === itemHrefDecoded) {
-//                             manItemsHtmlWithSmil.push(manItemHtmlWithSmil);
-//                         } else {
-//                             debug(`smilFilePath !== itemHrefDecoded ?! ${smilFilePath} ${itemHrefDecoded}`);
-//                         }
-//                     }
-//                 }
-//             });
-
-//             const mo = new MediaOverlayNode();
-//             mo.SmilPathInZip = itemHrefDecoded;
-//             mo.initialized = false;
-
-//             manItemsHtmlWithSmil.forEach((manItemHtmlWithSmil) => {
-
-//                 if (!opf.ZipPath) {
-//                     return;
-//                 }
-//                 const manItemHtmlWithSmilHrefDecoded = manItemHtmlWithSmil.HrefDecoded;
-//                 if (!manItemHtmlWithSmilHrefDecoded) {
-//                     debug("?!manItemHtmlWithSmil.HrefDecoded");
-//                     return; // foreach
-//                 }
-//                 const htmlPathInZip = path.join(path.dirname(opf.ZipPath), manItemHtmlWithSmilHrefDecoded)
-//                     .replace(/\\/g, "/");
-
-//                 const link = findLinKByHref(publication, rootfile, opf, htmlPathInZip);
-//                 if (link) {
-//                     if (link.MediaOverlays) {
-//                         debug(`#### MediaOverlays?! ${htmlPathInZip} => ${link.MediaOverlays.SmilPathInZip}`);
-//                         return; // continue for each
-//                     }
-
-//                     const moURL = mediaOverlayURLPath + "?" +
-//                         mediaOverlayURLParam + "=" + encodeURIComponent_RFC3986(link.Href);
-
-//                     // legacy method:
-//                     if (!link.Properties) {
-//                         link.Properties = new Properties();
-//                     }
-//                     link.Properties.MediaOverlay = moURL;
-
-//                     // new method:
-//                     // https://w3c.github.io/sync-media-pub/incorporating-synchronized-narration.html#with-webpub
-//                     if (!link.Alternate) {
-//                         link.Alternate = [];
-//                     }
-//                     const moLink = new Link();
-//                     moLink.Href = moURL;
-//                     moLink.TypeLink = "application/vnd.syncnarr+json";
-//                     moLink.Duration = link.Duration;
-//                     link.Alternate.push(moLink);
-//                 }
-//             });
-
-//             if (item.Properties && item.Properties.Encrypted) {
-//                 debug("ENCRYPTED SMIL MEDIA OVERLAY: " + item.Href);
-//                 continue;
-//             }
-//             // LAZY
-//             // await lazyLoadMediaOverlays(publication, mo);
-//         }
-
-//         return;
-//     };
-
-const addSeqToMediaOverlay = (
-    smil: SMIL, publication: Publication,
-    rootMO: MediaOverlayNode, mo: MediaOverlayNode[], seqChild: SeqOrPar) => {
-
-    if (!smil.ZipPath) {
-        return;
-    }
-
-    const moc = new MediaOverlayNode();
-    moc.initialized = rootMO.initialized;
-    mo.push(moc);
-
-    if (seqChild instanceof Seq) {
-        moc.Role = [];
-        moc.Role.push("section");
-
-        const seq = seqChild as Seq;
-
-        if (seq.EpubType) {
-            const roles = parseSpaceSeparatedString(seq.EpubType);
-            for (const role of roles) {
-                if (!role.length) {
-                    return;
-                }
-                if (moc.Role.indexOf(role) < 0) {
-                    moc.Role.push(role);
-                }
-            }
-        }
-
-        if (seq.TextRef) {
-            const seqTextRefDecoded = seq.TextRefDecoded;
-            if (!seqTextRefDecoded) {
-                debug("!?seqTextRefDecoded");
-            } else {
-                const zipPath = path.join(path.dirname(smil.ZipPath), seqTextRefDecoded)
-                    .replace(/\\/g, "/");
-                moc.Text = zipPath;
-            }
-        }
-
-        if (seq.Children && seq.Children.length) {
-            seq.Children.forEach((child) => {
-                if (!moc.Children) {
-                    moc.Children = [];
-                }
-                addSeqToMediaOverlay(smil, publication, rootMO, moc.Children, child);
-            });
-        }
-    } else { // Par
-        const par = seqChild as Par;
-
-        if (par.EpubType) {
-            const roles = parseSpaceSeparatedString(par.EpubType);
-            for (const role of roles) {
-                if (!role.length) {
-                    return;
-                }
-                if (!moc.Role) {
-                    moc.Role = [];
-                }
-                if (moc.Role.indexOf(role) < 0) {
-                    moc.Role.push(role);
-                }
-            }
-        }
-
-        if (par.Text && par.Text.Src) {
-            const parTextSrcDcoded = par.Text.SrcDecoded;
-            if (!parTextSrcDcoded) {
-                debug("?!parTextSrcDcoded");
-            } else {
-                const zipPath = path.join(path.dirname(smil.ZipPath), parTextSrcDcoded)
-                    .replace(/\\/g, "/");
-                moc.Text = zipPath;
-            }
-        }
-        if (par.Audio && par.Audio.Src) {
-            const parAudioSrcDcoded = par.Audio.SrcDecoded;
-            if (!parAudioSrcDcoded) {
-                debug("?!parAudioSrcDcoded");
-            } else {
-                const zipPath = path.join(path.dirname(smil.ZipPath), parAudioSrcDcoded)
-                    .replace(/\\/g, "/");
-                moc.Audio = zipPath;
-                moc.Audio += "#t=";
-                moc.Audio += par.Audio.ClipBegin ? timeStrToSeconds(par.Audio.ClipBegin) : "0";
-                if (par.Audio.ClipEnd) {
-                    moc.Audio += ",";
-                    moc.Audio += timeStrToSeconds(par.Audio.ClipEnd);
-                }
-            }
+            linkItem.Duration = parseInt(item.MediaOverlay, 10);
+        } catch (er) {
+            console.log(er);
+            // ignore
         }
     }
 };
 
-const fillPublicationDate = (publication: Publication, opf: OPF) => {
-
-    if (opf.Metadata && opf.Metadata.DCMetadata.Date && opf.Metadata.DCMetadata.Date.length) {
-
-        if (opf.Metadata.DCMetadata.Date[0] && opf.Metadata.DCMetadata.Date[0].Data) {
-            const token = opf.Metadata.DCMetadata.Date[0].Data;
-            try {
-                const mom = moment(token);
-                if (mom.isValid()) {
-                    publication.Metadata.PublicationDate = mom.toDate();
-                }
-            } catch (err) {
-                debug("INVALID DATE/TIME? " + token);
-            }
-            return;
-        }
-
-        opf.Metadata.DCMetadata.Date.forEach((date) => {
-            if (date.Data && date.Event && date.Event.indexOf("publication") >= 0) {
-                const token = date.Data;
-                try {
-                    const mom = moment(token);
-                    if (mom.isValid()) {
-                        publication.Metadata.PublicationDate = mom.toDate();
-                    }
-                } catch (err) {
-                    debug("INVALID DATE/TIME? " + token);
-                }
-            }
-        });
-    }
-};
-
-const findContributorInMeta = (publication: Publication, opf: OPF) => {
-
-    if (opf.Metadata && opf.Metadata.XMetadata) {
-        opf.Metadata.XMetadata.Meta.forEach((meta) => {
-            if (meta.Property === "dcterms:creator" || meta.Property === "dcterms:contributor") {
-                const cont = new Author();
-                cont.Data = meta.Data;
-                cont.ID = meta.ID;
-                addContributor(publication, opf, undefined);
-            }
-        });
-    }
-};
-
-const addContributor = (
-    publication: Publication, opf: OPF, forcedRole: string | undefined) => {
-
-    const dcMetadata = opf.Metadata.DCMetadata;
-
-    if (dcMetadata.Contributor && Array.isArray(dcMetadata.Contributor)) {
-        dcMetadata.Contributor.forEach((cont) => {
-
-            const contributor = new Contributor();
-            contributor.Name = cont.Data;
-            contributor.SortAs = cont.FileAs;
-            contributor.Role[0] = cont.Role;
-
-            let role = cont.Role;
-            if (!role && forcedRole) {
-                role = forcedRole;
-            }
-
-            if (role) {
-                switch (role) {
-                    case "aut": {
-                        if (!publication.Metadata.Author) {
-                            publication.Metadata.Author = [];
-                        }
-                        publication.Metadata.Author.push(contributor);
-                        break;
-                    }
-                    case "trl": {
-                        if (!publication.Metadata.Translator) {
-                            publication.Metadata.Translator = [];
-                        }
-                        publication.Metadata.Translator.push(contributor);
-                        break;
-                    }
-                    case "art": {
-                        if (!publication.Metadata.Artist) {
-                            publication.Metadata.Artist = [];
-                        }
-                        publication.Metadata.Artist.push(contributor);
-                        break;
-                    }
-                    case "edt": {
-                        if (!publication.Metadata.Editor) {
-                            publication.Metadata.Editor = [];
-                        }
-                        publication.Metadata.Editor.push(contributor);
-                        break;
-                    }
-                    case "ill": {
-                        if (!publication.Metadata.Illustrator) {
-                            publication.Metadata.Illustrator = [];
-                        }
-                        publication.Metadata.Illustrator.push(contributor);
-                        break;
-                    }
-                    case "ltr": {
-                        if (!publication.Metadata.Letterer) {
-                            publication.Metadata.Letterer = [];
-                        }
-                        publication.Metadata.Letterer.push(contributor);
-                        break;
-                    }
-                    case "pen": {
-                        if (!publication.Metadata.Penciler) {
-                            publication.Metadata.Penciler = [];
-                        }
-                        publication.Metadata.Penciler.push(contributor);
-                        break;
-                    }
-                    case "clr": {
-                        if (!publication.Metadata.Colorist) {
-                            publication.Metadata.Colorist = [];
-                        }
-                        publication.Metadata.Colorist.push(contributor);
-                        break;
-                    }
-                    case "ink": {
-                        if (!publication.Metadata.Inker) {
-                            publication.Metadata.Inker = [];
-                        }
-                        publication.Metadata.Inker.push(contributor);
-                        break;
-                    }
-                    case "nrt": {
-                        if (!publication.Metadata.Narrator) {
-                            publication.Metadata.Narrator = [];
-                        }
-                        publication.Metadata.Narrator.push(contributor);
-                        break;
-                    }
-                    case "pbl": {
-                        if (!publication.Metadata.Publisher) {
-                            publication.Metadata.Publisher = [];
-                        }
-                        publication.Metadata.Publisher.push(contributor);
-                        break;
-                    }
-                    default: {
-                        contributor.Role = [role];
-
-                        if (!publication.Metadata.Contributor) {
-                            publication.Metadata.Contributor = [];
-                        }
-                        publication.Metadata.Contributor.push(contributor);
-                    }
-                }
-            }
-        });
-    }
-};
-
-const addIdentifier = (publication: Publication, opf: OPF) => {
-    if (opf.Metadata.DCMetadata && opf.Metadata.DCMetadata.Identifier) {
-        if (opf.UniqueIdentifier && opf.Metadata.DCMetadata.Identifier.length > 1) {
-            opf.Metadata.DCMetadata.Identifier.forEach((iden) => {
-                if (iden.ID === opf.UniqueIdentifier) {
-                    publication.Metadata.Identifier = iden.Data;
-                }
-            });
-        } else if (opf.Metadata.DCMetadata.Identifier.length > 0) {
-            publication.Metadata.Identifier = opf.Metadata.DCMetadata.Identifier[0].Data;
-        }
-    }
-};
-
-const addTitle = (publication: Publication, opf: OPF) => {
-
-    let mainTitle: Title | undefined;
-
-    if (opf.Metadata &&
-        opf.Metadata.DCMetadata &&
-        opf.Metadata.DCMetadata.Title) {
-        mainTitle = opf.Metadata.DCMetadata.Title[0];
-    }
-
-    if (mainTitle) {
-        publication.Metadata.Title = mainTitle.Data;
-    }
-};
-
-const addRelAndPropertiesToLink =
-    async (publication: Publication, link: Link, linkEpub: Manifest, opf: OPF) => {
-
-        if (linkEpub.Properties) {
-            await addToLinkFromProperties(publication, link, linkEpub.Properties);
-        }
-        const spineProperties = findPropertiesInSpineForManifest(linkEpub, opf);
-        if (spineProperties) {
-            await addToLinkFromProperties(publication, link, spineProperties);
-        }
-    };
-
-const addToLinkFromProperties = async (publication: Publication, link: Link, propertiesString: string) => {
-
-    const properties = parseSpaceSeparatedString(propertiesString);
-    const propertiesStruct = new Properties();
-
-    // https://idpf.github.io/epub-vocabs/rendition/
-
-    for (const p of properties) {
-        switch (p) {
-            case "cover-image": {
-                link.AddRel("cover");
-                await addCoverDimensions(publication, link);
-                break;
-            }
-            case "nav": {
-                link.AddRel("contents");
-                break;
-            }
-            case "scripted": {
-                if (!propertiesStruct.Contains) {
-                    propertiesStruct.Contains = [];
-                }
-                propertiesStruct.Contains.push("js");
-                break;
-            }
-            case "mathml": {
-                if (!propertiesStruct.Contains) {
-                    propertiesStruct.Contains = [];
-                }
-                propertiesStruct.Contains.push("mathml");
-                break;
-            }
-            case "onix-record": {
-                if (!propertiesStruct.Contains) {
-                    propertiesStruct.Contains = [];
-                }
-                propertiesStruct.Contains.push("onix");
-                break;
-            }
-            case "svg": {
-                if (!propertiesStruct.Contains) {
-                    propertiesStruct.Contains = [];
-                }
-                propertiesStruct.Contains.push("svg");
-                break;
-            }
-            case "xmp-record": {
-                if (!propertiesStruct.Contains) {
-                    propertiesStruct.Contains = [];
-                }
-                propertiesStruct.Contains.push("xmp");
-                break;
-            }
-            case "remote-resources": {
-                if (!propertiesStruct.Contains) {
-                    propertiesStruct.Contains = [];
-                }
-                propertiesStruct.Contains.push("remote-resources");
-                break;
-            }
-            case "page-spread-left": {
-                propertiesStruct.Page = PageEnum.Left;
-                break;
-            }
-            case "page-spread-right": {
-                propertiesStruct.Page = PageEnum.Right;
-                break;
-            }
-            case "page-spread-center": {
-                propertiesStruct.Page = PageEnum.Center;
-                break;
-            }
-            case "rendition:spread-none": {
-                propertiesStruct.Spread = SpreadEnum.None;
-                break;
-            }
-            case "rendition:spread-auto": {
-                propertiesStruct.Spread = SpreadEnum.Auto;
-                break;
-            }
-            case "rendition:spread-landscape": {
-                propertiesStruct.Spread = SpreadEnum.Landscape;
-                break;
-            }
-            case "rendition:spread-portrait": {
-                propertiesStruct.Spread = SpreadEnum.Both; // https://github.com/readium/webpub-manifest/issues/24
-                break;
-            }
-            case "rendition:spread-both": {
-                propertiesStruct.Spread = SpreadEnum.Both;
-                break;
-            }
-            case "rendition:layout-reflowable": {
-                propertiesStruct.Layout = LayoutEnum.Reflowable;
-                break;
-            }
-            case "rendition:layout-pre-paginated": {
-                propertiesStruct.Layout = LayoutEnum.Fixed;
-                break;
-            }
-            case "rendition:orientation-auto": {
-                propertiesStruct.Orientation = OrientationEnum.Auto;
-                break;
-            }
-            case "rendition:orientation-landscape": {
-                propertiesStruct.Orientation = OrientationEnum.Landscape;
-                break;
-            }
-            case "rendition:orientation-portrait": {
-                propertiesStruct.Orientation = OrientationEnum.Portrait;
-                break;
-            }
-            case "rendition:flow-auto": {
-                propertiesStruct.Overflow = OverflowEnum.Auto;
-                break;
-            }
-            case "rendition:flow-paginated": {
-                propertiesStruct.Overflow = OverflowEnum.Paginated;
-                break;
-            }
-            case "rendition:flow-scrolled-continuous": {
-                propertiesStruct.Overflow = OverflowEnum.ScrolledContinuous;
-                break;
-            }
-            case "rendition:flow-scrolled-doc": {
-                propertiesStruct.Overflow = OverflowEnum.Scrolled;
-                break;
-            }
-            default: {
-                break;
-            }
-        }
-
-        if (propertiesStruct.Layout ||
-            propertiesStruct.Orientation ||
-            propertiesStruct.Overflow ||
-            propertiesStruct.Page ||
-            propertiesStruct.Spread ||
-            (propertiesStruct.Contains && propertiesStruct.Contains.length)) {
-
-            link.Properties = propertiesStruct;
-        }
-    }
-};
-
-const addMediaOverlay = async (link: Link, linkEpub: Manifest, opf: OPF, zip: IZip) => {
-    if (linkEpub.MediaOverlay) {
-        const meta = findMetaByRefineAndProperty(opf, linkEpub.MediaOverlay, "media:duration");
-        if (meta) {
-            link.Duration = timeStrToSeconds(meta.Data);
-        }
-
-        const manItemSmil = opf.Manifest.find((mi) => {
-            if (mi.ID === linkEpub.MediaOverlay) {
-                return true;
-            }
-            return false;
-        });
-        if (manItemSmil && manItemSmil.MediaType === "application/smil+xml") {
-            if (opf.ZipPath) {
-                const manItemSmilHrefDecoded = manItemSmil.HrefDecoded;
-                if (!manItemSmilHrefDecoded) {
-                    debug("!?manItemSmil.HrefDecoded");
-                    return;
-                }
-                const smilFilePath = path.join(path.dirname(opf.ZipPath), manItemSmilHrefDecoded)
-                    .replace(/\\/g, "/");
-
-                const has = await zipHasEntry(zip, smilFilePath, smilFilePath);
-                if (!has) {
-                    debug(`NOT IN ZIP (addMediaOverlay): ${smilFilePath}`);
-                    const zipEntries = await zip.getEntries();
-                    for (const zipEntry of zipEntries) {
-                        debug(zipEntry);
-                    }
-                    return;
-                }
-
-                const mo = new MediaOverlayNode();
-                mo.SmilPathInZip = smilFilePath;
-                mo.initialized = false;
-                link.MediaOverlays = mo;
-
-                const moURL = mediaOverlayURLPath + "?" +
-                    mediaOverlayURLParam + "=" +
-                    encodeURIComponent_RFC3986(link.HrefDecoded ? link.HrefDecoded : link.Href);
-
-                // legacy method:
-                if (!link.Properties) {
-                    link.Properties = new Properties();
-                }
-                link.Properties.MediaOverlay = moURL;
-
-                // new method:
-                // https://w3c.github.io/sync-media-pub/incorporating-synchronized-narration.html#with-webpub
-                if (!link.Alternate) {
-                    link.Alternate = [];
-                }
-                const moLink = new Link();
-                moLink.Href = moURL;
-                moLink.TypeLink = "application/vnd.syncnarr+json";
-                moLink.Duration = link.Duration;
-                link.Alternate.push(moLink);
-
-                if (link.Properties && link.Properties.Encrypted) {
-                    debug("ENCRYPTED SMIL MEDIA OVERLAY: " + (link.HrefDecoded ? link.HrefDecoded : link.Href));
-                }
-                // LAZY
-                // await lazyLoadMediaOverlays(publication, mo);
-            }
-        }
-    }
-};
-
-const addDaisyMediaOverlay = async (link: Link, linkEpub: Manifest) => {
-    if (linkEpub.MediaOverlay) {
-        // const mo = new MediaOverlayNode();
-        // mo.SmilPathInZip = smilFilePath;
-        // mo.initialized = false;
-        // link.MediaOverlays = mo;
-
-        const moURL = mediaOverlayURLPath + "?" +
-            mediaOverlayURLParam + "=" +
-            encodeURIComponent_RFC3986(link.HrefDecoded ? link.HrefDecoded : link.Href);
-
-        // legacy method:
-        if (!link.Properties) {
-            link.Properties = new Properties();
-        }
-        link.Properties.MediaOverlay = moURL;
-
-        // new method:
-        // https://w3c.github.io/sync-media-pub/incorporating-synchronized-narration.html#with-webpub
-        if (!link.Alternate) {
-            link.Alternate = [];
-        }
-        const moLink = new Link();
-        moLink.Href = moURL;
-        moLink.TypeLink = "application/vnd.syncnarr+json";
-        moLink.Duration = link.Duration;
-        link.Alternate.push(moLink);
-
-        if (link.Properties && link.Properties.Encrypted) {
-            debug("ENCRYPTED SMIL MEDIA OVERLAY: " + (link.HrefDecoded ? link.HrefDecoded : link.Href));
-        }
-        // LAZY
-        // await lazyLoadMediaOverlays(publication, mo);
-    }
-};
-
-const findInManifestByID =
-    async (publication: Publication, opf: OPF, ID: string, zip: IZip): Promise<Link> => {
-
-        if (opf.Manifest && opf.Manifest.length) {
-            const item = opf.Manifest.find((manItem) => {
-                if (manItem.ID === ID) {
-                    return true;
-                }
-                return false;
-            });
-            if (item && opf.ZipPath) {
-                const linkItem = new Link();
-                linkItem.TypeLink = item.MediaType;
-                if (item.Duration) {
-                    linkItem.Duration = item.Duration;
-                }
-                const itemHrefDecoded = item.HrefDecoded;
-                if (!itemHrefDecoded) {
-                    return Promise.reject("item.Href?!");
-                }
-                linkItem.setHrefDecoded(path.join(path.dirname(opf.ZipPath), itemHrefDecoded)
-                    .replace(/\\/g, "/"));
-
-                await addRelAndPropertiesToLink(publication, linkItem, item, opf);
-                await addMediaOverlay(linkItem, item, opf, zip);
-                await addDaisyMediaOverlay(linkItem, item);
-                return linkItem;
-            }
-        }
-        return Promise.reject(`ID ${ID} not found`);
-    };
-
-const fillSpineAndResource = async (publication: Publication, opf: OPF, zip: IZip) => {
-
-    if (!opf.ZipPath) {
-        return;
-    }
-
-    if (opf.Spine && opf.Spine.Items && opf.Spine.Items.length) {
-        for (const item of opf.Spine.Items) {
-
-            if (!item.Linear || item.Linear === "yes") {
-
-                let linkItem: Link;
-                try {
-                    linkItem = await findInManifestByID(publication, opf, item.IDref, zip);
-                } catch (err) {
-                    debug(err);
-                    continue;
-                }
-
-                if (linkItem && linkItem.Href) {
-                    if (!publication.Spine) {
-                        publication.Spine = [];
-                    }
-                    publication.Spine.push(linkItem);
-                }
-            }
-        }
-    }
-
-    if (opf.Manifest && opf.Manifest.length) {
-
-        for (const item of opf.Manifest) {
-
-            const itemHrefDecoded = item.HrefDecoded;
-            if (!itemHrefDecoded) {
-                debug("!? item.Href");
-                continue;
-            }
-            const zipPath = path.join(path.dirname(opf.ZipPath), itemHrefDecoded)
-                .replace(/\\/g, "/");
-            const linkSpine = findInSpineByHref(publication, zipPath);
-            if (!linkSpine || !linkSpine.Href) {
-
-                const linkItem = new Link();
-                linkItem.TypeLink = item.MediaType;
-
-                linkItem.setHrefDecoded(zipPath);
-
-                await addRelAndPropertiesToLink(publication, linkItem, item, opf);
-                await addMediaOverlay(linkItem, item, opf, zip);
-
-                if (!publication.Resources) {
-                    publication.Resources = [];
-                }
-                publication.Resources.push(linkItem);
-            }
-        }
-    }
-};
-
-const fillPageListFromNCX = async (publication: Publication, _opf: OPF, ncx: NCX, zip: IZip) => {
+// tslint:disable-next-line: max-line-length
+const fillPageListFromNCX = async (publication: Publication, parsedFiles: ParsedFile[], opf: OPF, ncx: NCX, zip: IZip) => {
     if (ncx.PageList && ncx.PageList.PageTarget && ncx.PageList.PageTarget.length) {
         // ncx.PageList.PageTarget.forEach((pageTarget) => {
         for (const pageTarget of ncx.PageList.PageTarget) {
@@ -1433,8 +231,8 @@ const fillPageListFromNCX = async (publication: Publication, _opf: OPF, ncx: NCX
                 .replace(/\\/g, "/");
 
             let smilXmlPath = "";
-            if (_opf.ZipPath) {
-                smilXmlPath = await getSmilLinkReference(publication, zip, srcDecoded, _opf);
+            if (opf.ZipPath) {
+                smilXmlPath = await getSmilLinkReference(parsedFiles, zip, srcDecoded, opf);
             } else {
                 debug("?!point.Content.Src");
                 return;
@@ -1449,95 +247,12 @@ const fillPageListFromNCX = async (publication: Publication, _opf: OPF, ncx: NCX
                 publication.PageList = [];
             }
             publication.PageList.push(link);
-        // });
+            // });
         }
     }
 };
 
-const fillPageListFromAdobePageMap = async (
-    publication: Publication,
-    _opf: OPF,
-    zip: IZip,
-    l: Link,
-): Promise<void> => {
-    if (!l.HrefDecoded) {
-        return;
-    }
-    const pageMapContent = await createDocStringFromZipPath(l, zip);
-    if (!pageMapContent) {
-        return;
-    }
-    const pageMapXmlDoc = new xmldom.DOMParser().parseFromString(pageMapContent);
-
-    const pages = pageMapXmlDoc.getElementsByTagName("page");
-    if (pages && pages.length) {
-        // tslint:disable-next-line:prefer-for-of
-        for (let i = 0; i < pages.length; i += 1) {
-            const page = pages.item(i)!;
-
-            const link = new Link();
-            const href = page.getAttribute("href");
-            const title = page.getAttribute("name");
-            if (href === null || title === null) {
-                continue;
-            }
-
-            if (!publication.PageList) {
-                publication.PageList = [];
-            }
-
-            const hrefDecoded = tryDecodeURI(href);
-            if (!hrefDecoded) {
-                continue;
-            }
-            const zipPath = path.join(path.dirname(l.HrefDecoded), hrefDecoded)
-                .replace(/\\/g, "/");
-
-            link.setHrefDecoded(zipPath);
-
-            link.Title = title;
-            publication.PageList.push(link);
-        }
-    }
-};
-
-const createDocStringFromZipPath = async (link: Link, zip: IZip): Promise<string | undefined> => {
-    const linkHrefDecoded = link.HrefDecoded;
-    if (!linkHrefDecoded) {
-        debug("!?link.HrefDecoded");
-        return undefined;
-    }
-    const has = await zipHasEntry(zip, linkHrefDecoded, link.Href);
-    if (!has) {
-        debug(`NOT IN ZIP (createDocStringFromZipPath): ${link.Href} --- ${linkHrefDecoded}`);
-        const zipEntries = await zip.getEntries();
-        for (const zipEntry of zipEntries) {
-            debug(zipEntry);
-        }
-        return undefined;
-    }
-
-    let zipStream_: IStreamAndLength;
-    try {
-        zipStream_ = await zip.entryStreamPromise(linkHrefDecoded);
-    } catch (err) {
-        debug(err);
-        return Promise.reject(err);
-    }
-    const zipStream = zipStream_.stream;
-
-    let zipData: Buffer;
-    try {
-        zipData = await streamToBufferPromise(zipStream);
-    } catch (err) {
-        debug(err);
-        return Promise.reject(err);
-    }
-
-    return zipData.toString("utf8");
-};
-
-const fillTOCFromNCX = async (publication: Publication, opf: OPF, ncx: NCX, zip: IZip) => {
+const fillTOCFromNCX = async (publication: Publication, parsedFiles: ParsedFile[], opf: OPF, ncx: NCX, zip: IZip) => {
     if (ncx.Points && ncx.Points.length) {
         // ncx.Points.forEach((point) => {
         //     if (!publication.TOC) {
@@ -1549,38 +264,13 @@ const fillTOCFromNCX = async (publication: Publication, opf: OPF, ncx: NCX, zip:
             if (!publication.TOC) {
                 publication.TOC = [];
             }
-            await fillTOCFromNavPoint(publication, opf, ncx, point, publication.TOC, zip);
+            await fillTOCFromNavPoint(parsedFiles, opf, ncx, point, publication.TOC, zip);
         }
     }
 };
 
-const fillLandmarksFromGuide = (publication: Publication, opf: OPF) => {
-    if (opf.Guide && opf.Guide.length) {
-        opf.Guide.forEach((ref) => {
-            if (ref.Href && opf.ZipPath) {
-                const refHrefDecoded = ref.HrefDecoded;
-                if (!refHrefDecoded) {
-                    debug("ref.Href?!");
-                    return; // foreach
-                }
-                const link = new Link();
-                const zipPath = path.join(path.dirname(opf.ZipPath), refHrefDecoded)
-                    .replace(/\\/g, "/");
-
-                link.setHrefDecoded(zipPath);
-
-                link.Title = ref.Title;
-                if (!publication.Landmarks) {
-                    publication.Landmarks = [];
-                }
-                publication.Landmarks.push(link);
-            }
-        });
-    }
-};
-
 const fillTOCFromNavPoint =
-    async (publication: Publication, opf: OPF, ncx: NCX, point: NavPoint, node: Link[], zip: IZip) => {
+    async (parsedFiles: ParsedFile[], opf: OPF, ncx: NCX, point: NavPoint, node: Link[], zip: IZip) => {
 
         const srcDecoded = point.Content.SrcDecoded;
         if (!srcDecoded) {
@@ -1593,7 +283,7 @@ const fillTOCFromNavPoint =
 
         let smilXmlPath = "";
         if (opf.ZipPath) {
-            smilXmlPath = await getSmilLinkReference(publication, zip, srcDecoded, opf);
+            smilXmlPath = await getSmilLinkReference(parsedFiles, zip, srcDecoded, opf);
         } else {
             debug("?!point.Content.Src");
             return;
@@ -1614,364 +304,19 @@ const fillTOCFromNavPoint =
                 if (!link.Children) {
                     link.Children = [];
                 }
-                await fillTOCFromNavPoint(publication, opf, ncx, p, link.Children, zip);
+                await fillTOCFromNavPoint(parsedFiles, opf, ncx, p, link.Children, zip);
             }
         }
 
         node.push(link);
     };
 
-const fillSubject = (publication: Publication, opf: OPF) => {
-    if (opf.Metadata && opf.Metadata.DCMetadata.Subject && opf.Metadata.DCMetadata.Subject.length) {
-        opf.Metadata.DCMetadata.Subject.forEach((s) => {
-            const sub = new Subject();
-            if (s.Lang) {
-                sub.Name = {} as IStringMap;
-                sub.Name[s.Lang] = s.Data;
-            } else {
-                sub.Name = s.Data;
-            }
-            sub.Code = s.Term;
-            sub.Scheme = s.Authority;
-            if (!publication.Metadata.Subject) {
-                publication.Metadata.Subject = [];
-            }
-            publication.Metadata.Subject.push(sub);
-        });
-    }
-};
+const convertXml = async (parsedFiles: ParsedFile[], xmlDom: any, zip: IZip, opf: OPF) => {
 
-const fillCalibreSerieInfo = (publication: Publication, opf: OPF) => {
-    let serie: string | undefined;
-    let seriePosition: number | undefined;
-
-    if (opf.Metadata && opf.Metadata.XMetadata.Meta && opf.Metadata.XMetadata.Meta.length) {
-        opf.Metadata.XMetadata.Meta.forEach((m) => {
-            if (m.Name === "calibre:series") {
-                serie = m.Content;
-            }
-            if (m.Name === "calibre:series_index") {
-                seriePosition = parseFloat(m.Content);
-            }
-        });
+    if (process.env) {
+        throw new Error("BREAK 1");
     }
 
-    if (serie) {
-        const contributor = new Contributor();
-        contributor.Name = serie;
-        if (seriePosition) {
-            contributor.Position = seriePosition;
-        }
-        if (!publication.Metadata.BelongsTo) {
-            publication.Metadata.BelongsTo = new BelongsTo();
-        }
-        if (!publication.Metadata.BelongsTo.Series) {
-            publication.Metadata.BelongsTo.Series = [];
-        }
-        publication.Metadata.BelongsTo.Series.push(contributor);
-    }
-};
-
-const fillTOCFromNavDoc = async (publication: Publication, _opf: OPF, zip: IZip):
-    Promise<void> => {
-
-    const navLink = publication.GetNavDoc();
-    if (!navLink) {
-        return;
-    }
-
-    const navLinkHrefDecoded = navLink.HrefDecoded;
-    if (!navLinkHrefDecoded) {
-        debug("!?navLink.HrefDecoded");
-        return;
-    }
-
-    const has = await zipHasEntry(zip, navLinkHrefDecoded, navLink.Href);
-    if (!has) {
-        debug(`NOT IN ZIP (fillTOCFromNavDoc): ${navLink.Href} --- ${navLinkHrefDecoded}`);
-        const zipEntries = await zip.getEntries();
-        for (const zipEntry of zipEntries) {
-            debug(zipEntry);
-        }
-        return;
-    }
-
-    let navDocZipStream_: IStreamAndLength;
-    try {
-        navDocZipStream_ = await zip.entryStreamPromise(navLinkHrefDecoded);
-    } catch (err) {
-        debug(err);
-        return Promise.reject(err);
-    }
-    const navDocZipStream = navDocZipStream_.stream;
-
-    let navDocZipData: Buffer;
-    try {
-        navDocZipData = await streamToBufferPromise(navDocZipStream);
-    } catch (err) {
-        debug(err);
-        return Promise.reject(err);
-    }
-
-    const navDocStr = navDocZipData.toString("utf8");
-    const navXmlDoc = new xmldom.DOMParser().parseFromString(navDocStr);
-
-    const select = xpath.useNamespaces({
-        epub: "http://www.idpf.org/2007/ops",
-        xhtml: "http://www.w3.org/1999/xhtml",
-    });
-
-    const navs = select("/xhtml:html/xhtml:body//xhtml:nav", navXmlDoc) as Element[];
-    if (navs && navs.length) {
-
-        navs.forEach((navElement: Element) => {
-
-            const epubType = select("@epub:type", navElement) as Attr[];
-            if (epubType && epubType.length) {
-
-                const olElem = select("xhtml:ol", navElement) as Element[];
-
-                const rolesString = epubType[0].value;
-                const rolesArray = parseSpaceSeparatedString(rolesString);
-
-                if (rolesArray.length) {
-                    for (const role of rolesArray) {
-                        switch (role) {
-                            case "toc": {
-                                publication.TOC = [];
-                                fillTOCFromNavDocWithOL(select, olElem, publication.TOC, navLinkHrefDecoded);
-                                break;
-                            }
-                            case "page-list": {
-                                publication.PageList = [];
-                                fillTOCFromNavDocWithOL(select, olElem, publication.PageList, navLinkHrefDecoded);
-                                break;
-                            }
-                            case "landmarks": {
-                                publication.Landmarks = [];
-                                fillTOCFromNavDocWithOL(select, olElem, publication.Landmarks, navLinkHrefDecoded);
-                                break;
-                            }
-                            case "lot": {
-                                publication.LOT = [];
-                                fillTOCFromNavDocWithOL(select, olElem, publication.LOT, navLinkHrefDecoded);
-                                break;
-                            }
-                            case "loa": {
-                                publication.LOA = [];
-                                fillTOCFromNavDocWithOL(select, olElem, publication.LOA, navLinkHrefDecoded);
-                                break;
-                            }
-                            case "loi": {
-                                publication.LOI = [];
-                                fillTOCFromNavDocWithOL(select, olElem, publication.LOI, navLinkHrefDecoded);
-                                break;
-                            }
-                            case "lov": {
-                                publication.LOV = [];
-                                fillTOCFromNavDocWithOL(select, olElem, publication.LOV, navLinkHrefDecoded);
-                                break;
-                            }
-                            default: {
-                                break; // "switch", not enclosing "for" loop
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-};
-
-const fillTOCFromNavDocWithOL = (
-    select: xpath.XPathSelect,
-    olElems: Element[],
-    children: Link[],
-    navDocPath: string) => {
-
-    olElems.forEach((olElem: Element) => {
-
-        const liElems = select("xhtml:li", olElem) as Element[];
-        if (liElems && liElems.length) {
-
-            liElems.forEach((liElem) => {
-
-                const link = new Link();
-                children.push(link);
-
-                const aElems = select("xhtml:a", liElem) as Element[];
-                if (aElems && aElems.length > 0) {
-
-                    const epubType = select("@epub:type", aElems[0]) as Attr[];
-                    if (epubType && epubType.length) {
-
-                        const rolesString = epubType[0].value;
-                        const rolesArray = parseSpaceSeparatedString(rolesString);
-
-                        if (rolesArray.length) {
-                            link.AddRels(rolesArray);
-                        }
-                    }
-
-                    const aHref = select("@href", aElems[0]) as Attr[];
-                    if (aHref && aHref.length) {
-                        const val = aHref[0].value;
-                        let valDecoded = tryDecodeURI(val);
-                        if (!valDecoded) {
-                            debug("!?valDecoded");
-                            return; // foreach
-                        }
-                        if (val[0] === "#") {
-                            valDecoded = path.basename(navDocPath) + valDecoded;
-                        }
-
-                        const zipPath = path.join(path.dirname(navDocPath), valDecoded)
-                            .replace(/\\/g, "/");
-
-                        link.setHrefDecoded(zipPath);
-                    }
-
-                    let aText = aElems[0].textContent; // select("text()", aElems[0])[0].data;
-                    if (aText && aText.length) {
-                        aText = aText.trim();
-                        aText = aText.replace(/\s\s+/g, " ");
-                        link.Title = aText;
-                    }
-                } else {
-                    const liFirstChild = select("xhtml:*[1]", liElem) as Element[];
-                    if (liFirstChild && liFirstChild.length && liFirstChild[0].textContent) {
-                        link.Title = liFirstChild[0].textContent.trim();
-                    }
-                }
-
-                const olElemsNext = select("xhtml:ol", liElem) as Element[];
-                if (olElemsNext && olElemsNext.length) {
-                    if (!link.Children) {
-                        link.Children = [];
-                    }
-                    fillTOCFromNavDocWithOL(select, olElemsNext, link.Children, navDocPath);
-                }
-            });
-        }
-    });
-};
-
-const findPropertiesInSpineForManifest = (linkEpub: Manifest, opf: OPF): string | undefined => {
-
-    if (opf.Spine && opf.Spine.Items && opf.Spine.Items.length) {
-        const it = opf.Spine.Items.find((item) => {
-            if (item.IDref === linkEpub.ID) {
-                return true;
-            }
-            return false;
-        });
-        if (it && it.Properties) {
-            return it.Properties;
-        }
-    }
-
-    return undefined;
-};
-
-const findInSpineByHref = (publication: Publication, href: string): Link | undefined => {
-
-    if (publication.Spine && publication.Spine.length) {
-        const ll = publication.Spine.find((l) => {
-            if (l.HrefDecoded === href) {
-                return true;
-            }
-            return false;
-        });
-        if (ll) {
-            return ll;
-        }
-    }
-
-    return undefined;
-};
-
-const findMetaByRefineAndProperty = (opf: OPF, ID: string, property: string): Metafield | undefined => {
-
-    const ret = findAllMetaByRefineAndProperty(opf, ID, property);
-    if (ret.length) {
-        return ret[0];
-    }
-    return undefined;
-};
-
-const findAllMetaByRefineAndProperty =
-    (opf: OPF, ID: string, property: string): Metafield[] => {
-        const metas: Metafield[] = [];
-
-        const refineID = "#" + ID;
-
-        if (opf.Metadata && opf.Metadata.XMetadata.Meta) {
-            opf.Metadata.XMetadata.Meta.forEach((metaTag) => {
-                if (metaTag.Refine === refineID && metaTag.Property === property) {
-                    metas.push(metaTag);
-                }
-            });
-        }
-
-        return metas;
-    };
-
-const parseDtBook = async (publication: Publication, files: string[], zip: IZip, opf: OPF) => {
-    const fileName = findEntryFile(files) || "dtbook.xml";
-    // const filePath = path.join(urlOrPath, fileName);
-    const dtBookStr =  await readFilesAsString(zip, fileName);
-    const dtBookDoc = new xmldom.DOMParser().parseFromString(dtBookStr, "application/xml");
-    await convertXml(publication, dtBookDoc, zip, opf);
-};
-
-const getFileNames = async (zip: IZip) => {
-    return  await zip.getEntries();
-};
-
-const checkOPFFile = async (directory: string) => {
-    let zip: IZip;
-    try {
-        zip = await zipLoadPromise(directory);
-    } catch (err) {
-        debug(err);
-        return Promise.reject(err);
-    }
-    const files = await zip.getEntries();
-    return findOpfFile(files);
-};
-
-const isFileValid = (files: string[]) => {
-    // const keys = Object.keys(files);
-
-    if (files.some((file) => file.match(/\.xml$/)) === false) {
-        return [false, "No xml file found."];
-    }
-
-    if (files.some((file) => file.match(/\/ncc\.html$/))) {
-        return [false, "DAISY 2 format is not supported."];
-    }
-
-    // if (files.some((file) => file.match(/\.mp3$/)) === false) {
-    //   console.log("mp3");
-    //   return [false];
-    // }
-    // if (files.some((file) => file.match(/\.smil$/)) === false) {
-    //   console.log("smil");
-    //   return [false];
-    // }
-
-    return [true];
-};
-
-const findOpfFile = (files: string[]) => {
-    return files.find((file) => file.match(/\.opf$/));
-};
-
-const findEntryFile = (files: string[]) => {
-    return files.find((file) => file.match(/\.xml$/));
-};
-
-const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf: OPF) => {
     const title = xmlDom.getElementsByTagName("doctitle")[0].textContent;
     const serializer = new xmldom.XMLSerializer();
     transformList(xmlDom);
@@ -1979,7 +324,6 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf:
     const stylesheets: any[] = xpath.select("/processing-instruction('xml-stylesheet')", xmlDom);
     const links: string[] = [];
     let index = 0;
-    // stylesheets.forEach(async (stylesheet: any, i: number) => {
     for (const stylesheet of stylesheets) {
         const href = stylesheet.nodeValue.match(/href=("|')(.*?)("|')/)[0];
         if (href) {
@@ -1993,16 +337,19 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf:
                 return "";
             }
             const cssPath = path.join(path.dirname(opf.ZipPath), src)
-                            .replace(/\\/g, "/");
+                .replace(/\\/g, "/");
             let cssText = await readFilesAsString(zip, cssPath);
             cssText = parseCss(cssText);
-            const parsedFile = new ParsedFile();
-            parsedFile.Name = newFileName;
-            parsedFile.Value = cssText.trim();
-            parsedFile.Type = "text/css";
-            parsedFile.FilePath = path.join(path.dirname(opf.ZipPath), newFileName)
-                        .replace(/\\/g, "/");
-            publication.ParsedFiles.push(parsedFile);
+
+            const parsedFile: ParsedFile = {
+                FilePath: path.join(path.dirname(opf.ZipPath), newFileName)
+                    .replace(/\\/g, "/"),
+                Name: newFileName,
+                Type: "text/css",
+                Value: cssText.trim(),
+            };
+            parsedFiles.push(parsedFile);
+
             // fs.writeFileSync(newFilePath , cssText.trim());
             // console.log("CSS File Saved!");
             const tempManifest = new Manifest();
@@ -2010,11 +357,10 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf:
             tempManifest.setHrefDecoded(newFileName);
             tempManifest.MediaType = parsedFile.Type;
             opf.Manifest.push(tempManifest);
-            // }
+
             links.push(`<link rel="stylesheet" href="${newFileName}" />`);
             index++;
         }
-    // });
     }
 
     opf.Spine.Items = [];
@@ -2024,7 +370,6 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf:
     parseRearmatterXml(xmlDom, serializer, data);
 
     let i = 0;
-    // data.forEach((element, i) => {
     for (const element of data) {
         if (!opf.ZipPath) {
             return "";
@@ -2052,20 +397,20 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf:
         tempManifest.ID = `dtb_page${i + 1}`;
         tempManifest.setHrefDecoded(pageName);
         tempManifest.MediaType = "application/xhtml+xml";
-        tempManifest.isTemp = true;
         opf.Manifest.push(tempManifest);
 
         const tempSpineItem = new SpineItem();
         tempSpineItem.IDref = tempManifest.ID;
         opf.Spine.Items.push(tempSpineItem);
 
-        const parsedFile = new ParsedFile();
-        parsedFile.Name = pageName;
-        parsedFile.Value = xhtmlContent.trim();
-        parsedFile.Type = "application/xhtml+xml";
-        parsedFile.FilePath = path.join(path.dirname(opf.ZipPath), pageName)
-                        .replace(/\\/g, "/");
-        publication.ParsedFiles.push(parsedFile);
+        const parsedFile: ParsedFile = {
+            FilePath: path.join(path.dirname(opf.ZipPath), pageName)
+                .replace(/\\/g, "/"),
+            Name: pageName,
+            Type: "application/xhtml+xml",
+            Value: xhtmlContent.trim(),
+        };
+        parsedFiles.push(parsedFile);
 
         const xhtmlDoc = new xmldom.DOMParser().parseFromString(xhtmlContent, "text/html");
         const smilRefs = xpath.select("//@smilref", xhtmlDoc);
@@ -2087,22 +432,24 @@ const convertXml = async (publication: Publication, xmlDom: any, zip: IZip, opf:
 
         let duration = 0;
         for (const smilRefLink of smilRefLinks) {
-            const file = await parseSmilFile(zip, smilRefLink, opf);
-            if (!file) {
+            const smil = await parseSmilFile(zip, smilRefLink, opf);
+            if (!smil) {
                 return;
             }
             // setMediaInfo(tempManifest, tempSpineItem, file);
-            duration += getMediaDuration(file);
+            duration += getMediaDuration(smil);
         }
-        tempManifest.Duration = duration;
-        tempManifest.MediaOverlay = "true";
-    // });
+
+        // hacky way to temporarily store item duration,
+        // but much simpler than storing into "media:duration" OPF MetaData with #refines (ala EPUB)
+        tempManifest.MediaOverlay = duration.toString();
+
         i++;
     }
     return;
 };
 
-const getMediaDuration = (smilFile: SMIL ) => {
+const getMediaDuration = (smilFile: SMIL): number => {
     // const setMediaInfo = (manifest: Manifest, link: SpineItem, smilFile: SMIL ) => {
     // const metasDuration: any[] = [];
 
@@ -2113,7 +460,19 @@ const getMediaDuration = (smilFile: SMIL ) => {
     // });
 
     // console.log("metasDuration", metasDuration);
-    return timeStrToSeconds(smilFile.Body.Seq[0].Duration);
+    if (smilFile?.Body?.Children) {
+        const firstChild = smilFile.Body.Children[0];
+        if (firstChild) {
+            const seqOrPar = firstChild as any;
+            if (seqOrPar.Children ||
+                !seqOrPar.Text && !seqOrPar.Audio &&
+                (seqOrPar as Seq).Duration) {
+                return timeStrToSeconds((seqOrPar as Seq).Duration);
+            }
+        }
+    }
+
+    return 0;
 };
 
 const parseDtBookXml = (xml: any) => {
@@ -2155,21 +514,21 @@ const parseFrontmatterXml = (xmlDom: any, serializer: xmldom.XMLSerializer, data
         levelDoms = levels.concat(level1s);
         if (levelDoms.length > 0) {
             levelDoms.forEach((element: any, i: number) => {
-            const bodyContent = element.parentNode.cloneNode();
-            if (i === 0) {
-                if (docTitle) {
-                    bodyContent.appendChild(docTitle);
+                const bodyContent = element.parentNode.cloneNode();
+                if (i === 0) {
+                    if (docTitle) {
+                        bodyContent.appendChild(docTitle);
+                    }
+                    if (docAuthor) {
+                        bodyContent.appendChild(docAuthor);
+                    }
+                    if (coverTitle) {
+                        bodyContent.appendChild(coverTitle);
+                    }
                 }
-                if (docAuthor) {
-                    bodyContent.appendChild(docAuthor);
-                }
-                if (coverTitle) {
-                    bodyContent.appendChild(coverTitle);
-                }
-            }
-            bodyContent.appendChild(element);
-            const bodyContentStr = serializer.serializeToString(bodyContent);
-            data.push(bodyContentStr);
+                bodyContent.appendChild(element);
+                const bodyContentStr = serializer.serializeToString(bodyContent);
+                data.push(bodyContentStr);
             });
         } else {
             const bodyContent = frontmatter.cloneNode();
@@ -2248,13 +607,13 @@ const parseSmilFile = async (zip: IZip, srcDecoded: string, opf: OPF) => {
         return "";
     }
     const smilPath = path.join(path.dirname(opf.ZipPath), srcDecoded)
-                    .replace(/\\/g, "/");
+        .replace(/\\/g, "/");
     const smilStr = await readFilesAsString(zip, smilPath);
     const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
     return XML.deserialize<SMIL>(smilXmlDoc, SMIL);
 };
 
-const getSmilLinkReference = async (publication: Publication, zip: IZip, srcDecoded: string, opf: OPF) => {
+const getSmilLinkReference = async (parsedFiles: ParsedFile[], zip: IZip, srcDecoded: string, opf: OPF) => {
     const hashLink = srcDecoded.split("#");
     const smilLink = hashLink[0];
     const smilID = hashLink[1];
@@ -2264,7 +623,7 @@ const getSmilLinkReference = async (publication: Publication, zip: IZip, srcDeco
     // const smilStr = fs.readFileSync(smilFilePath, { encoding: "utf8" });
     const smil = await parseSmilFile(zip, smilLink, opf);
     // console.log("smil" , findAllByKey(smil, "Par"));
-    const parsInSmil =  findAllByKey(smil, "Par");
+    const parsInSmil = findAllByKey(smil, "Par");
     const linkedPar = parsInSmil.find((par: Par) => par.ID === smilID);
     if (!linkedPar) {
         return "";
@@ -2272,15 +631,15 @@ const getSmilLinkReference = async (publication: Publication, zip: IZip, srcDeco
     if (linkedPar.Text) {
         const hashXmlLink = linkedPar.Text.Src.split("#");
         const xmlID = hashXmlLink[1];
-        const xmlLink = findXhtmlWithID(publication, xmlID);
+        const xmlLink = findXhtmlWithID(parsedFiles, xmlID);
         return `${xmlLink}#${xmlID}`;
         // return linkedPar.Text.Src;
     }
     return "";
 };
 
-const findXhtmlWithID = (publication: Publication, ID: string) => {
-    for (const parsedFile of publication.ParsedFiles) {
+const findXhtmlWithID = (parsedFiles: ParsedFile[], ID: string) => {
+    for (const parsedFile of parsedFiles) {
         // const parsedFile: ParsedFile = publication.ParsedFiles[i];
         if (parsedFile.Type === "application/xhtml+xml") {
             const xhtmlDoc = new xmldom.DOMParser().parseFromString(parsedFile.Value, "text/html");
@@ -2298,6 +657,53 @@ const findXhtmlWithID = (publication: Publication, ID: string) => {
     //         }
     //     }
     // });
+};
+
+const findAllByKey = (obj: any, keyToFind: string): any => {
+    return Object.entries(obj)
+        .reduce((acc, data: any[]) => {
+            const key = data[0];
+            const value = data[1];
+            return (key === keyToFind)
+                ? acc.concat(value)
+                : (typeof value === "object")
+                    ? acc.concat(findAllByKey(value, keyToFind))
+                    : acc;
+        }, []);
+};
+
+// see createDocStringFromZipPath()
+const readFilesAsString = async (zip: IZip, filePathDecoded: string) => {
+    const has = await zipHasEntry(zip, filePathDecoded, undefined);
+    if (!has) {
+        const err = `NOT IN ZIP (readFilesAsString): --- ${filePathDecoded}`;
+        debug(err);
+        const zipEntries = await zip.getEntries();
+        for (const zipEntry of zipEntries) {
+            debug(zipEntry);
+        }
+        return Promise.reject(err);
+    }
+
+    let fileZipStream_: IStreamAndLength;
+    try {
+        fileZipStream_ = await zip.entryStreamPromise(filePathDecoded);
+    } catch (err) {
+        debug(err);
+        return Promise.reject(err);
+    }
+    const fileZipStream = fileZipStream_.stream;
+
+    let opfZipData: Buffer;
+    try {
+        opfZipData = await streamToBufferPromise(fileZipStream);
+    } catch (err) {
+        debug(err);
+        return Promise.reject(err);
+    }
+
+    return opfZipData.toString("utf8");
+
 };
 
 // const parseSmilFile = (link: Link, filePath: string, i: number = 0) => {
@@ -2335,7 +741,7 @@ const findXhtmlWithID = (publication: Publication, ID: string) => {
 //             // }
 //             // const has = await zipHasEntry(zip, itemHrefDecoded, item.Href);
 //             // if (!has) {
-//             //     debug(`NOT IN ZIP (fillMediaOverlay): ${item.HrefDecoded} --- ${itemHrefDecoded}`);
+//             //     debug(`NOT IN ZIP (parseSmilFile): ${item.HrefDecoded} --- ${itemHrefDecoded}`);
 //             //     const zipEntries = await zip.getEntries();
 //             //     for (const zipEntry of zipEntries) {
 //             //         debug(zipEntry);
@@ -2437,49 +843,3 @@ const findXhtmlWithID = (publication: Publication, ID: string) => {
 
 //         return;
 // };
-
-const findAllByKey = (obj: any, keyToFind: string): any => {
-    return Object.entries(obj)
-        .reduce((acc, data: any[]) => {
-            const key = data[0];
-            const value = data[1];
-            return (key === keyToFind)
-                ? acc.concat(value)
-                : (typeof value === "object")
-                ? acc.concat(findAllByKey(value, keyToFind))
-                : acc;
-        }, []);
-};
-
-const readFilesAsString = async (zip: IZip, filePathDecoded: string) => {
-    const has = await zipHasEntry(zip, filePathDecoded, undefined);
-    if (!has) {
-        const err = `NOT IN ZIP (readFilesAsString): --- ${filePathDecoded}`;
-        debug(err);
-        const zipEntries = await zip.getEntries();
-        for (const zipEntry of zipEntries) {
-            debug(zipEntry);
-        }
-        return Promise.reject(err);
-    }
-
-    let fileZipStream_: IStreamAndLength;
-    try {
-        fileZipStream_ = await zip.entryStreamPromise(filePathDecoded);
-    } catch (err) {
-        debug(err);
-        return Promise.reject(err);
-    }
-    const fileZipStream = fileZipStream_.stream;
-
-    let opfZipData: Buffer;
-    try {
-        opfZipData = await streamToBufferPromise(fileZipStream);
-    } catch (err) {
-        debug(err);
-        return Promise.reject(err);
-    }
-
-    return opfZipData.toString("utf8");
-
-};

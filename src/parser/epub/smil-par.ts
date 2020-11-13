@@ -16,15 +16,18 @@ import { Text } from "./smil-text";
 @XmlObject({
     epub: "http://www.idpf.org/2007/ops",
     smil: "http://www.w3.org/ns/SMIL",
+    smil2: "http://www.w3.org/2001/SMIL20/",
 })
 @XmlDiscriminatorValue("par")
 export class Par extends SeqOrPar {
 
     // XPATH ROOT: /smil:smil/smil:body/**/smil:par
 
+    // @XmlXPathSelector("smil:text | smil2:text")
     @XmlXPathSelector("text")
     public Text!: Text;
 
+    // @XmlXPathSelector("smil:audio | smil2:audio")
     @XmlXPathSelector("audio")
     public Audio!: Audio;
 

@@ -5,11 +5,17 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
-import { XmlItemType, XmlXPathSelector } from "@r2-utils-js/_utils/xml-js-mapper";
+import { XmlItemType, XmlObject, XmlXPathSelector } from "@r2-utils-js/_utils/xml-js-mapper";
+
 import { Metafield } from "./opf-metafield";
 
-// @XmlObject({})
+@XmlObject({
+    dc: "http://purl.org/dc/elements/1.1/",
+    opf: "http://www.idpf.org/2007/opf",
+    opf2: "http://openebook.org/namespaces/oeb-package/1.0/",
+})
 export class XMetadata {
+    // XPATH ROOT: /opf:package/opf:metadata/dc-metadata or /smil:smil/smil:head/dc-metadata
 
     @XmlXPathSelector("meta")
     @XmlItemType(Metafield)

@@ -14,24 +14,25 @@ import { Spine } from "./opf-spine";
 
 @XmlObject({
     dc: "http://purl.org/dc/elements/1.1/",
-    opf: "http://openebook.org/namespaces/oeb-package/1.0/",
+    opf: "http://www.idpf.org/2007/opf",
+    opf2: "http://openebook.org/namespaces/oeb-package/1.0/",
     xml: "http://www.w3.org/XML/1998/namespace",
 })
 export class OPF {
 
     // XPATH ROOT: /opf:package
 
-    @XmlXPathSelector("opf:metadata")
+    @XmlXPathSelector("opf:metadata | opf2:metadata")
     public Metadata!: Metadata;
 
-    @XmlXPathSelector("opf:manifest/opf:item")
+    @XmlXPathSelector("manifest/item")
     @XmlItemType(Manifest)
     public Manifest!: Manifest[];
 
-    @XmlXPathSelector("opf:spine")
+    @XmlXPathSelector("spine")
     public Spine!: Spine;
 
-    @XmlXPathSelector("opf:guide/opf:reference")
+    @XmlXPathSelector("guide/reference")
     @XmlItemType(Reference)
     public Guide!: Reference[];
 

@@ -15,67 +15,70 @@ import { Title } from "./opf-title";
 
 @XmlObject({
     dc: "http://purl.org/dc/elements/1.1/",
-    oebpackage: "http://openebook.org/namespaces/oeb-package/1.0/",
+    opf: "http://www.idpf.org/2007/opf",
+    opf2: "http://openebook.org/namespaces/oeb-package/1.0/",
 })
 export class DCMetadata {
 
-    @XmlXPathSelector("dc:Title/text()")
+    // XPATH ROOT: /opf:package/opf:metadata/dc-metadata
+
+    @XmlXPathSelector("dc:Title | dc:title")
     @XmlItemType(Title)
     public Title!: Title[];
 
-    @XmlXPathSelector("dc:Language/text()")
+    @XmlXPathSelector("dc:Language/text() | dc:language/text()")
     @XmlItemType(String)
     public Language!: string[];
 
-    @XmlXPathSelector("dc:Identifier")
+    @XmlXPathSelector("dc:Identifier | dc:identifier")
     @XmlItemType(Identifier)
     public Identifier!: Identifier[];
 
-    @XmlXPathSelector("dc:Creator")
+    @XmlXPathSelector("dc:Creator | dc:creator")
     @XmlItemType(Author)
     public Creator!: Author[];
 
-    @XmlXPathSelector("dc:Subject")
+    @XmlXPathSelector("dc:Subject | dc:subject")
     @XmlItemType(Subject)
     public Subject!: Subject[];
 
-    @XmlXPathSelector("dc:Description/text()")
+    @XmlXPathSelector("dc:Description/text() | dc:description/text()")
     @XmlItemType(String)
     public Description!: string[];
 
-    @XmlXPathSelector("dc:Publisher/text()")
+    @XmlXPathSelector("dc:Publisher/text() | dc:publisher/text()")
     @XmlItemType(String)
     public Publisher!: string[];
 
-    @XmlXPathSelector("dc:Contributor")
+    @XmlXPathSelector("dc:Contributor | dc:contributor")
     @XmlItemType(Author)
     public Contributor!: Author[];
 
-    @XmlXPathSelector("dc:Date")
+    @XmlXPathSelector("dc:Date | dc:date")
     @XmlItemType(MetaDate)
     public Date!: MetaDate[];
 
-    @XmlXPathSelector("dc:Type/text()")
+    @XmlXPathSelector("dc:Type/text() | dc:type/text()")
     @XmlItemType(String)
     public Type!: string[];
 
-    @XmlXPathSelector("dc:Format/text()")
+    @XmlXPathSelector("dc:Format/text() | dc:format/text()")
     @XmlItemType(String)
     public Format!: string[];
 
-    @XmlXPathSelector("dc:Source/text()")
+    @XmlXPathSelector("dc:Source/text() | dc:source/text()")
     @XmlItemType(String)
     public Source!: string[];
 
-    @XmlXPathSelector("dc:Relation/text()")
+    @XmlXPathSelector("dc:Relation/text() | dc:relation/text()")
     @XmlItemType(String)
     public Relation!: string[];
 
-    @XmlXPathSelector("dc:Coverage/text()")
+    @XmlXPathSelector("dc:Coverage/text() | dc:coverage/text()")
     @XmlItemType(String)
     public Coverage!: string[];
 
-    @XmlXPathSelector("dc:Rights/text()")
+    @XmlXPathSelector("dc:Rights/text() | dc:rights/text()")
     @XmlItemType(String)
     public Rights!: string[];
 

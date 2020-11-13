@@ -11,12 +11,24 @@ import { SpineItem } from "./opf-spineitem";
 
 @XmlObject({
     dc: "http://purl.org/dc/elements/1.1/",
-    opf: "http://openebook.org/namespaces/oeb-package/1.0/",
+    opf: "http://www.idpf.org/2007/opf",
+    opf2: "http://openebook.org/namespaces/oeb-package/1.0/",
     xml: "http://www.w3.org/XML/1998/namespace",
 })
 export class Spine {
 
-    @XmlXPathSelector("opf:itemref")
+    // XPATH ROOT: /opf:package/opf:spine
+
+    @XmlXPathSelector("@id | @xml:id")
+    public ID!: string;
+
+    @XmlXPathSelector("@toc")
+    public Toc!: string;
+
+    @XmlXPathSelector("@page-progression-direction")
+    public PageProgression!: string;
+
+    @XmlXPathSelector("itemref")
     @XmlItemType(SpineItem)
     public Items!: SpineItem[];
 }

@@ -17,9 +17,6 @@ import { tryDecodeURI } from "../../_utils/decodeURI";
 export class Manifest {
 
     // XPATH ROOT: /opf:package/opf:manifest/opf:item
-    public isTemp: boolean = false;
-
-    public Duration: number = 0;
 
     @XmlXPathSelector("@id | @xml:id")
     public ID!: string;

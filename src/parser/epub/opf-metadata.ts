@@ -6,23 +6,32 @@
 // ==LICENSE-END==
 
 import { XmlItemType, XmlObject, XmlXPathSelector } from "@r2-utils-js/_utils/xml-js-mapper";
+
 import { DCMetadata } from "./opf-dc-metadata";
+import { MetaLink } from "./opf-link";
+import { Metafield } from "./opf-metafield";
 import { XMetadata } from "./opf-x-metadata";
 
 @XmlObject({
     dc: "http://purl.org/dc/elements/1.1/",
-    opf: "http://openebook.org/namespaces/oeb-package/1.0/",
+    opf: "http://www.idpf.org/2007/opf",
+    opf2: "http://openebook.org/namespaces/oeb-package/1.0/",
 })
-export class Metadata {
+export class Metadata extends DCMetadata {
 
     // XPATH ROOT: /opf:package/opf:metadata
 
+    @XmlXPathSelector("link")
+    @XmlItemType(MetaLink)
+    public Link!: MetaLink[];
+
+    @XmlXPathSelector("meta")
+    @XmlItemType(Metafield)
+    public Meta!: Metafield[];
+
     @XmlXPathSelector("dc-metadata")
-    @XmlItemType(DCMetadata)
     public DCMetadata!: DCMetadata;
 
     @XmlXPathSelector("x-metadata")
-    @XmlItemType(XMetadata)
     public XMetadata!: XMetadata;
-
 }

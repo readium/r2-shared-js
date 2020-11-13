@@ -7,23 +7,40 @@
 
 import { XmlObject, XmlXPathSelector } from "@r2-utils-js/_utils/xml-js-mapper";
 
-import { XMetadata } from "./opf-x-metadata";
 import { Body } from "./smil-body";
+import { Head } from "./smil-head";
 import { Par } from "./smil-par";
 
 @XmlObject({
-    dtbsmil: "http://www.w3.org/2001/SMIL20/",
+    epub: "http://www.idpf.org/2007/ops",
     smil: "http://www.w3.org/ns/SMIL",
+    smil2: "http://www.w3.org/2001/SMIL20/",
 })
 export class SMIL {
 
     // XPATH ROOT: /smil:smil
 
+    // @XmlXPathSelector("smil:head | smil2:head")
     @XmlXPathSelector("head")
-    public Head!: XMetadata;
+    public Head!: Head;
 
+    // @XmlXPathSelector("smil:body | smil2:body")
     @XmlXPathSelector("body")
     public Body!: Body;
+
+    // @XmlXPathSelector("smil:body")
+    // public Body1!: Body;
+    // @XmlXPathSelector("smil2:body")
+    // public Body2!: Body | undefined;
+    // get Body(): Body | undefined {
+    //     return this.Body2 ? this.Body2 : this.Body1;
+    // }
+    // set Body(body: Body | undefined) {
+    //     if (body) {
+    //         this.Body1 = body;
+    //         this.Body2 = undefined;
+    //     }
+    // }
 
     // Bug with Javascript / Typescript @ANNOTATION() !
     // Requires the class hierarchy to explicitely include all object types

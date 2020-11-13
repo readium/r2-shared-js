@@ -16,7 +16,6 @@ import { IZip } from "@r2-utils-js/_utils/zip/zip";
 
 import { IInternal } from "./internal";
 import { Metadata } from "./metadata";
-import { ParsedFile } from "./parsed-file";
 import { Link } from "./publication-link";
 
 // import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
@@ -143,8 +142,6 @@ export class Publication {
     // public Images!: Link[];
 
     public LCP: LCP | undefined;
-
-    public ParsedFiles: ParsedFile[] = [];
 
     public freeDestroy() {
         console.log("freeDestroy: Publication");
