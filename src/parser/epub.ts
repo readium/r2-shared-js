@@ -428,152 +428,151 @@ export async function getMediaOverlay(publication: Publication, spineHref: strin
     return Promise.reject(`No Media Overlays ${spineHref}`);
 }
 
-export const lazyLoadMediaOverlays =
-    async (publication: Publication, mo: MediaOverlayNode) => {
+export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaOverlayNode) => {
 
-        if (mo.initialized || !mo.SmilPathInZip) {
-            return;
-        }
+    if (mo.initialized || !mo.SmilPathInZip) {
+        return;
+    }
 
-        let link: Link | undefined;
-        if (publication.Resources) {
+    let link: Link | undefined;
+    if (publication.Resources) {
 
-            link = publication.Resources.find((l) => {
-                if (l.Href === mo.SmilPathInZip) {
-                    return true;
-                }
-                return false;
-            });
-            if (!link) {
-                if (publication.Spine) {
-                    link = publication.Spine.find((l) => {
-                        if (l.Href === mo.SmilPathInZip) {
-                            return true;
-                        }
-                        return false;
-                    });
-                }
+        link = publication.Resources.find((l) => {
+            if (l.Href === mo.SmilPathInZip) {
+                return true;
             }
-            if (!link) {
-                const err = "Asset not declared in publication spine/resources! " + mo.SmilPathInZip;
-                debug(err);
-                return Promise.reject(err);
-            }
-        }
-
-        const zipInternal = publication.findFromInternal("zip");
-        if (!zipInternal) {
-            return;
-        }
-        const zip = zipInternal.Value as IZip;
-
-        const has = await zipHasEntry(zip, mo.SmilPathInZip, undefined);
-        if (!has) {
-            const err = `NOT IN ZIP (lazyLoadMediaOverlays): ${mo.SmilPathInZip}`;
-            debug(err);
-            const zipEntries = await zip.getEntries();
-            for (const zipEntry of zipEntries) {
-                debug(zipEntry);
-            }
-            return Promise.reject(err);
-        }
-
-        let smilZipStream_: IStreamAndLength;
-        try {
-            smilZipStream_ = await zip.entryStreamPromise(mo.SmilPathInZip);
-        } catch (err) {
-            debug(err);
-            return Promise.reject(err);
-        }
-
-        if (link && link.Properties && link.Properties.Encrypted) {
-            let decryptFail = false;
-            let transformedStream: IStreamAndLength;
-            try {
-                transformedStream = await Transformers.tryStream(
-                    publication, link, undefined,
-                    smilZipStream_,
-                    false,
-                    0,
-                    0,
-                    undefined,
-                );
-            } catch (err) {
-                debug(err);
-                return Promise.reject(err);
-            }
-            if (transformedStream) {
-                smilZipStream_ = transformedStream;
-            } else {
-                decryptFail = true;
-            }
-
-            if (decryptFail) {
-                const err = "Encryption scheme not supported.";
-                debug(err);
-                return Promise.reject(err);
-            }
-        }
-
-        const smilZipStream = smilZipStream_.stream;
-
-        let smilZipData: Buffer;
-        try {
-            smilZipData = await streamToBufferPromise(smilZipStream);
-        } catch (err) {
-            debug(err);
-            return Promise.reject(err);
-        }
-
-        const smilStr = smilZipData.toString("utf8");
-        const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
-        const smil = XML.deserialize<SMIL>(smilXmlDoc, SMIL);
-        smil.ZipPath = mo.SmilPathInZip;
-
-        mo.initialized = true;
-        debug("PARSED SMIL: " + mo.SmilPathInZip);
-
-        // breakLength: 100  maxArrayLength: undefined
-        // debug(util.inspect(smil,
-        //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
-
-        mo.Role = [];
-        mo.Role.push("section");
-
-        if (smil.Body) {
-            if (smil.Body.EpubType) {
-                const roles = parseSpaceSeparatedString(smil.Body.EpubType);
-                for (const role of roles) {
-                    if (!role.length) {
-                        return;
+            return false;
+        });
+        if (!link) {
+            if (publication.Spine) {
+                link = publication.Spine.find((l) => {
+                    if (l.Href === mo.SmilPathInZip) {
+                        return true;
                     }
-                    if (mo.Role.indexOf(role) < 0) {
-                        mo.Role.push(role);
-                    }
-                }
-            }
-            if (smil.Body.TextRef) {
-                const smilBodyTextRefDecoded = smil.Body.TextRefDecoded;
-                if (!smilBodyTextRefDecoded) {
-                    debug("!?smilBodyTextRefDecoded");
-                } else {
-                    const zipPath = path.join(path.dirname(smil.ZipPath), smilBodyTextRefDecoded)
-                        .replace(/\\/g, "/");
-                    mo.Text = zipPath;
-                }
-            }
-            if (smil.Body.Children && smil.Body.Children.length) {
-                smil.Body.Children.forEach((seqChild) => {
-                    if (!mo.Children) {
-                        mo.Children = [];
-                    }
-                    addSeqToMediaOverlay(smil, publication, mo, mo.Children, seqChild);
+                    return false;
                 });
             }
         }
+        if (!link) {
+            const err = "Asset not declared in publication spine/resources! " + mo.SmilPathInZip;
+            debug(err);
+            return Promise.reject(err);
+        }
+    }
 
+    const zipInternal = publication.findFromInternal("zip");
+    if (!zipInternal) {
         return;
-    };
+    }
+    const zip = zipInternal.Value as IZip;
+
+    const has = await zipHasEntry(zip, mo.SmilPathInZip, undefined);
+    if (!has) {
+        const err = `NOT IN ZIP (lazyLoadMediaOverlays): ${mo.SmilPathInZip}`;
+        debug(err);
+        const zipEntries = await zip.getEntries();
+        for (const zipEntry of zipEntries) {
+            debug(zipEntry);
+        }
+        return Promise.reject(err);
+    }
+
+    let smilZipStream_: IStreamAndLength;
+    try {
+        smilZipStream_ = await zip.entryStreamPromise(mo.SmilPathInZip);
+    } catch (err) {
+        debug(err);
+        return Promise.reject(err);
+    }
+
+    if (link && link.Properties && link.Properties.Encrypted) {
+        let decryptFail = false;
+        let transformedStream: IStreamAndLength;
+        try {
+            transformedStream = await Transformers.tryStream(
+                publication, link, undefined,
+                smilZipStream_,
+                false,
+                0,
+                0,
+                undefined,
+            );
+        } catch (err) {
+            debug(err);
+            return Promise.reject(err);
+        }
+        if (transformedStream) {
+            smilZipStream_ = transformedStream;
+        } else {
+            decryptFail = true;
+        }
+
+        if (decryptFail) {
+            const err = "Encryption scheme not supported.";
+            debug(err);
+            return Promise.reject(err);
+        }
+    }
+
+    const smilZipStream = smilZipStream_.stream;
+
+    let smilZipData: Buffer;
+    try {
+        smilZipData = await streamToBufferPromise(smilZipStream);
+    } catch (err) {
+        debug(err);
+        return Promise.reject(err);
+    }
+
+    const smilStr = smilZipData.toString("utf8");
+    const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
+    const smil = XML.deserialize<SMIL>(smilXmlDoc, SMIL);
+    smil.ZipPath = mo.SmilPathInZip;
+
+    mo.initialized = true;
+    debug("PARSED SMIL: " + mo.SmilPathInZip);
+
+    // breakLength: 100  maxArrayLength: undefined
+    // debug(util.inspect(smil,
+    //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
+
+    mo.Role = [];
+    mo.Role.push("section");
+
+    if (smil.Body) {
+        if (smil.Body.EpubType) {
+            const roles = parseSpaceSeparatedString(smil.Body.EpubType);
+            for (const role of roles) {
+                if (!role.length) {
+                    return;
+                }
+                if (mo.Role.indexOf(role) < 0) {
+                    mo.Role.push(role);
+                }
+            }
+        }
+        if (smil.Body.TextRef) {
+            const smilBodyTextRefDecoded = smil.Body.TextRefDecoded;
+            if (!smilBodyTextRefDecoded) {
+                debug("!?smilBodyTextRefDecoded");
+            } else {
+                const zipPath = path.join(path.dirname(smil.ZipPath), smilBodyTextRefDecoded)
+                    .replace(/\\/g, "/");
+                mo.Text = zipPath;
+            }
+        }
+        if (smil.Body.Children && smil.Body.Children.length) {
+            smil.Body.Children.forEach((seqChild) => {
+                if (!mo.Children) {
+                    mo.Children = [];
+                }
+                addSeqToMediaOverlay(smil, publication, mo, mo.Children, seqChild);
+            });
+        }
+    }
+
+    return;
+};
 
 // const fillMediaOverlay =
 //     async (publication: Publication, rootfile: Rootfile, opf: OPF, zip: IZip) => {
