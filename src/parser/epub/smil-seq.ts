@@ -23,17 +23,17 @@ export class Seq extends SeqOrPar {
     // XPATH ROOT: /smil:smil/smil:body
     // XPATH ROOT: /smil:smil/smil:body/**/smil:seq
 
-    // @XmlXPathSelector("smil:par|smil:seq|smil2:par|smil2:seq")
-    @XmlXPathSelector("par|seq")
+    @XmlXPathSelector("smil:par | smil:seq | smil2:par | smil2:seq")
+    // @XmlXPathSelector("par | seq")
     @XmlItemType(SeqOrPar)
     public Children!: SeqOrPar[];
 
-    // @XmlXPathSelector("smil:seq|smil2:seq")
+    // @XmlXPathSelector("smil:seq | smil2:seq")
     // @XmlXPathSelector("seq")
     // @XmlItemType(Seq)
     // public Seq: Seq[];
 
-    // @XmlXPathSelector("smil:par|smil2:par")
+    // @XmlXPathSelector("smil:par | smil2:par")
     // @XmlXPathSelector("par")
     // @XmlItemType(Par)
     // public Par: Par[];

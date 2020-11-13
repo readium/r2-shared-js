@@ -25,6 +25,7 @@ export class SMIL {
     public Head!: Head;
 
     // @XmlXPathSelector("smil:body | smil2:body")
+    // @XmlXPathSelector("smil:body")
     @XmlXPathSelector("body")
     public Body!: Body;
 

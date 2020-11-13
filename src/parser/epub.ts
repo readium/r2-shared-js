@@ -39,8 +39,8 @@ import { zipHasEntry } from "../_utils/zipHasEntry";
 import {
     addIdentifier, addLanguage, addOtherMetadata, addTitle, fillLandmarksFromGuide,
     fillPublicationDate, fillSpineAndResource, fillSubject, findContributorInMeta,
-    findInManifestByID, findMetaByRefineAndProperty, getNcx, getOpf, mediaOverlayURLParam,
-    mediaOverlayURLPath, parseSpaceSeparatedString, setPublicationDirection,
+    findInManifestByID, findMetaByRefineAndProperty, getNcx, getOpf, loadFileStrFromZipPath,
+    mediaOverlayURLParam, mediaOverlayURLPath, parseSpaceSeparatedString, setPublicationDirection,
 } from "./epub-daisy-common";
 import { Container } from "./epub/container";
 import { Rootfile } from "./epub/container-rootfile";
@@ -538,6 +538,9 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
 
     mo.Role = [];
     mo.Role.push("section");
+
+    // debug(smil);
+    // debug(JSON.stringify(smil, null, 4));
 
     if (smil.Body) {
         if (smil.Body.EpubType) {
@@ -1304,7 +1307,7 @@ const fillPageListFromAdobePageMap = async (
     if (!l.HrefDecoded) {
         return;
     }
-    const pageMapContent = await createDocStringFromZipPath(l, zip);
+    const pageMapContent = await loadFileStrFromZipPath(l.Href, l.HrefDecoded, zip);
     if (!pageMapContent) {
         return;
     }
@@ -1340,42 +1343,6 @@ const fillPageListFromAdobePageMap = async (
             publication.PageList.push(link);
         }
     }
-};
-
-const createDocStringFromZipPath = async (link: Link, zip: IZip): Promise<string | undefined> => {
-    const linkHrefDecoded = link.HrefDecoded;
-    if (!linkHrefDecoded) {
-        debug("!?link.HrefDecoded");
-        return undefined;
-    }
-    const has = await zipHasEntry(zip, linkHrefDecoded, link.Href);
-    if (!has) {
-        debug(`NOT IN ZIP (createDocStringFromZipPath): ${link.Href} --- ${linkHrefDecoded}`);
-        const zipEntries = await zip.getEntries();
-        for (const zipEntry of zipEntries) {
-            debug(zipEntry);
-        }
-        return undefined;
-    }
-
-    let zipStream_: IStreamAndLength;
-    try {
-        zipStream_ = await zip.entryStreamPromise(linkHrefDecoded);
-    } catch (err) {
-        debug(err);
-        return Promise.reject(err);
-    }
-    const zipStream = zipStream_.stream;
-
-    let zipData: Buffer;
-    try {
-        zipData = await streamToBufferPromise(zipStream);
-    } catch (err) {
-        debug(err);
-        return Promise.reject(err);
-    }
-
-    return zipData.toString("utf8");
 };
 
 const fillTOCFromNCX = (publication: Publication, rootfile: Rootfile, opf: OPF, ncx: NCX) => {

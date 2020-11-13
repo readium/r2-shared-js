@@ -17,16 +17,15 @@ import { Metadata } from "@models/metadata";
 import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
 import { isHTTP } from "@r2-utils-js/_utils/http/UrlUtils";
-import { streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { XML } from "@r2-utils-js/_utils/xml-js-mapper";
-import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
+import { IZip } from "@r2-utils-js/_utils/zip/zip";
 import { zipLoadPromise } from "@r2-utils-js/_utils/zip/zipFactory";
 
 import { zipHasEntry } from "../_utils/zipHasEntry";
 import {
     addIdentifier, addLanguage, addOtherMetadata, addTitle, fillLandmarksFromGuide,
     fillPublicationDate, fillSpineAndResource, fillSubject, findContributorInMeta, getNcx, getOpf,
-    setPublicationDirection,
+    loadFileStrFromZipPath, setPublicationDirection,
 } from "./epub-daisy-common";
 import { Rootfile } from "./epub/container-rootfile";
 import { NCX } from "./epub/ncx";
@@ -103,7 +102,6 @@ export async function isDaisyPublication(urlOrPath: string): Promise<DaisyBookis
 // };
 
 export async function DaisyParsePromise(filePath: string): Promise<Publication> {
-    const parsedFiles: ParsedFile[] = [];
 
     // const isDaisy = isDaisyPublication(filePath);
 
@@ -174,7 +172,23 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
 
     findContributorInMeta(publication, undefined, opf);
 
-    await fillSpineAndResource(publication, undefined, opf, zip, addLinkData);
+    // debug(opf.Metadata);
+    // debug(JSON.stringify(opf.Metadata, null, 4));
+
+    let parsedFiles: ParsedFile[] = [];
+
+    // "application/x-dtbook+xml" content type
+    // manifest/item@media-type
+    const dtBookZipEntryPath = entries.find((entry) => entry.match(/\.xml$/));
+    if (dtBookZipEntryPath) {
+        const dtBookStr = await loadFileStrFromZipPath(dtBookZipEntryPath, dtBookZipEntryPath, zip);
+        if (!dtBookStr) {
+            console.log("!loadFileStrFromZipPath", dtBookStr);
+        } else {
+            const dtBookDoc = new xmldom.DOMParser().parseFromString(dtBookStr, "application/xml");
+            parsedFiles = await convertXml(dtBookDoc, zip, opf);
+        }
+    }
 
     if (!publication.TOC || !publication.TOC.length) {
         if (ncx) {
@@ -186,18 +200,19 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
         fillLandmarksFromGuide(publication, opf);
     }
 
+    debug("parsedFiles", parsedFiles.map((parsedFile) => {
+        return {
+            FilePath: parsedFile.FilePath,
+            Name: parsedFile.Name,
+            Type: parsedFile.Type,
+        };
+    }));
+
+    await fillSpineAndResource(publication, undefined, opf, zip, addLinkData);
+
     fillSubject(publication, opf);
 
     fillPublicationDate(publication, undefined, opf);
-
-    // "application/x-dtbook+xml" content type
-    // manifest/item@media-type
-    const dtBookZipEntryPath = entries.find((entry) => entry.match(/\.xml$/));
-    if (dtBookZipEntryPath) {
-        const dtBookStr = await readFilesAsString(zip, dtBookZipEntryPath);
-        const dtBookDoc = new xmldom.DOMParser().parseFromString(dtBookStr, "application/xml");
-        await convertXml(parsedFiles, dtBookDoc, zip, opf);
-    }
 
     return publication;
 }
@@ -219,24 +234,18 @@ const addLinkData = async (
 // tslint:disable-next-line: max-line-length
 const fillPageListFromNCX = async (publication: Publication, parsedFiles: ParsedFile[], opf: OPF, ncx: NCX, zip: IZip) => {
     if (ncx.PageList && ncx.PageList.PageTarget && ncx.PageList.PageTarget.length) {
-        // ncx.PageList.PageTarget.forEach((pageTarget) => {
+
         for (const pageTarget of ncx.PageList.PageTarget) {
             const link = new Link();
             const srcDecoded = pageTarget.Content.SrcDecoded;
             if (!srcDecoded) {
                 debug("!?srcDecoded");
-                return; // foreach
+                continue;
             }
             const zipPath = path.join(path.dirname(ncx.ZipPath), srcDecoded)
                 .replace(/\\/g, "/");
 
-            let smilXmlPath = "";
-            if (opf.ZipPath) {
-                smilXmlPath = await getSmilLinkReference(parsedFiles, zip, srcDecoded, opf);
-            } else {
-                debug("?!point.Content.Src");
-                return;
-            }
+            const smilXmlPath = await getSmilLinkReference(parsedFiles, zip, srcDecoded, opf);
 
             link.setHrefDecoded(smilXmlPath || zipPath);
 
@@ -247,7 +256,6 @@ const fillPageListFromNCX = async (publication: Publication, parsedFiles: Parsed
                 publication.PageList = [];
             }
             publication.PageList.push(link);
-            // });
         }
     }
 };
@@ -281,13 +289,7 @@ const fillTOCFromNavPoint =
         const zipPath = path.join(path.dirname(ncx.ZipPath), srcDecoded)
             .replace(/\\/g, "/");
 
-        let smilXmlPath = "";
-        if (opf.ZipPath) {
-            smilXmlPath = await getSmilLinkReference(parsedFiles, zip, srcDecoded, opf);
-        } else {
-            debug("?!point.Content.Src");
-            return;
-        }
+        const smilXmlPath = await getSmilLinkReference(parsedFiles, zip, srcDecoded, opf);
 
         link.setHrefDecoded(smilXmlPath || zipPath);
 
@@ -311,21 +313,34 @@ const fillTOCFromNavPoint =
         node.push(link);
     };
 
-const convertXml = async (parsedFiles: ParsedFile[], xmlDom: any, zip: IZip, opf: OPF) => {
-
-    if (process.env) {
-        throw new Error("BREAK 1");
+const convertXml = async (xmlDom: Document, zip: IZip, opf: OPF): Promise<ParsedFile[]> => {
+    if (!opf.ZipPath) {
+        return Promise.reject("!opf.ZipPath??");
     }
 
-    const title = xmlDom.getElementsByTagName("doctitle")[0].textContent;
-    const serializer = new xmldom.XMLSerializer();
-    transformList(xmlDom);
+    const parsedFiles: ParsedFile[] = [];
 
-    const stylesheets: any[] = xpath.select("/processing-instruction('xml-stylesheet')", xmlDom);
+    const title = xmlDom.getElementsByTagName("doctitle")[0].textContent;
+
+    transformListElements(xmlDom);
+
+    const select = xpath.useNamespaces({
+        // epub: "http://www.idpf.org/2007/ops",
+        // xhtml: "http://www.w3.org/1999/xhtml",
+    });
+
+    const stylesheets = select("/processing-instruction('xml-stylesheet')", xmlDom) as ProcessingInstruction[];
     const links: string[] = [];
     let index = 0;
     for (const stylesheet of stylesheets) {
-        const href = stylesheet.nodeValue.match(/href=("|')(.*?)("|')/)[0];
+        if (!stylesheet.nodeValue) {
+            continue;
+        }
+        const match = stylesheet.nodeValue.match(/href=("|')(.*?)("|')/);
+        if (!match) {
+            continue;
+        }
+        const href = match[0];
         if (href) {
             const src = href.split("=")[1].replace(/"/g, "");
             // const filePath = path.join(urlOrPath, src);
@@ -333,13 +348,15 @@ const convertXml = async (parsedFiles: ParsedFile[], xmlDom: any, zip: IZip, opf
             // const newFilePath = path.join(urlOrPath, newFileName);
             // if (fs.existsSync(filePath) && !fs.existsSync(newFilePath)) {
             // let cssText = fs.readFileSync(filePath, { encoding: "utf8" });
-            if (!opf.ZipPath) {
-                return "";
-            }
+
             const cssPath = path.join(path.dirname(opf.ZipPath), src)
                 .replace(/\\/g, "/");
-            let cssText = await readFilesAsString(zip, cssPath);
-            cssText = parseCss(cssText);
+            let cssText = await loadFileStrFromZipPath(cssPath, cssPath, zip);
+            if (!cssText) {
+                console.log("!loadFileStrFromZipPath", cssPath);
+                continue;
+            }
+            cssText = transformCss(cssText);
 
             const parsedFile: ParsedFile = {
                 FilePath: path.join(path.dirname(opf.ZipPath), newFileName)
@@ -364,17 +381,38 @@ const convertXml = async (parsedFiles: ParsedFile[], xmlDom: any, zip: IZip, opf
     }
 
     opf.Spine.Items = [];
-    const data: any[] = [];
+
+    const serializer = new xmldom.XMLSerializer();
+    const data: string[] = [];
     parseFrontmatterXml(xmlDom, serializer, data);
     parseBodymatterXml(xmlDom, serializer, data);
     parseRearmatterXml(xmlDom, serializer, data);
 
     let i = 0;
     for (const element of data) {
-        if (!opf.ZipPath) {
-            return "";
-        }
-        const content = parseDtBookXml(element);
+        const content = element
+            .replace('xmlns="', 'xmlns:conf="')
+            .replace(/<frontmatter/g, '<div class="frontmatter"')
+            .replace(/<bodymatter/g, '<div class="bodymatter"')
+            .replace(/<rearmatter/g, '<div class="rearmatter">')
+            .replace(/<\/frontmatter>/g, "</div>")
+            .replace(/<\/bodymatter>/g, "</div>")
+            .replace(/<\/rearmatter>/g, "</div>")
+            .replace(/<level(\d)>/g, '<div class="level level-$1">')
+            .replace(/<\/level\d>/g, "</div>")
+            .replace(/<doctitle/g, "<h1 class='doctitle'")
+            .replace(/<\/doctitle>/g, "</h1>")
+            .replace(/<docauthor/g, "<p class='docauthor'")
+            .replace(/<\/docauthor>/g, "</p>")
+            .replace(/<covertitle/g, "<p class='covertitle'")
+            .replace(/<\/covertitle>/g, "</p>")
+            .replace(/<pagenum/g, "<span class='pagenum'")
+            .replace(/<\/pagenum>/g, "</span>")
+            .replace(/<sent/g, "<span")
+            .replace(/<\/sent>/g, "</span>")
+            .replace(/(<\/?)imggroup/g, "$1figure")
+            .replace(/<caption/g, "<figcaption")
+            .replace(/<\/caption>/g, "</figcaption>");
 
         const xhtmlContent = `
             <?xml version="1.0" encoding="utf-8"?>
@@ -413,8 +451,8 @@ const convertXml = async (parsedFiles: ParsedFile[], xmlDom: any, zip: IZip, opf
         parsedFiles.push(parsedFile);
 
         const xhtmlDoc = new xmldom.DOMParser().parseFromString(xhtmlContent, "text/html");
-        const smilRefs = xpath.select("//@smilref", xhtmlDoc);
-        const refs = smilRefs.map((smilRef: any) => {
+        const smilRefs = select("//@smilref", xhtmlDoc) as Attr[];
+        const refs = smilRefs.map((smilRef) => {
             return smilRef.value.split("#")[0]; // get link only
         });
         // const smilRefLinks = [...new Set(refs)]; // remove duplicate
@@ -426,6 +464,10 @@ const convertXml = async (parsedFiles: ParsedFile[], xmlDom: any, zip: IZip, opf
             continue;
         }
 
+        if (process.env) {
+            throw new Error("AUDIO SMIL");
+        }
+
         const smilRefLinks = refs.filter((ref: string, ind: number) => {
             return refs.indexOf(ref) === ind;
         }); // remove duplicate
@@ -434,7 +476,7 @@ const convertXml = async (parsedFiles: ParsedFile[], xmlDom: any, zip: IZip, opf
         for (const smilRefLink of smilRefLinks) {
             const smil = await parseSmilFile(zip, smilRefLink, opf);
             if (!smil) {
-                return;
+                continue;
             }
             // setMediaInfo(tempManifest, tempSpineItem, file);
             duration += getMediaDuration(smil);
@@ -446,28 +488,21 @@ const convertXml = async (parsedFiles: ParsedFile[], xmlDom: any, zip: IZip, opf
 
         i++;
     }
-    return;
+
+    return parsedFiles;
 };
 
 const getMediaDuration = (smilFile: SMIL): number => {
-    // const setMediaInfo = (manifest: Manifest, link: SpineItem, smilFile: SMIL ) => {
-    // const metasDuration: any[] = [];
 
-    // smilFile.Head.Meta.forEach((metaTag) => {
-    //     if (metaTag.Name === "dtb:totalElapsedTime") {
-    //         metasDuration.push(timeStrToSeconds(metaTag.Content));
-    //     }
-    // });
-
-    // console.log("metasDuration", metasDuration);
     if (smilFile?.Body?.Children) {
         const firstChild = smilFile.Body.Children[0];
         if (firstChild) {
-            const seqOrPar = firstChild as any;
-            if (seqOrPar.Children ||
-                !seqOrPar.Text && !seqOrPar.Audio &&
-                (seqOrPar as Seq).Duration) {
-                return timeStrToSeconds((seqOrPar as Seq).Duration);
+            // Duck typing ...
+            if ((firstChild as Seq).Children ||
+                !(firstChild as Par).Text && !(firstChild as Par).Audio &&
+                (firstChild as Seq).Duration) {
+
+                return timeStrToSeconds((firstChild as Seq).Duration);
             }
         }
     }
@@ -475,33 +510,7 @@ const getMediaDuration = (smilFile: SMIL): number => {
     return 0;
 };
 
-const parseDtBookXml = (xml: any) => {
-    return xml
-        .replace('xmlns="', 'xmlns:conf="')
-        .replace(/<frontmatter/g, '<div class="frontmatter"')
-        .replace(/<bodymatter/g, '<div class="bodymatter"')
-        .replace(/<rearmatter/g, '<div class="rearmatter">')
-        .replace(/<\/frontmatter>/g, "</div>")
-        .replace(/<\/bodymatter>/g, "</div>")
-        .replace(/<\/rearmatter>/g, "</div>")
-        .replace(/<level(\d)>/g, '<div class="level level-$1">')
-        .replace(/<\/level\d>/g, "</div>")
-        .replace(/<doctitle/g, "<h1 class='doctitle'")
-        .replace(/<\/doctitle>/g, "</h1>")
-        .replace(/<docauthor/g, "<p class='docauthor'")
-        .replace(/<\/docauthor>/g, "</p>")
-        .replace(/<covertitle/g, "<p class='covertitle'")
-        .replace(/<\/covertitle>/g, "</p>")
-        .replace(/<pagenum/g, "<span class='pagenum'")
-        .replace(/<\/pagenum>/g, "</span>")
-        .replace(/<sent/g, "<span")
-        .replace(/<\/sent>/g, "</span>")
-        .replace(/(<\/?)imggroup/g, "$1figure")
-        .replace(/<caption/g, "<figcaption")
-        .replace(/<\/caption>/g, "</figcaption>");
-};
-
-const parseFrontmatterXml = (xmlDom: any, serializer: xmldom.XMLSerializer, data: any[]) => {
+const parseFrontmatterXml = (xmlDom: Document, serializer: xmldom.XMLSerializer, data: string[]) => {
     let levelDoms = [];
     const frontmatter = xmlDom.getElementsByTagName("frontmatter")[0];
     if (frontmatter) {
@@ -513,7 +522,10 @@ const parseFrontmatterXml = (xmlDom: any, serializer: xmldom.XMLSerializer, data
 
         levelDoms = levels.concat(level1s);
         if (levelDoms.length > 0) {
-            levelDoms.forEach((element: any, i: number) => {
+            levelDoms.forEach((element: Element, i: number) => {
+                if (!element.parentNode) {
+                    return;
+                }
                 const bodyContent = element.parentNode.cloneNode();
                 if (i === 0) {
                     if (docTitle) {
@@ -547,7 +559,7 @@ const parseFrontmatterXml = (xmlDom: any, serializer: xmldom.XMLSerializer, data
     }
 };
 
-const parseBodymatterXml = (xmlDom: any, serializer: xmldom.XMLSerializer, data: any[]) => {
+const parseBodymatterXml = (xmlDom: Document, serializer: xmldom.XMLSerializer, data: string[]) => {
     let levelDoms = [];
     const bodymatter = xmlDom.getElementsByTagName("bodymatter")[0];
     if (bodymatter) {
@@ -555,7 +567,10 @@ const parseBodymatterXml = (xmlDom: any, serializer: xmldom.XMLSerializer, data:
         const levels = Array.from(bodymatter.getElementsByTagName("level"));
 
         levelDoms = levels.concat(level1s);
-        levelDoms.forEach((element: any) => {
+        levelDoms.forEach((element) => {
+            if (!element.parentNode) {
+                return;
+            }
             const bodyContent = element.parentNode.cloneNode();
             bodyContent.appendChild(element);
             const bodyContentStr = serializer.serializeToString(bodyContent);
@@ -564,7 +579,7 @@ const parseBodymatterXml = (xmlDom: any, serializer: xmldom.XMLSerializer, data:
     }
 };
 
-const parseRearmatterXml = (xmlDom: any, serializer: xmldom.XMLSerializer, data: any[]) => {
+const parseRearmatterXml = (xmlDom: Document, serializer: xmldom.XMLSerializer, data: string[]) => {
     let levelDoms = [];
     const rearmatter = xmlDom.getElementsByTagName("rearmatter")[0];
     if (rearmatter) {
@@ -572,7 +587,10 @@ const parseRearmatterXml = (xmlDom: any, serializer: xmldom.XMLSerializer, data:
         const levels = Array.from(rearmatter.getElementsByTagName("level"));
 
         levelDoms = levels.concat(level1s);
-        levelDoms.forEach((element: any) => {
+        levelDoms.forEach((element) => {
+            if (!element.parentNode) {
+                return;
+            }
             const bodyContent = element.parentNode.cloneNode();
             bodyContent.appendChild(element);
             const bodyContentStr = serializer.serializeToString(bodyContent);
@@ -581,11 +599,11 @@ const parseRearmatterXml = (xmlDom: any, serializer: xmldom.XMLSerializer, data:
     }
 };
 
-const parseCss = (cssText: any): string => {
+const transformCss = (cssText: string): string => {
     cssText = cssText.replace(/\/\*[^\/\*]+\*\//g, ""); // remove comments
-    const cssTags = ["annoref", "annotation", "author", "bdo", "bodymatter", "book", "bridgehead", "byline", "caption", "cite", "col", "covertitle", "dateline", "dfn", "docauthor", "doctitle", "dtbook", "epigraph", "frontmatter", "hd", "imggroup", "kbd", "level", "level1", "level2", "level3", "level4", "level5", "level6", "lic", "line", "linegroup", "link", "list", "meta", "note", "noteref", "pagenum", "poem", "prodnote", "rearmatter", "samp", "sent", "sub", "sup"];
+    const cssTags = ["annoref", "annotation", "author", "bdo", "bodymatter", "book", "bridgehead", "byline", "caption", "cite", "col", "covertitle", "dateline", "dfn", "docauthor", "doctitle", "dtbook", "epigraph", "frontmatter", "hd", "imggroup", "kbd", "level1", "level2", "level3", "level4", "level5", "level6", "level", "lic", "linegroup", "line", "link", "list", "meta", "noteref", "note", "pagenum", "poem", "prodnote", "rearmatter", "samp", "sent", "sub", "sup"];
     cssTags.forEach((cssTag) => {
-        const regex = new RegExp(`${cssTag}`, "g");
+        const regex = new RegExp(`[^#\.]${cssTag}`, "g");
         cssText = cssText
             .replace(regex, `.${cssTag}`);
     });
@@ -593,27 +611,37 @@ const parseCss = (cssText: any): string => {
     return cssText;
 };
 
-const transformList = (xmlDom: any) => {
+const transformListElements = (xmlDom: Document) => {
     const elDoms = xmlDom.getElementsByTagName("list");
 
     for (let i = 0; i < elDoms.length; i++) {
         const elem = elDoms.item(i);
-        elem.tagName = elem.getAttribute("type");
+        if (!elem) {
+            continue;
+        }
+        // read-only property!
+        (elem as any).tagName = elem.getAttribute("type");
     }
 };
 
-const parseSmilFile = async (zip: IZip, srcDecoded: string, opf: OPF) => {
+const parseSmilFile = async (zip: IZip, srcDecoded: string, opf: OPF): Promise<SMIL> => {
     if (!opf.ZipPath) {
-        return "";
+        return Promise.reject("!opf.ZipPath??");
     }
     const smilPath = path.join(path.dirname(opf.ZipPath), srcDecoded)
         .replace(/\\/g, "/");
-    const smilStr = await readFilesAsString(zip, smilPath);
+    debug(`>>>>> parseSmilFile ${smilPath}`);
+    const smilStr = await loadFileStrFromZipPath(smilPath, smilPath, zip);
+    if (!smilStr) {
+        return Promise.reject("!loadFileStrFromZipPath: " + smilPath);
+    }
     const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
     return XML.deserialize<SMIL>(smilXmlDoc, SMIL);
 };
 
-const getSmilLinkReference = async (parsedFiles: ParsedFile[], zip: IZip, srcDecoded: string, opf: OPF) => {
+const getSmilLinkReference = async (
+    parsedFiles: ParsedFile[], zip: IZip, srcDecoded: string, opf: OPF): Promise<string | undefined> => {
+
     const hashLink = srcDecoded.split("#");
     const smilLink = hashLink[0];
     const smilID = hashLink[1];
@@ -622,11 +650,10 @@ const getSmilLinkReference = async (parsedFiles: ParsedFile[], zip: IZip, srcDec
 
     // const smilStr = fs.readFileSync(smilFilePath, { encoding: "utf8" });
     const smil = await parseSmilFile(zip, smilLink, opf);
-    // console.log("smil" , findAllByKey(smil, "Par"));
-    const parsInSmil = findAllByKey(smil, "Par");
-    const linkedPar = parsInSmil.find((par: Par) => par.ID === smilID);
+
+    const linkedPar = findParInSmilWithID(smil, smilID);
     if (!linkedPar) {
-        return "";
+        return undefined;
     }
     if (linkedPar.Text) {
         const hashXmlLink = linkedPar.Text.Src.split("#");
@@ -635,7 +662,8 @@ const getSmilLinkReference = async (parsedFiles: ParsedFile[], zip: IZip, srcDec
         return `${xmlLink}#${xmlID}`;
         // return linkedPar.Text.Src;
     }
-    return "";
+
+    return undefined;
 };
 
 const findXhtmlWithID = (parsedFiles: ParsedFile[], ID: string) => {
@@ -648,7 +676,7 @@ const findXhtmlWithID = (parsedFiles: ParsedFile[], ID: string) => {
             }
         }
     }
-    return "";
+    return;
     // publication.ParsedFiles.forEach((parsedFile: ParsedFile, i: number) => {
     //     if (parsedFile.Type === "application/xhtml+xml") {
     //         const xhtmlDoc = new xmldom.DOMParser().parseFromString(parsedFile.Value, "text/html");
@@ -659,49 +687,28 @@ const findXhtmlWithID = (parsedFiles: ParsedFile[], ID: string) => {
     // });
 };
 
-const findAllByKey = (obj: any, keyToFind: string): any => {
-    return Object.entries(obj)
-        .reduce((acc, data: any[]) => {
-            const key = data[0];
-            const value = data[1];
-            return (key === keyToFind)
-                ? acc.concat(value)
-                : (typeof value === "object")
-                    ? acc.concat(findAllByKey(value, keyToFind))
-                    : acc;
-        }, []);
-};
-
-// see createDocStringFromZipPath()
-const readFilesAsString = async (zip: IZip, filePathDecoded: string) => {
-    const has = await zipHasEntry(zip, filePathDecoded, undefined);
-    if (!has) {
-        const err = `NOT IN ZIP (readFilesAsString): --- ${filePathDecoded}`;
-        debug(err);
-        const zipEntries = await zip.getEntries();
-        for (const zipEntry of zipEntries) {
-            debug(zipEntry);
+const findParInSeqWithID = (seq: Seq, id: string): Par | undefined => {
+    for (const child of seq.Children) {
+        // Duck typing ...
+        if ((child as Seq).Children) {
+            const found = findParInSeqWithID(child as Seq, id);
+            if (found) {
+                return found;
+            }
+            continue;
         }
-        return Promise.reject(err);
+        const par = child as Par;
+        if ((par.Text || par.Audio) &&
+            par.ID === id) {
+
+            return par;
+        }
     }
-
-    let fileZipStream_: IStreamAndLength;
-    try {
-        fileZipStream_ = await zip.entryStreamPromise(filePathDecoded);
-    } catch (err) {
-        debug(err);
-        return Promise.reject(err);
+    return undefined;
+};
+const findParInSmilWithID = (smil: SMIL, id: string): Par | undefined => {
+    if (smil.Body) {
+        return findParInSeqWithID(smil.Body, id);
     }
-    const fileZipStream = fileZipStream_.stream;
-
-    let opfZipData: Buffer;
-    try {
-        opfZipData = await streamToBufferPromise(fileZipStream);
-    } catch (err) {
-        debug(err);
-        return Promise.reject(err);
-    }
-
-    return opfZipData.toString("utf8");
-
+    return undefined;
 };

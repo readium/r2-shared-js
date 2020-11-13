@@ -514,6 +514,10 @@ async function dumpPublication(publication: Publication): Promise<void> {
     console.log(util.inspect(publication,
         { showHidden: false, depth: 1000, colors: true, customInspect: true }));
 
+    if (process.env) {
+        throw new Error("XXXYYY");
+    }
+
     const publicationJsonObj = TaJsonSerialize(publication);
     console.log(util.inspect(publicationJsonObj,
         { showHidden: false, depth: 1000, colors: true, customInspect: true }));
@@ -569,6 +573,8 @@ async function dumpPublication(publication: Publication): Promise<void> {
             }
             if (spineItem.MediaOverlays) {
                 const mo = spineItem.MediaOverlays;
+                console.log(util.inspect(mo,
+                    { showHidden: false, depth: 1000, colors: true, customInspect: true }));
                 console.log(mo.SmilPathInZip);
                 // mo.initialized true/false automatically handled
                 try {

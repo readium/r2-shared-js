@@ -1220,3 +1220,40 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
         }
     }
 };
+
+export const loadFileStrFromZipPath = async (
+    linkHref: string, linkHrefDecoded: string, zip: IZip): Promise<string | undefined> => {
+
+    if (!linkHrefDecoded) {
+        debug("!?link.HrefDecoded");
+        return undefined;
+    }
+    const has = await zipHasEntry(zip, linkHrefDecoded, linkHref);
+    if (!has) {
+        debug(`NOT IN ZIP (createDocStringFromZipPath): ${linkHref} --- ${linkHrefDecoded}`);
+        const zipEntries = await zip.getEntries();
+        for (const zipEntry of zipEntries) {
+            debug(zipEntry);
+        }
+        return undefined;
+    }
+
+    let zipStream_: IStreamAndLength;
+    try {
+        zipStream_ = await zip.entryStreamPromise(linkHrefDecoded);
+    } catch (err) {
+        debug(err);
+        return Promise.reject(err);
+    }
+    const zipStream = zipStream_.stream;
+
+    let zipData: Buffer;
+    try {
+        zipData = await streamToBufferPromise(zipStream);
+    } catch (err) {
+        debug(err);
+        return Promise.reject(err);
+    }
+
+    return zipData.toString("utf8");
+};
