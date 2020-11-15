@@ -62,7 +62,6 @@ export async function isDaisyPublication(urlOrPath: string): Promise<DaisyBookis
         }
         if (!await zipHasEntry(zip, "META-INF/container.xml", undefined) &&
             await zipHasEntry(zip, "package.opf", undefined)) {
-
             return DaisyBookis.LocalPacked;
         }
     }
@@ -94,7 +93,7 @@ export async function isDaisyPublication(urlOrPath: string): Promise<DaisyBookis
 
 export async function DaisyParsePromise(filePath: string): Promise<Publication> {
 
-    // const isDaisy = isDaisyPublication(filePath);
+    // const isDaisy = await isDaisyPublication(filePath);
 
     let zip: IZip;
     try {

@@ -18,7 +18,7 @@ import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
 import { AudioBookis, isAudioBookPublication } from "@parser/audiobook";
 import { DaisyBookis, isDaisyPublication } from "@parser/daisy";
-import { convertDaisyToEpub } from "@parser/daisy-convert-to-epub";
+import { convertDaisyToReadiumWebPub } from "@parser/daisy-convert-to-epub";
 import { isEPUBlication, lazyLoadMediaOverlays } from "@parser/epub";
 import { PublicationParsePromise } from "@parser/publication-parser";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
@@ -156,9 +156,10 @@ if (args[2]) {
     if ((isDaisyBook || isAnAudioBook || isAnEPUB) && outputDirPath) {
         try {
             if (isDaisyBook) {
-                await convertDaisyToEpub(outputDirPath, publication);
+                await convertDaisyToReadiumWebPub(outputDirPath, publication);
+            } else {
+                await extractEPUB((isAnEPUB || isDaisyBook) ? true : false, publication, outputDirPath, decryptKeys);
             }
-            await extractEPUB((isAnEPUB || isDaisyBook) ? true : false, publication, outputDirPath, decryptKeys);
         } catch (err) {
             console.log("== Publication extract FAIL");
             console.log(err);
@@ -452,8 +453,8 @@ async function extractEPUB(isEPUB: boolean, pub: Publication, outDir: string, ke
         throw err;
     }
 
-    // fs.mkdirSync
-    ensureDirs(outDir); // { recursive: false }
+    // fs.mkdirSync // { recursive: false }
+    ensureDirs(path.join(outDir, "DUMMY"));
 
     extractEPUB_ManifestJSON(pub, outDir, keys);
 

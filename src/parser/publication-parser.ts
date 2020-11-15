@@ -15,10 +15,10 @@ import { DivinaParsePromise, isDivinaPublication } from "./divina";
 export async function PublicationParsePromise(filePath: string): Promise<Publication> {
     let isAudio: AudioBookis | undefined;
     return isEPUBlication(filePath) ? EpubParsePromise(filePath) :
-        isDaisyPublication(filePath) ? DaisyParsePromise(filePath) :
-            (isCBZPublication(filePath) ? CbzParsePromise(filePath) :
-                (isDivinaPublication(filePath) ? DivinaParsePromise(filePath) :
+        (isCBZPublication(filePath) ? CbzParsePromise(filePath) :
+            (await isDivinaPublication(filePath) ? DivinaParsePromise(filePath) :
+                (await isDaisyPublication(filePath) ? DaisyParsePromise(filePath) :
                     // tslint:disable-next-line: no-conditional-assignment
                     (isAudio = await isAudioBookPublication(filePath)) ? AudioBookParsePromise(filePath, isAudio) :
-                        Promise.reject(`Unrecognized publication type ${filePath}`)));
+                        Promise.reject(`Unrecognized publication type ${filePath}`))));
 }

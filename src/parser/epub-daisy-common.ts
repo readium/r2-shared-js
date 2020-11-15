@@ -1183,13 +1183,29 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
 export const loadFileStrFromZipPath = async (
     linkHref: string, linkHrefDecoded: string, zip: IZip): Promise<string | undefined> => {
 
+    let zipData: Buffer | undefined;
+    try {
+        zipData = await loadFileBufferFromZipPath(linkHref, linkHrefDecoded, zip);
+    } catch (err) {
+        debug(err);
+        return Promise.reject(err);
+    }
+    if (zipData) {
+        return zipData.toString("utf8");
+    }
+    return Promise.reject("?!zipData loadFileStrFromZipPath()");
+};
+
+export const loadFileBufferFromZipPath = async (
+    linkHref: string, linkHrefDecoded: string, zip: IZip): Promise<Buffer | undefined> => {
+
     if (!linkHrefDecoded) {
         debug("!?link.HrefDecoded");
         return undefined;
     }
     const has = await zipHasEntry(zip, linkHrefDecoded, linkHref);
     if (!has) {
-        debug(`NOT IN ZIP (createDocStringFromZipPath): ${linkHref} --- ${linkHrefDecoded}`);
+        debug(`NOT IN ZIP (loadFileBufferFromZipPath): ${linkHref} --- ${linkHrefDecoded}`);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
             debug(zipEntry);
@@ -1214,7 +1230,7 @@ export const loadFileStrFromZipPath = async (
         return Promise.reject(err);
     }
 
-    return zipData.toString("utf8");
+    return zipData;
 };
 
 const fillLandmarksFromGuide = (publication: Publication, opf: OPF) => {
