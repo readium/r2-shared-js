@@ -132,7 +132,6 @@ export const convertDaisyToReadiumWebPub = async (
             "sent",
             "sub",
             "sup",
-            "br",
             "q",
             "w",
             "notice",
@@ -171,9 +170,9 @@ export const convertDaisyToReadiumWebPub = async (
 
                 // const regex = new RegExp(`[^#\.](${elementNames.join("|")})`, "g");
                 for (const elementName of elementNames) {
-                    // allows comma, whitespace, colon prefix/suffix chars, which are used in CSS selectors
+                    // meant to patch CSS selectors, but not property values
                     const regex = new RegExp(
-                        `([^#\.a-zA-Z0-9\-_\(\);<>\*~\+])(${elementName})([^a-zA-Z0-9\-_\(\);<>\*~\+])`, "g");
+                        `([^#\.a-zA-Z0-9\-_])(${elementName})([^a-zA-Z0-9\-_;])`, "g");
                     // let i = -1;
                     // let match: RegExpExecArray | null;
                     // // tslint:disable-next-line: no-conditional-assignment
@@ -185,7 +184,9 @@ export const convertDaisyToReadiumWebPub = async (
                     //     debug("B -----------");
                     // }
                     cssText = cssText.replace(regex, `$1.$2_R2$3`);
-                    cssText = cssText.replace(regex, `$1.$2_R2$3`); // second pass
+
+                    // second pass, as the first doesn't match tokens with trailing / leading separators
+                    cssText = cssText.replace(regex, `$1.$2_R2$3`);
                 }
 
                 // restore comments
@@ -228,9 +229,13 @@ export const convertDaisyToReadiumWebPub = async (
                     if (type) {
                         // TODO: strictly-speaking, this is a read-only property!
                         (listElement as any).tagName = type;
-                        listElement.removeAttribute("type");
+                        // listElement.removeAttribute("type");
                     }
                 }
+
+//             .replace(/(<\/?)imggroup/g, "$1figure")
+//             .replace(/<caption/g, "<figcaption")
+//             .replace(/<\/caption>/g, "</figcaption>");
 
                 for (const elementName of elementNames) {
                     // getElementsByName(elementName: string): NodeListOf<HTMLElement>
@@ -243,8 +248,14 @@ export const convertDaisyToReadiumWebPub = async (
                         const cls = el.getAttribute("class");
                         el.setAttribute("class", `${cls ? (cls + " ") : ""}${elementName}_R2`);
                         // TODO: strictly-speaking, this is a read-only property!
-                        (el as any).tagName = ((elementName === "dtbook") ? "html" :
-                            ((elementName === "book") ? "body" : "div"));
+                        (el as any).tagName =
+                            ((elementName === "dtbook") ? "html" :
+                            ((elementName === "book") ? "body" :
+                            ((elementName === "pagenum") ? "span" :
+                            ((elementName === "sent") ? "span" :
+                            ((elementName === "caption") ? "figcaption" :
+                            ((elementName === "imggroup") ? "figure" :
+                            "div"))))));
                     }
                 }
 
@@ -269,7 +280,7 @@ export const convertDaisyToReadiumWebPub = async (
                     }
                 }
 
-                const smilRefs = select("*[smilref]", dtBookDoc) as Element[];
+                const smilRefs = select("//*[@smilref]", dtBookDoc) as Element[];
                 for (const smilRef of smilRefs) {
                     const ref = smilRef.getAttribute("smilref");
                     if (ref) {
@@ -469,185 +480,6 @@ ${cssHrefs.reduce((pv, cv) => {
     }
     return outputZipPath;
 };
-
-// const convertXml = async (xmlDom: Document, zip: IZip, opf: OPF): Promise<ParsedFile[]> => {
-//     if (!opf.ZipPath) {
-//         return Promise.reject("!opf.ZipPath??");
-//     }
-
-//     const parsedFiles: ParsedFile[] = [];
-
-//     const title = xmlDom.getElementsByTagName("doctitle")[0].textContent;
-
-//     transformListElements(xmlDom);
-
-//     const select = xpath.useNamespaces({
-//         // epub: "http://www.idpf.org/2007/ops",
-//         // xhtml: "http://www.w3.org/1999/xhtml",
-//     });
-
-//     const stylesheets = select("/processing-instruction('xml-stylesheet')", xmlDom) as ProcessingInstruction[];
-//     const links: string[] = [];
-//     let index = 0;
-//     for (const stylesheet of stylesheets) {
-//         if (!stylesheet.nodeValue) {
-//             continue;
-//         }
-//         const match = stylesheet.nodeValue.match(/href=("|')(.*?)("|')/);
-//         if (!match) {
-//             continue;
-//         }
-//         const href = match[0];
-//         if (href) {
-//             const src = href.split("=")[1].replace(/"/g, "");
-//             // const filePath = path.join(urlOrPath, src);
-//             const newFileName = `style_${index}.css`;
-//             // const newFilePath = path.join(urlOrPath, newFileName);
-//             // if (fs.existsSync(filePath) && !fs.existsSync(newFilePath)) {
-//             // let cssText = fs.readFileSync(filePath, { encoding: "utf8" });
-
-//             const cssPath = path.join(path.dirname(opf.ZipPath), src)
-//                 .replace(/\\/g, "/");
-//             let cssText = await loadFileStrFromZipPath(cssPath, cssPath, zip);
-//             if (!cssText) {
-//                 debug("!loadFileStrFromZipPath", cssPath);
-//                 continue;
-//             }
-//             cssText = transformCss(cssText);
-
-//             const parsedFile: ParsedFile = {
-//                 FilePath: path.join(path.dirname(opf.ZipPath), newFileName)
-//                     .replace(/\\/g, "/"),
-//                 Name: newFileName,
-//                 Type: "text/css",
-//                 Value: cssText.trim(),
-//             };
-//             parsedFiles.push(parsedFile);
-
-//             // fs.writeFileSync(newFilePath , cssText.trim());
-//             // debug("CSS File Saved!");
-//             const tempManifest = new Manifest();
-//             tempManifest.ID = `dtb_css${index + 1}`;
-//             tempManifest.setHrefDecoded(newFileName);
-//             tempManifest.MediaType = parsedFile.Type;
-//             opf.Manifest.push(tempManifest);
-
-//             links.push(`<link rel="stylesheet" href="${newFileName}" />`);
-//             index++;
-//         }
-//     }
-
-//     opf.Spine.Items = [];
-
-//     const serializer = new xmldom.XMLSerializer();
-//     const data: string[] = [];
-//     parseFrontmatterXml(xmlDom, serializer, data);
-//     parseBodymatterXml(xmlDom, serializer, data);
-//     parseRearmatterXml(xmlDom, serializer, data);
-
-//     let i = 0;
-//     for (const element of data) {
-//         const content = element
-//             .replace('xmlns="', 'xmlns:conf="')
-//             .replace(/<frontmatter/g, '<div class="frontmatter"')
-//             .replace(/<bodymatter/g, '<div class="bodymatter"')
-//             .replace(/<rearmatter/g, '<div class="rearmatter">')
-//             .replace(/<\/frontmatter>/g, "</div>")
-//             .replace(/<\/bodymatter>/g, "</div>")
-//             .replace(/<\/rearmatter>/g, "</div>")
-//             .replace(/<level(\d)>/g, '<div class="level level-$1">')
-//             .replace(/<\/level\d>/g, "</div>")
-//             .replace(/<doctitle/g, "<h1 class='doctitle'")
-//             .replace(/<\/doctitle>/g, "</h1>")
-//             .replace(/<docauthor/g, "<p class='docauthor'")
-//             .replace(/<\/docauthor>/g, "</p>")
-//             .replace(/<covertitle/g, "<p class='covertitle'")
-//             .replace(/<\/covertitle>/g, "</p>")
-//             .replace(/<pagenum/g, "<span class='pagenum'")
-//             .replace(/<\/pagenum>/g, "</span>")
-//             .replace(/<sent/g, "<span")
-//             .replace(/<\/sent>/g, "</span>")
-//             .replace(/(<\/?)imggroup/g, "$1figure")
-//             .replace(/<caption/g, "<figcaption")
-//             .replace(/<\/caption>/g, "</figcaption>");
-
-//         const xhtmlContent = `
-//             <?xml version="1.0" encoding="utf-8"?>
-//             <!DOCTYPE xhtml>
-//             <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-//             <head>
-//                 <meta charset="UTF-8" />
-//                 <title>${title}</title>
-//                 ${links.join(" ")}
-//             </head>
-//             <body>
-//                 <div class="book">
-//                     ${content}
-//                 </div>
-//             </body>
-//             </html>
-//         `;
-//         const pageName = `page${i + 1}.xhtml`;
-//         const tempManifest = new Manifest();
-//         tempManifest.ID = `dtb_page${i + 1}`;
-//         tempManifest.setHrefDecoded(pageName);
-//         tempManifest.MediaType = "application/xhtml+xml";
-//         opf.Manifest.push(tempManifest);
-
-//         const tempSpineItem = new SpineItem();
-//         tempSpineItem.IDref = tempManifest.ID;
-//         opf.Spine.Items.push(tempSpineItem);
-
-//         const parsedFile: ParsedFile = {
-//             FilePath: path.join(path.dirname(opf.ZipPath), pageName)
-//                 .replace(/\\/g, "/"),
-//             Name: pageName,
-//             Type: "application/xhtml+xml",
-//             Value: xhtmlContent.trim(),
-//         };
-//         parsedFiles.push(parsedFile);
-
-//         const xhtmlDoc = new xmldom.DOMParser().parseFromString(xhtmlContent, "text/html");
-//         const smilRefs = select("//@smilref", xhtmlDoc) as Attr[];
-//         const refs = smilRefs.map((smilRef) => {
-//             return smilRef.value.split("#")[0]; // get link only
-//         });
-//         // const smilRefLinks = [...new Set(refs)]; // remove duplicate
-//         const multimediaContent = opf.Metadata.XMetadata.Meta.find((metaTag) => {
-//             return metaTag.Name === "dtb:multimediaContent";
-//         });
-//         if (!multimediaContent || !multimediaContent.Content.includes("audio")) {
-//             i++;
-//             continue;
-//         }
-
-//         if (process.env) {
-//             throw new Error("AUDIO SMIL");
-//         }
-
-//         const smilRefLinks = refs.filter((ref: string, ind: number) => {
-//             return refs.indexOf(ref) === ind;
-//         }); // remove duplicate
-
-//         let duration = 0;
-//         for (const smilRefLink of smilRefLinks) {
-//             const smil = await parseSmilFile(zip, smilRefLink, opf);
-//             if (!smil) {
-//                 continue;
-//             }
-//             // setMediaInfo(tempManifest, tempSpineItem, file);
-//             duration += getMediaDuration(smil);
-//         }
-
-//         // hacky way to temporarily store item duration,
-//         // but much simpler than storing into "media:duration" OPF MetaData with #refines (ala EPUB)
-//         tempManifest.MediaOverlay = duration.toString();
-
-//         i++;
-//     }
-
-//     return parsedFiles;
-// };
 
 // const getMediaDuration = (smilFile: SMIL): number => {
 
