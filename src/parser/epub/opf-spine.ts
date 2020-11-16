@@ -12,6 +12,7 @@ import { SpineItem } from "./opf-spineitem";
 @XmlObject({
     dc: "http://purl.org/dc/elements/1.1/",
     opf: "http://www.idpf.org/2007/opf",
+    opf2: "http://openebook.org/namespaces/oeb-package/1.0/",
     xml: "http://www.w3.org/XML/1998/namespace",
 })
 export class Spine {
@@ -27,7 +28,7 @@ export class Spine {
     @XmlXPathSelector("@page-progression-direction")
     public PageProgression!: string;
 
-    @XmlXPathSelector("opf:itemref")
+    @XmlXPathSelector("itemref")
     @XmlItemType(SpineItem)
     public Items!: SpineItem[];
 }

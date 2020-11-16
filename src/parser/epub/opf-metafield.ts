@@ -10,6 +10,7 @@ import { XmlObject, XmlXPathSelector } from "@r2-utils-js/_utils/xml-js-mapper";
 @XmlObject({
     dc: "http://purl.org/dc/elements/1.1/",
     opf: "http://www.idpf.org/2007/opf",
+    opf2: "http://openebook.org/namespaces/oeb-package/1.0/",
     xml: "http://www.w3.org/XML/1998/namespace",
 })
 export class Metafield {

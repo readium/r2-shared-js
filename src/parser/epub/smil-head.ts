@@ -5,20 +5,21 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
-import { XmlObject } from "@r2-utils-js/_utils/xml-js-mapper";
+import { XmlObject, XmlXPathSelector } from "@r2-utils-js/_utils/xml-js-mapper";
 
-import { Seq } from "./smil-seq";
+import { XMetadata } from "./opf-x-metadata";
+import { CustomAttributes } from "./smil-custom-attributes";
 
 @XmlObject({
     epub: "http://www.idpf.org/2007/ops",
     smil: "http://www.w3.org/ns/SMIL",
     smil2: "http://www.w3.org/2001/SMIL20/",
 })
-export class Body extends Seq {
+export class Head extends XMetadata {
 
-    // XPATH ROOT: /smil:smil/smil:body
+    // XPATH ROOT: /smil:smil/smil:head
 
-    // tslint:disable-next-line:no-unused-variable
-    // @ts-ignore: TS6133 (is declared but its value is never read.)
-    private isBody: boolean = true;
+    @XmlXPathSelector("customAttributes")
+    // @XmlItemType(CustomAttributes)
+    public CustomAttributes!: CustomAttributes;
 }

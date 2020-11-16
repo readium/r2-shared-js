@@ -12,10 +12,27 @@ import { tryDecodeURI } from "../../_utils/decodeURI";
 @XmlObject({
     epub: "http://www.idpf.org/2007/ops",
     smil: "http://www.w3.org/ns/SMIL",
+    smil2: "http://www.w3.org/2001/SMIL20/",
+    xml: "http://www.w3.org/XML/1998/namespace",
 })
 export class Audio {
 
     // XPATH ROOT: /smil:smil/smil:body/**/smil:audio
+
+    // @XmlXPathSelector("@id | @xml:id")
+    // public ID!: string;
+
+    // @XmlXPathSelector("@dur")
+    // public Duration!: string;
+
+    // @XmlXPathSelector("@fill")
+    // public Fill!: string;
+
+    // @XmlXPathSelector("@class")
+    // public Class!: string;
+
+    // @XmlXPathSelector("@customTest")
+    // public CustomTest!: string;
 
     @XmlXPathSelector("@clipBegin")
     public ClipBegin!: string;

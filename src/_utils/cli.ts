@@ -17,6 +17,8 @@ import { MediaOverlayNode } from "@models/media-overlay";
 import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
 import { AudioBookis, isAudioBookPublication } from "@parser/audiobook";
+import { DaisyBookis, isDaisyPublication } from "@parser/daisy";
+import { convertDaisyToReadiumWebPub } from "@parser/daisy-convert-to-epub";
 import { isEPUBlication, lazyLoadMediaOverlays } from "@parser/epub";
 import { PublicationParsePromise } from "@parser/publication-parser";
 import { setLcpNativePluginPath } from "@r2-lcp-js/parser/epub/lcp";
@@ -143,10 +145,21 @@ if (args[2]) {
         // console.log(err);
         // ignore
     }
+    let isDaisyBook: DaisyBookis | undefined;
+    try {
+        isDaisyBook = await isDaisyPublication(filePath);
+    } catch (_err) {
+        // console.log(err);
+        // ignore
+    }
 
-    if ((isAnEPUB || isAnAudioBook) && outputDirPath) {
+    if ((isDaisyBook || isAnAudioBook || isAnEPUB) && outputDirPath) {
         try {
-            await extractEPUB(isAnEPUB ? true : false, publication, outputDirPath, decryptKeys);
+            if (isDaisyBook) {
+                await convertDaisyToReadiumWebPub(outputDirPath, publication);
+            } else {
+                await extractEPUB((isAnEPUB || isDaisyBook) ? true : false, publication, outputDirPath, decryptKeys);
+            }
         } catch (err) {
             console.log("== Publication extract FAIL");
             console.log(err);
@@ -198,9 +211,9 @@ function extractEPUB_ManifestJSON(pub: Publication, outDir: string, keys: string
                 const link = lks[i] as JsonMap;
                 if (link.type === "application/vnd.readium.lcp.license.v1.0+json"
                     && link.rel === "license") {
-                        index = i;
-                        break;
-                    }
+                    index = i;
+                    break;
+                }
             }
             if (index >= 0) {
                 lks.splice(index, 1);
@@ -214,7 +227,7 @@ function extractEPUB_ManifestJSON(pub: Publication, outDir: string, keys: string
     arrLinks.forEach((link: any) => {
         if (link.properties && link.properties.encrypted &&
             (link.properties.encrypted.algorithm === "http://www.idpf.org/2008/embedding" ||
-            link.properties.encrypted.algorithm === "http://ns.adobe.com/pdf/enc#RC")) {
+                link.properties.encrypted.algorithm === "http://ns.adobe.com/pdf/enc#RC")) {
             delete link.properties.encrypted;
 
             let atLeastOne = false;
@@ -440,7 +453,14 @@ async function extractEPUB(isEPUB: boolean, pub: Publication, outDir: string, ke
         throw err;
     }
 
-    fs.mkdirSync(outDir); // { recursive: false }
+    // fs.mkdirSync // { recursive: false }
+    ensureDirs(path.join(outDir, "DUMMY_FILE.EXT"));
+
+    try {
+        await extractEPUB_MediaOverlays(pub, zip, outDir);
+    } catch (err) {
+        console.log(err);
+    }
 
     extractEPUB_ManifestJSON(pub, outDir, keys);
 
@@ -477,6 +497,50 @@ async function extractEPUB(isEPUB: boolean, pub: Publication, outDir: string, ke
         await extractEPUB_Check(zip, outDir);
     } catch (err) {
         console.log(err);
+    }
+}
+
+async function extractEPUB_MediaOverlays(pub: Publication, _zip: IZip, outDir: string): Promise<void> {
+
+    if (!pub.Spine) {
+        return;
+    }
+
+    let i = -1;
+    for (const spineItem of pub.Spine) {
+
+        if (spineItem.MediaOverlays) {
+            const mo = spineItem.MediaOverlays;
+            // console.log(util.inspect(mo,
+            //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
+            // console.log(mo.SmilPathInZip);
+
+            try {
+                // mo.initialized true/false is automatically handled
+                await lazyLoadMediaOverlays(pub, mo);
+            } catch (err) {
+                return Promise.reject(err);
+            }
+            const moJsonObj = TaJsonSerialize(mo);
+            const moJsonStr = global.JSON.stringify(moJsonObj, null, "  ");
+
+            i++;
+            const p = `media-overlays_${i}.json`;
+
+            const moJsonPath = path.join(outDir, p);
+            fs.writeFileSync(moJsonPath, moJsonStr, "utf8");
+
+            if (spineItem.Properties && spineItem.Properties.MediaOverlay) {
+                spineItem.Properties.MediaOverlay = p;
+            }
+            if (spineItem.Alternate) {
+                for (const altLink of spineItem.Alternate) {
+                    if (altLink.TypeLink === "application/vnd.syncnarr+json") {
+                        altLink.Href = p;
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -536,24 +600,29 @@ async function dumpPublication(publication: Publication): Promise<void> {
     if (publication.Spine) {
         for (const spineItem of publication.Spine) {
             if (spineItem.Properties && spineItem.Properties.MediaOverlay) {
-                console.log(spineItem.Href);
-                console.log(spineItem.Properties.MediaOverlay);
-                console.log(spineItem.Duration);
+                console.log(spineItem.Href); // OPS/chapter_002.xhtml
+                console.log(spineItem.Properties.MediaOverlay); // media-overlay.json?resource=OPS%2Fchapter_002.xhtml
+                console.log(spineItem.Duration); // 543
             }
             if (spineItem.Alternate) {
                 for (const altLink of spineItem.Alternate) {
                     if (altLink.TypeLink === "application/vnd.syncnarr+json") {
-                        console.log(altLink.Href);
-                        console.log(altLink.TypeLink);
-                        console.log(altLink.Duration);
+                        console.log(altLink.Href); // media-overlay.json?resource=OPS%2Fchapter_002.xhtml
+                        console.log(altLink.TypeLink); // application/vnd.syncnarr+json
+                        console.log(altLink.Duration); // 543
                     }
                 }
             }
             if (spineItem.MediaOverlays) {
                 const mo = spineItem.MediaOverlays;
+                if (!mo.initialized) {
+                    console.log(util.inspect(mo,
+                        { showHidden: false, depth: 1000, colors: true, customInspect: true }));
+                }
                 console.log(mo.SmilPathInZip);
-                // mo.initialized true/false automatically handled
+
                 try {
+                    // mo.initialized true/false is automatically handled
                     await lazyLoadMediaOverlays(publication, mo);
                 } catch (err) {
                     return Promise.reject(err);

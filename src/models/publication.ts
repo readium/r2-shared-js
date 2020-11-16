@@ -5,6 +5,7 @@
 // that can be found in the LICENSE file exposed on Github (readium) in the project repository.
 // ==LICENSE-END==
 
+import * as debug_ from "debug";
 // https://github.com/edcarroll/ta-json
 import {
     JsonConverter, JsonElementType, JsonObject, JsonProperty, OnDeserialized,
@@ -20,6 +21,8 @@ import { Link } from "./publication-link";
 
 // import { JsonStringConverter } from "@r2-utils-js/_utils/ta-json-string-converter";
 // import { IPublicationCollection } from "./publication-collection";
+
+const debug = debug_("r2:shared#models/publication");
 
 const METADATA_JSON_PROP = "metadata";
 const LINKS_JSON_PROP = "links";
@@ -144,7 +147,7 @@ export class Publication {
     public LCP: LCP | undefined;
 
     public freeDestroy() {
-        console.log("freeDestroy: Publication");
+        debug("freeDestroy: Publication");
         if (this.Internal) {
             const zipInternal = this.findFromInternal("zip");
             if (zipInternal) {

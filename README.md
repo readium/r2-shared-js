@@ -109,6 +109,9 @@ Command line steps (NPM, but similar with YARN):
 9) `npm run cli ./misc/epubs/wasteland-otf-obf_LCP_dan.lcpl.epub ./misc/epubs/ ec4f2dbb3b140095550c9afbbb69b5d6fd9e814b9da82fad0b34e9fcbe56f1cb` (same as above, with SHA256 checksum/hex-digest to avoid plain-text passphrase in console)
 10) `npm run cli https://raw.githubusercontent.com/readium/r2-shared-js/develop/misc/epubs/wasteland-otf-obf_LCP_dan.lcpl.epub ./misc/epubs/ dan` (same as above, but with a remote HTTP URL)
 
+## Daisy Integration
+[Daisy](/daisy.md)
+
 ## Documentation
 
 TODO
