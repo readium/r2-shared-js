@@ -454,7 +454,13 @@ async function extractEPUB(isEPUB: boolean, pub: Publication, outDir: string, ke
     }
 
     // fs.mkdirSync // { recursive: false }
-    ensureDirs(path.join(outDir, "DUMMY"));
+    ensureDirs(path.join(outDir, "DUMMY_FILE.EXT"));
+
+    try {
+        await extractEPUB_MediaOverlays(pub, zip, outDir);
+    } catch (err) {
+        console.log(err);
+    }
 
     extractEPUB_ManifestJSON(pub, outDir, keys);
 
@@ -491,6 +497,49 @@ async function extractEPUB(isEPUB: boolean, pub: Publication, outDir: string, ke
         await extractEPUB_Check(zip, outDir);
     } catch (err) {
         console.log(err);
+    }
+}
+
+async function extractEPUB_MediaOverlays(pub: Publication, _zip: IZip, outDir: string): Promise<void> {
+
+    if (!pub.Spine) {
+        return;
+    }
+
+    let i = -1;
+    for (const spineItem of pub.Spine) {
+
+        if (spineItem.MediaOverlays) {
+            const mo = spineItem.MediaOverlays;
+            console.log(util.inspect(mo,
+                { showHidden: false, depth: 1000, colors: true, customInspect: true }));
+            console.log(mo.SmilPathInZip);
+            // mo.initialized true/false automatically handled
+            try {
+                await lazyLoadMediaOverlays(pub, mo);
+            } catch (err) {
+                return Promise.reject(err);
+            }
+            const moJsonObj = TaJsonSerialize(mo);
+            const moJsonStr = global.JSON.stringify(moJsonObj, null, "  ");
+
+            i++;
+            const p = `media-overlays_${i}.json`;
+
+            const moJsonPath = path.join(outDir, p);
+            fs.writeFileSync(moJsonPath, moJsonStr, "utf8");
+
+            if (spineItem.Properties && spineItem.Properties.MediaOverlay) {
+                spineItem.Properties.MediaOverlay = p;
+            }
+            if (spineItem.Alternate) {
+                for (const altLink of spineItem.Alternate) {
+                    if (altLink.TypeLink === "application/vnd.syncnarr+json") {
+                        altLink.Href = p;
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -550,16 +599,16 @@ async function dumpPublication(publication: Publication): Promise<void> {
     if (publication.Spine) {
         for (const spineItem of publication.Spine) {
             if (spineItem.Properties && spineItem.Properties.MediaOverlay) {
-                console.log(spineItem.Href);
-                console.log(spineItem.Properties.MediaOverlay);
-                console.log(spineItem.Duration);
+                console.log(spineItem.Href); // OPS/chapter_002.xhtml
+                console.log(spineItem.Properties.MediaOverlay); // media-overlay.json?resource=OPS%2Fchapter_002.xhtml
+                console.log(spineItem.Duration); // 543
             }
             if (spineItem.Alternate) {
                 for (const altLink of spineItem.Alternate) {
                     if (altLink.TypeLink === "application/vnd.syncnarr+json") {
-                        console.log(altLink.Href);
-                        console.log(altLink.TypeLink);
-                        console.log(altLink.Duration);
+                        console.log(altLink.Href); // media-overlay.json?resource=OPS%2Fchapter_002.xhtml
+                        console.log(altLink.TypeLink); // application/vnd.syncnarr+json
+                        console.log(altLink.Duration); // 543
                     }
                 }
             }
