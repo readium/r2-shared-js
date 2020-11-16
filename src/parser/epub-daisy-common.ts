@@ -11,7 +11,7 @@ import * as path from "path";
 import * as xmldom from "xmldom";
 
 import { MediaOverlayNode, timeStrToSeconds } from "@models/media-overlay";
-import { DirectionEnum } from "@models/metadata";
+import { DirectionEnum, MetadataSupportedKeys } from "@models/metadata";
 import { Contributor } from "@models/metadata-contributor";
 import { MediaOverlay } from "@models/metadata-media-overlay";
 import { IStringMap } from "@models/metadata-multilang";
@@ -729,7 +729,19 @@ export const getNcx = async (ncxManItem: Manifest, opf: OPF, zip: IZip): Promise
         return Promise.reject(err);
     }
 
-    const ncxStr = ncxZipData.toString("utf8");
+    let ncxStr = ncxZipData.toString("utf8");
+
+    const iStart = ncxStr.indexOf("<ncx");
+    if (iStart >= 0) {
+        const iEnd = ncxStr.indexOf(">", iStart);
+        if (iEnd > iStart) {
+            const clip = ncxStr.substr(iStart, iEnd - iStart);
+            if (clip.indexOf("xmlns") < 0) {
+                ncxStr = ncxStr.replace(/<ncx/, "<ncx xmlns=\"http://www.daisy.org/z3986/2005/ncx/\" ");
+            }
+        }
+    }
+
     const ncxDoc = new xmldom.DOMParser().parseFromString(ncxStr);
     const ncx = XML.deserialize<NCX>(ncxDoc, NCX);
     ncx.ZipPath = ncxFilePath;
@@ -782,7 +794,18 @@ export const getOpf = async (zip: IZip, rootfilePathDecoded: string, rootfilePat
     // debug(`2) ${timeElapsed2[0]} seconds + ${timeElapsed2[1]} nanoseconds`);
     // timeBegin = process.hrtime();
 
-    const opfStr = opfZipData.toString("utf8");
+    let opfStr = opfZipData.toString("utf8");
+
+    const iStart = opfStr.indexOf("<package");
+    if (iStart >= 0) {
+        const iEnd = opfStr.indexOf(">", iStart);
+        if (iEnd > iStart) {
+            const clip = opfStr.substr(iStart, iEnd - iStart);
+            if (clip.indexOf("xmlns") < 0) {
+                opfStr = opfStr.replace(/<package/, "<package xmlns=\"http://openebook.org/namespaces/oeb-package/1.0/\" ");
+            }
+        }
+    }
 
     // const timeElapsed3 = process.hrtime(timeBegin);
     // debug(`3) ${timeElapsed3[0]} seconds + ${timeElapsed3[1]} nanoseconds`);
@@ -1126,28 +1149,27 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
 
             if (metaTag.Name === "dtb:totalTime") {
                 metasDuration.push(metaTag);
-            }
-
-            if (metaTag.Name === "dtb:multimediaType" || // audioFullText
-                metaTag.Name === "dtb:multimediaContent") { // audio,text
-
-                if (!publication.Metadata.AdditionalJSON) {
-                    publication.Metadata.AdditionalJSON = {};
-                }
-                publication.Metadata.AdditionalJSON[metaTag.Name] = metaTag.Content;
-            }
-
-            if (metaTag.Property === "media:duration" && !metaTag.Refine) {
+            } else if (metaTag.Property === "media:duration" && !metaTag.Refine) {
                 metasDuration.push(metaTag);
-            }
-            if (metaTag.Property === "media:narrator") {
+            } else if (metaTag.Property === "media:narrator") {
                 metasNarrator.push(metaTag);
-            }
-            if (metaTag.Property === "media:active-class") {
+            } else if (metaTag.Property === "media:active-class") {
                 metasActiveClass.push(metaTag);
-            }
-            if (metaTag.Property === "media:playback-active-class") {
+            } else if (metaTag.Property === "media:playback-active-class") {
                 metasPlaybackActiveClass.push(metaTag);
+            } else {
+                const key = metaTag.Name ? metaTag.Name : metaTag.Property;
+                if (key && !MetadataSupportedKeys.includes(key)) {
+
+                    if (!publication.Metadata.AdditionalJSON) {
+                        publication.Metadata.AdditionalJSON = {};
+                    }
+                    if (metaTag.Name && metaTag.Content) {
+                        publication.Metadata.AdditionalJSON[metaTag.Name] = metaTag.Content;
+                    } else if (metaTag.Property && metaTag.Data) {
+                        publication.Metadata.AdditionalJSON[metaTag.Property] = metaTag.Data;
+                    }
+                }
             }
         };
         if (opf.Metadata.Meta) {
