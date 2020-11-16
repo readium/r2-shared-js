@@ -37,10 +37,10 @@ import { Transformers } from "@transform/transformer";
 import { tryDecodeURI } from "../_utils/decodeURI";
 import { zipHasEntry } from "../_utils/zipHasEntry";
 import {
-    addIdentifier, addLanguage, addMediaOverlaySMIL, addOtherMetadata, addTitle,
-    fillPublicationDate, fillSpineAndResource, fillSubject, fillTOC, findContributorInMeta,
-    findInManifestByID, findMetaByRefineAndProperty, getNcx, getOpf, loadFileStrFromZipPath,
-    parseSpaceSeparatedString, setPublicationDirection,
+    BCP47_UNKNOWN_LANG as BCP47_UNKNOWN_LANG_, addIdentifier, addLanguage, addMediaOverlaySMIL,
+    addOtherMetadata, addTitle, fillPublicationDate, fillSpineAndResource, fillSubject, fillTOC,
+    findContributorInMeta, findInManifestByID, findMetaByRefineAndProperty, getNcx, getOpf,
+    loadFileStrFromZipPath, parseSpaceSeparatedString, setPublicationDirection,
 } from "./epub-daisy-common";
 import { Container } from "./epub/container";
 import { Rootfile } from "./epub/container-rootfile";
@@ -55,6 +55,9 @@ import { Seq } from "./epub/smil-seq";
 import { SeqOrPar } from "./epub/smil-seq-or-par";
 
 const debug = debug_("r2:shared#parser/epub");
+
+// https://github.com/readium/webpub-manifest/issues/52#issuecomment-601686135
+export const BCP47_UNKNOWN_LANG = BCP47_UNKNOWN_LANG_;
 
 export const addCoverDimensions = async (publication: Publication, coverLink: Link) => {
 

@@ -39,9 +39,14 @@ export enum DaisyBookis {
 }
 
 export async function isDaisyPublication(urlOrPath: string): Promise<DaisyBookis | undefined> {
+    let p = urlOrPath;
     const http = isHTTP(urlOrPath);
     if (http) {
+        const url = new URL(urlOrPath);
+        p = url.pathname;
         return undefined; // remote DAISY not supported
+    } else if (/\.daisy[3]?$/.test(path.extname(path.basename(p)).toLowerCase())) {
+        return DaisyBookis.LocalPacked;
     } else if (fs.existsSync(path.join(urlOrPath, "package.opf"))) {
         if (!fs.existsSync(path.join(urlOrPath, "META-INF", "container.xml"))) {
             return DaisyBookis.LocalExploded;
