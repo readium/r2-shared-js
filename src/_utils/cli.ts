@@ -514,8 +514,9 @@ async function extractEPUB_MediaOverlays(pub: Publication, _zip: IZip, outDir: s
             console.log(util.inspect(mo,
                 { showHidden: false, depth: 1000, colors: true, customInspect: true }));
             console.log(mo.SmilPathInZip);
-            // mo.initialized true/false automatically handled
+
             try {
+                // mo.initialized true/false is automatically handled
                 await lazyLoadMediaOverlays(pub, mo);
             } catch (err) {
                 return Promise.reject(err);

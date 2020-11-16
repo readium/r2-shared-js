@@ -10,15 +10,17 @@ import * as moment from "moment";
 import * as path from "path";
 import * as xmldom from "xmldom";
 
-import { timeStrToSeconds } from "@models/media-overlay";
+import { MediaOverlayNode, timeStrToSeconds } from "@models/media-overlay";
 import { DirectionEnum } from "@models/metadata";
 import { Contributor } from "@models/metadata-contributor";
 import { MediaOverlay } from "@models/metadata-media-overlay";
 import { IStringMap } from "@models/metadata-multilang";
+import { Properties } from "@models/metadata-properties";
 import { Subject } from "@models/metadata-subject";
 import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
 import { DelinearizeAccessModeSufficient } from "@models/ta-json-string-tokens-converter";
+import { encodeURIComponent_RFC3986 } from "@r2-utils-js/_utils/http/UrlUtils";
 import { streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { XML } from "@r2-utils-js/_utils/xml-js-mapper";
 import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
@@ -1125,10 +1127,15 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
             if (metaTag.Name === "dtb:totalTime") {
                 metasDuration.push(metaTag);
             }
-            // "dtb:multimediaType"
-            // "dtb:multimediaContent"
-            // "track:Guidelines"
-            // "track:Supplier"
+
+            if (metaTag.Name === "dtb:multimediaType" || // audioFullText
+                metaTag.Name === "dtb:multimediaContent") { // audio,text
+
+                if (!publication.Metadata.AdditionalJSON) {
+                    publication.Metadata.AdditionalJSON = {};
+                }
+                publication.Metadata.AdditionalJSON[metaTag.Name] = metaTag.Content;
+            }
 
             if (metaTag.Property === "media:duration" && !metaTag.Refine) {
                 metasDuration.push(metaTag);
@@ -1329,4 +1336,61 @@ export const fillTOC = (publication: Publication, opf: OPF, ncx: NCX | undefined
         }
     }
     fillLandmarksFromGuide(publication, opf);
+};
+
+export const addMediaOverlaySMIL = async (link: Link, manItemSmil: Manifest, opf: OPF, zip: IZip) => {
+
+    if (manItemSmil && manItemSmil.MediaType && manItemSmil.MediaType.startsWith("application/smil")) {
+        if (opf.ZipPath) {
+            const manItemSmilHrefDecoded = manItemSmil.HrefDecoded;
+            if (!manItemSmilHrefDecoded) {
+                debug("!?manItemSmil.HrefDecoded");
+                return;
+            }
+            const smilFilePath = path.join(path.dirname(opf.ZipPath), manItemSmilHrefDecoded)
+                .replace(/\\/g, "/");
+
+            const has = await zipHasEntry(zip, smilFilePath, smilFilePath);
+            if (!has) {
+                debug(`NOT IN ZIP (addMediaOverlay): ${smilFilePath}`);
+                const zipEntries = await zip.getEntries();
+                for (const zipEntry of zipEntries) {
+                    debug(zipEntry);
+                }
+                return;
+            }
+
+            const mo = new MediaOverlayNode();
+            mo.SmilPathInZip = smilFilePath;
+            mo.initialized = false;
+            link.MediaOverlays = mo;
+
+            const moURL = mediaOverlayURLPath + "?" +
+                mediaOverlayURLParam + "=" +
+                encodeURIComponent_RFC3986(link.HrefDecoded ? link.HrefDecoded : link.Href);
+
+            // legacy method:
+            if (!link.Properties) {
+                link.Properties = new Properties();
+            }
+            link.Properties.MediaOverlay = moURL;
+
+            // new method:
+            // https://w3c.github.io/sync-media-pub/incorporating-synchronized-narration.html#with-webpub
+            if (!link.Alternate) {
+                link.Alternate = [];
+            }
+            const moLink = new Link();
+            moLink.Href = moURL;
+            moLink.TypeLink = "application/vnd.syncnarr+json";
+            moLink.Duration = link.Duration;
+            link.Alternate.push(moLink);
+
+            if (link.Properties && link.Properties.Encrypted) {
+                debug("ENCRYPTED SMIL MEDIA OVERLAY: " + (link.HrefDecoded ? link.HrefDecoded : link.Href));
+            }
+            // LAZY
+            // await lazyLoadMediaOverlays(publication, mo);
+        }
+    }
 };

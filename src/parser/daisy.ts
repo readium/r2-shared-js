@@ -18,22 +18,16 @@ import { IZip } from "@r2-utils-js/_utils/zip/zip";
 import { zipLoadPromise } from "@r2-utils-js/_utils/zip/zipFactory";
 
 import { zipHasEntry } from "../_utils/zipHasEntry";
+import { lazyLoadMediaOverlays } from "./epub";
 import {
-    addIdentifier, addLanguage, addOtherMetadata, addTitle, fillPublicationDate,
-    fillSpineAndResource, fillSubject, fillTOC, findContributorInMeta, getNcx, getOpf,
-    setPublicationDirection,
+    addIdentifier, addLanguage, addMediaOverlaySMIL, addOtherMetadata, addTitle,
+    fillPublicationDate, fillSpineAndResource, fillSubject, fillTOC, findContributorInMeta, getNcx,
+    getOpf, setPublicationDirection,
 } from "./epub-daisy-common";
 import { Rootfile } from "./epub/container-rootfile";
 import { NCX } from "./epub/ncx";
 import { OPF } from "./epub/opf";
 import { Manifest } from "./epub/opf-manifest";
-
-// import { XML } from "@r2-utils-js/_utils/xml-js-mapper";
-// import { NavPoint } from "./epub/ncx-navpoint";
-// import { SpineItem } from "./epub/opf-spineitem";
-// import { SMIL } from "./epub/smil";
-// import { Par } from "./epub/smil-par";
-// import { Seq } from "./epub/smil-seq";
 
 const debug = debug_("r2:shared#parser/daisy");
 
@@ -174,15 +168,33 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
 }
 
 const addLinkData = async (
-    _publication: Publication, _rootfile: Rootfile | undefined,
-    _opf: OPF, _zip: IZip, linkItem: Link, item: Manifest) => {
+    publication: Publication, _rootfile: Rootfile | undefined,
+    opf: OPF, zip: IZip, linkItem: Link, item: Manifest) => {
 
-    if (item.MediaOverlay) {
-        try {
-            linkItem.Duration = parseInt(item.MediaOverlay, 10);
-        } catch (er) {
-            console.log(er);
-            // ignore
+    // dtb:multimediaContent ==> audio,text
+    if (publication.Metadata?.AdditionalJSON &&
+        publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText") {
+
+        await addMediaOverlaySMIL(linkItem, item, opf, zip);
+        if (linkItem.MediaOverlays) {
+            await lazyLoadMediaOverlays(publication, linkItem.MediaOverlays);
+
+            if (linkItem.MediaOverlays.duration) {
+
+                if (!linkItem.Duration) {
+                    linkItem.Duration = linkItem.MediaOverlays.duration;
+                }
+
+                if (linkItem.Alternate) {
+                    for (const altLink of linkItem.Alternate) {
+                        if (altLink.TypeLink === "application/vnd.syncnarr+json") {
+                            if (!altLink.Duration) {
+                                altLink.Duration = linkItem.MediaOverlays.duration;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 };

@@ -27,7 +27,7 @@ import { Link } from "@models/publication-link";
 import { Encrypted } from "@r2-lcp-js/models/metadata-encrypted";
 import { LCP } from "@r2-lcp-js/parser/epub/lcp";
 import { TaJsonDeserialize } from "@r2-lcp-js/serializable";
-import { encodeURIComponent_RFC3986, isHTTP } from "@r2-utils-js/_utils/http/UrlUtils";
+import { isHTTP } from "@r2-utils-js/_utils/http/UrlUtils";
 import { streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { XML } from "@r2-utils-js/_utils/xml-js-mapper";
 import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
@@ -37,10 +37,10 @@ import { Transformers } from "@transform/transformer";
 import { tryDecodeURI } from "../_utils/decodeURI";
 import { zipHasEntry } from "../_utils/zipHasEntry";
 import {
-    addIdentifier, addLanguage, addOtherMetadata, addTitle, fillPublicationDate,
-    fillSpineAndResource, fillSubject, fillTOC, findContributorInMeta, findInManifestByID,
-    findMetaByRefineAndProperty, getNcx, getOpf, loadFileStrFromZipPath, mediaOverlayURLParam,
-    mediaOverlayURLPath, parseSpaceSeparatedString, setPublicationDirection,
+    addIdentifier, addLanguage, addMediaOverlaySMIL, addOtherMetadata, addTitle,
+    fillPublicationDate, fillSpineAndResource, fillSubject, fillTOC, findContributorInMeta,
+    findInManifestByID, findMetaByRefineAndProperty, getNcx, getOpf, loadFileStrFromZipPath,
+    parseSpaceSeparatedString, setPublicationDirection,
 } from "./epub-daisy-common";
 import { Container } from "./epub/container";
 import { Rootfile } from "./epub/container-rootfile";
@@ -537,6 +537,9 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
     // debug(JSON.stringify(smil, null, 4));
 
     if (smil.Body) {
+        if (smil.Body.Duration) {
+            mo.duration = timeStrToSeconds(smil.Body.Duration);
+        }
         if (smil.Body.EpubType) {
             const roles = parseSpaceSeparatedString(smil.Body.EpubType);
             for (const role of roles) {
@@ -559,7 +562,13 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
             }
         }
         if (smil.Body.Children && smil.Body.Children.length) {
+
+            const getDur = !smil.Body.Duration && smil.Body.Children.length === 1;
+
             smil.Body.Children.forEach((seqChild) => {
+                if (getDur && seqChild.Duration) {
+                    mo.duration = timeStrToSeconds(seqChild.Duration);
+                }
                 if (!mo.Children) {
                     mo.Children = [];
                 }
@@ -582,6 +591,10 @@ const addSeqToMediaOverlay = (
     const moc = new MediaOverlayNode();
     moc.initialized = rootMO.initialized;
     mo.push(moc);
+
+    if (seqChild.Duration) {
+        moc.duration = timeStrToSeconds(seqChild.Duration);
+    }
 
     if (seqChild instanceof Seq) {
         moc.Role = [];
@@ -837,58 +850,8 @@ const addMediaOverlay = async (link: Link, linkEpub: Manifest, opf: OPF, zip: IZ
             }
             return false;
         });
-        if (manItemSmil && manItemSmil.MediaType === "application/smil+xml") {
-            if (opf.ZipPath) {
-                const manItemSmilHrefDecoded = manItemSmil.HrefDecoded;
-                if (!manItemSmilHrefDecoded) {
-                    debug("!?manItemSmil.HrefDecoded");
-                    return;
-                }
-                const smilFilePath = path.join(path.dirname(opf.ZipPath), manItemSmilHrefDecoded)
-                    .replace(/\\/g, "/");
-
-                const has = await zipHasEntry(zip, smilFilePath, smilFilePath);
-                if (!has) {
-                    debug(`NOT IN ZIP (addMediaOverlay): ${smilFilePath}`);
-                    const zipEntries = await zip.getEntries();
-                    for (const zipEntry of zipEntries) {
-                        debug(zipEntry);
-                    }
-                    return;
-                }
-
-                const mo = new MediaOverlayNode();
-                mo.SmilPathInZip = smilFilePath;
-                mo.initialized = false;
-                link.MediaOverlays = mo;
-
-                const moURL = mediaOverlayURLPath + "?" +
-                    mediaOverlayURLParam + "=" +
-                    encodeURIComponent_RFC3986(link.HrefDecoded ? link.HrefDecoded : link.Href);
-
-                // legacy method:
-                if (!link.Properties) {
-                    link.Properties = new Properties();
-                }
-                link.Properties.MediaOverlay = moURL;
-
-                // new method:
-                // https://w3c.github.io/sync-media-pub/incorporating-synchronized-narration.html#with-webpub
-                if (!link.Alternate) {
-                    link.Alternate = [];
-                }
-                const moLink = new Link();
-                moLink.Href = moURL;
-                moLink.TypeLink = "application/vnd.syncnarr+json";
-                moLink.Duration = link.Duration;
-                link.Alternate.push(moLink);
-
-                if (link.Properties && link.Properties.Encrypted) {
-                    debug("ENCRYPTED SMIL MEDIA OVERLAY: " + (link.HrefDecoded ? link.HrefDecoded : link.Href));
-                }
-                // LAZY
-                // await lazyLoadMediaOverlays(publication, mo);
-            }
+        if (manItemSmil) {
+            await addMediaOverlaySMIL(link, manItemSmil, opf, zip);
         }
     }
 };

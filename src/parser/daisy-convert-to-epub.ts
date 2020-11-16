@@ -22,6 +22,13 @@ import { loadFileBufferFromZipPath, loadFileStrFromZipPath } from "./epub-daisy-
 
 // import * as moment from "moment";
 
+// import { XML } from "@r2-utils-js/_utils/xml-js-mapper";
+// import { NavPoint } from "./epub/ncx-navpoint";
+// import { SpineItem } from "./epub/opf-spineitem";
+// import { SMIL } from "./epub/smil";
+// import { Par } from "./epub/smil-par";
+// import { Seq } from "./epub/smil-seq";
+
 // import { timeStrToSeconds } from "@models/media-overlay";
 // import { Metadata } from "@models/metadata";
 // import { Link } from "@models/publication-link";
