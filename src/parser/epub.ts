@@ -387,6 +387,7 @@ export async function getAllMediaOverlays(publication: Publication): Promise<Med
             const mo = link.MediaOverlays;
             if (!mo.initialized) {
                 try {
+                    // mo.initialized true/false is automatically handled
                     await lazyLoadMediaOverlays(publication, mo);
                 } catch (err) {
                     return Promise.reject(err);
@@ -410,6 +411,7 @@ export async function getMediaOverlay(publication: Publication, spineHref: strin
             const mo = link.MediaOverlays;
             if (!mo.initialized) {
                 try {
+                    // mo.initialized true/false is automatically handled
                     await lazyLoadMediaOverlays(publication, mo);
                 } catch (err) {
                     return Promise.reject(err);
@@ -422,6 +424,7 @@ export async function getMediaOverlay(publication: Publication, spineHref: strin
     return Promise.reject(`No Media Overlays ${spineHref}`);
 }
 
+// mo.initialized true/false is automatically handled
 export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaOverlayNode) => {
 
     if (mo.initialized || !mo.SmilPathInZip) {

@@ -12,40 +12,16 @@ import * as xmldom from "xmldom";
 import * as xpath from "xpath";
 import { ZipFile } from "yazl";
 
+import { MediaOverlayNode } from "@models/media-overlay";
 import { Metadata } from "@models/metadata";
+import { Properties } from "@models/metadata-properties";
 import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
 import { TaJsonDeserialize, TaJsonSerialize } from "@r2-lcp-js/serializable";
 import { IZip } from "@r2-utils-js/_utils/zip/zip";
 
+import { lazyLoadMediaOverlays } from "./epub";
 import { loadFileBufferFromZipPath, loadFileStrFromZipPath } from "./epub-daisy-common";
-
-// import * as moment from "moment";
-
-// import { XML } from "@r2-utils-js/_utils/xml-js-mapper";
-// import { NavPoint } from "./epub/ncx-navpoint";
-// import { SpineItem } from "./epub/opf-spineitem";
-// import { SMIL } from "./epub/smil";
-// import { Par } from "./epub/smil-par";
-// import { Seq } from "./epub/smil-seq";
-
-// import { timeStrToSeconds } from "@models/media-overlay";
-// import { Metadata } from "@models/metadata";
-// import { Link } from "@models/publication-link";
-// import { isHTTP } from "@r2-utils-js/_utils/http/UrlUtils";
-// import { XML } from "@r2-utils-js/_utils/xml-js-mapper";
-// import { zipLoadPromise } from "@r2-utils-js/_utils/zip/zipFactory";
-
-// import { zipHasEntry } from "../_utils/zipHasEntry";
-// import { Rootfile } from "./epub/container-rootfile";
-// import { NCX } from "./epub/ncx";
-// import { NavPoint } from "./epub/ncx-navpoint";
-// import { OPF } from "./epub/opf";
-// import { Manifest } from "./epub/opf-manifest";
-// import { SpineItem } from "./epub/opf-spineitem";
-// import { SMIL } from "./epub/smil";
-// import { Par } from "./epub/smil-par";
-// import { Seq } from "./epub/smil-seq";
 
 const debug = debug_("r2:shared#parser/daisy-convert-to-epub");
 
@@ -149,6 +125,73 @@ export const convertDaisyToReadiumWebPub = async (
             "title",
         ];
 
+        let combinedMediaOverlays: MediaOverlayNode | undefined;
+
+        const patchMediaOverlaysTextHref = (mo: MediaOverlayNode) => {
+
+            if (mo.Text) {
+                // TODO: .xml file extension replacement is bit weak / brittle
+                // (but for most DAISY books, this is a reasonable expectation)
+                mo.Text = mo.Text.replace(/\.xml/, ".xhtml");
+            }
+            if (mo.Children) {
+                for (const child of mo.Children) {
+                    patchMediaOverlaysTextHref(child);
+                }
+            }
+        };
+
+        // dtb:multimediaContent ==> audio,text
+        if (publication.Spine &&
+            publication.Metadata?.AdditionalJSON &&
+            publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText") {
+
+            combinedMediaOverlays = new MediaOverlayNode();
+            combinedMediaOverlays.SmilPathInZip = undefined;
+            combinedMediaOverlays.initialized = true;
+            combinedMediaOverlays.Role = [];
+            combinedMediaOverlays.Role.push("section");
+            combinedMediaOverlays.duration = 0;
+
+            for (const linkItem of publication.Spine) {
+                if (linkItem.MediaOverlays) {
+
+                    if (!linkItem.MediaOverlays.initialized) {
+                        // mo.initialized true/false is automatically handled
+                        await lazyLoadMediaOverlays(publication, linkItem.MediaOverlays);
+
+                        if (linkItem.MediaOverlays.duration) {
+                            if (!linkItem.Duration) {
+                                linkItem.Duration = linkItem.MediaOverlays.duration;
+                            }
+                            if (linkItem.Alternate) {
+                                for (const altLink of linkItem.Alternate) {
+                                    if (altLink.TypeLink === "application/vnd.syncnarr+json") {
+                                        if (!altLink.Duration) {
+                                            altLink.Duration = linkItem.MediaOverlays.duration;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (linkItem.MediaOverlays.Children) {
+                        if (!combinedMediaOverlays.Children) {
+                            combinedMediaOverlays.Children = [];
+                        }
+                        combinedMediaOverlays.Children =
+                            combinedMediaOverlays.Children.concat(linkItem.MediaOverlays.Children);
+
+                        if (linkItem.MediaOverlays.duration) {
+                            combinedMediaOverlays.duration += linkItem.MediaOverlays.duration;
+                        }
+                    }
+                }
+            }
+
+            patchMediaOverlaysTextHref(combinedMediaOverlays);
+        }
         publication.Spine = [];
 
         const resourcesToKeep: Link[] = [];
@@ -240,9 +283,9 @@ export const convertDaisyToReadiumWebPub = async (
                     }
                 }
 
-//             .replace(/(<\/?)imggroup/g, "$1figure")
-//             .replace(/<caption/g, "<figcaption")
-//             .replace(/<\/caption>/g, "</figcaption>");
+                //             .replace(/(<\/?)imggroup/g, "$1figure")
+                //             .replace(/<caption/g, "<figcaption")
+                //             .replace(/<\/caption>/g, "</figcaption>");
 
                 for (const elementName of elementNames) {
                     // getElementsByName(elementName: string): NodeListOf<HTMLElement>
@@ -257,12 +300,12 @@ export const convertDaisyToReadiumWebPub = async (
                         // TODO: strictly-speaking, this is a read-only property!
                         (el as any).tagName =
                             ((elementName === "dtbook") ? "html" :
-                            ((elementName === "book") ? "body" :
-                            ((elementName === "pagenum") ? "span" :
-                            ((elementName === "sent") ? "span" :
-                            ((elementName === "caption") ? "figcaption" :
-                            ((elementName === "imggroup") ? "figure" :
-                            "div"))))));
+                                ((elementName === "book") ? "body" :
+                                    ((elementName === "pagenum") ? "span" :
+                                        ((elementName === "sent") ? "span" :
+                                            ((elementName === "caption") ? "figcaption" :
+                                                ((elementName === "imggroup") ? "figure" :
+                                                    "div"))))));
                     }
                 }
 
@@ -338,6 +381,41 @@ ${cssHrefs.reduce((pv, cv) => {
                 resLinkClone.TypeLink = "application/xhtml+xml";
 
                 publication.Spine.push(resLinkClone);
+
+                if (combinedMediaOverlays && publication.Spine.length === 1) {
+                    resLinkClone.MediaOverlays = combinedMediaOverlays;
+
+                    if (combinedMediaOverlays.duration) {
+                        resLinkClone.Duration = combinedMediaOverlays.duration;
+                    }
+
+                    const moURL = "smil-media-overlays.json";
+                    // mediaOverlayURLPath + "?" +
+                    //     mediaOverlayURLParam + "=" +
+                    //     encodeURIComponent_RFC3986(
+                    //         resLinkClone.HrefDecoded ? resLinkClone.HrefDecoded : resLinkClone.Href);
+
+                    // legacy method:
+                    if (!resLinkClone.Properties) {
+                        resLinkClone.Properties = new Properties();
+                    }
+                    resLinkClone.Properties.MediaOverlay = moURL;
+
+                    // new method:
+                    // https://w3c.github.io/sync-media-pub/incorporating-synchronized-narration.html#with-webpub
+                    if (!resLinkClone.Alternate) {
+                        resLinkClone.Alternate = [];
+                    }
+                    const moLink = new Link();
+                    moLink.Href = moURL;
+                    moLink.TypeLink = "application/vnd.syncnarr+json";
+                    moLink.Duration = resLinkClone.Duration;
+                    resLinkClone.Alternate.push(moLink);
+
+                    const jsonObjMO = TaJsonSerialize(combinedMediaOverlays);
+                    const jsonStrMO = global.JSON.stringify(jsonObjMO, null, "  ");
+                    zipfile.addBuffer(Buffer.from(jsonStrMO), moURL);
+                }
 
             } else if (!resLink.HrefDecoded.endsWith(".opf") &&
                 !resLink.HrefDecoded.endsWith(".res") &&

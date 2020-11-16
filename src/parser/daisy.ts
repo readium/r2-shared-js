@@ -176,7 +176,10 @@ const addLinkData = async (
         publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText") {
 
         await addMediaOverlaySMIL(linkItem, item, opf, zip);
-        if (linkItem.MediaOverlays) {
+
+        if (linkItem.MediaOverlays && !linkItem.MediaOverlays.initialized) {
+
+            // mo.initialized true/false is automatically handled
             await lazyLoadMediaOverlays(publication, linkItem.MediaOverlays);
 
             if (linkItem.MediaOverlays.duration) {

@@ -511,9 +511,9 @@ async function extractEPUB_MediaOverlays(pub: Publication, _zip: IZip, outDir: s
 
         if (spineItem.MediaOverlays) {
             const mo = spineItem.MediaOverlays;
-            console.log(util.inspect(mo,
-                { showHidden: false, depth: 1000, colors: true, customInspect: true }));
-            console.log(mo.SmilPathInZip);
+            // console.log(util.inspect(mo,
+            //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
+            // console.log(mo.SmilPathInZip);
 
             try {
                 // mo.initialized true/false is automatically handled
@@ -615,11 +615,14 @@ async function dumpPublication(publication: Publication): Promise<void> {
             }
             if (spineItem.MediaOverlays) {
                 const mo = spineItem.MediaOverlays;
-                console.log(util.inspect(mo,
-                    { showHidden: false, depth: 1000, colors: true, customInspect: true }));
+                if (!mo.initialized) {
+                    console.log(util.inspect(mo,
+                        { showHidden: false, depth: 1000, colors: true, customInspect: true }));
+                }
                 console.log(mo.SmilPathInZip);
-                // mo.initialized true/false automatically handled
+
                 try {
+                    // mo.initialized true/false is automatically handled
                     await lazyLoadMediaOverlays(publication, mo);
                 } catch (err) {
                     return Promise.reject(err);
