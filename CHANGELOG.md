@@ -1,10 +1,28 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.40...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.41...develop
 
 Changes:
 * TODO
+
+# 1.0.41
+
+> Build environment: NodeJS `14.15.0`, NPM `6.14.8`
+
+Changes:
+* Improved support for DAISY3 audio-text and text-only publications: resilience for missing DocTitle, and lacking XML namespaces
+* Parse and preserve non-supported EPUB and DAISY metadata into JSON in-memory data model
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.41/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.41/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.41
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.40...v1.0.41
 
 # 1.0.40
 
