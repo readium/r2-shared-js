@@ -276,7 +276,7 @@ export const convertDaisyToReadiumWebPub = async (
                     }
                     const dtBookDoc = new xmldom.DOMParser().parseFromString(dtBookStr, "application/xml");
 
-                    const title = dtBookDoc.getElementsByTagName("doctitle")[0].textContent;
+                    const title = dtBookDoc.getElementsByTagName("doctitle")[0]?.textContent;
 
                     const listElements = dtBookDoc.getElementsByTagName("list");
                     for (let i = 0; i < listElements.length; i++) {
@@ -366,7 +366,7 @@ export const convertDaisyToReadiumWebPub = async (
                             `
 <head$1>
 <meta charset="UTF-8" />
-<title>${title}</title>
+<title>${title ? title : " "}</title>
 `)
                         .replace(/<\/head[\s\S]*?>/gm,
                             `
@@ -578,181 +578,3 @@ ${cssHrefs.reduce((pv, cv) => {
         }
     });
 };
-
-// const parseFrontmatterXml = (xmlDom: Document, serializer: xmldom.XMLSerializer, data: string[]) => {
-//     let levelDoms = [];
-//     const frontmatter = xmlDom.getElementsByTagName("frontmatter")[0];
-//     if (frontmatter) {
-//         const docTitle = frontmatter.getElementsByTagName("doctitle")[0];
-//         const docAuthor = frontmatter.getElementsByTagName("docauthor")[0];
-//         const coverTitle = frontmatter.getElementsByTagName("covertitle")[0];
-//         const level1s = Array.from(frontmatter.getElementsByTagName("level1"));
-//         const levels = Array.from(frontmatter.getElementsByTagName("level"));
-
-//         levelDoms = levels.concat(level1s);
-//         if (levelDoms.length > 0) {
-//             levelDoms.forEach((element: Element, i: number) => {
-//                 if (!element.parentNode) {
-//                     return;
-//                 }
-//                 const bodyContent = element.parentNode.cloneNode();
-//                 if (i === 0) {
-//                     if (docTitle) {
-//                         bodyContent.appendChild(docTitle);
-//                     }
-//                     if (docAuthor) {
-//                         bodyContent.appendChild(docAuthor);
-//                     }
-//                     if (coverTitle) {
-//                         bodyContent.appendChild(coverTitle);
-//                     }
-//                 }
-//                 bodyContent.appendChild(element);
-//                 const bodyContentStr = serializer.serializeToString(bodyContent);
-//                 data.push(bodyContentStr);
-//             });
-//         } else {
-//             const bodyContent = frontmatter.cloneNode();
-//             if (docTitle) {
-//                 bodyContent.appendChild(docTitle);
-//             }
-//             if (docAuthor) {
-//                 bodyContent.appendChild(docAuthor);
-//             }
-//             if (coverTitle) {
-//                 bodyContent.appendChild(coverTitle);
-//             }
-//             const bodyContentStr = serializer.serializeToString(bodyContent);
-//             data.push(bodyContentStr);
-//         }
-//     }
-// };
-
-// const parseBodymatterXml = (xmlDom: Document, serializer: xmldom.XMLSerializer, data: string[]) => {
-//     let levelDoms = [];
-//     const bodymatter = xmlDom.getElementsByTagName("bodymatter")[0];
-//     if (bodymatter) {
-//         const level1s = Array.from(bodymatter.getElementsByTagName("level1"));
-//         const levels = Array.from(bodymatter.getElementsByTagName("level"));
-
-//         levelDoms = levels.concat(level1s);
-//         levelDoms.forEach((element) => {
-//             if (!element.parentNode) {
-//                 return;
-//             }
-//             const bodyContent = element.parentNode.cloneNode();
-//             bodyContent.appendChild(element);
-//             const bodyContentStr = serializer.serializeToString(bodyContent);
-//             data.push(bodyContentStr);
-//         });
-//     }
-// };
-
-// const parseRearmatterXml = (xmlDom: Document, serializer: xmldom.XMLSerializer, data: string[]) => {
-//     let levelDoms = [];
-//     const rearmatter = xmlDom.getElementsByTagName("rearmatter")[0];
-//     if (rearmatter) {
-//         const level1s = Array.from(rearmatter.getElementsByTagName("level1"));
-//         const levels = Array.from(rearmatter.getElementsByTagName("level"));
-
-//         levelDoms = levels.concat(level1s);
-//         levelDoms.forEach((element) => {
-//             if (!element.parentNode) {
-//                 return;
-//             }
-//             const bodyContent = element.parentNode.cloneNode();
-//             bodyContent.appendChild(element);
-//             const bodyContentStr = serializer.serializeToString(bodyContent);
-//             data.push(bodyContentStr);
-//         });
-//     }
-// };
-
-// const parseSmilFile = async (zip: IZip, srcDecoded: string, opf: OPF): Promise<SMIL> => {
-//     if (!opf.ZipPath) {
-//         return Promise.reject("!opf.ZipPath??");
-//     }
-//     const smilPath = path.join(path.dirname(opf.ZipPath), srcDecoded)
-//         .replace(/\\/g, "/");
-//     debug(`>>>>> parseSmilFile ${smilPath}`);
-//     const smilStr = await loadFileStrFromZipPath(smilPath, smilPath, zip);
-//     if (!smilStr) {
-//         return Promise.reject("!loadFileStrFromZipPath: " + smilPath);
-//     }
-//     const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
-//     return XML.deserialize<SMIL>(smilXmlDoc, SMIL);
-// };
-
-// const getSmilLinkReference = async (
-//     parsedFiles: ParsedFile[], zip: IZip, srcDecoded: string, opf: OPF): Promise<string | undefined> => {
-
-//     const hashLink = srcDecoded.split("#");
-//     const smilLink = hashLink[0];
-//     const smilID = hashLink[1];
-
-//     // const smilFilePath = path.join(filePath, smilLink).replace(/\\/g, "/");
-
-//     // const smilStr = fs.readFileSync(smilFilePath, { encoding: "utf8" });
-//     const smil = await parseSmilFile(zip, smilLink, opf);
-
-//     const linkedPar = findParInSmilWithID(smil, smilID);
-//     if (!linkedPar) {
-//         return undefined;
-//     }
-//     if (linkedPar.Text) {
-//         const hashXmlLink = linkedPar.Text.Src.split("#");
-//         const xmlID = hashXmlLink[1];
-//         const xmlLink = findXhtmlWithID(parsedFiles, xmlID);
-//         return `${xmlLink}#${xmlID}`;
-//         // return linkedPar.Text.Src;
-//     }
-
-//     return undefined;
-// };
-
-// const findXhtmlWithID = (parsedFiles: ParsedFile[], ID: string) => {
-//     for (const parsedFile of parsedFiles) {
-//         // const parsedFile: ParsedFile = publication.ParsedFiles[i];
-//         if (parsedFile.Type === "application/xhtml+xml") {
-//             const xhtmlDoc = new xmldom.DOMParser().parseFromString(parsedFile.Value, "text/html");
-//             if (xhtmlDoc.getElementById(ID)) {
-//                 return parsedFile.Name;
-//             }
-//         }
-//     }
-//     return;
-//     // publication.ParsedFiles.forEach((parsedFile: ParsedFile, i: number) => {
-//     //     if (parsedFile.Type === "application/xhtml+xml") {
-//     //         const xhtmlDoc = new xmldom.DOMParser().parseFromString(parsedFile.Value, "text/html");
-//     //         if (xhtmlDoc.getElementById(ID)) {
-//     //             debug("xhtmlDoc" + i, parsedFile.Name);
-//     //         }
-//     //     }
-//     // });
-// };
-
-// const findParInSeqWithID = (seq: Seq, id: string): Par | undefined => {
-//     for (const child of seq.Children) {
-//         // Duck typing ...
-//         if ((child as Seq).Children) {
-//             const found = findParInSeqWithID(child as Seq, id);
-//             if (found) {
-//                 return found;
-//             }
-//             continue;
-//         }
-//         const par = child as Par;
-//         if ((par.Text || par.Audio) &&
-//             par.ID === id) {
-
-//             return par;
-//         }
-//     }
-//     return undefined;
-// };
-// const findParInSmilWithID = (smil: SMIL, id: string): Par | undefined => {
-//     if (smil.Body) {
-//         return findParInSeqWithID(smil.Body, id);
-//     }
-//     return undefined;
-// };
