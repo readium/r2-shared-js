@@ -40,7 +40,8 @@ import {
     BCP47_UNKNOWN_LANG as BCP47_UNKNOWN_LANG_, addIdentifier, addLanguage, addMediaOverlaySMIL,
     addOtherMetadata, addTitle, fillPublicationDate, fillSpineAndResource, fillSubject, fillTOC,
     findContributorInMeta, findInManifestByID, findMetaByRefineAndProperty, getNcx, getOpf,
-    loadFileStrFromZipPath, parseSpaceSeparatedString, setPublicationDirection,
+    loadFileStrFromZipPath, mediaOverlayURLParam as mediaOverlayURLParam_,
+    mediaOverlayURLPath as mediaOverlayURLPath_, parseSpaceSeparatedString, setPublicationDirection,
 } from "./epub-daisy-common";
 import { Container } from "./epub/container";
 import { Rootfile } from "./epub/container-rootfile";
@@ -58,6 +59,9 @@ const debug = debug_("r2:shared#parser/epub");
 
 // https://github.com/readium/webpub-manifest/issues/52#issuecomment-601686135
 export const BCP47_UNKNOWN_LANG = BCP47_UNKNOWN_LANG_;
+
+export const mediaOverlayURLPath = mediaOverlayURLPath_;
+export const mediaOverlayURLParam = mediaOverlayURLParam_;
 
 export const addCoverDimensions = async (publication: Publication, coverLink: Link) => {
 
