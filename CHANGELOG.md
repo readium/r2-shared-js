@@ -1,10 +1,27 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.44...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.45...develop
 
 Changes:
 * TODO
+
+# 1.0.45
+
+> Build environment: NodeJS `14.15.0`, NPM `6.14.8`
+
+Changes:
+* Support for DAISY text-only publications (including multiple DTBOOK XML documents in the spine / reading order)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.45/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.45/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.45
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.44...v1.0.45
 
 # 1.0.44
 
