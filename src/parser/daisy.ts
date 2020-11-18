@@ -194,18 +194,26 @@ const addLinkData = async (
     publication: Publication, _rootfile: Rootfile | undefined,
     opf: OPF, zip: IZip, linkItem: Link, item: Manifest) => {
 
-    // dtb:multimediaContent ==> audio,text
-    if (publication.Metadata?.AdditionalJSON &&
-        publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText") {
+    if (publication.Metadata?.AdditionalJSON) {
 
-        await addMediaOverlaySMIL(linkItem, item, opf, zip);
+        // dtb:multimediaContent ==> audio,text
+        const isFullTextAudio = publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText";
 
-        if (linkItem.MediaOverlays && !linkItem.MediaOverlays.initialized) {
+        // dtb:multimediaContent ==> text
+        const isTextOnly = publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "textNCX";
 
-            // mo.initialized true/false is automatically handled
-            await lazyLoadMediaOverlays(publication, linkItem.MediaOverlays);
+        if (isFullTextAudio || isTextOnly) {
+            await addMediaOverlaySMIL(linkItem, item, opf, zip);
 
-            updateDurations(linkItem.MediaOverlays.duration, linkItem);
+            if (linkItem.MediaOverlays && !linkItem.MediaOverlays.initialized) {
+
+                // mo.initialized true/false is automatically handled
+                await lazyLoadMediaOverlays(publication, linkItem.MediaOverlays);
+
+                if (isFullTextAudio) {
+                    updateDurations(linkItem.MediaOverlays.duration, linkItem);
+                }
+            }
         }
     }
 };
