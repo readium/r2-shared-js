@@ -24,6 +24,7 @@ import { encodeURIComponent_RFC3986 } from "@r2-utils-js/_utils/http/UrlUtils";
 import { streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { XML } from "@r2-utils-js/_utils/xml-js-mapper";
 import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
+import { Transformers } from "@transform/transformer";
 
 import { zipHasEntry } from "../_utils/zipHasEntry";
 import { Rootfile } from "./epub/container-rootfile";
@@ -34,6 +35,10 @@ import { Author } from "./epub/opf-author";
 import { Manifest } from "./epub/opf-manifest";
 import { Metafield } from "./epub/opf-metafield";
 import { Title } from "./epub/opf-title";
+import { SMIL } from "./epub/smil";
+import { Par } from "./epub/smil-par";
+import { Seq } from "./epub/smil-seq";
+import { SeqOrPar } from "./epub/smil-seq-or-par";
 
 const debug = debug_("r2:shared#parser/epub-daisy-common");
 
@@ -1413,6 +1418,439 @@ export const addMediaOverlaySMIL = async (link: Link, manItemSmil: Manifest, opf
             }
             // LAZY
             // await lazyLoadMediaOverlays(publication, mo);
+        }
+    }
+};
+
+// mo.initialized true/false is automatically handled
+export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaOverlayNode) => {
+
+    if (mo.initialized || !mo.SmilPathInZip) {
+        return;
+    }
+
+    let link: Link | undefined;
+    if (publication.Resources) {
+
+        link = publication.Resources.find((l) => {
+            if (l.Href === mo.SmilPathInZip) {
+                return true;
+            }
+            return false;
+        });
+        if (!link) {
+            if (publication.Spine) {
+                link = publication.Spine.find((l) => {
+                    if (l.Href === mo.SmilPathInZip) {
+                        return true;
+                    }
+                    return false;
+                });
+            }
+        }
+        if (!link) {
+            const err = "Asset not declared in publication spine/resources! " + mo.SmilPathInZip;
+            debug(err);
+            return Promise.reject(err);
+        }
+    }
+
+    const zipInternal = publication.findFromInternal("zip");
+    if (!zipInternal) {
+        return;
+    }
+    const zip = zipInternal.Value as IZip;
+
+    const has = await zipHasEntry(zip, mo.SmilPathInZip, undefined);
+    if (!has) {
+        const err = `NOT IN ZIP (lazyLoadMediaOverlays): ${mo.SmilPathInZip}`;
+        debug(err);
+        const zipEntries = await zip.getEntries();
+        for (const zipEntry of zipEntries) {
+            debug(zipEntry);
+        }
+        return Promise.reject(err);
+    }
+
+    let smilZipStream_: IStreamAndLength;
+    try {
+        smilZipStream_ = await zip.entryStreamPromise(mo.SmilPathInZip);
+    } catch (err) {
+        debug(err);
+        return Promise.reject(err);
+    }
+
+    if (link && link.Properties && link.Properties.Encrypted) {
+        let decryptFail = false;
+        let transformedStream: IStreamAndLength;
+        try {
+            transformedStream = await Transformers.tryStream(
+                publication, link, undefined,
+                smilZipStream_,
+                false,
+                0,
+                0,
+                undefined,
+            );
+        } catch (err) {
+            debug(err);
+            return Promise.reject(err);
+        }
+        if (transformedStream) {
+            smilZipStream_ = transformedStream;
+        } else {
+            decryptFail = true;
+        }
+
+        if (decryptFail) {
+            const err = "Encryption scheme not supported.";
+            debug(err);
+            return Promise.reject(err);
+        }
+    }
+
+    const smilZipStream = smilZipStream_.stream;
+
+    let smilZipData: Buffer;
+    try {
+        smilZipData = await streamToBufferPromise(smilZipStream);
+    } catch (err) {
+        debug(err);
+        return Promise.reject(err);
+    }
+
+    let smilStr = smilZipData.toString("utf8");
+
+    const iStart = smilStr.indexOf("<smil");
+    if (iStart >= 0) {
+        const iEnd = smilStr.indexOf(">", iStart);
+        if (iEnd > iStart) {
+            const clip = smilStr.substr(iStart, iEnd - iStart);
+            if (clip.indexOf("xmlns") < 0) {
+                smilStr = smilStr.replace(/<smil/, "<smil xmlns=\"http://www.w3.org/ns/SMIL\" ");
+            }
+        }
+    }
+
+    const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
+    const smil = XML.deserialize<SMIL>(smilXmlDoc, SMIL);
+    smil.ZipPath = mo.SmilPathInZip;
+
+    mo.initialized = true;
+    debug("PARSED SMIL: " + mo.SmilPathInZip);
+
+    // breakLength: 100  maxArrayLength: undefined
+    // debug(util.inspect(smil,
+    //     { showHidden: false, depth: 1000, colors: true, customInspect: true }));
+
+    mo.Role = [];
+    mo.Role.push("section");
+
+    // debug(smil);
+    // debug(JSON.stringify(smil, null, 4));
+
+    if (smil.Head?.Meta) {
+        for (const m of smil.Head.Meta) {
+            if (m.Content && m.Name === "dtb:totalElapsedTime") {
+                mo.totalElapsedTime = timeStrToSeconds(m.Content);
+            }
+        }
+    }
+
+    if (smil.Body) {
+        if (smil.Body.Duration) {
+            mo.duration = timeStrToSeconds(smil.Body.Duration);
+        }
+        if (smil.Body.EpubType) {
+            const roles = parseSpaceSeparatedString(smil.Body.EpubType);
+            for (const role of roles) {
+                if (!role.length) {
+                    continue;
+                }
+                if (mo.Role.indexOf(role) < 0) {
+                    mo.Role.push(role);
+                }
+            }
+        }
+
+        if (smil.Body.Class) {
+            if (smil.Body.Class.indexOf("pagenum") >= 0) {
+                mo.Role.push("pagebreak");
+            } else if (smil.Body.Class.indexOf("note") >= 0) {
+                mo.Role.push("note");
+            } else if (smil.Body.Class.indexOf("sidebar") >= 0) {
+                mo.Role.push("sidebar");
+            } else if (smil.Body.Class.indexOf("annotation") >= 0) {
+                mo.Role.push("annotation");
+            }
+        } else if (smil.Body.CustomTest) {
+            if (smil.Body.CustomTest.indexOf("pagenum") >= 0) {
+                mo.Role.push("pagebreak");
+            } else if (smil.Body.CustomTest.indexOf("note") >= 0) {
+                mo.Role.push("note");
+            } else if (smil.Body.CustomTest.indexOf("sidebar") >= 0) {
+                mo.Role.push("sidebar");
+            } else if (smil.Body.CustomTest.indexOf("annotation") >= 0) {
+                mo.Role.push("annotation");
+            }
+        }
+        if (smil.Body.TextRef) {
+            const smilBodyTextRefDecoded = smil.Body.TextRefDecoded;
+            if (!smilBodyTextRefDecoded) {
+                debug("!?smilBodyTextRefDecoded");
+            } else {
+                const zipPath = path.join(path.dirname(smil.ZipPath), smilBodyTextRefDecoded)
+                    .replace(/\\/g, "/");
+                mo.Text = zipPath;
+            }
+        }
+        if (smil.Body.Children && smil.Body.Children.length) {
+
+            const getDur = !smil.Body.Duration && smil.Body.Children.length === 1;
+
+            smil.Body.Children.forEach((seqChild) => {
+                if (getDur && seqChild.Duration) {
+                    mo.duration = timeStrToSeconds(seqChild.Duration);
+                }
+                if (!mo.Children) {
+                    mo.Children = [];
+                }
+                addSeqToMediaOverlay(smil, publication, mo, mo.Children, seqChild);
+            });
+        }
+    }
+
+    return;
+};
+
+const addSeqToMediaOverlay = (
+    smil: SMIL, publication: Publication,
+    rootMO: MediaOverlayNode, mo: MediaOverlayNode[], seqChild: SeqOrPar) => {
+
+    if (!smil.ZipPath) {
+        return;
+    }
+
+    const moc = new MediaOverlayNode();
+    moc.initialized = rootMO.initialized;
+    let doAdd = true;
+
+    if (seqChild.Duration) {
+        moc.duration = timeStrToSeconds(seqChild.Duration);
+    }
+
+    if (seqChild instanceof Seq) {
+        moc.Role = [];
+        moc.Role.push("section");
+
+        const seq = seqChild as Seq;
+
+        if (seq.EpubType) {
+            const roles = parseSpaceSeparatedString(seq.EpubType);
+            for (const role of roles) {
+                if (!role.length) {
+                    continue;
+                }
+                if (moc.Role.indexOf(role) < 0) {
+                    moc.Role.push(role);
+                }
+            }
+        }
+        if (seq.Class) {
+            if (seq.Class.indexOf("pagenum") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("pagebreak");
+            } else if (seq.Class.indexOf("note") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("note");
+            } else if (seq.Class.indexOf("sidebar") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("sidebar");
+            } else if (seq.Class.indexOf("annotation") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("annotation");
+            }
+        } else if (seq.CustomTest) {
+            if (seq.CustomTest.indexOf("pagenum") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("pagebreak");
+            } else if (seq.CustomTest.indexOf("note") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("note");
+            } else if (seq.CustomTest.indexOf("sidebar") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("sidebar");
+            } else if (seq.CustomTest.indexOf("annotation") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("annotation");
+            }
+        }
+        if (seq.TextRef) {
+            const seqTextRefDecoded = seq.TextRefDecoded;
+            if (!seqTextRefDecoded) {
+                debug("!?seqTextRefDecoded");
+            } else {
+                const zipPath = path.join(path.dirname(smil.ZipPath), seqTextRefDecoded)
+                    .replace(/\\/g, "/");
+                moc.Text = zipPath;
+            }
+        }
+
+        if (seq.Children && seq.Children.length) {
+            seq.Children.forEach((child) => {
+                if (!moc.Children) {
+                    moc.Children = [];
+                }
+                addSeqToMediaOverlay(smil, publication, rootMO, moc.Children, child);
+            });
+        }
+    } else { // Par
+        const par = seqChild as Par;
+
+        if (par.EpubType) {
+            const roles = parseSpaceSeparatedString(par.EpubType);
+            for (const role of roles) {
+                if (!role.length) {
+                    continue;
+                }
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                if (moc.Role.indexOf(role) < 0) {
+                    moc.Role.push(role);
+                }
+            }
+        }
+        if (par.Class) {
+            if (par.Class.indexOf("pagenum") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("pagebreak");
+            } else if (par.Class.indexOf("note") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("note");
+            } else if (par.Class.indexOf("sidebar") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("sidebar");
+            } else if (par.Class.indexOf("annotation") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("annotation");
+            }
+        } else if (par.CustomTest) {
+            if (par.CustomTest.indexOf("pagenum") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("pagebreak");
+            } else if (par.CustomTest.indexOf("note") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("note");
+            } else if (par.CustomTest.indexOf("sidebar") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("sidebar");
+            } else if (par.CustomTest.indexOf("annotation") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("annotation");
+            }
+        }
+        if (par.Text && par.Text.Src) {
+            const parTextSrcDcoded = par.Text.SrcDecoded;
+            if (!parTextSrcDcoded) {
+                debug("?!parTextSrcDcoded");
+            } else {
+                const zipPath = path.join(path.dirname(smil.ZipPath), parTextSrcDcoded)
+                    .replace(/\\/g, "/");
+                moc.Text = zipPath;
+            }
+        }
+        if (par.Audio && par.Audio.Src) {
+            const parAudioSrcDcoded = par.Audio.SrcDecoded;
+            if (!parAudioSrcDcoded) {
+                debug("?!parAudioSrcDcoded");
+            } else {
+                const zipPath = path.join(path.dirname(smil.ZipPath), parAudioSrcDcoded)
+                    .replace(/\\/g, "/");
+                moc.Audio = zipPath;
+                moc.Audio += "#t=";
+
+                const begin = par.Audio.ClipBegin ? timeStrToSeconds(par.Audio.ClipBegin) : 0;
+                moc.AudioClipBegin = begin;
+                const end = par.Audio.ClipEnd ? timeStrToSeconds(par.Audio.ClipEnd) : 0;
+                moc.AudioClipEnd = end;
+
+                moc.Audio += begin.toString();
+                if (par.Audio.ClipEnd) {
+                    moc.Audio += ",";
+                    moc.Audio += end.toString();
+                }
+            }
+        }
+        if (par.Img && par.Img.Src) {
+            const parImgSrcDcoded = par.Img.SrcDecoded;
+            if (!parImgSrcDcoded) {
+                debug("?!parImgSrcDcoded");
+            } else {
+                const zipPath = path.join(path.dirname(smil.ZipPath), parImgSrcDcoded)
+                    .replace(/\\/g, "/");
+                debug("SMIL IMG skipped: " + zipPath);
+            }
+            if (!par.Audio && !par.Text) {
+                moc.initialized = false;
+                doAdd = false;
+            }
+        }
+    }
+    if (doAdd) {
+        mo.push(moc);
+    } else {
+        debug("SMIL MO skip: ", moc, seqChild);
+    }
+};
+
+export const updateDurations = (dur: number | undefined, link: Link) => {
+    if (!dur || !link.MediaOverlays) {
+        return;
+    }
+
+    if (!link.Duration) {
+        link.Duration = dur;
+    }
+    if (link.Alternate) {
+        for (const altLink of link.Alternate) {
+            if (altLink.TypeLink === "application/vnd.syncnarr+json") {
+                if (!altLink.Duration) {
+                    altLink.Duration = dur;
+                }
+            }
         }
     }
 };

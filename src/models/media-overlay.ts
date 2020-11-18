@@ -106,7 +106,11 @@ export class MediaOverlayNode {
 
     public initialized: boolean = false;
 
+    public AudioClipBegin: number | undefined;
+    public AudioClipEnd: number | undefined;
+
     public duration: number | undefined;
+    public totalElapsedTime: number | undefined;
 
     // public inspect(depth: number, opts: any): string | null | undefined {
     //     return "MediaOverlay: " + this.SmilPathInZip;

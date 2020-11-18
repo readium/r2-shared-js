@@ -34,6 +34,9 @@ export class SeqOrPar {
     // @XmlXPathSelector("@class")
     // public Class!: string;
 
-    // @XmlXPathSelector("@customTest")
-    // public CustomTest!: string;
+    @XmlXPathSelector("@customTest")
+    public CustomTest!: string;
+
+    @XmlXPathSelector("@class")
+    public Class!: string;
 }

@@ -18,11 +18,10 @@ import { IZip } from "@r2-utils-js/_utils/zip/zip";
 import { zipLoadPromise } from "@r2-utils-js/_utils/zip/zipFactory";
 
 import { zipHasEntry } from "../_utils/zipHasEntry";
-import { lazyLoadMediaOverlays } from "./epub";
 import {
     addIdentifier, addLanguage, addMediaOverlaySMIL, addOtherMetadata, addTitle,
     fillPublicationDate, fillSpineAndResource, fillSubject, fillTOC, findContributorInMeta, getNcx,
-    getOpf, setPublicationDirection,
+    getOpf, lazyLoadMediaOverlays, setPublicationDirection, updateDurations,
 } from "./epub-daisy-common";
 import { Rootfile } from "./epub/container-rootfile";
 import { NCX } from "./epub/ncx";
@@ -52,7 +51,7 @@ export async function isDaisyPublication(urlOrPath: string): Promise<DaisyBookis
     } else if (fs.existsSync(path.join(urlOrPath, "package.opf")) ||
         fs.existsSync(path.join(urlOrPath, "Book.opf")) ||
         fs.existsSync(path.join(urlOrPath, "speechgen.opf"))
-        ) {
+    ) {
         if (!fs.existsSync(path.join(urlOrPath, "META-INF", "container.xml"))) {
 
             return DaisyBookis.LocalExploded;
@@ -67,8 +66,8 @@ export async function isDaisyPublication(urlOrPath: string): Promise<DaisyBookis
         }
         if (!await zipHasEntry(zip, "META-INF/container.xml", undefined) &&
             (await zipHasEntry(zip, "package.opf", undefined) ||
-            await zipHasEntry(zip, "Book.opf", undefined) ||
-            await zipHasEntry(zip, "speechgen.opf", undefined))) {
+                await zipHasEntry(zip, "Book.opf", undefined) ||
+                await zipHasEntry(zip, "speechgen.opf", undefined))) {
 
             return DaisyBookis.LocalPacked;
         }
@@ -206,22 +205,7 @@ const addLinkData = async (
             // mo.initialized true/false is automatically handled
             await lazyLoadMediaOverlays(publication, linkItem.MediaOverlays);
 
-            if (linkItem.MediaOverlays.duration) {
-
-                if (!linkItem.Duration) {
-                    linkItem.Duration = linkItem.MediaOverlays.duration;
-                }
-
-                if (linkItem.Alternate) {
-                    for (const altLink of linkItem.Alternate) {
-                        if (altLink.TypeLink === "application/vnd.syncnarr+json") {
-                            if (!altLink.Duration) {
-                                altLink.Duration = linkItem.MediaOverlays.duration;
-                            }
-                        }
-                    }
-                }
-            }
+            updateDurations(linkItem.MediaOverlays.duration, linkItem);
         }
     }
 };

@@ -38,8 +38,8 @@ export class Seq extends SeqOrPar {
     // @XmlItemType(Par)
     // public Par: Par[];
 
-    @XmlXPathSelector("@customTest")
-    public CustomTest!: string;
+    // @XmlXPathSelector("@customTest")
+    // public CustomTest!: string;
 
     @XmlXPathSelector("@epub:textref")
     public TextRef1!: string;
