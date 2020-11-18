@@ -1,10 +1,27 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.42...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.43...develop
 
 Changes:
 * TODO
+
+# 1.0.43
+
+> Build environment: NodeJS `14.15.0`, NPM `6.14.8`
+
+Changes:
+* Added support for DAISY publications with multiple DTBOOK XML documents (and multiple SMIL in the spine)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.43/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.43/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.43
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.42...v1.0.43
 
 # 1.0.42
 
