@@ -1,10 +1,27 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.45...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.46...develop
 
 Changes:
 * TODO
+
+# 1.0.46
+
+> Build environment: NodeJS `14.15.0`, NPM `6.14.8`
+
+Changes:
+* Fixed severe metadata parsing bug (code typo which skipped conditional branch)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.46/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.46/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.46
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.45...v1.0.46
 
 # 1.0.45
 
