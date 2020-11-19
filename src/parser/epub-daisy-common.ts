@@ -970,7 +970,7 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
         });
     }
 
-    if (opf.Metadata.Meta || opf.Metadata.XMetadata.Meta) {
+    if (opf.Metadata.Meta || opf.Metadata.XMetadata?.Meta) {
 
         interface IMetaTagValue {
             metaTag: Metafield;
@@ -1111,7 +1111,7 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
         if (opf.Metadata.Meta) {
             opf.Metadata.Meta.forEach(metaFunc);
         }
-        if (opf.Metadata.XMetadata.Meta) {
+        if (opf.Metadata.XMetadata?.Meta) {
             opf.Metadata.XMetadata.Meta.forEach(metaFunc);
         }
 
@@ -1181,7 +1181,7 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
         if (opf.Metadata.Meta) {
             opf.Metadata.Meta.forEach(mFunc);
         }
-        if (opf.Metadata.XMetadata.Meta) {
+        if (opf.Metadata.XMetadata?.Meta) {
             opf.Metadata.XMetadata.Meta.forEach(mFunc);
         }
 
