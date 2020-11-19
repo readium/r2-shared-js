@@ -851,7 +851,7 @@ export const getOpf = async (zip: IZip, rootfilePathDecoded: string, rootfilePat
 
 export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | undefined, opf: OPF) => {
 
-    if (!opf.Metadata?.DCMetadata) {
+    if (!opf.Metadata) {
         return;
     }
 
@@ -969,6 +969,7 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
             }
         });
     }
+
     if (opf.Metadata.Meta || opf.Metadata.XMetadata.Meta) {
 
         interface IMetaTagValue {
