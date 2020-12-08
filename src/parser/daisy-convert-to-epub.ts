@@ -283,6 +283,18 @@ export const convertDaisyToReadiumWebPub = async (
                 return smilTextRef;
             };
 
+            const addTextFromToc = (el: any, href: string) => {
+                const elmId = el.getAttribute("id");
+                const hrefDecoded = `${href}#${elmId}`;
+                const tocLinkItem = publication.TOC.find((toc: Link) => {
+                    return toc.HrefDecoded === hrefDecoded;
+                });
+                // if (tocLinkItem) {
+                //     console.log(tocLinkItem, tocLinkItem.Title);
+                // }
+                return tocLinkItem ? tocLinkItem.Title : undefined;
+            };
+
             const parseSmilDoc = (smil: string) => {
                 return smil
                     .replace(/<seq/g, '<div class="seq"')
@@ -303,6 +315,14 @@ export const convertDaisyToReadiumWebPub = async (
                     return;
                 }
                 const smilDoc = new xmldom.DOMParser().parseFromString(smilStr, "application/xml");
+                const els = Array.from(smilDoc.getElementsByTagName("par"));
+                els.forEach((el: any) => {
+                    const text = addTextFromToc(el, href);
+                    if (text) {
+                        const textNode = smilDoc.createTextNode(text);
+                        el.appendChild(textNode);
+                    }
+                });
                 const bodyContent = smilDoc.getElementsByTagName("body")[0];
                 removeTag(bodyContent, "audio");
                 const bodyContentStr = new xmldom.XMLSerializer().serializeToString(bodyContent);
@@ -428,8 +448,6 @@ export const convertDaisyToReadiumWebPub = async (
             const resourcesToKeep: Link[] = [];
 
             const dtBooks: Link[] = [...smilHtmls];
-            // console.log("mediaOverlaysMap", mediaOverlaysMap);
-            // console.log("publication.Resources", publication.Resources);
             // reference copy! (not by value) so we can publication.Resources.push(...) safely within the loop
             // const resources = [...publication.Resources];
             // ... but we completely replace the array of Links, so this is fine:
@@ -1332,7 +1350,6 @@ ${cssHrefs.reduce((pv, cv) => {
             }
 
             if (mediaOverlaysMap) {
-                console.log("dtBooks", dtBooks);
                 Object.keys(mediaOverlaysMap).forEach((smilTextRef) => {
                     if (!mediaOverlaysMap) { // compiler check
                         return;
@@ -1397,7 +1414,6 @@ ${cssHrefs.reduce((pv, cv) => {
                         continue;
                     }
                     debug("mediaOverlay:", mediaOverlay.index, mediaOverlay.smilTextRef);
-                    console.log("mediaOverlay:", mediaOverlay.index, mediaOverlay.smilTextRef);
 
                     const dtBookLink = dtBooks.find((l) => {
                         return l.HrefDecoded === mediaOverlay.smilTextRef;
@@ -1405,7 +1421,6 @@ ${cssHrefs.reduce((pv, cv) => {
 
                     if (!dtBookLink) {
                         debug("!!dtBookLink");
-                        console.log("!!dtBookLink");
                     } else if (dtBookLink.HrefDecoded !== mediaOverlay.smilTextRef) {
                         debug("dtBook.HrefDecoded !== mediaOverlay.smilTextRef",
                             dtBookLink.HrefDecoded, mediaOverlay.smilTextRef);
@@ -1501,7 +1516,10 @@ ${cssHrefs.reduce((pv, cv) => {
                 if (!href) {
                     return;
                 }
-
+                if (isFullAudio) {
+                    link.Href = href.replace(/\.smil/, ".html");
+                    return;
+                }
                 let fragment: string | undefined;
                 if (href.indexOf("#") >= 0) {
                     const arr = href.split("#");
@@ -1534,6 +1552,7 @@ ${cssHrefs.reduce((pv, cv) => {
                 if (!targetEl) {
                     return;
                 }
+
                 if (targetEl.nodeName !== "text") {
                     // const textElems = select("//text", targetEl, true) as Element;
                     // if (textElems) {
@@ -1541,6 +1560,7 @@ ${cssHrefs.reduce((pv, cv) => {
                     // }
                     targetEl = findFirstDescendantText(targetEl);
                 }
+
                 if (!targetEl || targetEl.nodeName !== "text") {
                     return;
                 }
@@ -1549,6 +1569,7 @@ ${cssHrefs.reduce((pv, cv) => {
                 if (!src) {
                     return;
                 }
+
                 // TODO: path is relative to SMIL (not to publication root),
                 // and .xml file extension replacement is bit weak / brittle
                 // (but for most DAISY books, this is a reasonable expectation)
@@ -1582,7 +1603,7 @@ ${cssHrefs.reduce((pv, cv) => {
 
             const jsonObj = TaJsonSerialize(publication);
             const jsonStr = global.JSON.stringify(jsonObj, null, "  ");
-            console.log("jsonStr", jsonStr);
+            // console.log("jsonStr", jsonStr);
             zipfile.addBuffer(Buffer.from(jsonStr), "manifest.json");
         } catch (erreur) {
             debug(erreur);
