@@ -283,15 +283,25 @@ export const convertDaisyToReadiumWebPub = async (
                 return smilTextRef;
             };
 
-            const addTextFromToc = (el: any, href: string) => {
+            const findLinkInToc = (links: Link[], hrefDecoded: string): Link | undefined => {
+                for (const link of links) {
+                    if (link.HrefDecoded === hrefDecoded) {
+                        return link;
+                    } else if (link.Children) {
+                        findLinkInToc(link.Children, hrefDecoded);
+                    }
+                }
+                return undefined;
+            };
+
+            const getTextFromToc = (el: any, href: string) => {
                 const elmId = el.getAttribute("id");
                 const hrefDecoded = `${href}#${elmId}`;
-                const tocLinkItem = publication.TOC.find((toc: Link) => {
-                    return toc.HrefDecoded === hrefDecoded;
-                });
-                // if (tocLinkItem) {
-                //     console.log(tocLinkItem, tocLinkItem.Title);
-                // }
+                // const tocLinkItem = publication.TOC.find((toc: Link) => {
+                //     return toc.HrefDecoded === hrefDecoded;
+                // });
+                // return tocLinkItem ? tocLinkItem.Title : undefined;
+                const tocLinkItem = findLinkInToc(publication.TOC, hrefDecoded);
                 return tocLinkItem ? tocLinkItem.Title : undefined;
             };
 
@@ -317,7 +327,7 @@ export const convertDaisyToReadiumWebPub = async (
                 const smilDoc = new xmldom.DOMParser().parseFromString(smilStr, "application/xml");
                 const els = Array.from(smilDoc.getElementsByTagName("par"));
                 els.forEach((el: any) => {
-                    const text = addTextFromToc(el, href);
+                    const text = getTextFromToc(el, href);
                     if (text) {
                         const textNode = smilDoc.createTextNode(text);
                         el.appendChild(textNode);
