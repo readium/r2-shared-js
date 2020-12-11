@@ -288,7 +288,10 @@ export const convertDaisyToReadiumWebPub = async (
                     if (link.HrefDecoded === hrefDecoded) {
                         return link;
                     } else if (link.Children) {
-                        findLinkInToc(link.Children, hrefDecoded);
+                        const foundLink = findLinkInToc(link.Children, hrefDecoded);
+                        if (foundLink) {
+                            return foundLink;
+                        }
                     }
                 }
                 return undefined;

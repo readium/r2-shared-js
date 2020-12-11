@@ -213,7 +213,7 @@ const addLinkData = async (
                 // mo.initialized true/false is automatically handled
                 await lazyLoadMediaOverlays(publication, linkItem.MediaOverlays);
 
-                if (isFullTextAudio) {
+                if (isFullTextAudio || isFullAudio) {
                     updateDurations(linkItem.MediaOverlays.duration, linkItem);
                 }
             }
