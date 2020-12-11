@@ -13,7 +13,7 @@ import { JsonDateConverter } from "@r2-utils-js/_utils/ta-json-date-converter";
 import { JsonNumberConverter } from "@r2-utils-js/_utils/ta-json-number-converter";
 import {
     BufferConverter as XmlBufferConverter, DateConverter as XmlDateConverter,
-    propertyConverters as xmlConverters,
+    NumberConverter as XmlNumberConverter, propertyConverters as xmlConverters,
 } from "@r2-utils-js/_utils/xml-js-mapper";
 
 // import { Contributor } from "@models/metadata-contributor";
@@ -30,4 +30,5 @@ export function initGlobalConverters_GENERIC() {
 
     xmlConverters.set(Buffer, new XmlBufferConverter());
     xmlConverters.set(Date, new XmlDateConverter());
+    xmlConverters.set(Number, new XmlNumberConverter());
 }

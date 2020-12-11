@@ -197,8 +197,8 @@ export enum Divinais {
     // RemotePacked = "RemotePacked",
 }
 
-async function doRequest(u: string): Promise<Divinais> {
-    return new Promise((resolve, _reject) => {
+async function doRequest(u: string): Promise<Divinais | undefined> {
+    return new Promise<Divinais | undefined>((resolve, _reject) => {
         const url = new URL(u);
         const secure = url.protocol === "https:";
         const options = {
