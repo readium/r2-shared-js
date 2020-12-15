@@ -1616,7 +1616,9 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
                 if (!mo.Children) {
                     mo.Children = [];
                 }
-                addSeqToMediaOverlay(smil, publication, mo, mo.Children, seqChild);
+                // dtb:multimediaContent ==> audio
+                const isFullAudio = publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioNCX";
+                addSeqToMediaOverlay(smil, publication, mo, mo.Children, seqChild, isFullAudio);
             });
         }
     }
@@ -1626,7 +1628,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
 
 const addSeqToMediaOverlay = (
     smil: SMIL, publication: Publication,
-    rootMO: MediaOverlayNode, mo: MediaOverlayNode[], seqChild: SeqOrPar) => {
+    rootMO: MediaOverlayNode, mo: MediaOverlayNode[], seqChild: SeqOrPar, isFullAudio: boolean = false) => {
 
     if (!smil.ZipPath) {
         return;
@@ -1718,7 +1720,7 @@ const addSeqToMediaOverlay = (
                 if (!moc.Children) {
                     moc.Children = [];
                 }
-                addSeqToMediaOverlay(smil, publication, rootMO, moc.Children, child);
+                addSeqToMediaOverlay(smil, publication, rootMO, moc.Children, child, isFullAudio);
             });
         }
     } else { // Par
@@ -1792,7 +1794,12 @@ const addSeqToMediaOverlay = (
                     .replace(/\\/g, "/");
                 moc.Text = zipPath;
             }
+        } else if (isFullAudio) {
+            const htmlPath = smil.ZipPath;
+            const htmlFilePath = htmlPath.replace(/\.(.+)$/, ".html");
+            moc.Text = `${htmlFilePath}#${par.ID}` ;
         }
+
         if (par.Audio && par.Audio.Src) {
             const parAudioSrcDcoded = par.Audio.SrcDecoded;
             if (!parAudioSrcDcoded) {
