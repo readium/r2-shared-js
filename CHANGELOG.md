@@ -1,10 +1,28 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.46...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.47...develop
 
 Changes:
 * TODO
+
+# 1.0.47
+
+> Build environment: NodeJS `14.15.1`, NPM `6.14.9`
+
+Changes:
+* NPM package updates (including fixed TA-JSON for class inheritance hierarchy and custom additional JSON properties)
+* Added missing support for Number type converter in XML deserialization
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.47/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.47/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.47
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.46...v1.0.47
 
 # 1.0.46
 
