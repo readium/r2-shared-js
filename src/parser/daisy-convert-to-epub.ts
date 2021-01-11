@@ -35,6 +35,14 @@ function ensureDirs(fspath: string) {
     }
 }
 
+function removeTag(bodyContent: any, tagToBeRemoved: string) {
+    const els = Array.from(bodyContent.getElementsByTagName(tagToBeRemoved)).filter((el) => el);
+
+    els.forEach((el: any) => {
+        el.parentNode.removeChild(el);
+    });
+}
+
 // this function modifies the input parameter "publication"!
 export const convertDaisyToReadiumWebPub = async (
     outputDirPath: string, publication: Publication): Promise<string | undefined> => {
@@ -275,15 +283,94 @@ export const convertDaisyToReadiumWebPub = async (
                 return smilTextRef;
             };
 
+            const findLinkInToc = (links: Link[], hrefDecoded: string): Link | undefined => {
+                for (const link of links) {
+                    if (link.HrefDecoded === hrefDecoded) {
+                        return link;
+                    } else if (link.Children) {
+                        const foundLink = findLinkInToc(link.Children, hrefDecoded);
+                        if (foundLink) {
+                            return foundLink;
+                        }
+                    }
+                }
+                return undefined;
+            };
+
+            const getTextFromToc = (el: any, href: string) => {
+                const elmId = el.getAttribute("id");
+                const hrefDecoded = `${href}#${elmId}`;
+                // const tocLinkItem = publication.TOC.find((toc: Link) => {
+                //     return toc.HrefDecoded === hrefDecoded;
+                // });
+                // return tocLinkItem ? tocLinkItem.Title : undefined;
+                const tocLinkItem = findLinkInToc(publication.TOC, hrefDecoded);
+                return tocLinkItem ? tocLinkItem.Title : undefined;
+            };
+
+            const parseSmilDoc = (smil: string) => {
+                return smil
+                    .replace(/<seq/g, '<div class="seq"')
+                    .replace(/<par/g, '<p class="par"')
+                    .replace(/<\/seq>/g, "</div>")
+                    .replace(/<\/par>/g, "</p>");
+            };
+
+            const createHtmlFromSmilFile = async (link: Link): Promise<string | undefined> => {
+                const href = link.HrefDecoded;
+                if (!href) {
+                    return;
+                }
+
+                const smilStr = await loadFileStrFromZipPath(href, href, zip);
+                if (!smilStr) {
+                    debug("!loadFileStrFromZipPath", smilStr);
+                    return;
+                }
+                const smilDoc = new xmldom.DOMParser().parseFromString(smilStr, "application/xml");
+                const els = Array.from(smilDoc.getElementsByTagName("par"));
+                els.forEach((el: any) => {
+                    const text = getTextFromToc(el, href);
+                    if (text) {
+                        const textNode = smilDoc.createTextNode(text);
+                        el.appendChild(textNode);
+                    }
+                });
+                const bodyContent = smilDoc.getElementsByTagName("body")[0];
+                removeTag(bodyContent, "audio");
+                const bodyContentStr = new xmldom.XMLSerializer().serializeToString(bodyContent);
+                const contentStr = parseSmilDoc(bodyContentStr);
+                const htmlDoc = `
+                <!DOCTYPE html>
+                <html>
+                    <head>
+                        <title></title>
+                    </head>
+                    <body>
+                        ${contentStr}
+                    </body>
+                </html>
+                `;
+                const htmlFilePath = href.replace(/\.(.+)$/, ".html");
+                // const fileName = path.parse(href).name;
+                zipfile.addBuffer(Buffer.from(htmlDoc), htmlFilePath);
+                return htmlFilePath;
+            };
+
             // dtb:multimediaContent ==> audio,text
             const isFullTextAudio = publication.Metadata?.AdditionalJSON &&
                 publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText";
 
+            // dtb:multimediaContent ==> audio
+            const isFullAudio = publication.Metadata?.AdditionalJSON &&
+                publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioNCX";
             // // dtb:multimediaContent ==> text
             // const isTextOnly = publication.Metadata?.AdditionalJSON &&
             //     publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "textNCX";
 
             // dtb:multimediaContent ==> audio,text
+
+            const smilHtmls: Link[] = [];
             if (publication.Spine) {
 
                 mediaOverlaysMap = {};
@@ -300,12 +387,12 @@ export const convertDaisyToReadiumWebPub = async (
                         // mo.initialized true/false is automatically handled
                         await lazyLoadMediaOverlays(publication, linkItem.MediaOverlays);
 
-                        if (isFullTextAudio) {
+                        if (isFullTextAudio || isFullAudio) {
                             updateDurations(linkItem.MediaOverlays.duration, linkItem);
                         }
                     }
 
-                    if (isFullTextAudio) {
+                    if (isFullTextAudio || isFullAudio) {
                         const computedDur = getMediaOverlaysDuration(linkItem.MediaOverlays);
                         if (computedDur) {
                             if (!linkItem.MediaOverlays.duration) {
@@ -343,7 +430,18 @@ export const convertDaisyToReadiumWebPub = async (
                         previousLinkItem = linkItem;
                     }
 
-                    const smilTextRef = patchMediaOverlaysTextHref(linkItem.MediaOverlays);
+                    let smilTextRef = patchMediaOverlaysTextHref(linkItem.MediaOverlays);
+
+                    if (isFullAudio) {
+                        smilTextRef = await createHtmlFromSmilFile(linkItem);
+                        if (smilTextRef) {
+                            const smilLink = new Link();
+                            smilLink.Href = smilTextRef;
+                            smilLink.TypeLink = "text/html";
+                            smilHtmls.push(smilLink);
+                        }
+                    }
+
                     if (smilTextRef) {
                         // spineIndex++;
                         if (!mediaOverlaysMap[smilTextRef]) {
@@ -362,8 +460,7 @@ export const convertDaisyToReadiumWebPub = async (
 
             const resourcesToKeep: Link[] = [];
 
-            const dtBooks: Link[] = [];
-
+            const dtBooks: Link[] = [...smilHtmls];
             // reference copy! (not by value) so we can publication.Resources.push(...) safely within the loop
             // const resources = [...publication.Resources];
             // ... but we completely replace the array of Links, so this is fine:
@@ -1341,7 +1438,7 @@ ${cssHrefs.reduce((pv, cv) => {
                         debug("dtBook.HrefDecoded !== mediaOverlay.smilTextRef",
                             dtBookLink.HrefDecoded, mediaOverlay.smilTextRef);
                     } else {
-                        if (isFullTextAudio) {
+                        if (isFullTextAudio || isFullAudio) {
                             dtBookLink.MediaOverlays = mediaOverlay.mo;
 
                             if (mediaOverlay.mo.duration) {
@@ -1432,7 +1529,10 @@ ${cssHrefs.reduce((pv, cv) => {
                 if (!href) {
                     return;
                 }
-
+                if (isFullAudio) {
+                    link.Href = href.replace(/\.smil/, ".html");
+                    return;
+                }
                 let fragment: string | undefined;
                 if (href.indexOf("#") >= 0) {
                     const arr = href.split("#");
@@ -1465,6 +1565,7 @@ ${cssHrefs.reduce((pv, cv) => {
                 if (!targetEl) {
                     return;
                 }
+
                 if (targetEl.nodeName !== "text") {
                     // const textElems = select("//text", targetEl, true) as Element;
                     // if (textElems) {
@@ -1472,6 +1573,7 @@ ${cssHrefs.reduce((pv, cv) => {
                     // }
                     targetEl = findFirstDescendantText(targetEl);
                 }
+
                 if (!targetEl || targetEl.nodeName !== "text") {
                     return;
                 }
@@ -1480,6 +1582,7 @@ ${cssHrefs.reduce((pv, cv) => {
                 if (!src) {
                     return;
                 }
+
                 // TODO: path is relative to SMIL (not to publication root),
                 // and .xml file extension replacement is bit weak / brittle
                 // (but for most DAISY books, this is a reasonable expectation)
@@ -1513,6 +1616,7 @@ ${cssHrefs.reduce((pv, cv) => {
 
             const jsonObj = TaJsonSerialize(publication);
             const jsonStr = global.JSON.stringify(jsonObj, null, "  ");
+            // console.log("jsonStr", jsonStr);
             zipfile.addBuffer(Buffer.from(jsonStr), "manifest.json");
         } catch (erreur) {
             debug(erreur);

@@ -202,7 +202,10 @@ const addLinkData = async (
         // dtb:multimediaContent ==> text
         const isTextOnly = publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "textNCX";
 
-        if (isFullTextAudio || isTextOnly) {
+        // dtb:multimediaContent ==> audio
+        const isFullAudio = publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioNCX";
+
+        if (isFullTextAudio || isTextOnly || isFullAudio) {
             await addMediaOverlaySMIL(linkItem, item, opf, zip);
 
             if (linkItem.MediaOverlays && !linkItem.MediaOverlays.initialized) {
@@ -210,7 +213,7 @@ const addLinkData = async (
                 // mo.initialized true/false is automatically handled
                 await lazyLoadMediaOverlays(publication, linkItem.MediaOverlays);
 
-                if (isFullTextAudio) {
+                if (isFullTextAudio || isFullAudio) {
                     updateDurations(linkItem.MediaOverlays.duration, linkItem);
                 }
             }
