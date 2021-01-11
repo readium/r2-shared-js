@@ -35,12 +35,17 @@ function ensureDirs(fspath: string) {
     }
 }
 
-function removeTag(bodyContent: any, tagToBeRemoved: string) {
-    const els = Array.from(bodyContent.getElementsByTagName(tagToBeRemoved)).filter((el) => el);
+function removeTag(bodyContent: Element, tagToBeRemoved: string) {
 
-    els.forEach((el: any) => {
-        el.parentNode.removeChild(el);
-    });
+    // getElementsByName(elementName: string): NodeListOf<HTMLElement>
+    // ==> not available in the XMLDOM API
+    // getElementsByTagName(qualifiedName: string): HTMLCollectionOf<Element>
+    const els = Array.from(bodyContent.getElementsByTagName(tagToBeRemoved)).filter((el) => el);
+    for (const el of els) {
+        if (el.parentNode) {
+            el.parentNode.removeChild(el);
+        }
+    }
 }
 
 // this function modifies the input parameter "publication"!
@@ -297,7 +302,7 @@ export const convertDaisyToReadiumWebPub = async (
                 return undefined;
             };
 
-            const getTextFromToc = (el: any, href: string) => {
+            const getTextFromToc = (el: Element, href: string) => {
                 const elmId = el.getAttribute("id");
                 const hrefDecoded = `${href}#${elmId}`;
                 // const tocLinkItem = publication.TOC.find((toc: Link) => {
@@ -319,39 +324,45 @@ export const convertDaisyToReadiumWebPub = async (
             const createHtmlFromSmilFile = async (link: Link): Promise<string | undefined> => {
                 const href = link.HrefDecoded;
                 if (!href) {
-                    return;
+                    return undefined;
                 }
 
                 const smilStr = await loadFileStrFromZipPath(href, href, zip);
                 if (!smilStr) {
                     debug("!loadFileStrFromZipPath", smilStr);
-                    return;
+                    return undefined;
                 }
                 const smilDoc = new xmldom.DOMParser().parseFromString(smilStr, "application/xml");
+
+                // getElementsByName(elementName: string): NodeListOf<HTMLElement>
+                // ==> not available in the XMLDOM API
+                // getElementsByTagName(qualifiedName: string): HTMLCollectionOf<Element>
                 const els = Array.from(smilDoc.getElementsByTagName("par"));
-                els.forEach((el: any) => {
+                for (const el of els) {
                     const text = getTextFromToc(el, href);
                     if (text) {
                         const textNode = smilDoc.createTextNode(text);
                         el.appendChild(textNode);
                     }
-                });
+                }
                 const bodyContent = smilDoc.getElementsByTagName("body")[0];
                 removeTag(bodyContent, "audio");
                 const bodyContentStr = new xmldom.XMLSerializer().serializeToString(bodyContent);
                 const contentStr = parseSmilDoc(bodyContentStr);
                 const htmlDoc = `
-                <!DOCTYPE html>
-                <html>
-                    <head>
-                        <title></title>
-                    </head>
-                    <body>
-                        ${contentStr}
-                    </body>
-                </html>
-                `;
-                const htmlFilePath = href.replace(/\.(.+)$/, ".html");
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+    <head>
+        <title>
+        </title>
+    </head>
+    <body>
+        ${contentStr}
+    </body>
+</html>
+`;
+                const htmlFilePath = href.replace(/\.(.+)$/, ".xhtml");
                 // const fileName = path.parse(href).name;
                 zipfile.addBuffer(Buffer.from(htmlDoc), htmlFilePath);
                 return htmlFilePath;
@@ -1316,8 +1327,8 @@ Helpers
                         .replace(/xmlns="http:\/\/www\.daisy\.org\/z3986\/2005\/dtbook\/"/, "xmlns=\"http://www.w3.org/1999/xhtml\"")
                         .replace(/xmlns="http:\/\/www\.daisy\.org\/z3986\/2005\/dtbook\/"/g, " ")
                         .replace(/^([\s\S]*)<html/gm,
-                            `<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE xhtml>
+                            `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
 <html `)
                         .replace(/<head([\s\S]*?)>/gm,
                             `
@@ -1529,7 +1540,7 @@ ${cssHrefs.reduce((pv, cv) => {
                     return;
                 }
                 if (isAudioOnly) {
-                    link.HrefDecoded = href.replace(/\.smil$/, ".html");
+                    link.HrefDecoded = href.replace(/\.smil$/, ".xhtml");
                     return;
                 }
                 let fragment: string | undefined;
