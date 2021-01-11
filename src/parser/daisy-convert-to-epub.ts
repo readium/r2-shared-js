@@ -362,13 +362,12 @@ export const convertDaisyToReadiumWebPub = async (
                 publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText";
 
             // dtb:multimediaContent ==> audio
-            const isFullAudio = publication.Metadata?.AdditionalJSON &&
+            const isAudioOnly = publication.Metadata?.AdditionalJSON &&
                 publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioNCX";
+
             // // dtb:multimediaContent ==> text
             // const isTextOnly = publication.Metadata?.AdditionalJSON &&
             //     publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "textNCX";
-
-            // dtb:multimediaContent ==> audio,text
 
             const smilHtmls: Link[] = [];
             if (publication.Spine) {
@@ -387,12 +386,12 @@ export const convertDaisyToReadiumWebPub = async (
                         // mo.initialized true/false is automatically handled
                         await lazyLoadMediaOverlays(publication, linkItem.MediaOverlays);
 
-                        if (isFullTextAudio || isFullAudio) {
+                        if (isFullTextAudio || isAudioOnly) {
                             updateDurations(linkItem.MediaOverlays.duration, linkItem);
                         }
                     }
 
-                    if (isFullTextAudio || isFullAudio) {
+                    if (isFullTextAudio || isAudioOnly) {
                         const computedDur = getMediaOverlaysDuration(linkItem.MediaOverlays);
                         if (computedDur) {
                             if (!linkItem.MediaOverlays.duration) {
@@ -432,7 +431,7 @@ export const convertDaisyToReadiumWebPub = async (
 
                     let smilTextRef = patchMediaOverlaysTextHref(linkItem.MediaOverlays);
 
-                    if (isFullAudio) {
+                    if (isAudioOnly) {
                         smilTextRef = await createHtmlFromSmilFile(linkItem);
                         if (smilTextRef) {
                             const smilLink = new Link();
@@ -1438,7 +1437,7 @@ ${cssHrefs.reduce((pv, cv) => {
                         debug("dtBook.HrefDecoded !== mediaOverlay.smilTextRef",
                             dtBookLink.HrefDecoded, mediaOverlay.smilTextRef);
                     } else {
-                        if (isFullTextAudio || isFullAudio) {
+                        if (isFullTextAudio || isAudioOnly) {
                             dtBookLink.MediaOverlays = mediaOverlay.mo;
 
                             if (mediaOverlay.mo.duration) {
@@ -1529,7 +1528,7 @@ ${cssHrefs.reduce((pv, cv) => {
                 if (!href) {
                     return;
                 }
-                if (isFullAudio) {
+                if (isAudioOnly) {
                     link.Href = href.replace(/\.smil/, ".html");
                     return;
                 }
