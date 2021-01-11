@@ -35,19 +35,6 @@ function ensureDirs(fspath: string) {
     }
 }
 
-function removeTag(bodyContent: Element, tagToBeRemoved: string) {
-
-    // getElementsByName(elementName: string): NodeListOf<HTMLElement>
-    // ==> not available in the XMLDOM API
-    // getElementsByTagName(qualifiedName: string): HTMLCollectionOf<Element>
-    const els = Array.from(bodyContent.getElementsByTagName(tagToBeRemoved)).filter((el) => el);
-    for (const el of els) {
-        if (el.parentNode) {
-            el.parentNode.removeChild(el);
-        }
-    }
-}
-
 // this function modifies the input parameter "publication"!
 export const convertDaisyToReadiumWebPub = async (
     outputDirPath: string, publication: Publication): Promise<string | undefined> => {
@@ -302,25 +289,6 @@ export const convertDaisyToReadiumWebPub = async (
                 return undefined;
             };
 
-            const getTextFromToc = (el: Element, href: string) => {
-                const elmId = el.getAttribute("id");
-                const hrefDecoded = `${href}#${elmId}`;
-                // const tocLinkItem = publication.TOC.find((toc: Link) => {
-                //     return toc.HrefDecoded === hrefDecoded;
-                // });
-                // return tocLinkItem ? tocLinkItem.Title : undefined;
-                const tocLinkItem = findLinkInToc(publication.TOC, hrefDecoded);
-                return tocLinkItem ? tocLinkItem.Title : undefined;
-            };
-
-            const parseSmilDoc = (smil: string) => {
-                return smil
-                    .replace(/<seq/g, '<div class="seq"')
-                    .replace(/<par/g, '<p class="par"')
-                    .replace(/<\/seq>/g, "</div>")
-                    .replace(/<\/par>/g, "</p>");
-            };
-
             const createHtmlFromSmilFile = async (link: Link): Promise<string | undefined> => {
                 const href = link.HrefDecoded;
                 if (!href) {
@@ -339,16 +307,35 @@ export const convertDaisyToReadiumWebPub = async (
                 // getElementsByTagName(qualifiedName: string): HTMLCollectionOf<Element>
                 const els = Array.from(smilDoc.getElementsByTagName("par"));
                 for (const el of els) {
-                    const text = getTextFromToc(el, href);
+
+                    const elmId = el.getAttribute("id");
+                    const hrefDecoded = `${href}#${elmId}`;
+                    const tocLinkItem = findLinkInToc(publication.TOC, hrefDecoded);
+                    const text = tocLinkItem ? tocLinkItem.Title : undefined;
+
                     if (text) {
                         const textNode = smilDoc.createTextNode(text);
                         el.appendChild(textNode);
                     }
                 }
                 const bodyContent = smilDoc.getElementsByTagName("body")[0];
-                removeTag(bodyContent, "audio");
+
+                // getElementsByName(elementName: string): NodeListOf<HTMLElement>
+                // ==> not available in the XMLDOM API
+                // getElementsByTagName(qualifiedName: string): HTMLCollectionOf<Element>
+                const audioElements = Array.from(bodyContent.getElementsByTagName("audio")).filter((el) => el);
+                for (const audioElement of audioElements) {
+                    if (audioElement.parentNode) {
+                        audioElement.parentNode.removeChild(audioElement);
+                    }
+                }
+
                 const bodyContentStr = new xmldom.XMLSerializer().serializeToString(bodyContent);
-                const contentStr = parseSmilDoc(bodyContentStr);
+                const contentStr = bodyContentStr
+                    .replace(/<seq/g, '<div class="smil-seq"')
+                    .replace(/<par/g, '<p class="smil-par"')
+                    .replace(/<\/seq>/g, "</div>")
+                    .replace(/<\/par>/g, "</p>");
                 const htmlDoc = `
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
