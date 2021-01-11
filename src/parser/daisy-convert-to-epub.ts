@@ -1529,7 +1529,7 @@ ${cssHrefs.reduce((pv, cv) => {
                     return;
                 }
                 if (isAudioOnly) {
-                    link.Href = href.replace(/\.smil/, ".html");
+                    link.HrefDecoded = href.replace(/\.smil$/, ".html");
                     return;
                 }
                 let fragment: string | undefined;
