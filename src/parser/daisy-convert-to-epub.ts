@@ -1562,7 +1562,6 @@ ${cssHrefs.reduce((pv, cv) => {
                 if (!targetEl) {
                     return;
                 }
-
                 if (targetEl.nodeName !== "text") {
                     // const textElems = select("//text", targetEl, true) as Element;
                     // if (textElems) {
@@ -1611,7 +1610,6 @@ ${cssHrefs.reduce((pv, cv) => {
 
             const jsonObj = TaJsonSerialize(publication);
             const jsonStr = global.JSON.stringify(jsonObj, null, "  ");
-
             zipfile.addBuffer(Buffer.from(jsonStr), "manifest.json");
         } catch (erreur) {
             debug(erreur);
