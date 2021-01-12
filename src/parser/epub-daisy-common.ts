@@ -1800,7 +1800,7 @@ const addSeqToMediaOverlay = (
         } else if (isAudioOnly) {
             const htmlPath = smil.ZipPath;
             const htmlFilePath = htmlPath.replace(/\.(.+)$/, ".xhtml");
-            moc.Text = `${htmlFilePath}#${par.ID}` ;
+            moc.Text = `${htmlFilePath}#${par.ID}`;
         }
 
         if (par.Audio && par.Audio.Src) {

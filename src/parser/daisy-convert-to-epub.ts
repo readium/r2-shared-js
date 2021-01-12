@@ -1570,7 +1570,6 @@ ${cssHrefs.reduce((pv, cv) => {
                     // }
                     targetEl = findFirstDescendantText(targetEl);
                 }
-
                 if (!targetEl || targetEl.nodeName !== "text") {
                     return;
                 }
@@ -1579,7 +1578,6 @@ ${cssHrefs.reduce((pv, cv) => {
                 if (!src) {
                     return;
                 }
-
                 // TODO: path is relative to SMIL (not to publication root),
                 // and .xml file extension replacement is bit weak / brittle
                 // (but for most DAISY books, this is a reasonable expectation)
@@ -1613,7 +1611,7 @@ ${cssHrefs.reduce((pv, cv) => {
 
             const jsonObj = TaJsonSerialize(publication);
             const jsonStr = global.JSON.stringify(jsonObj, null, "  ");
-            // console.log("jsonStr", jsonStr);
+
             zipfile.addBuffer(Buffer.from(jsonStr), "manifest.json");
         } catch (erreur) {
             debug(erreur);
