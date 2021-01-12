@@ -1609,6 +1609,10 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
 
             const getDur = !smil.Body.Duration && smil.Body.Children.length === 1;
 
+            // dtb:multimediaContent ==> audio
+            const isAudioOnly = publication.Metadata?.AdditionalJSON &&
+                publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioNCX";
+
             smil.Body.Children.forEach((seqChild) => {
                 if (getDur && seqChild.Duration) {
                     mo.duration = timeStrToSeconds(seqChild.Duration);
@@ -1616,10 +1620,6 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
                 if (!mo.Children) {
                     mo.Children = [];
                 }
-
-                // dtb:multimediaContent ==> audio
-                const isAudioOnly = publication.Metadata?.AdditionalJSON &&
-                    publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioNCX";
 
                 addSeqToMediaOverlay(smil, publication, mo, mo.Children, seqChild, isAudioOnly);
             });
