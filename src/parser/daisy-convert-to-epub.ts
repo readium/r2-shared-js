@@ -41,6 +41,18 @@ export const convertDaisyToReadiumWebPub = async (
 
     return new Promise(async (resolve, reject) => {
 
+        // dtb:multimediaContent ==> audio,text
+        const isFullTextAudio = publication.Metadata?.AdditionalJSON &&
+            publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText";
+
+        // dtb:multimediaContent ==> audio
+        const isAudioOnly = publication.Metadata?.AdditionalJSON &&
+            publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioNCX";
+
+        // dtb:multimediaContent ==> text
+        const isTextOnly = publication.Metadata?.AdditionalJSON &&
+            publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "textNCX";
+
         const zipInternal = publication.findFromInternal("zip");
         if (!zipInternal) {
             debug("No publication zip!?");
@@ -48,7 +60,7 @@ export const convertDaisyToReadiumWebPub = async (
         }
         const zip = zipInternal.Value as IZip;
 
-        const outputZipPath = path.join(outputDirPath, "daisy-to-epub.webpub");
+        const outputZipPath = path.join(outputDirPath, `${isAudioOnly ? "daisy_audioNCX" : (isTextOnly ? "daisy_textNCX" : "daisy_audioFullText")}-to-epub.webpub`);
         ensureDirs(outputZipPath);
 
         let timeoutId: NodeJS.Timeout | undefined;
@@ -244,11 +256,16 @@ export const convertDaisyToReadiumWebPub = async (
                 return duration;
             };
 
-            const patchMediaOverlaysTextHref = (mo: MediaOverlayNode): string | undefined => {
+            const patchMediaOverlaysTextHref = (
+                mo: MediaOverlayNode,
+                audioOnlySmilHtmlHref: string | undefined): string | undefined => {
 
                 let smilTextRef: string | undefined;
 
-                if (mo.Text) {
+                if (audioOnlySmilHtmlHref && !mo.Text && mo.Audio) {
+                    smilTextRef = audioOnlySmilHtmlHref;
+                    mo.Text = `${smilTextRef}#${mo.ParID || "_yyy_"}`;
+                } else if (mo.Text) {
                     // TODO: .xml file extension replacement is bit weak / brittle
                     // (but for most DAISY books, this is a reasonable expectation)
                     mo.Text = mo.Text.replace(/\.xml/, ".xhtml");
@@ -260,7 +277,7 @@ export const convertDaisyToReadiumWebPub = async (
                 }
                 if (mo.Children) {
                     for (const child of mo.Children) {
-                        const smilTextRef_ = patchMediaOverlaysTextHref(child);
+                        const smilTextRef_ = patchMediaOverlaysTextHref(child, audioOnlySmilHtmlHref);
                         if (!smilTextRef_) {
                             debug("########## WARNING: !smilTextRef ???!!", smilTextRef_, child);
                         } else if (smilTextRef && smilTextRef !== smilTextRef_) {
@@ -289,13 +306,8 @@ export const convertDaisyToReadiumWebPub = async (
                 return undefined;
             };
 
-            const createHtmlFromSmilFile = async (link: Link): Promise<string | undefined> => {
-                const href = link.HrefDecoded;
-                if (!href) {
-                    return undefined;
-                }
-
-                const smilStr = await loadFileStrFromZipPath(href, href, zip);
+            const createHtmlFromSmilFile = async (smilPathInZip: string): Promise<string | undefined> => {
+                const smilStr = await loadFileStrFromZipPath(smilPathInZip, smilPathInZip, zip);
                 if (!smilStr) {
                     debug("!loadFileStrFromZipPath", smilStr);
                     return undefined;
@@ -309,7 +321,7 @@ export const convertDaisyToReadiumWebPub = async (
                 for (const el of els) {
 
                     const elmId = el.getAttribute("id");
-                    const hrefDecoded = `${href}#${elmId}`;
+                    const hrefDecoded = `${smilPathInZip}#${elmId}`;
                     const tocLinkItem = findLinkInToc(publication.TOC, hrefDecoded);
                     const text = tocLinkItem ? tocLinkItem.Title : undefined;
 
@@ -349,23 +361,11 @@ export const convertDaisyToReadiumWebPub = async (
     </body>
 </html>
 `;
-                const htmlFilePath = href.replace(/\.(.+)$/, ".xhtml");
+                const htmlFilePath = smilPathInZip.replace(/\.smil$/, ".xhtml");
                 // const fileName = path.parse(href).name;
                 zipfile.addBuffer(Buffer.from(htmlDoc), htmlFilePath);
                 return htmlFilePath;
             };
-
-            // dtb:multimediaContent ==> audio,text
-            const isFullTextAudio = publication.Metadata?.AdditionalJSON &&
-                publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText";
-
-            // dtb:multimediaContent ==> audio
-            const isAudioOnly = publication.Metadata?.AdditionalJSON &&
-                publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioNCX";
-
-            // // dtb:multimediaContent ==> text
-            // const isTextOnly = publication.Metadata?.AdditionalJSON &&
-            //     publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "textNCX";
 
             const smilHtmls: Link[] = [];
             if (publication.Spine) {
@@ -427,19 +427,28 @@ export const convertDaisyToReadiumWebPub = async (
                         previousLinkItem = linkItem;
                     }
 
-                    let smilTextRef = patchMediaOverlaysTextHref(linkItem.MediaOverlays);
+                    let smilTextRef: string | undefined;
 
                     if (isAudioOnly) {
-                        smilTextRef = await createHtmlFromSmilFile(linkItem);
-                        if (smilTextRef) {
-                            const smilLink = new Link();
-                            smilLink.Href = smilTextRef;
-                            smilLink.TypeLink = "text/html";
-                            smilHtmls.push(smilLink);
+                        const audioOnlySmilHtmlHref =
+                            linkItem.MediaOverlays.SmilPathInZip?.replace(/\.smil$/, ".xhtml");
+                        if (audioOnlySmilHtmlHref) {
+                            smilTextRef = patchMediaOverlaysTextHref(linkItem.MediaOverlays, audioOnlySmilHtmlHref);
                         }
+                    } else {
+                        smilTextRef = patchMediaOverlaysTextHref(linkItem.MediaOverlays, undefined);
                     }
 
                     if (smilTextRef) {
+                        if (isAudioOnly && linkItem.MediaOverlays.SmilPathInZip) {
+                            await createHtmlFromSmilFile(linkItem.MediaOverlays.SmilPathInZip);
+
+                            const smilHtml = new Link();
+                            smilHtml.Href = smilTextRef;
+                            smilHtml.TypeLink = "application/xhtml+xml";
+                            smilHtmls.push(smilHtml);
+                        }
+
                         // spineIndex++;
                         if (!mediaOverlaysMap[smilTextRef]) {
                             mediaOverlaysMap[smilTextRef] = {
@@ -1489,7 +1498,8 @@ ${cssHrefs.reduce((pv, cv) => {
             if (!publication.Metadata.AdditionalJSON) {
                 publication.Metadata.AdditionalJSON = {};
             }
-            publication.Metadata.AdditionalJSON.ReadiumWebPublicationConvertedFrom = "DAISY";
+            publication.Metadata.AdditionalJSON.ReadiumWebPublicationConvertedFrom =
+                isAudioOnly ? "DAISY_audioNCX" : (isTextOnly ? "DAISY_textNCX" : "DAISY_audioFullText");
 
             const findFirstDescendantText = (parent: Element): Element | undefined => {
                 if (parent.childNodes && parent.childNodes.length) {
@@ -1527,7 +1537,7 @@ ${cssHrefs.reduce((pv, cv) => {
                     return;
                 }
                 if (isAudioOnly) {
-                    link.HrefDecoded = href.replace(/\.smil$/, ".xhtml");
+                    link.setHrefDecoded(href.replace(/\.smil/, ".xhtml"));
                     return;
                 }
                 let fragment: string | undefined;

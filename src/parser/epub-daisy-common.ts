@@ -1609,10 +1609,6 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
 
             const getDur = !smil.Body.Duration && smil.Body.Children.length === 1;
 
-            // dtb:multimediaContent ==> audio
-            const isAudioOnly = publication.Metadata?.AdditionalJSON &&
-                publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioNCX";
-
             smil.Body.Children.forEach((seqChild) => {
                 if (getDur && seqChild.Duration) {
                     mo.duration = timeStrToSeconds(seqChild.Duration);
@@ -1621,7 +1617,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
                     mo.Children = [];
                 }
 
-                addSeqToMediaOverlay(smil, publication, mo, mo.Children, seqChild, isAudioOnly);
+                addSeqToMediaOverlay(smil, publication, mo, mo.Children, seqChild);
             });
         }
     }
@@ -1631,7 +1627,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
 
 const addSeqToMediaOverlay = (
     smil: SMIL, publication: Publication,
-    rootMO: MediaOverlayNode, mo: MediaOverlayNode[], seqChild: SeqOrPar, isAudioOnly: boolean = false) => {
+    rootMO: MediaOverlayNode, mo: MediaOverlayNode[], seqChild: SeqOrPar) => {
 
     if (!smil.ZipPath) {
         return;
@@ -1723,11 +1719,15 @@ const addSeqToMediaOverlay = (
                 if (!moc.Children) {
                     moc.Children = [];
                 }
-                addSeqToMediaOverlay(smil, publication, rootMO, moc.Children, child, isAudioOnly);
+                addSeqToMediaOverlay(smil, publication, rootMO, moc.Children, child);
             });
         }
     } else { // Par
         const par = seqChild as Par;
+
+        if (par.ID) {
+            moc.ParID = par.ID;
+        }
 
         if (par.EpubType) {
             const roles = parseSpaceSeparatedString(par.EpubType);
@@ -1797,12 +1797,7 @@ const addSeqToMediaOverlay = (
                     .replace(/\\/g, "/");
                 moc.Text = zipPath;
             }
-        } else if (isAudioOnly) {
-            const htmlPath = smil.ZipPath;
-            const htmlFilePath = htmlPath.replace(/\.(.+)$/, ".xhtml");
-            moc.Text = `${htmlFilePath}#${par.ID}`;
         }
-
         if (par.Audio && par.Audio.Src) {
             const parAudioSrcDcoded = par.Audio.SrcDecoded;
             if (!parAudioSrcDcoded) {

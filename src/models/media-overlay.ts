@@ -106,6 +106,8 @@ export class MediaOverlayNode {
 
     public initialized: boolean = false;
 
+    public ParID: string | undefined;
+
     public AudioClipBegin: number | undefined;
     public AudioClipEnd: number | undefined;
 
