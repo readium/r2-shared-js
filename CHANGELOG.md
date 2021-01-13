@@ -6,6 +6,26 @@ Git diff:
 Changes:
 * TODO
 
+# 1.0.48
+
+> Build environment: NodeJS `14.15.1`, NPM `6.14.10`
+
+Changes:
+* NPM package updates
+* Support for DAISY3 audio-only talking books (conversion to EPUB3 Media Overlays)
+* Added parsing of NCX audio NavLabels, and preserved in ReadiumWebPubManifest Table of Contents, Page List, Landmarks, etc. (alternate links with URI Media Fragments)
+* Fixed DAISY3 DTBook XHTML in full text+audio converter
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.48/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.48/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.48
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.47...v1.0.48
+
 # 1.0.47
 
 > Build environment: NodeJS `14.15.1`, NPM `6.14.9`
