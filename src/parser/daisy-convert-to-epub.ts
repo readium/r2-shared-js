@@ -292,6 +292,9 @@ export const convertDaisyToReadiumWebPub = async (
                 return smilTextRef;
             };
 
+            // in-memory cache for expensive SMIL XML DOM parsing
+            const smilDocs: Record<string, Document> = {};
+
             const findLinkInToc = (links: Link[], hrefDecoded: string): Link | undefined => {
                 for (const link of links) {
                     if (link.HrefDecoded === hrefDecoded) {
@@ -307,58 +310,64 @@ export const convertDaisyToReadiumWebPub = async (
             };
 
             const createHtmlFromSmilFile = async (smilPathInZip: string): Promise<string | undefined> => {
-                const smilStr = await loadFileStrFromZipPath(smilPathInZip, smilPathInZip, zip);
-                if (!smilStr) {
-                    debug("!loadFileStrFromZipPath", smilStr);
-                    return undefined;
+
+                let smilDoc = smilDocs[smilPathInZip];
+                if (!smilDoc) {
+                    const smilStr = await loadFileStrFromZipPath(smilPathInZip, smilPathInZip, zip);
+                    if (!smilStr) {
+                        debug("!loadFileStrFromZipPath", smilStr);
+                        return undefined;
+                    }
+                    smilDoc = new xmldom.DOMParser().parseFromString(smilStr, "application/xml");
+                    smilDocs[smilPathInZip] = smilDoc;
                 }
-                const smilDoc = new xmldom.DOMParser().parseFromString(smilStr, "application/xml");
 
                 // getElementsByName(elementName: string): NodeListOf<HTMLElement>
                 // ==> not available in the XMLDOM API
                 // getElementsByTagName(qualifiedName: string): HTMLCollectionOf<Element>
-                const els = Array.from(smilDoc.getElementsByTagName("par"));
-                for (const el of els) {
+                const parEls = Array.from(smilDoc.getElementsByTagName("par"));
+                for (const parEl of parEls) {
 
-                    const elmId = el.getAttribute("id");
+                    // getElementsByName(elementName: string): NodeListOf<HTMLElement>
+                    // ==> not available in the XMLDOM API
+                    // getElementsByTagName(qualifiedName: string): HTMLCollectionOf<Element>
+                    const audioElements = Array.from(parEl.getElementsByTagName("audio")).filter((el) => el);
+                    for (const audioElement of audioElements) {
+                        if (audioElement.parentNode) {
+                            audioElement.parentNode.removeChild(audioElement);
+                        }
+                    }
+
+                    const elmId = parEl.getAttribute("id");
                     const hrefDecoded = `${smilPathInZip}#${elmId}`;
                     const tocLinkItem = findLinkInToc(publication.TOC, hrefDecoded);
                     const text = tocLinkItem ? tocLinkItem.Title : undefined;
 
-                    if (text) {
-                        const textNode = smilDoc.createTextNode(text);
-                        el.appendChild(textNode);
-                    }
+                    const textNode = smilDoc.createTextNode(text ? text : ".");
+                    parEl.appendChild(textNode);
                 }
+
                 const bodyContent = smilDoc.getElementsByTagName("body")[0];
-
-                // getElementsByName(elementName: string): NodeListOf<HTMLElement>
-                // ==> not available in the XMLDOM API
-                // getElementsByTagName(qualifiedName: string): HTMLCollectionOf<Element>
-                const audioElements = Array.from(bodyContent.getElementsByTagName("audio")).filter((el) => el);
-                for (const audioElement of audioElements) {
-                    if (audioElement.parentNode) {
-                        audioElement.parentNode.removeChild(audioElement);
-                    }
-                }
-
                 const bodyContentStr = new xmldom.XMLSerializer().serializeToString(bodyContent);
                 const contentStr = bodyContentStr
+                    .replace(`xmlns="http://www.w3.org/2001/SMIL20/"`, "")
+                    .replace(/dur=/g, "data-dur=")
+                    .replace(/fill=/g, "data-fill=")
+                    .replace(/customTest=/g, "data-customTest=")
+                    .replace(/class=/g, "data-class=")
                     .replace(/<seq/g, '<div class="smil-seq"')
                     .replace(/<par/g, '<p class="smil-par"')
                     .replace(/<\/seq>/g, "</div>")
-                    .replace(/<\/par>/g, "</p>");
-                const htmlDoc = `
-<?xml version="1.0" encoding="UTF-8"?>
+                    .replace(/<\/par>/g, "</p>")
+                    ;
+
+                const htmlDoc = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
     <head>
-        <title>
-        </title>
+        <title>${smilPathInZip}</title>
     </head>
-    <body>
-        ${contentStr}
-    </body>
+    ${contentStr}
 </html>
 `;
                 const htmlFilePath = smilPathInZip.replace(/\.smil$/, ".xhtml");
@@ -367,7 +376,7 @@ export const convertDaisyToReadiumWebPub = async (
                 return htmlFilePath;
             };
 
-            const smilHtmls: Link[] = [];
+            const audioOnlySmilHtmls: Link[] = [];
             if (publication.Spine) {
 
                 mediaOverlaysMap = {};
@@ -446,7 +455,7 @@ export const convertDaisyToReadiumWebPub = async (
                             const smilHtml = new Link();
                             smilHtml.Href = smilTextRef;
                             smilHtml.TypeLink = "application/xhtml+xml";
-                            smilHtmls.push(smilHtml);
+                            audioOnlySmilHtmls.push(smilHtml);
                         }
 
                         // spineIndex++;
@@ -466,7 +475,7 @@ export const convertDaisyToReadiumWebPub = async (
 
             const resourcesToKeep: Link[] = [];
 
-            const dtBooks: Link[] = [...smilHtmls];
+            const dtBooks: Link[] = [...audioOnlySmilHtmls];
             // reference copy! (not by value) so we can publication.Resources.push(...) safely within the loop
             // const resources = [...publication.Resources];
             // ... but we completely replace the array of Links, so this is fine:
@@ -1527,8 +1536,6 @@ ${cssHrefs.reduce((pv, cv) => {
                 }
                 return undefined;
             };
-
-            const smilDocs: Record<string, Document> = {};
 
             const processLink = async (link: Link) => {
                 // relative to publication root (package.opf / ReadiumWebPubManifest.json)
