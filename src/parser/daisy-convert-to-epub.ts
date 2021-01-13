@@ -41,6 +41,18 @@ export const convertDaisyToReadiumWebPub = async (
 
     return new Promise(async (resolve, reject) => {
 
+        // dtb:multimediaContent ==> audio,text
+        const isFullTextAudio = publication.Metadata?.AdditionalJSON &&
+            publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText";
+
+        // dtb:multimediaContent ==> audio
+        const isAudioOnly = publication.Metadata?.AdditionalJSON &&
+            publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioNCX";
+
+        // dtb:multimediaContent ==> text
+        const isTextOnly = publication.Metadata?.AdditionalJSON &&
+            publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "textNCX";
+
         const zipInternal = publication.findFromInternal("zip");
         if (!zipInternal) {
             debug("No publication zip!?");
@@ -48,7 +60,7 @@ export const convertDaisyToReadiumWebPub = async (
         }
         const zip = zipInternal.Value as IZip;
 
-        const outputZipPath = path.join(outputDirPath, "daisy-to-epub.webpub");
+        const outputZipPath = path.join(outputDirPath, `${isAudioOnly ? "daisy_audioNCX" : (isTextOnly ? "daisy_textNCX" : "daisy_audioFullText")}-to-epub.webpub`);
         ensureDirs(outputZipPath);
 
         let timeoutId: NodeJS.Timeout | undefined;
@@ -244,11 +256,16 @@ export const convertDaisyToReadiumWebPub = async (
                 return duration;
             };
 
-            const patchMediaOverlaysTextHref = (mo: MediaOverlayNode): string | undefined => {
+            const patchMediaOverlaysTextHref = (
+                mo: MediaOverlayNode,
+                audioOnlySmilHtmlHref: string | undefined): string | undefined => {
 
                 let smilTextRef: string | undefined;
 
-                if (mo.Text) {
+                if (audioOnlySmilHtmlHref && !mo.Text && mo.Audio) {
+                    smilTextRef = audioOnlySmilHtmlHref;
+                    mo.Text = `${smilTextRef}#${mo.ParID || "_yyy_"}`;
+                } else if (mo.Text) {
                     // TODO: .xml file extension replacement is bit weak / brittle
                     // (but for most DAISY books, this is a reasonable expectation)
                     mo.Text = mo.Text.replace(/\.xml/, ".xhtml");
@@ -260,7 +277,7 @@ export const convertDaisyToReadiumWebPub = async (
                 }
                 if (mo.Children) {
                     for (const child of mo.Children) {
-                        const smilTextRef_ = patchMediaOverlaysTextHref(child);
+                        const smilTextRef_ = patchMediaOverlaysTextHref(child, audioOnlySmilHtmlHref);
                         if (!smilTextRef_) {
                             debug("########## WARNING: !smilTextRef ???!!", smilTextRef_, child);
                         } else if (smilTextRef && smilTextRef !== smilTextRef_) {
@@ -275,15 +292,91 @@ export const convertDaisyToReadiumWebPub = async (
                 return smilTextRef;
             };
 
-            // dtb:multimediaContent ==> audio,text
-            const isFullTextAudio = publication.Metadata?.AdditionalJSON &&
-                publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText";
+            // in-memory cache for expensive SMIL XML DOM parsing
+            const smilDocs: Record<string, Document> = {};
 
-            // // dtb:multimediaContent ==> text
-            // const isTextOnly = publication.Metadata?.AdditionalJSON &&
-            //     publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "textNCX";
+            const findLinkInToc = (links: Link[], hrefDecoded: string): Link | undefined => {
+                for (const link of links) {
+                    if (link.HrefDecoded === hrefDecoded) {
+                        return link;
+                    } else if (link.Children) {
+                        const foundLink = findLinkInToc(link.Children, hrefDecoded);
+                        if (foundLink) {
+                            return foundLink;
+                        }
+                    }
+                }
+                return undefined;
+            };
 
-            // dtb:multimediaContent ==> audio,text
+            const createHtmlFromSmilFile = async (smilPathInZip: string): Promise<string | undefined> => {
+
+                let smilDoc = smilDocs[smilPathInZip];
+                if (!smilDoc) {
+                    const smilStr = await loadFileStrFromZipPath(smilPathInZip, smilPathInZip, zip);
+                    if (!smilStr) {
+                        debug("!loadFileStrFromZipPath", smilStr);
+                        return undefined;
+                    }
+                    smilDoc = new xmldom.DOMParser().parseFromString(smilStr, "application/xml");
+                    smilDocs[smilPathInZip] = smilDoc;
+                }
+
+                // getElementsByName(elementName: string): NodeListOf<HTMLElement>
+                // ==> not available in the XMLDOM API
+                // getElementsByTagName(qualifiedName: string): HTMLCollectionOf<Element>
+                const parEls = Array.from(smilDoc.getElementsByTagName("par"));
+                for (const parEl of parEls) {
+
+                    // getElementsByName(elementName: string): NodeListOf<HTMLElement>
+                    // ==> not available in the XMLDOM API
+                    // getElementsByTagName(qualifiedName: string): HTMLCollectionOf<Element>
+                    const audioElements = Array.from(parEl.getElementsByTagName("audio")).filter((el) => el);
+                    for (const audioElement of audioElements) {
+                        if (audioElement.parentNode) {
+                            audioElement.parentNode.removeChild(audioElement);
+                        }
+                    }
+
+                    const elmId = parEl.getAttribute("id");
+                    const hrefDecoded = `${smilPathInZip}#${elmId}`;
+                    const tocLinkItem = findLinkInToc(publication.TOC, hrefDecoded);
+                    const text = tocLinkItem ? tocLinkItem.Title : undefined;
+
+                    const textNode = smilDoc.createTextNode(text ? text : ".");
+                    parEl.appendChild(textNode);
+                }
+
+                const bodyContent = smilDoc.getElementsByTagName("body")[0];
+                const bodyContentStr = new xmldom.XMLSerializer().serializeToString(bodyContent);
+                const contentStr = bodyContentStr
+                    .replace(`xmlns="http://www.w3.org/2001/SMIL20/"`, "")
+                    .replace(/dur=/g, "data-dur=")
+                    .replace(/fill=/g, "data-fill=")
+                    .replace(/customTest=/g, "data-customTest=")
+                    .replace(/class=/g, "data-class=")
+                    .replace(/<seq/g, '<div class="smil-seq"')
+                    .replace(/<par/g, '<p class="smil-par"')
+                    .replace(/<\/seq>/g, "</div>")
+                    .replace(/<\/par>/g, "</p>")
+                    ;
+
+                const htmlDoc = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+    <head>
+        <title>${smilPathInZip}</title>
+    </head>
+    ${contentStr}
+</html>
+`;
+                const htmlFilePath = smilPathInZip.replace(/\.smil$/, ".xhtml");
+                // const fileName = path.parse(href).name;
+                zipfile.addBuffer(Buffer.from(htmlDoc), htmlFilePath);
+                return htmlFilePath;
+            };
+
+            const audioOnlySmilHtmls: Link[] = [];
             if (publication.Spine) {
 
                 mediaOverlaysMap = {};
@@ -300,12 +393,12 @@ export const convertDaisyToReadiumWebPub = async (
                         // mo.initialized true/false is automatically handled
                         await lazyLoadMediaOverlays(publication, linkItem.MediaOverlays);
 
-                        if (isFullTextAudio) {
+                        if (isFullTextAudio || isAudioOnly) {
                             updateDurations(linkItem.MediaOverlays.duration, linkItem);
                         }
                     }
 
-                    if (isFullTextAudio) {
+                    if (isFullTextAudio || isAudioOnly) {
                         const computedDur = getMediaOverlaysDuration(linkItem.MediaOverlays);
                         if (computedDur) {
                             if (!linkItem.MediaOverlays.duration) {
@@ -343,8 +436,28 @@ export const convertDaisyToReadiumWebPub = async (
                         previousLinkItem = linkItem;
                     }
 
-                    const smilTextRef = patchMediaOverlaysTextHref(linkItem.MediaOverlays);
+                    let smilTextRef: string | undefined;
+
+                    if (isAudioOnly) {
+                        const audioOnlySmilHtmlHref =
+                            linkItem.MediaOverlays.SmilPathInZip?.replace(/\.smil$/, ".xhtml");
+                        if (audioOnlySmilHtmlHref) {
+                            smilTextRef = patchMediaOverlaysTextHref(linkItem.MediaOverlays, audioOnlySmilHtmlHref);
+                        }
+                    } else {
+                        smilTextRef = patchMediaOverlaysTextHref(linkItem.MediaOverlays, undefined);
+                    }
+
                     if (smilTextRef) {
+                        if (isAudioOnly && linkItem.MediaOverlays.SmilPathInZip) {
+                            await createHtmlFromSmilFile(linkItem.MediaOverlays.SmilPathInZip);
+
+                            const smilHtml = new Link();
+                            smilHtml.Href = smilTextRef;
+                            smilHtml.TypeLink = "application/xhtml+xml";
+                            audioOnlySmilHtmls.push(smilHtml);
+                        }
+
                         // spineIndex++;
                         if (!mediaOverlaysMap[smilTextRef]) {
                             mediaOverlaysMap[smilTextRef] = {
@@ -362,8 +475,7 @@ export const convertDaisyToReadiumWebPub = async (
 
             const resourcesToKeep: Link[] = [];
 
-            const dtBooks: Link[] = [];
-
+            const dtBooks: Link[] = [...audioOnlySmilHtmls];
             // reference copy! (not by value) so we can publication.Resources.push(...) safely within the loop
             // const resources = [...publication.Resources];
             // ... but we completely replace the array of Links, so this is fine:
@@ -1220,8 +1332,8 @@ Helpers
                         .replace(/xmlns="http:\/\/www\.daisy\.org\/z3986\/2005\/dtbook\/"/, "xmlns=\"http://www.w3.org/1999/xhtml\"")
                         .replace(/xmlns="http:\/\/www\.daisy\.org\/z3986\/2005\/dtbook\/"/g, " ")
                         .replace(/^([\s\S]*)<html/gm,
-                            `<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE xhtml>
+                            `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
 <html `)
                         .replace(/<head([\s\S]*?)>/gm,
                             `
@@ -1341,7 +1453,7 @@ ${cssHrefs.reduce((pv, cv) => {
                         debug("dtBook.HrefDecoded !== mediaOverlay.smilTextRef",
                             dtBookLink.HrefDecoded, mediaOverlay.smilTextRef);
                     } else {
-                        if (isFullTextAudio) {
+                        if (isFullTextAudio || isAudioOnly) {
                             dtBookLink.MediaOverlays = mediaOverlay.mo;
 
                             if (mediaOverlay.mo.duration) {
@@ -1395,7 +1507,8 @@ ${cssHrefs.reduce((pv, cv) => {
             if (!publication.Metadata.AdditionalJSON) {
                 publication.Metadata.AdditionalJSON = {};
             }
-            publication.Metadata.AdditionalJSON.ReadiumWebPublicationConvertedFrom = "DAISY";
+            publication.Metadata.AdditionalJSON.ReadiumWebPublicationConvertedFrom =
+                isAudioOnly ? "DAISY_audioNCX" : (isTextOnly ? "DAISY_textNCX" : "DAISY_audioFullText");
 
             const findFirstDescendantText = (parent: Element): Element | undefined => {
                 if (parent.childNodes && parent.childNodes.length) {
@@ -1424,15 +1537,16 @@ ${cssHrefs.reduce((pv, cv) => {
                 return undefined;
             };
 
-            const smilDocs: Record<string, Document> = {};
-
             const processLink = async (link: Link) => {
                 // relative to publication root (package.opf / ReadiumWebPubManifest.json)
                 let href = link.HrefDecoded;
                 if (!href) {
                     return;
                 }
-
+                if (isAudioOnly) {
+                    link.setHrefDecoded(href.replace(/\.smil/, ".xhtml"));
+                    return;
+                }
                 let fragment: string | undefined;
                 if (href.indexOf("#") >= 0) {
                     const arr = href.split("#");

@@ -6,6 +6,7 @@
 // ==LICENSE-END==
 
 import * as debug_ from "debug";
+import * as mime from "mime-types";
 import * as moment from "moment";
 import * as path from "path";
 import * as xmldom from "xmldom";
@@ -29,6 +30,7 @@ import { Transformers } from "@transform/transformer";
 import { zipHasEntry } from "../_utils/zipHasEntry";
 import { Rootfile } from "./epub/container-rootfile";
 import { NCX } from "./epub/ncx";
+import { NavLabel } from "./epub/ncx-navlabel";
 import { NavPoint } from "./epub/ncx-navpoint";
 import { OPF } from "./epub/opf";
 import { Author } from "./epub/opf-author";
@@ -1304,35 +1306,77 @@ const fillTOCFromNCX = (publication: Publication, ncx: NCX) => {
     }
 };
 
-const fillTOCFromNavPoint =
-    (publication: Publication, ncx: NCX, point: NavPoint, node: Link[]) => {
+const addAlternateAudioLinkFromNCX = (ncx: NCX, link: Link, navLabel: NavLabel | undefined) => {
 
-        const srcDecoded = point.Content.SrcDecoded;
-        if (!srcDecoded) {
-            debug("?!point.Content.Src");
-            return;
+    if (navLabel?.Audio && navLabel.Audio.Src) {
+
+        const audioSrcDcoded = navLabel.Audio.SrcDecoded;
+        if (!audioSrcDcoded) {
+            debug("?!audioSrcDcoded");
+        } else {
+            const zipPath = path.join(path.dirname(ncx.ZipPath), audioSrcDcoded)
+                .replace(/\\/g, "/");
+            let timeHref = zipPath;
+            timeHref += "#t=";
+
+            const begin = navLabel.Audio.ClipBegin ? timeStrToSeconds(navLabel.Audio.ClipBegin) : 0;
+            // altLink.AudioClipBegin = begin;
+            const end = navLabel.Audio.ClipEnd ? timeStrToSeconds(navLabel.Audio.ClipEnd) : 0;
+            // altLink.AudioClipEnd = end;
+
+            timeHref += begin.toString();
+            if (navLabel.Audio.ClipEnd) {
+                timeHref += ",";
+                timeHref += end.toString();
+            }
+
+            if (!link.Alternate) {
+                link.Alternate = [];
+            }
+            const altLink = new Link();
+            altLink.setHrefDecoded(timeHref);
+
+            const mediaType = mime.lookup(audioSrcDcoded);
+            if (mediaType) {
+                altLink.TypeLink = mediaType;
+            }
+
+            link.Alternate.push(altLink);
         }
-        const link = new Link();
-        const zipPath = path.join(path.dirname(ncx.ZipPath), srcDecoded)
-            .replace(/\\/g, "/");
+    }
+};
 
-        link.setHrefDecoded(zipPath);
+const fillTOCFromNavPoint = (publication: Publication, ncx: NCX, point: NavPoint, node: Link[]) => {
 
-        link.Title = point.Text;
+    const srcDecoded = point.Content.SrcDecoded;
+    if (!srcDecoded) {
+        debug("?!point.Content.Src");
+        return;
+    }
+    const link = new Link();
+    const zipPath = path.join(path.dirname(ncx.ZipPath), srcDecoded)
+        .replace(/\\/g, "/");
 
-        if (point.Points && point.Points.length) {
-            point.Points.forEach((p) => {
-                if (!link.Children) {
-                    link.Children = [];
-                }
-                fillTOCFromNavPoint(publication, ncx, p, link.Children);
-            });
-        }
+    link.setHrefDecoded(zipPath);
 
-        node.push(link);
-    };
+    link.Title = point.NavLabel?.Text;
+
+    addAlternateAudioLinkFromNCX(ncx, link, point.NavLabel);
+
+    if (point.Points && point.Points.length) {
+        point.Points.forEach((p) => {
+            if (!link.Children) {
+                link.Children = [];
+            }
+            fillTOCFromNavPoint(publication, ncx, p, link.Children);
+        });
+    }
+
+    node.push(link);
+};
 
 const fillPageListFromNCX = (publication: Publication, ncx: NCX) => {
+
     if (ncx.PageList && ncx.PageList.PageTarget && ncx.PageList.PageTarget.length) {
         ncx.PageList.PageTarget.forEach((pageTarget) => {
             const link = new Link();
@@ -1346,7 +1390,10 @@ const fillPageListFromNCX = (publication: Publication, ncx: NCX) => {
 
             link.setHrefDecoded(zipPath);
 
-            link.Title = pageTarget.Text;
+            link.Title = pageTarget.NavLabel?.Text;
+
+            addAlternateAudioLinkFromNCX(ncx, link, pageTarget.NavLabel);
+
             if (!publication.PageList) {
                 publication.PageList = [];
             }
@@ -1616,6 +1663,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
                 if (!mo.Children) {
                     mo.Children = [];
                 }
+
                 addSeqToMediaOverlay(smil, publication, mo, mo.Children, seqChild);
             });
         }
@@ -1645,6 +1693,10 @@ const addSeqToMediaOverlay = (
         moc.Role.push("section");
 
         const seq = seqChild as Seq;
+
+        if (seq.ID) {
+            moc.SeqID = seq.ID;
+        }
 
         if (seq.EpubType) {
             const roles = parseSpaceSeparatedString(seq.EpubType);
@@ -1723,6 +1775,10 @@ const addSeqToMediaOverlay = (
         }
     } else { // Par
         const par = seqChild as Par;
+
+        if (par.ID) {
+            moc.ParID = par.ID;
+        }
 
         if (par.EpubType) {
             const roles = parseSpaceSeparatedString(par.EpubType);

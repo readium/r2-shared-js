@@ -8,6 +8,7 @@
 import { XmlObject, XmlXPathSelector } from "@r2-utils-js/_utils/xml-js-mapper";
 
 import { Content } from "./ncx-content";
+import { NavLabel } from "./ncx-navlabel";
 
 @XmlObject({
     ncx: "http://www.daisy.org/z3986/2005/ncx/",
@@ -17,8 +18,8 @@ export class PageTarget {
 
     // XPATH ROOT: /ncx:ncx/ncx:pageList/ncx:pageTarget
 
-    @XmlXPathSelector("ncx:navLabel/ncx:text/text()")
-    public Text!: string;
+    @XmlXPathSelector("ncx:navLabel")
+    public NavLabel!: NavLabel;
 
     @XmlXPathSelector("@value")
     public Value!: string;

@@ -8,6 +8,7 @@
 import { XmlItemType, XmlObject, XmlXPathSelector } from "@r2-utils-js/_utils/xml-js-mapper";
 
 import { Content } from "./ncx-content";
+import { NavLabel } from "./ncx-navlabel";
 
 @XmlObject({
     ncx: "http://www.daisy.org/z3986/2005/ncx/",
@@ -21,8 +22,8 @@ export class NavPoint {
     @XmlItemType(NavPoint)
     public Points!: NavPoint[];
 
-    @XmlXPathSelector("ncx:navLabel/ncx:text/text()")
-    public Text!: string;
+    @XmlXPathSelector("ncx:navLabel")
+    public NavLabel!: NavLabel;
 
     @XmlXPathSelector("ncx:content")
     public Content!: Content;
