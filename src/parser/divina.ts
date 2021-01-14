@@ -35,9 +35,12 @@ function absolutizeURLs(rootUrl: string, jsonObj: any) {
         });
 }
 
-export async function DivinaParsePromise(filePath: string, isDivina?: Divinais): Promise<Publication> {
+// tslint:disable-next-line:max-line-length
+export async function DivinaParsePromise(filePath: string, isDivina?: Divinais, pubtype?: string): Promise<Publication> {
 
     const isAnDivina = isDivina || await isDivinaPublication(filePath);
+
+    const publicationType = pubtype || (isAnDivina ? "divina" : "generic");
 
     // // excludes Divinais.RemoteExploded
     // const canLoad = isAnDivina === Divinais.LocalExploded ||
@@ -134,7 +137,7 @@ export async function DivinaParsePromise(filePath: string, isDivina?: Divinais):
 
     const publication = TaJsonDeserialize<Publication>(manifestJson, Publication);
 
-    publication.AddToInternal("type", "divina");
+    publication.AddToInternal("type", publicationType);
     publication.AddToInternal("zip", zip);
 
     const lcpEntryName = "license.lcpl";
@@ -194,7 +197,7 @@ export enum Divinais {
     LocalExploded = "LocalExploded",
     LocalPacked = "LocalPacked",
     RemoteExploded = "RemoteExploded",
-    // RemotePacked = "RemotePacked",
+    RemotePacked = "RemotePacked",
 }
 
 async function doRequest(u: string): Promise<Divinais | undefined> {
