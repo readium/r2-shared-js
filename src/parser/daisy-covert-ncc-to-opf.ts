@@ -439,7 +439,7 @@ const getSrcSmilData = async (anchor: any, zip: IZip) => {
     const smilStr = await loadFileStrFromZipPath(link, link, zip);
     if (!smilStr) {
         debug("!loadFileStrFromZipPath", smilStr);
-        return undefined;
+        return null;
     }
     const parsedSmil = new xmldom.DOMParser().parseFromString(smilStr, "application/xml");
     // const parsedSmil = parser.parseFromString(
@@ -466,19 +466,18 @@ const getSrcSmilData = async (anchor: any, zip: IZip) => {
     }
 
     const audioInsidePar = smilEl.getElementsByTagName("audio")[0];
-    if (!audioInsidePar) {
-        return null;
-    }
-    // smilObj.audioEl = serializer.serializeToString(audioInsidePar);
-    const clipBegin =  audioInsidePar.getAttribute("clip-begin");
-    const clipEnd = audioInsidePar.getAttribute("clip-end");
+    if (audioInsidePar) {
+        // smilObj.audioEl = serializer.serializeToString(audioInsidePar);
+        const clipBegin =  audioInsidePar.getAttribute("clip-begin");
+        const clipEnd = audioInsidePar.getAttribute("clip-end");
 
-    smilObj.audioEl = {
-        clipBegin: clipBegin ? clipBegin.replace("npt=", "") : "",
-        clipEnd: clipEnd ? clipEnd.replace("npt=", "") : "",
-        id: audioInsidePar.getAttribute("id"),
-        src: audioInsidePar.getAttribute("src"),
-    };
+        smilObj.audioEl = {
+            clipBegin: clipBegin ? clipBegin.replace("npt=", "") : "",
+            clipEnd: clipEnd ? clipEnd.replace("npt=", "") : "",
+            id: audioInsidePar.getAttribute("id"),
+            src: audioInsidePar.getAttribute("src"),
+        };
+    }
 
     return smilObj;
 };
