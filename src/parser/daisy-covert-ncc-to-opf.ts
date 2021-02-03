@@ -465,19 +465,47 @@ const getSrcSmilData = async (anchor: any, zip: IZip) => {
         smilObj.parSrc = anchor.getAttribute("href");
     }
 
-    const audioInsidePar = smilEl.getElementsByTagName("audio")[0];
-    if (audioInsidePar) {
-        // smilObj.audioEl = serializer.serializeToString(audioInsidePar);
-        const clipBegin =  audioInsidePar.getAttribute("clip-begin");
-        const clipEnd = audioInsidePar.getAttribute("clip-end");
+    const seq = smilEl.getElementsByTagName("seq")[0];
+    if (seq) {
+        const audios = smilEl.getElementsByTagName("audio");
+        if (audios && audios.length > 0) {
+            // smilObj.audioEl = serializer.serializeToString(audioInsidePar);
+            let clipBegin = "";
+            let clipEnd = "";
+            let id = "";
+            let src = "";
+            for (let i = 0; i < audios.length; i++) {
+                if (i === 0) {
+                    clipBegin = audios[i].getAttribute("clip-begin") || "";
+                    src = audios[i].getAttribute("src") || "";
+                    id = audios[i].getAttribute("id") || "";
+                }
+                if (i === audios.length - 1) {
+                    clipEnd = audios[i].getAttribute("clip-end") || "";
+                }
+            }
 
-        smilObj.audioEl = {
-            clipBegin: clipBegin ? clipBegin.replace("npt=", "") : "",
-            clipEnd: clipEnd ? clipEnd.replace("npt=", "") : "",
-            id: audioInsidePar.getAttribute("id"),
-            src: audioInsidePar.getAttribute("src"),
-        };
+            smilObj.audioEl = {
+                clipBegin: clipBegin.replace("npt=", ""),
+                clipEnd: clipEnd.replace("npt=", ""),
+                id,
+                src,
+            };
+        }
     }
+    // const audioInsidePar = smilEl.getElementsByTagName("audio")[0];
+    // if (audioInsidePar) {
+    //     // smilObj.audioEl = serializer.serializeToString(audioInsidePar);
+    //     const clipBegin =  audioInsidePar.getAttribute("clip-begin");
+    //     const clipEnd = audioInsidePar.getAttribute("clip-end");
+
+    //     smilObj.audioEl = {
+    //         clipBegin: clipBegin ? clipBegin.replace("npt=", "") : "",
+    //         clipEnd: clipEnd ? clipEnd.replace("npt=", "") : "",
+    //         id: audioInsidePar.getAttribute("id"),
+    //         src: audioInsidePar.getAttribute("src"),
+    //     };
+    // }
 
     return smilObj;
 };
@@ -505,7 +533,6 @@ const convertToJs = async (tag: any, navPoints: any[], playOrder: any, zip: IZip
     playOrder++;
     const anchor = tag.getElementsByTagName("a")[0];
     const smilData = await getSrcSmilData(anchor, zip);
-
     const tempObj: TempTemplate = {
         playOrder,
         smilData,

@@ -99,11 +99,10 @@ export async function isDaisyPublication(urlOrPath: string): Promise<DaisyBookis
 //     return [true];
 // };
 
-const isDaisy2Version = (files: string[]) => {
+export const isDaisy2Version = (files: string[]) => {
     if (files.some((file) => file.match(/ncc\.html$/))) {
         return true;
     }
-    console.log(files);
     return false;
 };
 
@@ -219,6 +218,10 @@ const addLinkData = async (
 
     if (publication.Metadata?.AdditionalJSON) {
 
+        const entries = await zip.getEntries();
+
+        const isDasiy2 = isDaisy2Version(entries);
+
         // dtb:multimediaContent ==> audio,text
         const isFullTextAudio = publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText";
 
@@ -234,7 +237,7 @@ const addLinkData = async (
             if (linkItem.MediaOverlays && !linkItem.MediaOverlays.initialized) {
 
                 // mo.initialized true/false is automatically handled
-                await lazyLoadMediaOverlays(publication, linkItem.MediaOverlays);
+                await lazyLoadMediaOverlays(publication, linkItem.MediaOverlays, isDasiy2);
 
                 if (isFullTextAudio || isAudioOnly) {
                     updateDurations(linkItem.MediaOverlays.duration, linkItem);
