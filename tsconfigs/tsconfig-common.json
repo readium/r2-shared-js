@@ -60,7 +60,7 @@
     "listEmittedFiles": false,
     "traceResolution": false,
     "disableSizeLimit": false,
-    "preserveConstEnums": false,
+    "preserveConstEnums": true,
     "removeComments": true,
     "skipLibCheck": false,
     "locale": "en-US"

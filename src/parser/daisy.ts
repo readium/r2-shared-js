@@ -141,7 +141,7 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
         return entry.endsWith(".opf") && entry.indexOf("/") < 0 && entry.indexOf("\\") < 0;
     });
     if (!opfZipEntryPath) {
-        return Promise.reject("Opf File doesn't exists");
+        return Promise.reject("OPF package XML file cannot be found.");
     }
 
     const rootfilePathDecoded = opfZipEntryPath; // || "package.opf";
