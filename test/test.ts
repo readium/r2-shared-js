@@ -1,6 +1,6 @@
 import test from "ava";
 import * as debug_ from "debug";
-import * as filehound from "filehound";
+import * as fs from "fs";
 import * as jsonDiff from "json-diff";
 import * as path from "path";
 
@@ -10,6 +10,8 @@ import { PublicationParsePromise } from "@parser/publication-parser";
 import { TaJsonDeserialize, TaJsonSerialize } from "@r2-lcp-js/serializable";
 
 import { initGlobalConverters_GENERIC, initGlobalConverters_SHARED } from "../src/init-globals";
+
+// import * as filehound from "filehound";
 
 initGlobalConverters_SHARED();
 initGlobalConverters_GENERIC();
@@ -64,12 +66,14 @@ test("EPUB parsing (de)serialize roundtrip", async (t) => {
 
     const dirPath = path.join(process.cwd(), "misc/epubs/");
 
-    const filePaths: string[] = await filehound.create()
-        .discard("node_modules")
-        .depth(5)
-        .paths(dirPath)
-        .ext([".epub", ".epub3"])
-        .find();
+    // const filePaths: string[] = await filehound.create()
+    //     .discard("node_modules")
+    //     .depth(5)
+    //     .paths(dirPath)
+    //     .ext([".epub", ".epub3"])
+    //     .find();
+    const filePaths = fs.readdirSync(dirPath, { withFileTypes: true }).
+        filter((f) => f.isFile() && /\.epub3?$/.test(f.name)).map((f) => path.join(dirPath, f.name));
 
     for (const filePath of filePaths) {
         debug("------------------------");
