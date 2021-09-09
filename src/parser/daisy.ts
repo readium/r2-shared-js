@@ -65,11 +65,26 @@ export async function isDaisyPublication(urlOrPath: string): Promise<DaisyBookis
             debug(err);
             return Promise.reject(err);
         }
-        if (!await zipHasEntry(zip, "META-INF/container.xml", undefined) &&
-            (await zipHasEntry(zip, "package.opf", undefined) ||
-                await zipHasEntry(zip, "Book.opf", undefined) ||
-                await zipHasEntry(zip, "speechgen.opf", undefined))) {
 
+        if (!await zipHasEntry(zip, "META-INF/container.xml", undefined)) {
+
+            // if (await zipHasEntry(zip, "package.opf", undefined) ||
+            //     await zipHasEntry(zip, "Book.opf", undefined) ||
+            //     await zipHasEntry(zip, "speechgen.opf", undefined)) {
+            //     return DaisyBookis.LocalPacked;
+            // }
+
+            const entries = await zip.getEntries();
+            const opfZipEntryPath = entries.find((entry) => {
+                // regexp fails?!
+                // return /[^/]+\.opf$/.test(entry);
+                return entry.endsWith(".opf"); // && entry.indexOf("/") < 0 && entry.indexOf("\\") < 0;
+            });
+            if (!opfZipEntryPath) {
+                return undefined;
+            }
+
+            // TODO: check for <dc:Format>ANSI/NISO Z39.86-2005</dc:Format> ?
             return DaisyBookis.LocalPacked;
         }
     }
@@ -146,15 +161,12 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
     let opfZipEntryPath = entries.find((entry) => {
         // regexp fails?!
         // return /[^/]+\.opf$/.test(entry);
-        return entry.endsWith(".opf") && entry.indexOf("/") < 0 && entry.indexOf("\\") < 0;
+        // && entry.indexOf("/") < 0 && entry.indexOf("\\") < 0;
+        return isDaisy2 ? /ncc\.html$/.test(entry) : entry.endsWith(".opf");
     });
 
-    if (isDaisy2) {
-        opfZipEntryPath = entries.find((entry) => {
-            // regexp fails?!
-            // return /[^/]+\.opf$/.test(entry);
-            return entry.match(/ncc\.html$/);
-        });
+    if (!opfZipEntryPath) {
+        return Promise.reject("OPF package XML file cannot be found.");
     }
 
     const rootfilePathDecoded = opfZipEntryPath; // || "package.opf";
