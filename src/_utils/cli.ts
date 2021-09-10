@@ -267,6 +267,7 @@ async function extractEPUB_Check(zip: IZip, outDir: string) {
             if (zipEntry !== "mimetype" &&
                 !zipEntry.startsWith("META-INF/") &&
                 !zipEntry.endsWith(".opf") &&
+                !zipEntry.endsWith("ncc.html") &&
                 zipEntry !== "publication.json" &&
                 zipEntry !== "license.lcpl" &&
                 !zipEntry.endsWith(".DS_Store") &&

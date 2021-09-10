@@ -18,7 +18,7 @@ import { IZip } from "@r2-utils-js/_utils/zip/zip";
 import { zipLoadPromise } from "@r2-utils-js/_utils/zip/zipFactory";
 
 import { zipHasEntry } from "../_utils/zipHasEntry";
-import { getNccAndNcxFromOpf } from "./daisy-covert-ncc-to-opf";
+import { convertNccToOpfAndNcx } from "./daisy-convert-ncc-to-opf-ncx";
 import {
     addIdentifier, addLanguage, addMediaOverlaySMIL, addOtherMetadata, addTitle,
     fillPublicationDate, fillSpineAndResource, fillSubject, fillTOC, findContributorInMeta, getNcx,
@@ -51,6 +51,7 @@ export async function isDaisyPublication(urlOrPath: string): Promise<DaisyBookis
 
     } else if (fs.existsSync(path.join(urlOrPath, "package.opf")) ||
         fs.existsSync(path.join(urlOrPath, "Book.opf")) ||
+        fs.existsSync(path.join(urlOrPath, "ncc.html")) ||
         fs.existsSync(path.join(urlOrPath, "speechgen.opf"))
     ) {
         if (!fs.existsSync(path.join(urlOrPath, "META-INF", "container.xml"))) {
@@ -78,7 +79,8 @@ export async function isDaisyPublication(urlOrPath: string): Promise<DaisyBookis
             const opfZipEntryPath = entries.find((entry) => {
                 // regexp fails?!
                 // return /[^/]+\.opf$/.test(entry);
-                return entry.endsWith(".opf"); // && entry.indexOf("/") < 0 && entry.indexOf("\\") < 0;
+                // && entry.indexOf("/") < 0 && entry.indexOf("\\") < 0;
+                return /ncc\.html$/.test(entry) || entry.endsWith(".opf");
             });
             if (!opfZipEntryPath) {
                 return undefined;
@@ -90,36 +92,6 @@ export async function isDaisyPublication(urlOrPath: string): Promise<DaisyBookis
     }
     return undefined;
 }
-
-// const isFileValid = (files: string[]) => {
-//     // const keys = Object.keys(files);
-
-//     if (files.some((file) => file.match(/\.xml$/)) === false) {
-//         return [false, "No xml file found."];
-//     }
-
-//     if (files.some((file) => file.match(/\/ncc\.html$/))) {
-//         return [false, "DAISY 2 format is not supported."];
-//     }
-
-//     // if (files.some((file) => file.match(/\.mp3$/)) === false) {
-//     //   console.log("mp3");
-//     //   return [false];
-//     // }
-//     // if (files.some((file) => file.match(/\.smil$/)) === false) {
-//     //   console.log("smil");
-//     //   return [false];
-//     // }
-
-//     return [true];
-// };
-
-export const isDaisy2Version = (files: string[]) => {
-    if (files.some((file) => file.match(/ncc\.html$/))) {
-        return true;
-    }
-    return false;
-};
 
 export async function DaisyParsePromise(filePath: string): Promise<Publication> {
 
@@ -150,7 +122,7 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
 
     // note: does not work in RemoteExploded
     const entries = await zip.getEntries();
-    const isDaisy2 = isDaisy2Version(entries);
+
     // const [valid, message] = isFileValid(entries);
     // if (!valid) {
     //     return Promise.reject(message || "File validation failed.");
@@ -162,11 +134,18 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
         // regexp fails?!
         // return /[^/]+\.opf$/.test(entry);
         // && entry.indexOf("/") < 0 && entry.indexOf("\\") < 0;
-        return isDaisy2 ? /ncc\.html$/.test(entry) : entry.endsWith(".opf");
+        return entry.endsWith(".opf");
     });
+    let daisy2NccZipEntryPath: string | undefined;
+    if (!opfZipEntryPath) {
+        daisy2NccZipEntryPath = entries.find((entry) => {
+            return /ncc\.html$/.test(entry);
+        });
+        opfZipEntryPath = daisy2NccZipEntryPath;
+    }
 
     if (!opfZipEntryPath) {
-        return Promise.reject("OPF package XML file cannot be found.");
+        return Promise.reject("DAISY3 OPF package XML file or DAISY2 NCC cannot be found.");
     }
 
     const rootfilePathDecoded = opfZipEntryPath; // || "package.opf";
@@ -174,15 +153,10 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
         return Promise.reject("?!rootfile.PathDecoded");
     }
 
-    if (!opfZipEntryPath) {
-        return Promise.reject("Opf File doesn't exists");
-        // opfZipEntryPath = os.tmpdir() + "/package.opf";
-    }
-
     let opf: OPF | undefined;
     let ncx: NCX | undefined;
-    if (isDaisy2) {
-        [opf, ncx] = await getNccAndNcxFromOpf(zip, rootfilePathDecoded, opfZipEntryPath, publication);
+    if (daisy2NccZipEntryPath) { // same as opfZipEntryPath
+        [opf, ncx] = await convertNccToOpfAndNcx(zip, rootfilePathDecoded, opfZipEntryPath);
     } else {
         opf = await getOpf(zip, rootfilePathDecoded, opfZipEntryPath);
         if (opf.Manifest) {
@@ -230,18 +204,24 @@ const addLinkData = async (
 
     if (publication.Metadata?.AdditionalJSON) {
 
-        const entries = await zip.getEntries();
+        // TODO: textPartAudio / audioPartText?? audioOnly??
+        // https://www.daisy.org/z3986/specifications/Z39-86-2002.html#Type
+        // https://www.daisy.org/z3986/specifications/daisy_202.html
 
-        const isDasiy2 = isDaisy2Version(entries);
+        const isFullTextAudio =
+            // dtb:multimediaContent ==> audio,text
+            publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText" ||
+            publication.Metadata.AdditionalJSON["ncc:multimediaType"] === "audioFullText";
 
-        // dtb:multimediaContent ==> audio,text
-        const isFullTextAudio = publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText";
+        const isAudioOnly =
+            // dtb:multimediaContent ==> audio
+            publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioNCX" ||
+            publication.Metadata.AdditionalJSON["ncc:multimediaType"] === "audioNcc";
 
-        // dtb:multimediaContent ==> text
-        const isTextOnly = publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "textNCX";
-
-        // dtb:multimediaContent ==> audio
-        const isAudioOnly = publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioNCX";
+        const isTextOnly =
+            // dtb:multimediaContent ==> text
+            publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "textNCX" ||
+            publication.Metadata.AdditionalJSON["ncc:multimediaType"] === "textNcc";
 
         if (isFullTextAudio || isTextOnly || isAudioOnly) {
             await addMediaOverlaySMIL(linkItem, item, opf, zip);
@@ -249,7 +229,7 @@ const addLinkData = async (
             if (linkItem.MediaOverlays && !linkItem.MediaOverlays.initialized) {
 
                 // mo.initialized true/false is automatically handled
-                await lazyLoadMediaOverlays(publication, linkItem.MediaOverlays, isDasiy2);
+                await lazyLoadMediaOverlays(publication, linkItem.MediaOverlays);
 
                 if (isFullTextAudio || isAudioOnly) {
                     updateDurations(linkItem.MediaOverlays.duration, linkItem);

@@ -736,7 +736,11 @@ export const getNcx = async (ncxManItem: Manifest, opf: OPF, zip: IZip): Promise
         return Promise.reject(err);
     }
 
-    let ncxStr = ncxZipData.toString("utf8");
+    const ncxStr = ncxZipData.toString("utf8");
+    return getNcx_(ncxStr, ncxFilePath);
+};
+
+export const getNcx_ = (ncxStr: string, ncxFilePath: string): NCX => {
 
     const iStart = ncxStr.indexOf("<ncx");
     if (iStart >= 0) {
@@ -801,7 +805,11 @@ export const getOpf = async (zip: IZip, rootfilePathDecoded: string, rootfilePat
     // debug(`2) ${timeElapsed2[0]} seconds + ${timeElapsed2[1]} nanoseconds`);
     // timeBegin = process.hrtime();
 
-    let opfStr = opfZipData.toString("utf8");
+    const opfStr = opfZipData.toString("utf8");
+    return getOpf_(opfStr, rootfilePathDecoded);
+};
+
+export const getOpf_ = (opfStr: string, rootfilePathDecoded: string): OPF => {
 
     const iStart = opfStr.indexOf("<package");
     if (iStart >= 0) {
@@ -1472,7 +1480,7 @@ export const addMediaOverlaySMIL = async (link: Link, manItemSmil: Manifest, opf
 
 // mo.initialized true/false is automatically handled
 export const lazyLoadMediaOverlays = async (
-    publication: Publication, mo: MediaOverlayNode, isDaisy2: boolean = false) => {
+    publication: Publication, mo: MediaOverlayNode) => {
 
     if (mo.initialized || !mo.SmilPathInZip) {
         return;
@@ -1570,10 +1578,6 @@ export const lazyLoadMediaOverlays = async (
 
     let smilStr = smilZipData.toString("utf8");
 
-    // if (isDaisy2) {
-    //     smilStr = smilStr.replace(/clip-begin/g, "clipBegin").replace(/clip-end/g, "clipEnd").replace(/npt=/g, "");
-    // }
-
     const iStart = smilStr.indexOf("<smil");
     if (iStart >= 0) {
         const iEnd = smilStr.indexOf(">", iStart);
@@ -1587,39 +1591,33 @@ export const lazyLoadMediaOverlays = async (
 
     const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
 
-    if (isDaisy2) {
+    const ncc = (await zip.getEntries()).find((entry) => {
+        return /ncc\.html$/.test(entry);
+    });
+    if (ncc) {
+        // flatten seq inside par
+        // (naive implementation, assumes contiguity of begin/end clips for same audio file)
         const pars = smilXmlDoc.getElementsByTagName("par");
-        // remove seq inside par
         // tslint:disable-next-line: prefer-for-of
         for (let i = 0; i < pars.length; i++) {
             const par = pars[i];
             const seq = par.getElementsByTagName("seq")[0];
             if (seq) {
-                // const audioInsidePar = smilXmlDoc.createElement("audio");
                 let audioInsidePar;
-                let clipBegin = "";
-                let clipEnd = "";
-                let src = "";
-                let id = "";
                 const audios = seq.getElementsByTagName("audio");
                 for (let j = 0; j < audios.length; j++) {
                     if (j === 0) {
                         audioInsidePar = audios[j];
-                        clipBegin = audios[j].getAttribute("clip-begin") || "";
-                        src = audios[j].getAttribute("src") || "";
-                        id = audios[j].getAttribute("id") || "";
                     }
-                    if (j === audios.length - 1) {
-                        clipEnd = audios[j].getAttribute("clip-end") || "";
+                    if (audioInsidePar && j === audios.length - 1) {
+                        const clipEnd = audios[j].getAttribute("clip-end") || "";
+                        audioInsidePar.setAttribute("clip-end", clipEnd);
                     }
                 }
                 if (audioInsidePar) {
-                    audioInsidePar.setAttribute("clipBegin", clipBegin.replace("npt=", ""));
-                    audioInsidePar.setAttribute("clipEnd", clipEnd.replace("npt=", ""));
-                    audioInsidePar.setAttribute("src", src);
-                    audioInsidePar.setAttribute("id", id);
-                    par.appendChild(audioInsidePar);
+                    seq.removeChild(audioInsidePar);
                     par.removeChild(seq);
+                    par.appendChild(audioInsidePar);
                 }
             }
         }

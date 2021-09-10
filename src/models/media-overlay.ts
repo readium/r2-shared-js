@@ -17,6 +17,9 @@ export function timeStrToSeconds(timeStr: string): number {
         return 0;
     }
 
+    // Normal Play Time
+    timeStr = timeStr.replace("npt=", "");
+
     let hours = 0;
     let minutes = 0;
     let seconds = 0;

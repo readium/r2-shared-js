@@ -146,8 +146,6 @@ export class Publication {
 
     public LCP: LCP | undefined;
 
-    public Daisy2Files: any[] | undefined;
-
     public freeDestroy() {
         debug("freeDestroy: Publication");
         if (this.Internal) {

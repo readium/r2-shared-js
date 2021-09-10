@@ -41,17 +41,24 @@ export const convertDaisyToReadiumWebPub = async (
 
     return new Promise(async (resolve, reject) => {
 
-        // dtb:multimediaContent ==> audio,text
+        // TODO: textPartAudio / audioPartText?? audioOnly??
+        // https://www.daisy.org/z3986/specifications/Z39-86-2002.html#Type
+        // https://www.daisy.org/z3986/specifications/daisy_202.html
+
         const isFullTextAudio = publication.Metadata?.AdditionalJSON &&
-            publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText";
+            // dtb:multimediaContent ==> audio,text
+            (publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText" ||
+            publication.Metadata.AdditionalJSON["ncc:multimediaType"] === "audioFullText");
 
-        // dtb:multimediaContent ==> audio
         const isAudioOnly = publication.Metadata?.AdditionalJSON &&
-            publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioNCX";
+            // dtb:multimediaContent ==> audio
+            (publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioNCX" ||
+            publication.Metadata.AdditionalJSON["ncc:multimediaType"] === "audioNcc");
 
-        // dtb:multimediaContent ==> text
         const isTextOnly = publication.Metadata?.AdditionalJSON &&
-            publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "textNCX";
+            // dtb:multimediaContent ==> text
+            (publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "textNCX" ||
+            publication.Metadata.AdditionalJSON["ncc:multimediaType"] === "textNcc");
 
         const zipInternal = publication.findFromInternal("zip");
         if (!zipInternal) {
@@ -377,12 +384,6 @@ export const convertDaisyToReadiumWebPub = async (
             };
 
             const audioOnlySmilHtmls: Link[] = [];
-
-            if (publication.Daisy2Files && publication.Daisy2Files.length > 0) {
-                for (const file of publication.Daisy2Files) {
-                    zipfile.addBuffer(Buffer.from(file.data), file.name);
-                }
-            }
 
             if (publication.Spine) {
 
@@ -1373,7 +1374,8 @@ ${cssHrefs.reduce((pv, cv) => {
 
                 } else if (!resLink.HrefDecoded.endsWith(".opf") &&
                     !resLink.HrefDecoded.endsWith(".res") &&
-                    !resLink.HrefDecoded.endsWith(".ncx")) {
+                    !resLink.HrefDecoded.endsWith(".ncx") &&
+                    !resLink.HrefDecoded.endsWith("ncc.html")) {
 
                     const buff = await loadFileBufferFromZipPath(resLink.Href, resLink.HrefDecoded, zip);
                     if (buff) {

@@ -34,11 +34,33 @@ export class Audio {
     // @XmlXPathSelector("@customTest")
     // public CustomTest!: string;
 
-    @XmlXPathSelector("@clipBegin")
-    public ClipBegin!: string;
+    @XmlXPathSelector("@clipBegin") // DAISY3
+    public ClipBegin1!: string;
+    @XmlXPathSelector("@clip-begin") // DAISY2
+    public ClipBegin2!: string | undefined;
+    get ClipBegin(): string | undefined {
+        return this.ClipBegin1 ? this.ClipBegin1 : this.ClipBegin2;
+    }
+    set ClipBegin(clipBegin: string | undefined) {
+        if (clipBegin) {
+            this.ClipBegin1 = clipBegin;
+            this.ClipBegin2 = undefined;
+        }
+    }
 
-    @XmlXPathSelector("@clipEnd")
-    public ClipEnd!: string;
+    @XmlXPathSelector("@clipEnd") // DAISY3
+    public ClipEnd1!: string;
+    @XmlXPathSelector("@clip-end") // DAISY2
+    public ClipEnd2!: string | undefined;
+    get ClipEnd(): string | undefined {
+        return this.ClipEnd1 ? this.ClipEnd1 : this.ClipEnd2;
+    }
+    set ClipEnd(clipEnd: string | undefined) {
+        if (clipEnd) {
+            this.ClipEnd1 = clipEnd;
+            this.ClipEnd2 = undefined;
+        }
+    }
 
     @XmlXPathSelector("@epub:type")
     public EpubType!: string;
