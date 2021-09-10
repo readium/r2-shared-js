@@ -347,7 +347,7 @@ export const convertDaisyToReadiumWebPub = async (
 
                     const elmId = parEl.getAttribute("id");
                     const hrefDecoded = `${smilPathInZip}#${elmId}`;
-                    const tocLinkItem = findLinkInToc(publication.TOC, hrefDecoded);
+                    const tocLinkItem = publication.TOC ? findLinkInToc(publication.TOC, hrefDecoded) : undefined;
                     const text = tocLinkItem ? tocLinkItem.Title : undefined;
 
                     const textNode = smilDoc.createTextNode(text ? text : ".");
