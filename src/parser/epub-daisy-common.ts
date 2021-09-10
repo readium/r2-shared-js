@@ -1479,8 +1479,7 @@ export const addMediaOverlaySMIL = async (link: Link, manItemSmil: Manifest, opf
 };
 
 // mo.initialized true/false is automatically handled
-export const lazyLoadMediaOverlays = async (
-    publication: Publication, mo: MediaOverlayNode) => {
+export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaOverlayNode) => {
 
     if (mo.initialized || !mo.SmilPathInZip) {
         return;
@@ -1705,6 +1704,7 @@ export const lazyLoadMediaOverlays = async (
                 if (!mo.Children) {
                     mo.Children = [];
                 }
+
                 addSeqToMediaOverlay(smil, publication, mo, mo.Children, seqChild);
             });
         }
@@ -1816,6 +1816,7 @@ const addSeqToMediaOverlay = (
         }
     } else { // Par
         const par = seqChild as Par;
+
         if (par.ID) {
             moc.ParID = par.ID;
         }

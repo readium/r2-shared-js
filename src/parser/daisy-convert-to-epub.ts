@@ -1385,7 +1385,10 @@ ${cssHrefs.reduce((pv, cv) => {
                     resourcesToKeep.push(resLink);
 
                     if (resLink.HrefDecoded.endsWith(".html") ||
-                        resLink.TypeLink === "text/html") {
+                        resLink.HrefDecoded.endsWith(".xhtml") ||
+                        resLink.TypeLink === "text/html" ||
+                        resLink.TypeLink === "application/xhtml+xml") {
+
                         dtBooks.push(resLink);
                     }
                 }
@@ -1458,15 +1461,16 @@ ${cssHrefs.reduce((pv, cv) => {
                     debug("mediaOverlay:", mediaOverlay.index, mediaOverlay.smilTextRef);
 
                     const dtBookLink = dtBooks.find((l) => {
-                        return l.HrefDecoded ?
+                        return l.HrefDecoded && mediaOverlay.smilTextRef ?
                             l.HrefDecoded.toLowerCase() === mediaOverlay.smilTextRef.toLowerCase()
                             : false;
                     });
 
                     if (!dtBookLink) {
                         debug("!!dtBookLink");
-                    } else if (!dtBookLink.HrefDecoded ||
-                            (dtBookLink.HrefDecoded.toLowerCase() !== mediaOverlay.smilTextRef.toLowerCase())) {
+                    } else if (dtBookLink.HrefDecoded && mediaOverlay.smilTextRef &&
+                        dtBookLink.HrefDecoded.toLowerCase() !== mediaOverlay.smilTextRef.toLowerCase()) {
+
                         debug("dtBook.HrefDecoded !== mediaOverlay.smilTextRef",
                             dtBookLink.HrefDecoded, mediaOverlay.smilTextRef);
                     } else {
