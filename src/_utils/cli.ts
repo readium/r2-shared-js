@@ -87,6 +87,16 @@ if (isHTTP(filePath)) {
 fileName = fileName.replace(/META-INF[\/|\\]container.xml$/, "");
 fileName = path.basename(fileName);
 
+let generateDaisyAudioManifestOnly = false;
+let decryptKeys: string[] | undefined;
+if (args[2]) {
+    if (args[2] === "generate-daisy-audio-manifest-only") {
+        generateDaisyAudioManifestOnly = true;
+    } else {
+        decryptKeys = args[2].trim().split(";");
+    }
+}
+
 let outputDirPath: string | undefined;
 if (args[1]) {
     const argDir = args[1].trim();
@@ -112,19 +122,27 @@ if (args[1]) {
 
     dirPath = fs.realpathSync(dirPath);
 
-    const fileNameNoExt = fileName + "_R2_EXTRACTED";
-    console.log(fileNameNoExt);
-    outputDirPath = path.join(dirPath, fileNameNoExt);
-    console.log(outputDirPath);
-    if (fs.existsSync(outputDirPath)) {
-        console.log("OUTPUT FOLDER ALREADY EXISTS!");
-        process.exit(1);
-    }
-}
+    if (generateDaisyAudioManifestOnly) {
+        outputDirPath = dirPath;
 
-let decryptKeys: string[] | undefined;
-if (args[2]) {
-    decryptKeys = args[2].trim().split(";");
+        console.log(outputDirPath);
+
+        // ensureDirs(path.join(outputDirPath, "DUMMY.txt"));
+        // if (!fs.existsSync(outputDirPath)) {
+        //     console.log("OUTPUT FOLDER DOES NOT EXIST!");
+        //     process.exit(1);
+        // }
+    } else {
+        const fileNameNoExt = fileName + "_R2_EXTRACTED";
+        console.log(fileNameNoExt);
+        outputDirPath = path.join(dirPath, fileNameNoExt);
+
+        console.log(outputDirPath);
+        if (fs.existsSync(outputDirPath)) {
+            console.log("OUTPUT FOLDER ALREADY EXISTS!");
+            process.exit(1);
+        }
+    }
 }
 
 // tslint:disable-next-line:no-floating-promises
@@ -157,7 +175,10 @@ if (args[2]) {
     if ((isDaisyBook || isAnAudioBook || isAnEPUB) && outputDirPath) {
         try {
             if (isDaisyBook) {
-                await convertDaisyToReadiumWebPub(outputDirPath, publication);
+                await convertDaisyToReadiumWebPub(
+                    outputDirPath,
+                    publication,
+                    generateDaisyAudioManifestOnly ? fileName : undefined);
             } else {
                 await extractEPUB((isAnEPUB || isDaisyBook) ? true : false, publication, outputDirPath, decryptKeys);
             }

@@ -1325,7 +1325,7 @@ const addAlternateAudioLinkFromNCX = (ncx: NCX, link: Link, navLabel: NavLabel |
             // altLink.AudioClipEnd = end;
 
             timeHref += begin.toString();
-            if (navLabel.Audio.ClipEnd) {
+            if (navLabel.Audio.ClipEnd && end) {
                 timeHref += ",";
                 timeHref += end.toString();
             }
@@ -1334,11 +1334,17 @@ const addAlternateAudioLinkFromNCX = (ncx: NCX, link: Link, navLabel: NavLabel |
                 link.Alternate = [];
             }
             const altLink = new Link();
+            altLink.Rel = ["daisyAudioLabel"];
+
             altLink.setHrefDecoded(timeHref);
 
             const mediaType = mime.lookup(audioSrcDcoded);
             if (mediaType) {
                 altLink.TypeLink = mediaType;
+            }
+
+            if (navLabel.Audio.ClipEnd && end > begin) {
+                altLink.Duration = end - begin;
             }
 
             link.Alternate.push(altLink);

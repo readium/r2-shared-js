@@ -7,12 +7,13 @@
 
 import * as debug_ from "debug";
 import * as fs from "fs";
+import * as mime from "mime-types";
 import * as path from "path";
 import * as xmldom from "xmldom";
 import * as xpath from "xpath";
 import { ZipFile } from "yazl";
 
-import { MediaOverlayNode } from "@models/media-overlay";
+import { MediaOverlayNode, timeStrToSeconds } from "@models/media-overlay";
 import { Metadata } from "@models/metadata";
 import { Properties } from "@models/metadata-properties";
 import { Publication } from "@models/publication";
@@ -37,7 +38,9 @@ function ensureDirs(fspath: string) {
 
 // this function modifies the input parameter "publication"!
 export const convertDaisyToReadiumWebPub = async (
-    outputDirPath: string, publication: Publication): Promise<string | undefined> => {
+    outputDirPath: string,
+    publication: Publication,
+    generateDaisyAudioManifestOnly?: string): Promise<string | undefined> => {
 
     return new Promise(async (resolve, reject) => {
 
@@ -61,25 +64,30 @@ export const convertDaisyToReadiumWebPub = async (
         const zip = zipInternal.Value as IZip;
 
         const outputZipPath = path.join(outputDirPath, `${isAudioOnly ? "daisy_audioNCX" : (isTextOnly ? "daisy_textNCX" : "daisy_audioFullText")}-to-epub.webpub`);
-        ensureDirs(outputZipPath);
+
+        if (!generateDaisyAudioManifestOnly) {
+            ensureDirs(outputZipPath);
+        }
 
         let timeoutId: NodeJS.Timeout | undefined;
-        const zipfile = new ZipFile();
+        const zipfile = generateDaisyAudioManifestOnly ? undefined : new ZipFile();
         try {
-            const writeStream = fs.createWriteStream(outputZipPath);
-            zipfile.outputStream.pipe(writeStream)
-                .on("close", () => {
-                    debug("ZIP close");
-                    if (timeoutId) {
-                        clearTimeout(timeoutId);
-                        timeoutId = undefined;
-                        resolve(outputZipPath);
-                    }
-                })
-                .on("error", (e: any) => {
-                    debug("ZIP error", e);
-                    reject(e);
-                });
+            if (!generateDaisyAudioManifestOnly) {
+                const writeStream = fs.createWriteStream(outputZipPath);
+                (zipfile as ZipFile).outputStream.pipe(writeStream)
+                    .on("close", () => {
+                        debug("ZIP close");
+                        if (timeoutId) {
+                            clearTimeout(timeoutId);
+                            timeoutId = undefined;
+                            resolve(outputZipPath);
+                        }
+                    })
+                    .on("error", (e: any) => {
+                        debug("ZIP error", e);
+                        reject(e);
+                    });
+            }
 
             // <dtbook xmlns="http://www.daisy.org/z3986/2005/dtbook/" ...
             const select = xpath.useNamespaces({
@@ -322,10 +330,12 @@ export const convertDaisyToReadiumWebPub = async (
                     smilDocs[smilPathInZip] = smilDoc;
                 }
 
+                const smilDocClone = smilDoc.cloneNode(true) as Document;
+
                 // getElementsByName(elementName: string): NodeListOf<HTMLElement>
                 // ==> not available in the XMLDOM API
                 // getElementsByTagName(qualifiedName: string): HTMLCollectionOf<Element>
-                const parEls = Array.from(smilDoc.getElementsByTagName("par"));
+                const parEls = Array.from(smilDocClone.getElementsByTagName("par"));
                 for (const parEl of parEls) {
 
                     // getElementsByName(elementName: string): NodeListOf<HTMLElement>
@@ -343,11 +353,11 @@ export const convertDaisyToReadiumWebPub = async (
                     const tocLinkItem = findLinkInToc(publication.TOC, hrefDecoded);
                     const text = tocLinkItem ? tocLinkItem.Title : undefined;
 
-                    const textNode = smilDoc.createTextNode(text ? text : ".");
+                    const textNode = smilDocClone.createTextNode(text ? text : ".");
                     parEl.appendChild(textNode);
                 }
 
-                const bodyContent = smilDoc.getElementsByTagName("body")[0];
+                const bodyContent = smilDocClone.getElementsByTagName("body")[0];
                 const bodyContentStr = new xmldom.XMLSerializer().serializeToString(bodyContent);
                 const contentStr = bodyContentStr
                     .replace(`xmlns="http://www.w3.org/2001/SMIL20/"`, "")
@@ -372,7 +382,9 @@ export const convertDaisyToReadiumWebPub = async (
 `;
                 const htmlFilePath = smilPathInZip.replace(/\.smil$/, ".xhtml");
                 // const fileName = path.parse(href).name;
-                zipfile.addBuffer(Buffer.from(htmlDoc), htmlFilePath);
+                if (!generateDaisyAudioManifestOnly) {
+                    (zipfile as ZipFile).addBuffer(Buffer.from(htmlDoc), htmlFilePath);
+                }
                 return htmlFilePath;
             };
 
@@ -529,7 +541,9 @@ export const convertDaisyToReadiumWebPub = async (
                     // const cssOutputFilePath = path.join(outputDirPathExploded, newCssFilePath);
                     // ensureDirs(cssOutputFilePath);
                     // fs.writeFileSync(cssOutputFilePath, cssText);
-                    zipfile.addBuffer(Buffer.from(cssText), resLink.HrefDecoded);
+                    if (!generateDaisyAudioManifestOnly) {
+                        (zipfile as ZipFile).addBuffer(Buffer.from(cssText), resLink.HrefDecoded);
+                    }
 
                     // const resLinkJson = TaJsonSerialize(resLink);
                     // // resLinkJson.href = newCssFilePath;
@@ -1354,7 +1368,9 @@ ${cssHrefs.reduce((pv, cv) => {
                     // ensureDirs(xhtmlOutputFilePath);
                     // fs.writeFileSync(xhtmlOutputFilePath, dtbookNowXHTML);
                     // zipfile.addFile(xhtmlOutputFilePath, xhtmlFilePath);
-                    zipfile.addBuffer(Buffer.from(dtbookNowXHTML), xhtmlFilePath);
+                    if (!generateDaisyAudioManifestOnly) {
+                        (zipfile as ZipFile).addBuffer(Buffer.from(dtbookNowXHTML), xhtmlFilePath);
+                    }
 
                     const resLinkJson = TaJsonSerialize(resLink);
                     // resLinkJson.href = xhtmlFilePath;
@@ -1368,9 +1384,11 @@ ${cssHrefs.reduce((pv, cv) => {
                     !resLink.HrefDecoded.endsWith(".res") &&
                     !resLink.HrefDecoded.endsWith(".ncx")) {
 
-                    const buff = await loadFileBufferFromZipPath(resLink.Href, resLink.HrefDecoded, zip);
-                    if (buff) {
-                        zipfile.addBuffer(buff, resLink.HrefDecoded);
+                    if (!generateDaisyAudioManifestOnly) {
+                        const buff = await loadFileBufferFromZipPath(resLink.Href, resLink.HrefDecoded, zip);
+                        if (buff) {
+                            (zipfile as ZipFile).addBuffer(buff, resLink.HrefDecoded);
+                        }
                     }
 
                     resourcesToKeep.push(resLink);
@@ -1486,7 +1504,9 @@ ${cssHrefs.reduce((pv, cv) => {
 
                             const jsonObjMO = TaJsonSerialize(mediaOverlay.mo);
                             const jsonStrMO = global.JSON.stringify(jsonObjMO, null, "  ");
-                            zipfile.addBuffer(Buffer.from(jsonStrMO), moURL);
+                            if (!generateDaisyAudioManifestOnly) {
+                                (zipfile as ZipFile).addBuffer(Buffer.from(jsonStrMO), moURL);
+                            }
 
                             debug("dtBookLink IN SPINE:",
                                 mediaOverlay.index, dtBookLink.HrefDecoded, dtBookLink.Duration, moURL);
@@ -1510,14 +1530,15 @@ ${cssHrefs.reduce((pv, cv) => {
             publication.Metadata.AdditionalJSON.ReadiumWebPublicationConvertedFrom =
                 isAudioOnly ? "DAISY_audioNCX" : (isTextOnly ? "DAISY_textNCX" : "DAISY_audioFullText");
 
-            const findFirstDescendantText = (parent: Element): Element | undefined => {
+            const findFirstDescendantTextOrAudio = (parent: Element, audio: boolean): Element | undefined => {
                 if (parent.childNodes && parent.childNodes.length) {
                     // tslint:disable-next-line: prefer-for-of
                     for (let i = 0; i < parent.childNodes.length; i++) {
                         const child = parent.childNodes[i];
                         if (child.nodeType === 1) { // Node.ELEMENT_NODE
                             const element = child as Element;
-                            if (element.localName && element.localName.toLowerCase() === "text") {
+                            if (element.localName &&
+                                element.localName.toLowerCase() === (audio ? "audio" : "text")) {
                                 return element;
                             }
                         }
@@ -1527,7 +1548,7 @@ ${cssHrefs.reduce((pv, cv) => {
                         const child = parent.childNodes[i];
                         if (child.nodeType === 1) { // Node.ELEMENT_NODE
                             const element = child as Element;
-                            const found = findFirstDescendantText(element);
+                            const found = findFirstDescendantTextOrAudio(element, audio);
                             if (found) {
                                 return found;
                             }
@@ -1545,6 +1566,7 @@ ${cssHrefs.reduce((pv, cv) => {
                 }
                 if (isAudioOnly) {
                     link.setHrefDecoded(href.replace(/\.smil/, ".xhtml"));
+                    link.TypeLink = "application/xhtml+xml";
                     return;
                 }
                 let fragment: string | undefined;
@@ -1574,9 +1596,10 @@ ${cssHrefs.reduce((pv, cv) => {
                     // if (textElems && textElems[0]) {
                     //     targetEl = textElems[0];
                     // }
-                    targetEl = findFirstDescendantText(smilDoc.documentElement);
+                    targetEl = findFirstDescendantTextOrAudio(smilDoc.documentElement, false);
                 }
                 if (!targetEl) {
+                    debug("--??-- !targetEl1 ", href);
                     return;
                 }
                 if (targetEl.nodeName !== "text") {
@@ -1584,9 +1607,10 @@ ${cssHrefs.reduce((pv, cv) => {
                     // if (textElems) {
                     //     targetEl = textElems;
                     // }
-                    targetEl = findFirstDescendantText(targetEl);
+                    targetEl = findFirstDescendantTextOrAudio(targetEl, false);
                 }
                 if (!targetEl || targetEl.nodeName !== "text") {
+                    debug("--??-- !targetEl2 ", href);
                     return;
                 }
 
@@ -1598,6 +1622,7 @@ ${cssHrefs.reduce((pv, cv) => {
                 // and .xml file extension replacement is bit weak / brittle
                 // (but for most DAISY books, this is a reasonable expectation)
                 link.Href = src.replace(/\.xml/, ".xhtml");
+                link.TypeLink = "application/xhtml+xml";
             };
 
             const processLinks = async (links: Link[]) => {
@@ -1627,15 +1652,223 @@ ${cssHrefs.reduce((pv, cv) => {
 
             const jsonObj = TaJsonSerialize(publication);
             const jsonStr = global.JSON.stringify(jsonObj, null, "  ");
-            zipfile.addBuffer(Buffer.from(jsonStr), "manifest.json");
+            if (!generateDaisyAudioManifestOnly) {
+                (zipfile as ZipFile).addBuffer(Buffer.from(jsonStr), "manifest.json");
+            }
+
+            if (isAudioOnly) {
+                debug("DAISY audio only book => manifest-audio.json");
+
+                const transformPublicationToAudioBook = async (pubAudio: Publication): Promise<Publication> => {
+                    const pubJson = TaJsonSerialize(pubAudio);
+                    const audioPublication = TaJsonDeserialize<Publication>(pubJson, Publication);
+
+                    if (!audioPublication.Metadata) {
+                        audioPublication.Metadata = new Metadata();
+                    }
+                    audioPublication.Metadata.RDFType = "http://schema.org/Audiobook";
+
+                    const processLinkAudio = async (link: Link) => {
+
+                        // ALTERNATE is the audio "label" for the link, not the link destination!!
+                        // See addAlternateAudioLinkFromNCX()
+                        // if (link.Alternate) {
+                        //     const audioLink = link.Alternate.find((l) => {
+                        //         return l.TypeLink?.startsWith("audio/");
+                        //     });
+                        //     if (audioLink) { // remove clipEnd
+                        //         link.setHrefDecoded(audioLink.Href.replace(/^(.+)#t=(.+),(.*)$/, "$1#t=$2"));
+                        //         link.TypeLink = audioLink.TypeLink;
+                        //     }
+
+                        //     // tslint:disable-next-line
+                        //     // @tsxxx-ignore: TS2790 (The operand of a 'delete' operator must be optional)
+                        //     // delete link.Alternate;
+                        //     // link.Alternate = [];
+                        //     (link.Alternate as any) = undefined;
+                        // }
+
+                        // relative to publication root (package.opf / ReadiumWebPubManifest.json)
+                        let href = link.HrefDecoded;
+                        if (!href) {
+                            return;
+                        }
+
+                        let fragment: string | undefined;
+                        if (href.indexOf("#") >= 0) {
+                            const arr = href.split("#");
+                            href = arr[0].trim();
+                            fragment = arr[1].trim();
+                        }
+                        if (!href) {
+                            return;
+                        }
+
+                        const smilDoc = smilDocs[href.replace(/\.xhtml/, ".smil")];
+                        if (!smilDoc) {
+                            debug("==?? !smilDoc ", href);
+                        }
+
+                        let targetEl = fragment ? smilDoc.getElementById(fragment) as Element : undefined;
+                        if (!targetEl) {
+                            // const textElems = smilDoc.getElementsByTagName("text");
+                            // if (textElems && textElems[0]) {
+                            //     targetEl = textElems[0];
+                            // }
+                            targetEl = findFirstDescendantTextOrAudio(smilDoc.documentElement, true);
+                        }
+                        if (!targetEl) {
+                            debug("==?? !targetEl1 ", href,
+                                new xmldom.XMLSerializer().serializeToString(smilDoc.documentElement));
+                            return;
+                        }
+                        const targetElOriginal = targetEl;
+                        if (targetEl.nodeName !== "audio") {
+
+                            // const textElems = select("//text", targetEl, true) as Element;
+                            // if (textElems) {
+                            //     targetEl = textElems;
+                            // }
+                            targetEl = findFirstDescendantTextOrAudio(targetEl, true);
+                        }
+                        if (!targetEl || targetEl.nodeName !== "audio") {
+                            debug("==?? !targetEl2 ", href,
+                                new xmldom.XMLSerializer().serializeToString(targetElOriginal));
+                            return;
+                        }
+
+                        const src = targetEl.getAttribute("src");
+                        if (!src) {
+                            debug("==?? !src");
+                            return;
+                        }
+
+                        const clipBegin = targetEl.getAttribute("clipBegin");
+                        // const clipEnd = targetEl.getAttribute("clipEnd");
+                        let timeStamp = "#t=";
+                        const begin = clipBegin ? timeStrToSeconds(clipBegin) : 0;
+                        // const end = clipEnd ? timeStrToSeconds(clipEnd) : 0;
+
+                        timeStamp += begin.toString();
+                        // if (clipEnd && end) {
+                        //     timeStamp += ",";
+                        //     timeStamp += end.toString();
+                        // }
+
+                        // if (clipEnd && end > begin) {
+                        //     link.Duration = end - begin;
+                        // }
+
+                        // TODO: path is relative to SMIL (not to publication root),
+                        // and .xml file extension replacement is bit weak / brittle
+                        // (but for most DAISY books, this is a reasonable expectation)
+                        link.Href = src + timeStamp;
+
+                        link.TypeLink = "audio/?";
+                        const mediaType = mime.lookup(src);
+                        if (mediaType) {
+                            link.TypeLink = mediaType;
+                        }
+                    };
+
+                    const processLinksAudio = async (links: Link[]) => {
+                        for (const link of links) {
+                            await processLinkAudio(link);
+                            if (link.Children) {
+                                await processLinksAudio(link.Children);
+                            }
+                        }
+                    };
+
+                    if (audioPublication.PageList) {
+                        for (const link of audioPublication.PageList) {
+                            await processLinkAudio(link);
+                        }
+                    }
+
+                    if (audioPublication.Landmarks) {
+                        for (const link of audioPublication.Landmarks) {
+                            await processLinkAudio(link);
+                        }
+                    }
+
+                    if (audioPublication.TOC) {
+                        await processLinksAudio(audioPublication.TOC);
+                    }
+
+                    audioPublication.Spine = [];
+                    if (pubAudio.Spine) {
+                        for (const spineLink of pubAudio.Spine) {
+                            if (!spineLink.MediaOverlays?.SmilPathInZip) {
+                                debug("???- !spineLink.MediaOverlays?.SmilPathInZip");
+                                continue;
+                            }
+                            const smilDoc = smilDocs[spineLink.MediaOverlays.SmilPathInZip];
+                            if (!smilDoc) {
+                                debug("???- !smilDoc ", spineLink.MediaOverlays.SmilPathInZip);
+                                continue;
+                            }
+                            const firstAudioElement = findFirstDescendantTextOrAudio(smilDoc.documentElement, true);
+                            if (!firstAudioElement) {
+                                debug("???- !firstAudioElement ", spineLink.MediaOverlays.SmilPathInZip);
+                                continue;
+                            }
+
+                            const src = firstAudioElement.getAttribute("src");
+                            if (!src) {
+                                continue;
+                            }
+                            // TODO: path is relative to SMIL (not to publication root),
+                            // and .xml file extension replacement is bit weak / brittle
+                            // (but for most DAISY books, this is a reasonable expectation)
+
+                            const link = new Link();
+                            link.Href = src;
+                            link.TypeLink = "audio/?";
+                            if (audioPublication.Resources) {
+                                const resAudio = audioPublication.Resources.find((l) => {
+                                    return l.Href === src;
+                                });
+                                if (resAudio?.TypeLink) {
+                                    link.TypeLink = resAudio.TypeLink;
+                                }
+                            }
+                            if (spineLink.MediaOverlays.duration) {
+                                link.Duration = spineLink.MediaOverlays.duration;
+                            }
+                            audioPublication.Spine.push(link);
+                        }
+                    }
+                    return audioPublication;
+                };
+
+                try {
+                    const audioPublication = await transformPublicationToAudioBook(publication);
+                    const jsonObjAudio = TaJsonSerialize(audioPublication);
+                    const jsonStrAudio = global.JSON.stringify(jsonObjAudio, null, "  ");
+                    if (!generateDaisyAudioManifestOnly) {
+                        (zipfile as ZipFile).addBuffer(Buffer.from(jsonStrAudio), "manifest-audio.json");
+                    } else {
+                        const outputManifestPath = path.join(outputDirPath, generateDaisyAudioManifestOnly + "_manifest.json");
+                        ensureDirs(outputManifestPath);
+                        fs.writeFileSync(outputManifestPath, jsonStrAudio, "utf8");
+                        resolve(outputManifestPath);
+                    }
+                } catch (ero) {
+                    debug(ero);
+                }
+            }
         } catch (erreur) {
             debug(erreur);
         } finally {
-            timeoutId = setTimeout(() => {
-                timeoutId = undefined;
-                reject("YAZL zip took too long!? " + outputZipPath);
-            }, 10000);
-            zipfile.end();
+            debug("DAISY-EPUB-RWPM done.");
+            if (!generateDaisyAudioManifestOnly) {
+                timeoutId = setTimeout(() => {
+                    timeoutId = undefined;
+                    reject("YAZL zip took too long!? " + outputZipPath);
+                }, 10000);
+                (zipfile as ZipFile).end();
+            }
         }
     });
 };
