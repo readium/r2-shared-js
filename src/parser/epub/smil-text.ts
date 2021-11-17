@@ -22,8 +22,8 @@ export class Text {
     @XmlXPathSelector("@epub:type")
     public EpubType!: string;
 
-    // @XmlXPathSelector("@id | @xml:id")
-    // public ID!: string;
+    @XmlXPathSelector("@id | @xml:id")
+    public ID!: string;
 
     // @XmlXPathSelector("@dur")
     // public Duration!: string;

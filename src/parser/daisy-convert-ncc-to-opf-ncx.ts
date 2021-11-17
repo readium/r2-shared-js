@@ -1,4 +1,12 @@
+// ==LICENSE-BEGIN==
+// Copyright 2017 European Digital Reading Lab. All rights reserved.
+// Licensed to the Readium Foundation under one or more contributor license agreements.
+// Use of this source code is governed by a BSD-style license
+// that can be found in the LICENSE file exposed on Github (readium) in the project repository.
+// ==LICENSE-END==
+
 import * as debug_ from "debug";
+import * as mime from "mime-types";
 import * as path from "path";
 import * as xmldom from "xmldom";
 
@@ -7,7 +15,6 @@ import { streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
 
 import { zipHasEntry } from "../_utils/zipHasEntry";
-
 import { getNcx_, getOpf_ } from "./epub-daisy-common"; // , loadFileStrFromZipPath
 import { NCX } from "./epub/ncx";
 import { OPF } from "./epub/opf";
@@ -51,7 +58,7 @@ const getMediaTypeFromFileExtension = (ext: string) => {
         return "application/xhtml+xml";
     }
 
-    return "plain/text";
+    return mime.lookup("dummy" + ext);
 };
 
 export const convertNccToOpfAndNcx = async (
@@ -62,7 +69,7 @@ export const convertNccToOpfAndNcx = async (
 
     const has = await zipHasEntry(zip, rootfilePathDecoded, rootfilePath);
     if (!has) {
-        const err = `NOT IN ZIP (container OPF rootfile): ${rootfilePath} --- ${rootfilePathDecoded}`;
+        const err = `NOT IN ZIP (NCC.html): ${rootfilePath} --- ${rootfilePathDecoded}`;
         debug(err);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
@@ -115,8 +122,13 @@ export const convertNccToOpfAndNcx = async (
     if (metas["ncc:multimediaType"] === "audioFullText" ||
         metas["ncc:multimediaType"] === "audioNcc" ||
         metas["ncc:totalTime"] && timeStrToSeconds(metas["ncc:totalTime"]) > 0) {
-        multimediaContent = "audio,text,image";
-        multimediaType = "audioFullText";
+        if (metas["ncc:multimediaType"] === "audioFullText") {
+            multimediaContent = "audio,text,image";
+            multimediaType = "audioFullText";
+        } else {
+            multimediaContent = "audio,image";
+            multimediaType = "audioNCX";
+        }
     } else if (metas["ncc:multimediaType"] === "textNcc" ||
         metas["ncc:totalTime"] && timeStrToSeconds(metas["ncc:totalTime"]) === 0) {
         multimediaContent = "text,image";

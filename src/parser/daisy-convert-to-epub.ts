@@ -22,7 +22,8 @@ import { TaJsonDeserialize, TaJsonSerialize } from "@r2-lcp-js/serializable";
 import { IZip } from "@r2-utils-js/_utils/zip/zip";
 
 import {
-    lazyLoadMediaOverlays, loadFileBufferFromZipPath, loadFileStrFromZipPath, updateDurations,
+    flattenDaisy2SmilAudioSeq, lazyLoadMediaOverlays, loadFileBufferFromZipPath,
+    loadFileStrFromZipPath, updateDurations,
 } from "./epub-daisy-common";
 
 const debug = debug_("r2:shared#parser/daisy-convert-to-epub");
@@ -69,6 +70,10 @@ export const convertDaisyToReadiumWebPub = async (
             return reject("No publication zip!?");
         }
         const zip = zipInternal.Value as IZip;
+
+        const nccZipEntry = (await zip.getEntries()).find((entry) => {
+            return /ncc\.html$/.test(entry);
+        });
 
         const outputZipPath = path.join(outputDirPath, `${isAudioOnly ? "daisy_audioNCX" : (isTextOnly ? "daisy_textNCX" : "daisy_audioFullText")}-to-epub.webpub`);
 
@@ -279,11 +284,11 @@ export const convertDaisyToReadiumWebPub = async (
 
                 if (audioOnlySmilHtmlHref && !mo.Text && mo.Audio) {
                     smilTextRef = audioOnlySmilHtmlHref;
-                    mo.Text = `${smilTextRef}#${mo.ParID || "_yyy_"}`;
+                    mo.Text = `${smilTextRef}#${mo.ParID || mo.TextID || "_yyy_"}`;
                 } else if (mo.Text) {
-                    // TODO: .xml file extension replacement is bit weak / brittle
+                    // TODO: .xml/html file extension replacement is bit weak / brittle
                     // (but for most DAISY books, this is a reasonable expectation)
-                    mo.Text = mo.Text.replace(/\.xml/, ".xhtml");
+                    mo.Text = mo.Text.replace(/(\.xml)|(\.html)/, ".xhtml"); // note: regexp not $ (END)
                     smilTextRef = mo.Text;
                     const k = smilTextRef.indexOf("#");
                     if (k > 0) {
@@ -310,6 +315,24 @@ export const convertDaisyToReadiumWebPub = async (
             // in-memory cache for expensive SMIL XML DOM parsing
             const smilDocs: Record<string, Document> = {};
 
+            const loadOrGetCachedSmil = async (smilPathInZip: string): Promise<Document> => {
+
+                let smilDoc = smilDocs[smilPathInZip];
+                if (!smilDoc) {
+                    const smilStr = await loadFileStrFromZipPath(smilPathInZip, smilPathInZip, zip);
+                    if (!smilStr) {
+                        debug("!loadFileStrFromZipPath", smilPathInZip);
+                        return Promise.reject("!loadFileStrFromZipPath " + smilPathInZip);
+                    }
+                    smilDoc = new xmldom.DOMParser().parseFromString(smilStr, "application/xml");
+                    if (nccZipEntry) {
+                        flattenDaisy2SmilAudioSeq(smilDoc);
+                    }
+                    smilDocs[smilPathInZip] = smilDoc;
+                }
+                return Promise.resolve(smilDoc);
+            };
+
             const findLinkInToc = (links: Link[], hrefDecoded: string): Link | undefined => {
                 for (const link of links) {
                     if (link.HrefDecoded === hrefDecoded) {
@@ -326,16 +349,7 @@ export const convertDaisyToReadiumWebPub = async (
 
             const createHtmlFromSmilFile = async (smilPathInZip: string): Promise<string | undefined> => {
 
-                let smilDoc = smilDocs[smilPathInZip];
-                if (!smilDoc) {
-                    const smilStr = await loadFileStrFromZipPath(smilPathInZip, smilPathInZip, zip);
-                    if (!smilStr) {
-                        debug("!loadFileStrFromZipPath", smilStr);
-                        return undefined;
-                    }
-                    smilDoc = new xmldom.DOMParser().parseFromString(smilStr, "application/xml");
-                    smilDocs[smilPathInZip] = smilDoc;
-                }
+                const smilDoc = await loadOrGetCachedSmil(smilPathInZip);
 
                 const smilDocClone = smilDoc.cloneNode(true) as Document;
 
@@ -355,6 +369,19 @@ export const convertDaisyToReadiumWebPub = async (
                         }
                     }
 
+                    const textElements = Array.from(parEl.getElementsByTagName("text")).filter((el) => el);
+                    for (const textElement of textElements) {
+                        // if (textElement.parentNode) {
+                        //     textElement.parentNode.removeChild(textElement);
+                        // }
+                        const src = textElement.getAttribute("src");
+                        if (src) {
+                            textElement.setAttribute("data-src",
+                                src.replace(/(\.xml)|(\.html)/, ".xhtml")); // note: regexp not $ (END)
+                            textElement.removeAttribute("src");
+                        }
+                    }
+
                     const elmId = parEl.getAttribute("id");
                     const hrefDecoded = `${smilPathInZip}#${elmId}`;
                     const tocLinkItem = publication.TOC ? findLinkInToc(publication.TOC, hrefDecoded) : undefined;
@@ -369,10 +396,13 @@ export const convertDaisyToReadiumWebPub = async (
                 const contentStr = bodyContentStr
                     .replace(`xmlns="http://www.w3.org/2001/SMIL20/"`, "")
                     .replace(/dur=/g, "data-dur=")
+                    .replace(/endsync=/g, "data-endsync=")
                     .replace(/fill=/g, "data-fill=")
+                    .replace(/system-required=/g, "data-system-required=")
                     .replace(/customTest=/g, "data-customTest=")
                     .replace(/class=/g, "data-class=")
                     .replace(/<seq/g, '<div class="smil-seq"')
+                    .replace(/<text/g, '<hr class="smil-text"')
                     .replace(/<par/g, '<p class="smil-par"')
                     .replace(/<\/seq>/g, "</div>")
                     .replace(/<\/par>/g, "</p>")
@@ -1480,6 +1510,8 @@ ${cssHrefs.reduce((pv, cv) => {
 
                     const dtBookLink = dtBooks.find((l) => {
                         return l.HrefDecoded && mediaOverlay.smilTextRef ?
+                            // TODO: do we need to cover the case sensitivity edge case,
+                            // and if so, what about the myriad of other HREF comparisons in this codebase??
                             l.HrefDecoded.toLowerCase() === mediaOverlay.smilTextRef.toLowerCase()
                             : false;
                     });
@@ -1487,6 +1519,8 @@ ${cssHrefs.reduce((pv, cv) => {
                     if (!dtBookLink) {
                         debug("!!dtBookLink");
                     } else if (dtBookLink.HrefDecoded && mediaOverlay.smilTextRef &&
+                        // TODO: do we need to cover the case sensitivity edge case,
+                        // and if so, what about the myriad of other HREF comparisons in this codebase??
                         dtBookLink.HrefDecoded.toLowerCase() !== mediaOverlay.smilTextRef.toLowerCase()) {
 
                         debug("dtBook.HrefDecoded !== mediaOverlay.smilTextRef",
@@ -1586,7 +1620,7 @@ ${cssHrefs.reduce((pv, cv) => {
                     return;
                 }
                 if (isAudioOnly) {
-                    link.setHrefDecoded(href.replace(/\.smil/, ".xhtml"));
+                    link.setHrefDecoded(href.replace(/\.smil/, ".xhtml")); // note: regexp not $ (END)
                     link.TypeLink = "application/xhtml+xml";
                     return;
                 }
@@ -1600,16 +1634,7 @@ ${cssHrefs.reduce((pv, cv) => {
                     return;
                 }
 
-                let smilDoc = smilDocs[href];
-                if (!smilDoc) {
-                    const smilStr = await loadFileStrFromZipPath(href, href, zip);
-                    if (!smilStr) {
-                        debug("!loadFileStrFromZipPath", smilStr);
-                        return;
-                    }
-                    smilDoc = new xmldom.DOMParser().parseFromString(smilStr, "application/xml");
-                    smilDocs[href] = smilDoc;
-                }
+                const smilDoc = await loadOrGetCachedSmil(href);
 
                 let targetEl = fragment ? smilDoc.getElementById(fragment) as Element : undefined;
                 if (!targetEl) {
@@ -1642,7 +1667,7 @@ ${cssHrefs.reduce((pv, cv) => {
                 // TODO: path is relative to SMIL (not to publication root),
                 // and .xml file extension replacement is bit weak / brittle
                 // (but for most DAISY books, this is a reasonable expectation)
-                link.Href = src.replace(/\.xml/, ".xhtml");
+                link.Href = src.replace(/\.xml/, ".xhtml"); // note: regexp not $ (END)
                 link.TypeLink = "application/xhtml+xml";
             };
 
@@ -1725,10 +1750,8 @@ ${cssHrefs.reduce((pv, cv) => {
                             return;
                         }
 
-                        const smilDoc = smilDocs[href.replace(/\.xhtml/, ".smil")];
-                        if (!smilDoc) {
-                            debug("==?? !smilDoc ", href);
-                        }
+                        const smilHref = href.replace(/\.xhtml/, ".smil"); // note: regexp not $ (END)
+                        const smilDoc = await loadOrGetCachedSmil(smilHref);
 
                         let targetEl = fragment ? smilDoc.getElementById(fragment) as Element : undefined;
                         if (!targetEl) {
@@ -1764,8 +1787,8 @@ ${cssHrefs.reduce((pv, cv) => {
                             return;
                         }
 
-                        const clipBegin = targetEl.getAttribute("clipBegin");
-                        // const clipEnd = targetEl.getAttribute("clipEnd");
+                        const clipBegin = targetEl.getAttribute("clipBegin") || targetEl.getAttribute("clip-begin");
+                        // const clipEnd = targetEl.getAttribute("clipEnd") || targetEl.getAttribute("clip-end");
                         let timeStamp = "#t=";
                         const begin = clipBegin ? timeStrToSeconds(clipBegin) : 0;
                         // const end = clipEnd ? timeStrToSeconds(clipEnd) : 0;
@@ -1824,11 +1847,8 @@ ${cssHrefs.reduce((pv, cv) => {
                                 debug("???- !spineLink.MediaOverlays?.SmilPathInZip");
                                 continue;
                             }
-                            const smilDoc = smilDocs[spineLink.MediaOverlays.SmilPathInZip];
-                            if (!smilDoc) {
-                                debug("???- !smilDoc ", spineLink.MediaOverlays.SmilPathInZip);
-                                continue;
-                            }
+                            const smilDoc = await loadOrGetCachedSmil(spineLink.MediaOverlays.SmilPathInZip);
+
                             const firstAudioElement = findFirstDescendantTextOrAudio(smilDoc.documentElement, true);
                             if (!firstAudioElement) {
                                 debug("???- !firstAudioElement ", spineLink.MediaOverlays.SmilPathInZip);

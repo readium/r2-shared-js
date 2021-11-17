@@ -19,8 +19,8 @@ export class Audio {
 
     // XPATH ROOT: /smil:smil/smil:body/**/smil:audio
 
-    // @XmlXPathSelector("@id | @xml:id")
-    // public ID!: string;
+    @XmlXPathSelector("@id | @xml:id")
+    public ID!: string;
 
     // @XmlXPathSelector("@dur")
     // public Duration!: string;

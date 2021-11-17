@@ -111,6 +111,9 @@ export class MediaOverlayNode {
 
     public ParID: string | undefined;
     public SeqID: string | undefined;
+    public TextID: string | undefined;
+    public AudioID: string | undefined;
+    public ImgID: string | undefined;
 
     public AudioClipBegin: number | undefined;
     public AudioClipEnd: number | undefined;

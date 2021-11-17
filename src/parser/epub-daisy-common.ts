@@ -1484,6 +1484,36 @@ export const addMediaOverlaySMIL = async (link: Link, manItemSmil: Manifest, opf
     }
 };
 
+export const flattenDaisy2SmilAudioSeq = (smilXmlDoc: Document) => {
+
+    // flatten seq inside par
+    // (naive implementation, assumes contiguity of begin/end clips for same audio file)
+    const pars = smilXmlDoc.getElementsByTagName("par");
+    // tslint:disable-next-line: prefer-for-of
+    for (let i = 0; i < pars.length; i++) {
+        const par = pars[i];
+        const seq = par.getElementsByTagName("seq")[0];
+        if (seq) {
+            let audioInsidePar;
+            const audios = seq.getElementsByTagName("audio");
+            for (let j = 0; j < audios.length; j++) {
+                if (j === 0) {
+                    audioInsidePar = audios[j];
+                }
+                if (audioInsidePar && j === audios.length - 1) {
+                    const clipEnd = audios[j].getAttribute("clip-end") || "";
+                    audioInsidePar.setAttribute("clip-end", clipEnd);
+                }
+            }
+            if (audioInsidePar) {
+                seq.removeChild(audioInsidePar);
+                par.removeChild(seq);
+                par.appendChild(audioInsidePar);
+            }
+        }
+    }
+};
+
 // mo.initialized true/false is automatically handled
 export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaOverlayNode) => {
 
@@ -1596,36 +1626,11 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
 
     const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
 
-    const ncc = (await zip.getEntries()).find((entry) => {
+    const nccZipEntry = (await zip.getEntries()).find((entry) => {
         return /ncc\.html$/.test(entry);
     });
-    if (ncc) {
-        // flatten seq inside par
-        // (naive implementation, assumes contiguity of begin/end clips for same audio file)
-        const pars = smilXmlDoc.getElementsByTagName("par");
-        // tslint:disable-next-line: prefer-for-of
-        for (let i = 0; i < pars.length; i++) {
-            const par = pars[i];
-            const seq = par.getElementsByTagName("seq")[0];
-            if (seq) {
-                let audioInsidePar;
-                const audios = seq.getElementsByTagName("audio");
-                for (let j = 0; j < audios.length; j++) {
-                    if (j === 0) {
-                        audioInsidePar = audios[j];
-                    }
-                    if (audioInsidePar && j === audios.length - 1) {
-                        const clipEnd = audios[j].getAttribute("clip-end") || "";
-                        audioInsidePar.setAttribute("clip-end", clipEnd);
-                    }
-                }
-                if (audioInsidePar) {
-                    seq.removeChild(audioInsidePar);
-                    par.removeChild(seq);
-                    par.appendChild(audioInsidePar);
-                }
-            }
-        }
+    if (nccZipEntry) {
+        flattenDaisy2SmilAudioSeq(smilXmlDoc);
     }
 
     const smil = XML.deserialize<SMIL>(smilXmlDoc, SMIL);
@@ -1895,6 +1900,10 @@ const addSeqToMediaOverlay = (
                     .replace(/\\/g, "/");
                 moc.Text = zipPath;
             }
+
+            if (par.Text.ID) {
+                moc.TextID = par.Text.ID;
+            }
         }
         if (par.Audio && par.Audio.Src) {
             const parAudioSrcDcoded = par.Audio.SrcDecoded;
@@ -1917,6 +1926,10 @@ const addSeqToMediaOverlay = (
                     moc.Audio += end.toString();
                 }
             }
+
+            if (par.Audio.ID) {
+                moc.AudioID = par.Audio.ID;
+            }
         }
         if (par.Img && par.Img.Src) {
             const parImgSrcDcoded = par.Img.SrcDecoded;
@@ -1930,6 +1943,10 @@ const addSeqToMediaOverlay = (
             if (!par.Audio && !par.Text) {
                 moc.initialized = false;
                 doAdd = false;
+            }
+
+            if (par.Img.ID) {
+                moc.ImgID = par.Img.ID;
             }
         }
     }
