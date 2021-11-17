@@ -73,6 +73,9 @@ export const convertNccToOpfAndNcx = async (
         debug(err);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
+            if (zipEntry.startsWith("__MACOSX/")) {
+                continue;
+            }
             debug(zipEntry);
         }
         return Promise.reject(err);
@@ -177,8 +180,8 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 
 ${zipEntriez.reduce((pv, cv, ci) => {
     const ext = path.extname(cv).toLowerCase();
-    return `${pv}${cv !== "ncc.html" && ext !== ".ent" && ext !== ".dtd" ? `
-    <item href="${cv}" id="opf-${ci}" media-type="${getMediaTypeFromFileExtension(ext)}" />` : ""}`;
+    return `${pv}${!cv.startsWith("__MACOSX/") && !cv.endsWith("ncc.html") && ext !== ".ent" && ext !== ".dtd" ? `
+    <item href="${path.relative("file:///" + path.dirname(rootfilePathDecoded), "file:///" + cv).replace(/\\/g, "/")}" id="opf-${ci}" media-type="${getMediaTypeFromFileExtension(ext)}" />` : ""}`;
 
 }, "")}
 </manifest>
@@ -186,7 +189,7 @@ ${zipEntriez.reduce((pv, cv, ci) => {
 <spine>
 ${zipEntriez.reduce((pv, cv, ci) => {
     const ext = path.extname(cv).toLowerCase();
-    return `${pv}${ext === ".smil" ? `
+    return `${pv}${!cv.startsWith("__MACOSX/") && ext === ".smil" && !cv.endsWith("master.smil") ? `
     <itemref idref="opf-${ci}" />` : ""}`;
 }, "")}
 </spine>

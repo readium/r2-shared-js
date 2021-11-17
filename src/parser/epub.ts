@@ -73,6 +73,9 @@ export const addCoverDimensions = async (publication: Publication, coverLink: Li
             debug(`NOT IN ZIP (addCoverDimensions): ${coverLink.Href} --- ${coverLinkHrefDecoded}`);
             const zipEntries = await zip.getEntries();
             for (const zipEntry of zipEntries) {
+                if (zipEntry.startsWith("__MACOSX/")) {
+                    continue;
+                }
                 debug(zipEntry);
             }
             return;
@@ -959,6 +962,9 @@ const fillTOCFromNavDoc = async (publication: Publication, zip: IZip):
         debug(`NOT IN ZIP (fillTOCFromNavDoc): ${navLink.Href} --- ${navLinkHrefDecoded}`);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
+            if (zipEntry.startsWith("__MACOSX/")) {
+                continue;
+            }
             debug(zipEntry);
         }
         return;
@@ -1219,6 +1225,9 @@ const findPropertiesInSpineForManifest = (linkEpub: Manifest, opf: OPF): string 
 //                 debug(`NOT IN ZIP (fillMediaOverlay): ${item.HrefDecoded} --- ${itemHrefDecoded}`);
 //                 const zipEntries = await zip.getEntries();
 //                 for (const zipEntry of zipEntries) {
+// if (zipEntry.startsWith("__MACOSX/")) {
+//     continue;
+// }
 //                     debug(zipEntry);
 //                 }
 //                 continue;

@@ -228,6 +228,14 @@ const addLinkData = async (
 
             if (linkItem.MediaOverlays && !linkItem.MediaOverlays.initialized) {
 
+                // debug(
+                //     global.JSON.stringify(TaJsonSerialize(publication), null, 4),
+                //     global.JSON.stringify(linkItem, null, 4));
+
+                // if (process.env) {
+                //     throw new Error("BREAK");
+                // }
+
                 // mo.initialized true/false is automatically handled
                 await lazyLoadMediaOverlays(publication, linkItem.MediaOverlays);
 

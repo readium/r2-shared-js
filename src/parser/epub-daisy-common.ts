@@ -454,12 +454,12 @@ export const fillSpineAndResource = async (
 
                 linkItem.setHrefDecoded(zipPath);
 
-                await addLinkData(publication, rootfile, opf, zip, linkItem, item);
-
                 if (!publication.Resources) {
                     publication.Resources = [];
                 }
                 publication.Resources.push(linkItem);
+
+                await addLinkData(publication, rootfile, opf, zip, linkItem, item);
             }
         }
     }
@@ -714,6 +714,9 @@ export const getNcx = async (ncxManItem: Manifest, opf: OPF, zip: IZip): Promise
         debug(err);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
+            if (zipEntry.startsWith("__MACOSX/")) {
+                continue;
+            }
             debug(zipEntry);
         }
         return Promise.reject(err);
@@ -773,6 +776,9 @@ export const getOpf = async (zip: IZip, rootfilePathDecoded: string, rootfilePat
         debug(err);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
+            if (zipEntry.startsWith("__MACOSX/")) {
+                continue;
+            }
             debug(zipEntry);
         }
         return Promise.reject(err);
@@ -1253,6 +1259,9 @@ export const loadFileBufferFromZipPath = async (
         debug(`NOT IN ZIP (loadFileBufferFromZipPath): ${linkHref} --- ${linkHrefDecoded}`);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
+            if (zipEntry.startsWith("__MACOSX/")) {
+                continue;
+            }
             debug(zipEntry);
         }
         return undefined;
@@ -1441,9 +1450,12 @@ export const addMediaOverlaySMIL = async (link: Link, manItemSmil: Manifest, opf
 
             const has = await zipHasEntry(zip, smilFilePath, smilFilePath);
             if (!has) {
-                debug(`NOT IN ZIP (addMediaOverlay): ${smilFilePath}`);
+                debug(`NOT IN ZIP (addMediaOverlay): ${smilFilePath} -- ${opf.ZipPath}`);
                 const zipEntries = await zip.getEntries();
                 for (const zipEntry of zipEntries) {
+                    if (zipEntry.startsWith("__MACOSX/")) {
+                        continue;
+                    }
                     debug(zipEntry);
                 }
                 return;
@@ -1559,6 +1571,9 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
         debug(err);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
+            if (zipEntry.startsWith("__MACOSX/")) {
+                continue;
+            }
             debug(zipEntry);
         }
         return Promise.reject(err);

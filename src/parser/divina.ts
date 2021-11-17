@@ -84,6 +84,9 @@ export async function DivinaParsePromise(filePath: string, isDivina?: Divinais, 
         if (!has) {
             const zipEntries = await zip.getEntries();
             for (const zipEntry of zipEntries) {
+                if (zipEntry.startsWith("__MACOSX/")) {
+                    continue;
+                }
                 debug(zipEntry);
             }
             return Promise.reject("Divina no manifest?!");

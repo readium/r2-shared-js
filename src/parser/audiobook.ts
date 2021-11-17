@@ -81,6 +81,9 @@ export async function AudioBookParsePromise(filePath: string, isAudio?: AudioBoo
         if (!has) {
             const zipEntries = await zip.getEntries();
             for (const zipEntry of zipEntries) {
+                if (zipEntry.startsWith("__MACOSX/")) {
+                    continue;
+                }
                 debug(zipEntry);
             }
             return Promise.reject("AudioBook no manifest?!");

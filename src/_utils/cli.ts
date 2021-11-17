@@ -405,6 +405,9 @@ async function extractEPUB_Link(pub: Publication, zip: IZip, outDir: string, lin
         console.log(`NOT IN ZIP (extractEPUB_Link): ${link.Href} --- ${hrefDecoded}`);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
+            if (zipEntry.startsWith("__MACOSX/")) {
+                continue;
+            }
             console.log(zipEntry);
         }
         return;

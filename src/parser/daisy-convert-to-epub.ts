@@ -43,6 +43,8 @@ export const convertDaisyToReadiumWebPub = async (
     publication: Publication,
     generateDaisyAudioManifestOnly?: string): Promise<string | undefined> => {
 
+    // debug("DEBUG: ", global.JSON.stringify(publication, null, 4));
+
     return new Promise(async (resolve, reject) => {
 
         // TODO: textPartAudio / audioPartText?? audioOnly??
@@ -282,7 +284,8 @@ export const convertDaisyToReadiumWebPub = async (
 
                 let smilTextRef: string | undefined;
 
-                if (audioOnlySmilHtmlHref && !mo.Text && mo.Audio) {
+                // && !mo.Text => with audio-only DAISY2.02, points back to ncc.html
+                if (audioOnlySmilHtmlHref && mo.Audio) {
                     smilTextRef = audioOnlySmilHtmlHref;
                     mo.Text = `${smilTextRef}#${mo.ParID || mo.TextID || "_yyy_"}`;
                 } else if (mo.Text) {

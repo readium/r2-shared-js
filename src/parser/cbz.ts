@@ -126,6 +126,9 @@ const comicRackMetadata = async (zip: IZip, entryName: string, publication: Publ
         console.log(`NOT IN ZIP: ${entryName} --- ${entryNameDecoded}`);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
+            if (zipEntry.startsWith("__MACOSX/")) {
+                continue;
+            }
             console.log(zipEntry);
         }
         return;
