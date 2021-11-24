@@ -355,6 +355,8 @@ export const convertDaisyToReadiumWebPub = async (
 
                 const smilDocClone = smilDoc.cloneNode(true) as Document;
 
+                let txtCounter = 0;
+
                 // getElementsByName(elementName: string): NodeListOf<HTMLElement>
                 // ==> not available in the XMLDOM API
                 // getElementsByTagName(qualifiedName: string): HTMLCollectionOf<Element>
@@ -407,8 +409,10 @@ export const convertDaisyToReadiumWebPub = async (
                         tocLinkItem = publication.TOC ? findLinkInToc(publication.TOC, hrefDecoded_) : undefined;
                     }
                     const text = tocLinkItem ? tocLinkItem.Title : undefined;
-
-                    const textNode = smilDocClone.createTextNode(text ? text : ".");
+                    if (text) {
+                        txtCounter = 0;
+                    }
+                    const textNode = smilDocClone.createTextNode(text ? text : `... [${++txtCounter}]`);
                     parEl.appendChild(textNode);
                 }
 
