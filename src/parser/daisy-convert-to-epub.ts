@@ -371,6 +371,7 @@ export const convertDaisyToReadiumWebPub = async (
                         }
                     }
 
+                    let textId: string | undefined | null;
                     const textElements = Array.from(parEl.getElementsByTagName("text")).filter((el) => el);
                     for (const textElement of textElements) {
                         // if (textElement.parentNode) {
@@ -383,20 +384,28 @@ export const convertDaisyToReadiumWebPub = async (
                             textElement.removeAttribute("src");
                         }
 
-                        // hoist DAISY2 text ID to parent par
-                        const parId = parEl.getAttribute("id");
-                        if (!parId) {
-                            const txtId = textElement.getAttribute("id");
-                            if (txtId) {
-                                parEl.setAttribute("id", txtId);
-                                textElement.removeAttribute("id");
-                            }
+                        if (!textId) {
+                            textId = textElement.getAttribute("id");
                         }
+
+                        // // hoist DAISY2 text ID to parent par
+                        // const parId = parEl.getAttribute("id");
+                        // if (!parId) {
+                        //     const txtId = textElement.getAttribute("id");
+                        //     if (txtId) {
+                        //         parEl.setAttribute("id", txtId);
+                        //         textElement.removeAttribute("id");
+                        //     }
+                        // }
                     }
 
                     const elmId = parEl.getAttribute("id");
                     const hrefDecoded = `${smilPathInZip}#${elmId}`;
-                    const tocLinkItem = publication.TOC ? findLinkInToc(publication.TOC, hrefDecoded) : undefined;
+                    let tocLinkItem = publication.TOC ? findLinkInToc(publication.TOC, hrefDecoded) : undefined;
+                    if (!tocLinkItem && textId) {
+                        const hrefDecoded_ = `${smilPathInZip}#${textId}`;
+                        tocLinkItem = publication.TOC ? findLinkInToc(publication.TOC, hrefDecoded_) : undefined;
+                    }
                     const text = tocLinkItem ? tocLinkItem.Title : undefined;
 
                     const textNode = smilDocClone.createTextNode(text ? text : ".");
@@ -1010,7 +1019,7 @@ ${cssHrefs.reduce((pv, cv) => {
                     return;
                 }
 
-                link.Href = href + "/../" + src.replace(/((\.xml)|(\.html))(#.*)?$/i, ".xhtml$4");
+                link.Href = path.join(href, "..", src.replace(/((\.xml)|(\.html))(#.*)?$/i, ".xhtml$4")).replace(/\\/g, "/");
                 link.TypeLink = "application/xhtml+xml";
             };
 
@@ -1116,7 +1125,10 @@ ${cssHrefs.reduce((pv, cv) => {
                             // if (textElems) {
                             //     targetEl = textElems;
                             // }
-                            targetEl = findFirstDescendantTextOrAudio(targetEl, true);
+                            targetEl = findFirstDescendantTextOrAudio(
+                                (targetEl.nodeName === "text" && targetEl.parentNode) ?
+                                targetEl.parentNode as Element :
+                                targetEl, true);
                         }
                         if (!targetEl || targetEl.nodeName !== "audio") {
                             debug("==?? !targetEl2 ", href,
@@ -1146,7 +1158,7 @@ ${cssHrefs.reduce((pv, cv) => {
                         //     link.Duration = end - begin;
                         // }
 
-                        link.Href = smilHref + "/../" + src + timeStamp;
+                        link.Href = path.join(smilHref, "..", src + timeStamp).replace(/\\/g, "/");
 
                         link.TypeLink = "audio/?";
                         const mediaType = mime.lookup(src);
@@ -1201,7 +1213,7 @@ ${cssHrefs.reduce((pv, cv) => {
                             }
 
                             const link = new Link();
-                            link.Href = spineLink.MediaOverlays.SmilPathInZip + "/../" + src;
+                            link.Href = path.join(spineLink.MediaOverlays.SmilPathInZip, "..", src).replace(/\\/g, "/");
                             link.TypeLink = "audio/?";
                             if (audioPublication.Resources) {
                                 const resAudio = audioPublication.Resources.find((l) => {

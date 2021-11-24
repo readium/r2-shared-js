@@ -1550,6 +1550,16 @@ export const flattenDaisy2SmilAudioSeq = (_smilPathInZip: string, smilXmlDoc: Do
                         } else if (text.parentNode) {
                             text.parentNode.insertBefore(audio, text.nextElementSibling);
                         }
+
+                        // hoist DAISY2 text ID to parent par
+                        const parId = par.getAttribute("id");
+                        if (!parId) {
+                            const txtId = text.getAttribute("id");
+                            if (txtId) {
+                                par.setAttribute("id", txtId);
+                                text.removeAttribute("id");
+                            }
+                        }
                     } else {
                         par.appendChild(audio);
                     }
@@ -1564,7 +1574,8 @@ export const flattenDaisy2SmilAudioSeq = (_smilPathInZip: string, smilXmlDoc: Do
                         if (tId) {
                             cloneText.removeAttribute("id");
                         }
-                        cloneText.setAttribute("id", (tId ? tId : "id") + "r2__" + iClone);
+                        // hoist DAISY2 text ID to parent par
+                        newPar.setAttribute("id", (tId ? tId : "id") + "r2__" + iClone);
                         newPar.appendChild(cloneText);
                     } else {
                         newPar.setAttribute("id", "id" + "r2__" + iClone);
