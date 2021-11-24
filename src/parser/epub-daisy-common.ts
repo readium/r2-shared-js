@@ -441,7 +441,7 @@ export const fillSpineAndResource = async (
 
             const itemHrefDecoded = item.HrefDecoded;
             if (!itemHrefDecoded) {
-                debug("!? item.Href");
+                debug("!? item.Href", JSON.stringify(item, null, 4));
                 continue;
             }
             const zipPath = path.join(path.dirname(opf.ZipPath), itemHrefDecoded)

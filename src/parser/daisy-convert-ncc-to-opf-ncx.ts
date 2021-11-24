@@ -140,7 +140,9 @@ export const convertNccToOpfAndNcx = async (
         multimediaType = "textNCX";
     }
 
-    const zipEntriez = await zip.getEntries();
+    const zipEntriez = (await zip.getEntries()).filter((e) => {
+        return e && !e.endsWith("/"); // exclude folders!
+    });
 
     const manifestItemsBaseStr = zipEntriez.reduce((pv, cv, ci) => {
         const ext = path.extname(cv);

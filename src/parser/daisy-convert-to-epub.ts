@@ -779,6 +779,9 @@ ${cssHrefs.reduce((pv, cv) => {
                         resLink.TypeLink === "text/html" ||
                         resLink.TypeLink === "application/xhtml+xml") {
 
+                        if (resLink.TypeLink === "text/html") {
+                            resLink.TypeLink = "application/xhtml+xml";
+                        }
                         dtBooks.push(resLink);
                     }
                 }
@@ -962,7 +965,7 @@ ${cssHrefs.reduce((pv, cv) => {
                     return;
                 }
                 if (isAudioOnly) {
-                    link.setHrefDecoded(href.replace(/\.smil/, ".xhtml")); // note: regexp not $ (END)
+                    link.setHrefDecoded(href.replace(/\.smil(#.*)?$/i, ".xhtml$1"));
                     link.TypeLink = "application/xhtml+xml";
                     return;
                 }
@@ -1006,10 +1009,8 @@ ${cssHrefs.reduce((pv, cv) => {
                 if (!src) {
                     return;
                 }
-                // TODO: path is relative to SMIL (not to publication root),
-                // and .xml file extension replacement is bit weak / brittle
-                // (but for most DAISY books, this is a reasonable expectation)
-                link.Href = src.replace(/\.xml/, ".xhtml"); // note: regexp not $ (END)
+
+                link.Href = href + "/../" + src.replace(/((\.xml)|(\.html))(#.*)?$/i, ".xhtml$4");
                 link.TypeLink = "application/xhtml+xml";
             };
 
@@ -1092,7 +1093,7 @@ ${cssHrefs.reduce((pv, cv) => {
                             return;
                         }
 
-                        const smilHref = href.replace(/\.xhtml/, ".smil"); // note: regexp not $ (END)
+                        const smilHref = href.replace(/\.xhtml(#.*)?$/i, ".smil$1");
                         const smilDoc = await loadOrGetCachedSmil(smilHref);
 
                         let targetEl = fragment ? smilDoc.getElementById(fragment) as Element : undefined;
@@ -1145,10 +1146,7 @@ ${cssHrefs.reduce((pv, cv) => {
                         //     link.Duration = end - begin;
                         // }
 
-                        // TODO: path is relative to SMIL (not to publication root),
-                        // and .xml file extension replacement is bit weak / brittle
-                        // (but for most DAISY books, this is a reasonable expectation)
-                        link.Href = src + timeStamp;
+                        link.Href = smilHref + "/../" + src + timeStamp;
 
                         link.TypeLink = "audio/?";
                         const mediaType = mime.lookup(src);
@@ -1201,12 +1199,9 @@ ${cssHrefs.reduce((pv, cv) => {
                             if (!src) {
                                 continue;
                             }
-                            // TODO: path is relative to SMIL (not to publication root),
-                            // and .xml file extension replacement is bit weak / brittle
-                            // (but for most DAISY books, this is a reasonable expectation)
 
                             const link = new Link();
-                            link.Href = src;
+                            link.Href = spineLink.MediaOverlays.SmilPathInZip + "/../" + src;
                             link.TypeLink = "audio/?";
                             if (audioPublication.Resources) {
                                 const resAudio = audioPublication.Resources.find((l) => {
