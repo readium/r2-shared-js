@@ -187,7 +187,7 @@ if (args[1]) {
             console.log(err);
             return;
         }
-    } else { //  if (ext === ".cbz")
+    } else {
         await dumpPublication(publication);
     }
 })();

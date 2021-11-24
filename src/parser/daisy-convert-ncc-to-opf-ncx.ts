@@ -22,39 +22,39 @@ import { OPF } from "./epub/opf";
 const debug = debug_("r2:shared#parser/daisy-convert-to-epub");
 
 const getMediaTypeFromFileExtension = (ext: string) => {
-    if (ext === ".smil") {
+    if (/\.smil$/i.test(ext)) {
         return "application/smil";
     }
 
-    if (ext === ".css") {
+    if (/\.css$/i.test(ext)) {
         return "text/css";
     }
 
-    if (ext === ".mp3") {
+    if (/\.mp3$/i.test(ext)) {
         return "audio/mpeg";
     }
 
-    if (ext === ".wav") {
+    if (/\.wav$/i.test(ext)) {
         return "audio/wav";
     }
 
-    if (ext === ".jpg" || ext === ".jpeg") {
+    if (/\.jpe?g$/i.test(ext)) {
         return "image/jpeg";
     }
 
-    if (ext === ".png") {
+    if (/\.png$/i.test(ext)) {
         return "image/png";
     }
 
-    if (ext === ".xml") {
+    if (/\.xml$/i.test(ext)) {
         return "application/x-dtbook+xml";
     }
 
-    if (ext === ".html") {
+    if (/\.html$/i.test(ext)) {
         return "text/html";
     }
 
-    if (ext === ".xhtml") {
+    if (/\.xhtml$/i.test(ext)) {
         return "application/xhtml+xml";
     }
 
