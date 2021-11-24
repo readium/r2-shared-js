@@ -1496,34 +1496,94 @@ export const addMediaOverlaySMIL = async (link: Link, manItemSmil: Manifest, opf
     }
 };
 
-export const flattenDaisy2SmilAudioSeq = (smilXmlDoc: Document) => {
+// export const flattenDaisy2SmilAudioSeq_ = (_smilPathInZip: string, smilXmlDoc: Document) => {
 
-    // flatten seq inside par
-    // (naive implementation, assumes contiguity of begin/end clips for same audio file)
-    const pars = smilXmlDoc.getElementsByTagName("par");
-    // tslint:disable-next-line: prefer-for-of
-    for (let i = 0; i < pars.length; i++) {
-        const par = pars[i];
-        const seq = par.getElementsByTagName("seq")[0];
+//     // flatten seq inside par
+//     // (naive implementation, assumes contiguity of begin/end clips for same audio file)
+//     const pars = smilXmlDoc.getElementsByTagName("par");
+//     // tslint:disable-next-line: prefer-for-of
+//     for (let i = 0; i < pars.length; i++) {
+//         const par = pars[i];
+//         const seq = par.getElementsByTagName("seq")[0] as Element | undefined; // assumes one only (safe assumption)
+//         if (seq) {
+//             let audioInsidePar;
+//             const audios = seq.getElementsByTagName("audio");
+//             for (let j = 0; j < audios.length; j++) {
+//                 if (j === 0) {
+//                     audioInsidePar = audios[j];
+//                 }
+//                 if (audioInsidePar && j === audios.length - 1) {
+//                     const clipEnd = audios[j].getAttribute("clip-end") || "";
+//                     audioInsidePar.setAttribute("clip-end", clipEnd);
+//                 }
+//             }
+//             if (audioInsidePar) {
+//                 seq.removeChild(audioInsidePar);
+//                 par.removeChild(seq);
+//                 par.appendChild(audioInsidePar);
+//             }
+//         }
+//     }
+// };
+
+export const flattenDaisy2SmilAudioSeq = (_smilPathInZip: string, smilXmlDoc: Document) => {
+
+    let iClone = 0;
+
+    // factor out seq that's inside par
+    const pars = Array.from(smilXmlDoc.getElementsByTagName("par"));
+    for (const par of pars) {
+        const seq = par.getElementsByTagName("seq")[0] as Element | undefined; // assumes one only (safe assumption)
         if (seq) {
-            let audioInsidePar;
-            const audios = seq.getElementsByTagName("audio");
+            const text = par.getElementsByTagName("text")[0] as Element | undefined; // assumes one only (safe assumption)
+
+            const audios = Array.from(seq.getElementsByTagName("audio"));
             for (let j = 0; j < audios.length; j++) {
+                const audio = audios[j];
+
+                seq.removeChild(audio);
+
                 if (j === 0) {
-                    audioInsidePar = audios[j];
-                }
-                if (audioInsidePar && j === audios.length - 1) {
-                    const clipEnd = audios[j].getAttribute("clip-end") || "";
-                    audioInsidePar.setAttribute("clip-end", clipEnd);
+                    if (text) {
+                        if (text.insertAdjacentElement) {
+                            text.insertAdjacentElement("afterend", audio);
+                        } else if (text.parentNode) {
+                            text.parentNode.insertBefore(audio, text.nextElementSibling);
+                        }
+                    } else {
+                        par.appendChild(audio);
+                    }
+                } else {
+                    const newPar = par.namespaceURI ?
+                        smilXmlDoc.createElementNS(par.namespaceURI, "par") :
+                        smilXmlDoc.createElement("par");
+                    iClone++;
+                    if (text) {
+                        const cloneText = text.cloneNode(false) as Element;
+                        const tId = cloneText.getAttribute("id");
+                        if (tId) {
+                            cloneText.removeAttribute("id");
+                        }
+                        cloneText.setAttribute("id", (tId ? tId : "id") + "r2__" + iClone);
+                        newPar.appendChild(cloneText);
+                    } else {
+                        newPar.setAttribute("id", "id" + "r2__" + iClone);
+                    }
+                    newPar.appendChild(audio);
+                    newPar.appendChild(smilXmlDoc.createTextNode("\n"));
+
+                    if (par.insertAdjacentElement) {
+                        par.insertAdjacentElement("afterend", newPar);
+                    } else if (par.parentNode) {
+                        par.parentNode.insertBefore(newPar, par.nextElementSibling);
+                    }
                 }
             }
-            if (audioInsidePar) {
-                seq.removeChild(audioInsidePar);
-                par.removeChild(seq);
-                par.appendChild(audioInsidePar);
-            }
+            par.removeChild(seq);
         }
     }
+
+    // debug(smilPathInZip, new xmldom.XMLSerializer().serializeToString(smilXmlDoc));
 };
 
 // mo.initialized true/false is automatically handled
@@ -1645,7 +1705,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
         return /ncc\.html$/i.test(entry);
     });
     if (nccZipEntry) {
-        flattenDaisy2SmilAudioSeq(smilXmlDoc);
+        flattenDaisy2SmilAudioSeq(mo.SmilPathInZip, smilXmlDoc);
     }
 
     const smil = XML.deserialize<SMIL>(smilXmlDoc, SMIL);
@@ -1653,6 +1713,9 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
 
     mo.initialized = true;
     debug("PARSED SMIL: " + mo.SmilPathInZip);
+
+    // debug(mo.SmilPathInZip, new xmldom.XMLSerializer().serializeToString(smilXmlDoc));
+    // debug(JSON.stringify(smil, null, 4));
 
     // breakLength: 100  maxArrayLength: undefined
     // debug(util.inspect(smil,
@@ -1736,6 +1799,12 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
         }
     }
 
+    // debug(JSON.stringify(mo, null, 4));
+
+    // if ((process.env as NodeJS.ProcessEnv).BREAK) {
+    //     throw new Error("BREAK");
+    // }
+    // (process.env as NodeJS.ProcessEnv).BREAK = "break!";
     return;
 };
 
