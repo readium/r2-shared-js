@@ -884,7 +884,10 @@ const fillPageListFromAdobePageMap = async (publication: Publication, zip: IZip,
     if (pages && pages.length) {
         // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < pages.length; i += 1) {
-            const page = pages.item(i)!;
+            const page = pages.item(i);
+            if (!page) {
+                continue;
+            }
 
             const link = new Link();
             const href = page.getAttribute("href");

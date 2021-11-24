@@ -24,6 +24,7 @@ import { zipHasEntry } from "../_utils/zipHasEntry";
 
 const debug = debug_("r2:shared#parser/divina");
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function absolutizeURLs(rootUrl: string, jsonObj: any) {
     traverseJsonObjects(jsonObj,
         (obj) => {
@@ -239,7 +240,7 @@ async function doRequest(u: string): Promise<Divinais | undefined> {
                         try {
                             const redirectRes = await doRequest(l);
                             resolve(redirectRes);
-                        } catch (err) {
+                        } catch (_err) {
                             resolve(undefined);
                             // reject(`HTTP Divina redirect, then fail ${u} ${err}`);
                         }

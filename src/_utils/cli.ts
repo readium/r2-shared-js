@@ -205,6 +205,7 @@ function extractEPUB_ManifestJSON(pub: Publication, outDir: string, keys: string
     }
 
     if (keys) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         arrLinks.forEach((link: any) => {
             if (link.properties && link.properties.encrypted &&
                 link.properties.encrypted.scheme === "http://readium.org/2014/01/lcp") {
@@ -246,6 +247,7 @@ function extractEPUB_ManifestJSON(pub: Publication, outDir: string, keys: string
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     arrLinks.forEach((link: any) => {
         if (link.properties && link.properties.encrypted &&
             (link.properties.encrypted.algorithm === "http://www.idpf.org/2008/embedding" ||

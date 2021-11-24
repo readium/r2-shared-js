@@ -63,6 +63,7 @@ test("JSON SERIALIZE: Metadata.Title => string-lang", (t) => {
 
 test("JSON DESERIALIZE: Metadata.Title => string", (t) => {
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const json: any = {};
     json.title = titleStr1;
     logJSON(json);
@@ -76,6 +77,7 @@ test("JSON DESERIALIZE: Metadata.Title => string", (t) => {
 
 test("JSON DESERIALIZE: Metadata.Title => string-lang", (t) => {
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const json: any = {};
     json.title = titleLangStr1;
     logJSON(json);

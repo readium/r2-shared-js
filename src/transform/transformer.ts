@@ -142,7 +142,7 @@ export class Transformers {
                 if (transformedData) { // need to consume the promise
                     try {
                         s = await transformedData;
-                    } catch (err) {
+                    } catch (_err) {
                         transformedData = undefined;
                         break;
                     }

@@ -97,6 +97,7 @@ export const convertDaisyToReadiumWebPub = async (
                             resolve(outputZipPath);
                         }
                     })
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     .on("error", (e: any) => {
                         debug("ZIP error", e);
                         reject(e);
@@ -262,7 +263,7 @@ export const convertDaisyToReadiumWebPub = async (
             let mediaOverlaysMap: TmoMap | undefined;
 
             const getMediaOverlaysDuration = (mo: MediaOverlayNode): number => {
-                let duration: number = 0;
+                let duration = 0;
 
                 if (typeof mo.AudioClipBegin !== "undefined" &&
                     typeof mo.AudioClipEnd !== "undefined") {
@@ -397,16 +398,16 @@ export const convertDaisyToReadiumWebPub = async (
                 const bodyContent = smilDocClone.getElementsByTagName("body")[0];
                 const bodyContentStr = new xmldom.XMLSerializer().serializeToString(bodyContent);
                 const contentStr = bodyContentStr
-                    .replace(`xmlns="http://www.w3.org/2001/SMIL20/"`, "")
+                    .replace("xmlns=\"http://www.w3.org/2001/SMIL20/\"", "")
                     .replace(/dur=/g, "data-dur=")
                     .replace(/endsync=/g, "data-endsync=")
                     .replace(/fill=/g, "data-fill=")
                     .replace(/system-required=/g, "data-system-required=")
                     .replace(/customTest=/g, "data-customTest=")
                     .replace(/class=/g, "data-class=")
-                    .replace(/<seq/g, '<div class="smil-seq"')
-                    .replace(/<text/g, '<hr class="smil-text"')
-                    .replace(/<par/g, '<p class="smil-par"')
+                    .replace(/<seq/g, "<div class=\"smil-seq\"")
+                    .replace(/<text/g, "<hr class=\"smil-text\"")
+                    .replace(/<par/g, "<p class=\"smil-par\"")
                     .replace(/<\/seq>/g, "</div>")
                     .replace(/<\/par>/g, "</p>")
                     ;
@@ -566,10 +567,10 @@ export const convertDaisyToReadiumWebPub = async (
                         // `===${match[1]}^^^${match[2]}^^^${match[3]}===`);
                         //     debug("B -----------");
                         // }
-                        cssText = cssText.replace(regex, `$1.$2_R2$3`);
+                        cssText = cssText.replace(regex, "$1.$2_R2$3");
 
                         // second pass, as the first doesn't match tokens with trailing / leading separators
-                        cssText = cssText.replace(regex, `$1.$2_R2$3`);
+                        cssText = cssText.replace(regex, "$1.$2_R2$3");
                     }
 
                     // restore comments
@@ -1297,6 +1298,7 @@ Helpers
                         const type = listElement.getAttribute("type");
                         if (type) {
                             // TODO: strictly-speaking, this is a read-only property!
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             (listElement as any).tagName = type;
                             // listElement.removeAttribute("type");
                         }
@@ -1317,6 +1319,7 @@ Helpers
                             const cls = el.getAttribute("class");
                             el.setAttribute("class", `${cls ? (cls + " ") : ""}${elementName}_R2`);
                             // TODO: strictly-speaking, this is a read-only property!
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             (el as any).tagName =
                                 ((elementName === "dtbook") ? "html" :
                                     ((elementName === "book") ? "body" :

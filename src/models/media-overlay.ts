@@ -107,7 +107,7 @@ export class MediaOverlayNode {
 
     public SmilPathInZip: string | undefined; // URL already decodeURI()
 
-    public initialized: boolean = false;
+    public initialized = false;
 
     public ParID: string | undefined;
     public SeqID: string | undefined;

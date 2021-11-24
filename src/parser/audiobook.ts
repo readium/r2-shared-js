@@ -24,6 +24,7 @@ import { zipHasEntry } from "../_utils/zipHasEntry";
 
 const debug = debug_("r2:shared#parser/audiobook");
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function absolutizeURLs(rootUrl: string, jsonObj: any) {
     traverseJsonObjects(jsonObj,
         (obj) => {

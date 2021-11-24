@@ -101,7 +101,7 @@ export const fillPublicationDate = (publication: Publication, rootfile: Rootfile
                 if (mom.isValid()) {
                     publication.Metadata.PublicationDate = mom.toDate();
                 }
-            } catch (err) {
+            } catch (_err) {
                 debug("INVALID DATE/TIME? " + token);
             }
             return;
@@ -115,7 +115,7 @@ export const fillPublicationDate = (publication: Publication, rootfile: Rootfile
                     if (mom.isValid()) {
                         publication.Metadata.PublicationDate = mom.toDate();
                     }
-                } catch (err) {
+                } catch (_err) {
                     debug("INVALID DATE/TIME? " + token);
                 }
             }
