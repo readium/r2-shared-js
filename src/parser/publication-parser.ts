@@ -23,9 +23,9 @@ export async function PublicationParsePromise(filePath: string): Promise<Publica
             // tslint:disable-next-line: no-conditional-assignment
             ((isDivina = await isDivinaPublication(filePath)) ? DivinaParsePromise(filePath, isDivina) :
                 // tslint:disable-next-line:max-line-length
-                (/\.webpub$/.test(path.extname(path.basename(filePath)).toLowerCase()) ? DivinaParsePromise(filePath, (/^http[s]?:\/\//.test(filePath) ? Divinais.RemotePacked : Divinais.LocalPacked), "webpub") :
+                (/\.webpub$/i.test(path.extname(path.basename(filePath))) ? DivinaParsePromise(filePath, (/^https?:\/\//.test(filePath) ? Divinais.RemotePacked : Divinais.LocalPacked), "webpub") :
                     // tslint:disable-next-line:max-line-length
-                    (/\.lcpdf$/.test(path.extname(path.basename(filePath)).toLowerCase()) ? DivinaParsePromise(filePath, (/^http[s]?:\/\//.test(filePath) ? Divinais.RemotePacked : Divinais.LocalPacked), "pdf") :
+                    (/\.lcpdf$/i.test(path.extname(path.basename(filePath))) ? DivinaParsePromise(filePath, (/^https?:\/\//.test(filePath) ? Divinais.RemotePacked : Divinais.LocalPacked), "pdf") :
                         (await isDaisyPublication(filePath) ? DaisyParsePromise(filePath) :
                             // tslint:disable-next-line: no-conditional-assignment max-line-length
                             (isAudio = await isAudioBookPublication(filePath)) ? AudioBookParsePromise(filePath, isAudio) :

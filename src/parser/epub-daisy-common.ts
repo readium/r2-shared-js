@@ -1642,7 +1642,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
     const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
 
     const nccZipEntry = (await zip.getEntries()).find((entry) => {
-        return /ncc\.html$/.test(entry);
+        return /ncc\.html$/i.test(entry);
     });
     if (nccZipEntry) {
         flattenDaisy2SmilAudioSeq(smilXmlDoc);

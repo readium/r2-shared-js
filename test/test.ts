@@ -73,7 +73,7 @@ test("EPUB parsing (de)serialize roundtrip", async (t) => {
     //     .ext([".epub", ".epub3"])
     //     .find();
     const filePaths = fs.readdirSync(dirPath, { withFileTypes: true }).
-        filter((f) => f.isFile() && /\.epub3?$/.test(f.name)).map((f) => path.join(dirPath, f.name));
+        filter((f) => f.isFile() && /\.epub3?$/i.test(f.name)).map((f) => path.join(dirPath, f.name));
 
     for (const filePath of filePaths) {
         debug("------------------------");

@@ -74,7 +74,7 @@ export const convertDaisyToReadiumWebPub = async (
         const zip = zipInternal.Value as IZip;
 
         const nccZipEntry = (await zip.getEntries()).find((entry) => {
-            return /ncc\.html$/.test(entry);
+            return /ncc\.html$/i.test(entry);
         });
 
         const outputZipPath = path.join(outputDirPath, `${isAudioOnly ? "daisy_audioNCX" : (isTextOnly ? "daisy_textNCX" : "daisy_audioFullText")}-to-epub.webpub`);
@@ -291,7 +291,7 @@ export const convertDaisyToReadiumWebPub = async (
                 } else if (mo.Text) {
                     // TODO: .xml/html file extension replacement is bit weak / brittle
                     // (but for most DAISY books, this is a reasonable expectation)
-                    mo.Text = mo.Text.replace(/(\.xml)|(\.html)/, ".xhtml"); // note: regexp not $ (END)
+                    mo.Text = mo.Text.replace(/((\.xml)|(\.html))(#.*)?$/i, ".xhtml");
                     smilTextRef = mo.Text;
                     const k = smilTextRef.indexOf("#");
                     if (k > 0) {
@@ -380,7 +380,7 @@ export const convertDaisyToReadiumWebPub = async (
                         const src = textElement.getAttribute("src");
                         if (src) {
                             textElement.setAttribute("data-src",
-                                src.replace(/(\.xml)|(\.html)/, ".xhtml")); // note: regexp not $ (END)
+                                src.replace(/((\.xml)|(\.html))(#.*)?$/i, ".xhtml"));
                             textElement.removeAttribute("src");
                         }
                     }
@@ -420,7 +420,7 @@ export const convertDaisyToReadiumWebPub = async (
     ${contentStr}
 </html>
 `;
-                const htmlFilePath = smilPathInZip.replace(/\.smil$/, ".xhtml");
+                const htmlFilePath = smilPathInZip.replace(/\.smil$/i, ".xhtml");
                 // const fileName = path.parse(href).name;
                 if (!generateDaisyAudioManifestOnly) {
                     (zipfile as ZipFile).addBuffer(Buffer.from(htmlDoc), htmlFilePath);
@@ -493,7 +493,7 @@ export const convertDaisyToReadiumWebPub = async (
 
                     if (isAudioOnly) {
                         const audioOnlySmilHtmlHref =
-                            linkItem.MediaOverlays.SmilPathInZip?.replace(/\.smil$/, ".xhtml");
+                            linkItem.MediaOverlays.SmilPathInZip?.replace(/\.smil$/i, ".xhtml");
                         if (audioOnlySmilHtmlHref) {
                             smilTextRef = patchMediaOverlaysTextHref(linkItem.MediaOverlays, audioOnlySmilHtmlHref);
                         }
@@ -537,7 +537,7 @@ export const convertDaisyToReadiumWebPub = async (
                 if (!resLink.HrefDecoded) {
                     continue;
                 }
-                if (resLink.TypeLink === "text/css" || resLink.HrefDecoded.endsWith(".css")) {
+                if (resLink.TypeLink === "text/css" || /\.css$/i.test(resLink.HrefDecoded)) {
 
                     let cssText = await loadFileStrFromZipPath(resLink.Href, resLink.HrefDecoded, zip);
                     if (!cssText) {
@@ -578,7 +578,7 @@ export const convertDaisyToReadiumWebPub = async (
                         return `/*${comment}*/`;
                     });
 
-                    // const newCssFilePath = resLink.HrefDecoded.replace(/\.css$/, "__.css");
+                    // const newCssFilePath = resLink.HrefDecoded.replace(/\.css$/i, "__.css");
                     // const cssOutputFilePath = path.join(outputDirPathExploded, newCssFilePath);
                     // ensureDirs(cssOutputFilePath);
                     // fs.writeFileSync(cssOutputFilePath, cssText);
@@ -593,7 +593,7 @@ export const convertDaisyToReadiumWebPub = async (
 
                     resourcesToKeep.push(resLink);
 
-                } else if (resLink.TypeLink === "application/x-dtbook+xml" || resLink.HrefDecoded.endsWith(".xml")) {
+                } else if (resLink.TypeLink === "application/x-dtbook+xml" || /\.xml$/i.test(resLink.HrefDecoded)) {
 
                     // TODO: XSLT?
                     /*
@@ -1403,7 +1403,7 @@ ${cssHrefs.reduce((pv, cv) => {
                             }, "")}
 </head>
 `);
-                    const xhtmlFilePath = resLink.HrefDecoded.replace(/\.(.+)$/, ".xhtml");
+                    const xhtmlFilePath = resLink.HrefDecoded.replace(/\.([^\.]+)$/i, ".xhtml");
 
                     // const xhtmlOutputFilePath = path.join(outputDirPathExploded, xhtmlFilePath);
                     // ensureDirs(xhtmlOutputFilePath);
@@ -1421,10 +1421,10 @@ ${cssHrefs.reduce((pv, cv) => {
 
                     dtBooks.push(resLinkClone);
 
-                } else if (!resLink.HrefDecoded.endsWith(".opf") &&
-                    !resLink.HrefDecoded.endsWith(".res") &&
-                    !resLink.HrefDecoded.endsWith(".ncx") &&
-                    !resLink.HrefDecoded.endsWith("ncc.html")) {
+                } else if (!/\.opf$/i.test(resLink.HrefDecoded) &&
+                    !/\.res$/i.test(resLink.HrefDecoded) &&
+                    !/\.ncx$/i.test(resLink.HrefDecoded) &&
+                    !/ncc\.html$/i.test(resLink.HrefDecoded)) {
 
                     if (!generateDaisyAudioManifestOnly) {
                         const buff = await loadFileBufferFromZipPath(resLink.Href, resLink.HrefDecoded, zip);
@@ -1435,8 +1435,7 @@ ${cssHrefs.reduce((pv, cv) => {
 
                     resourcesToKeep.push(resLink);
 
-                    if (resLink.HrefDecoded.endsWith(".html") ||
-                        resLink.HrefDecoded.endsWith(".xhtml") ||
+                    if (/\.x?html$/i.test(resLink.HrefDecoded) ||
                         resLink.TypeLink === "text/html" ||
                         resLink.TypeLink === "application/xhtml+xml") {
 

@@ -179,8 +179,8 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 <item href="navigation.ncx" id="ncx" media-type="application/x-dtbncx+xml" / -->
 
 ${zipEntriez.reduce((pv, cv, ci) => {
-    const ext = path.extname(cv).toLowerCase();
-    return `${pv}${!cv.startsWith("__MACOSX/") && !cv.endsWith("ncc.html") && ext !== ".ent" && ext !== ".dtd" ? `
+    const ext = path.extname(cv);
+    return `${pv}${!cv.startsWith("__MACOSX/") && !/ncc\.html$/i.test(cv) && !/\.ent$/i.test(ext) && !/\.dtd$/i.test(ext) ? `
     <item href="${path.relative("file:///" + path.dirname(rootfilePathDecoded), "file:///" + cv).replace(/\\/g, "/")}" id="opf-${ci}" media-type="${getMediaTypeFromFileExtension(ext)}" />` : ""}`;
 
 }, "")}
@@ -188,8 +188,8 @@ ${zipEntriez.reduce((pv, cv, ci) => {
 
 <spine>
 ${zipEntriez.reduce((pv, cv, ci) => {
-    const ext = path.extname(cv).toLowerCase();
-    return `${pv}${!cv.startsWith("__MACOSX/") && ext === ".smil" && !cv.endsWith("master.smil") ? `
+    const ext = path.extname(cv);
+    return `${pv}${!cv.startsWith("__MACOSX/") && /\.smil$/i.test(ext) && !/master\.smil$/i.test(cv) ? `
     <itemref idref="opf-${ci}" />` : ""}`;
 }, "")}
 </spine>

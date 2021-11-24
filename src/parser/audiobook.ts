@@ -262,7 +262,7 @@ async function doRequest(u: string): Promise<AudioBookis> {
                         try {
                             const manJson = JSON.parse(responseBody);
                             if (manJson.metadata && manJson.metadata["@type"] &&
-                                /http[s]?:\/\/schema\.org\/Audiobook$/.test(manJson.metadata["@type"])
+                                /https?:\/\/schema\.org\/Audiobook$/.test(manJson.metadata["@type"])
                                 ) {
                                 resolve(AudioBookis.RemoteExploded);
                                 return;
@@ -295,11 +295,11 @@ export async function isAudioBookPublication(urlOrPath: string): Promise<AudioBo
     }
 
     const fileName = path.basename(p);
-    const ext = path.extname(fileName).toLowerCase();
+    const ext = path.extname(fileName);
 
-    const audio = /\.audiobook$/.test(ext);
-    const audioLcp = /\.lcpa$/.test(ext);
-    const audioLcpAlt = /\.lcpaudiobook$/.test(ext);
+    const audio = /\.audiobook$/i.test(ext);
+    const audioLcp = /\.lcpa$/i.test(ext);
+    const audioLcpAlt = /\.lcpaudiobook$/i.test(ext);
     if (audio || audioLcp || audioLcpAlt) {
         // return isHttp ? AudioBookis.RemotePacked : AudioBookis.LocalPacked;
         if (!isHttp) {
@@ -313,7 +313,7 @@ export async function isAudioBookPublication(urlOrPath: string): Promise<AudioBo
             const manStr = fs.readFileSync(p, { encoding: "utf8" });
             const manJson = JSON.parse(manStr);
             if (manJson.metadata && manJson.metadata["@type"] &&
-                /http[s]?:\/\/schema\.org\/Audiobook$/.test(manJson.metadata["@type"])
+                /https?:\/\/schema\.org\/Audiobook$/.test(manJson.metadata["@type"])
             ) {
                 return AudioBookis.LocalExploded;
             }

@@ -129,9 +129,9 @@ export function isEPUBlication(urlOrPath: string): EPUBis | undefined {
         return EPUBis.LocalExploded;
     }
     const fileName = path.basename(p);
-    const ext = path.extname(fileName).toLowerCase();
+    const ext = path.extname(fileName);
 
-    const epub = /\.epub[3]?$/.test(ext);
+    const epub = /\.epub3?$/i.test(ext);
     if (epub) {
         return http ? EPUBis.RemotePacked : EPUBis.LocalPacked;
     }

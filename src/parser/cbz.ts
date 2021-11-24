@@ -27,9 +27,9 @@ import { addCoverDimensions } from "./epub";
 export function isCBZPublication(filePath: string): boolean {
 
     const fileName = path.basename(filePath);
-    const ext = path.extname(fileName).toLowerCase();
+    const ext = path.extname(fileName);
 
-    const cbz = /\.cbz$/.test(ext);
+    const cbz = /\.cbz$/i.test(ext);
     return cbz;
 }
 

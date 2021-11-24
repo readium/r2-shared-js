@@ -45,7 +45,7 @@ export async function isDaisyPublication(urlOrPath: string): Promise<DaisyBookis
         const url = new URL(urlOrPath);
         p = url.pathname;
         return undefined; // remote DAISY not supported
-    } else if (/\.daisy[23]?$/.test(path.extname(path.basename(p)).toLowerCase())) {
+    } else if (/\.daisy[23]?$/i.test(path.extname(path.basename(p)))) {
 
         return DaisyBookis.LocalPacked;
 
@@ -78,9 +78,9 @@ export async function isDaisyPublication(urlOrPath: string): Promise<DaisyBookis
             const entries = await zip.getEntries();
             const opfZipEntryPath = entries.find((entry) => {
                 // regexp fails?!
-                // return /[^/]+\.opf$/.test(entry);
+                // return /[^/]+\.opf$/i.test(entry);
                 // && entry.indexOf("/") < 0 && entry.indexOf("\\") < 0;
-                return /ncc\.html$/.test(entry) || entry.endsWith(".opf");
+                return /ncc\.html$/i.test(entry) || /\.opf$/i.test(entry);
             });
             if (!opfZipEntryPath) {
                 return undefined;
@@ -132,14 +132,14 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
     // manifest/item@media-type
     let opfZipEntryPath = entries.find((entry) => {
         // regexp fails?!
-        // return /[^/]+\.opf$/.test(entry);
+        // return /[^/]+\.opf$/i.test(entry);
         // && entry.indexOf("/") < 0 && entry.indexOf("\\") < 0;
-        return entry.endsWith(".opf");
+        return /\.opf$/i.test(entry);
     });
     let daisy2NccZipEntryPath: string | undefined;
     if (!opfZipEntryPath) {
         daisy2NccZipEntryPath = entries.find((entry) => {
-            return /ncc\.html$/.test(entry);
+            return /ncc\.html$/i.test(entry);
         });
         opfZipEntryPath = daisy2NccZipEntryPath;
     }
@@ -166,7 +166,7 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
             if (!ncxManItem) {
                 ncxManItem = opf.Manifest.find((manifestItem) => {
                     return manifestItem.MediaType === "text/xml" &&
-                        manifestItem.Href && manifestItem.Href.endsWith(".ncx");
+                        manifestItem.Href && /\.ncx$/i.test(manifestItem.Href);
                 });
             }
             if (ncxManItem) {
