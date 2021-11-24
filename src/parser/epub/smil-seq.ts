@@ -41,6 +41,9 @@ export class Seq extends SeqOrPar {
     // @XmlXPathSelector("@customTest")
     // public CustomTest!: string;
 
+    // @XmlXPathSelector("@system-required")
+    // public SystemRequired!: string;
+
     @XmlXPathSelector("@epub:textref")
     public TextRef1!: string;
     get TextRef(): string {

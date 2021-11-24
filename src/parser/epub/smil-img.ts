@@ -37,6 +37,9 @@ export class Img {
     // @XmlXPathSelector("@customTest")
     // public CustomTest!: string;
 
+    // @XmlXPathSelector("@system-required")
+    // public SystemRequired!: string;
+
     @XmlXPathSelector("@src")
     public Src1!: string;
     get Src(): string {

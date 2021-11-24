@@ -34,6 +34,9 @@ export class Audio {
     // @XmlXPathSelector("@customTest")
     // public CustomTest!: string;
 
+    // @XmlXPathSelector("@system-required")
+    // public SystemRequired!: string;
+
     @XmlXPathSelector("@clipBegin") // DAISY3
     public ClipBegin1!: string;
     @XmlXPathSelector("@clip-begin") // DAISY2

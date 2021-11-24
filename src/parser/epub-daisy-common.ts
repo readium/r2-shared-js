@@ -1771,6 +1771,10 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
             } else if (smil.Body.CustomTest.indexOf("annotation") >= 0) {
                 mo.Role.push("annotation");
             }
+        } else if (smil.Body.SystemRequired) {
+            if (smil.Body.SystemRequired.indexOf("pagenumber-on") >= 0) {
+                mo.Role.push("pagebreak");
+            }
         }
         if (smil.Body.TextRef) {
             const smilBodyTextRefDecoded = smil.Body.TextRefDecoded;
@@ -1889,6 +1893,13 @@ const addSeqToMediaOverlay = (
                 }
                 moc.Role.push("annotation");
             }
+        } else if (seq.SystemRequired) {
+            if (seq.SystemRequired.indexOf("pagenumber-on") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("pagebreak");
+            }
         }
         if (seq.TextRef) {
             const seqTextRefDecoded = seq.TextRefDecoded;
@@ -1973,6 +1984,13 @@ const addSeqToMediaOverlay = (
                     moc.Role = [];
                 }
                 moc.Role.push("annotation");
+            }
+        } else if (par.SystemRequired) {
+            if (par.SystemRequired.indexOf("pagenumber-on") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("pagebreak");
             }
         }
         if (par.Text && par.Text.Src) {

@@ -23,7 +23,7 @@ const debug = debug_("r2:shared#parser/daisy-convert-to-epub");
 
 const getMediaTypeFromFileExtension = (ext: string) => {
     if (/\.smil$/i.test(ext)) {
-        return "application/smil";
+        return "application/smil+xml";
     }
 
     if (/\.css$/i.test(ext)) {
@@ -117,6 +117,8 @@ export const convertNccToOpfAndNcx = async (
             return prevVal;
         }, {} as {[key: string]: string});
 
+    const aElems = Array.from(nccDoc.getElementsByTagName("a"));
+
     // TODO: textPartAudio / audioPartText?? audioOnly??
     // https://www.daisy.org/z3986/specifications/Z39-86-2002.html#Type
     // https://www.daisy.org/z3986/specifications/daisy_202.html
@@ -139,6 +141,127 @@ export const convertNccToOpfAndNcx = async (
     }
 
     const zipEntriez = await zip.getEntries();
+
+    const manifestItemsBaseStr = zipEntriez.reduce((pv, cv, ci) => {
+        const ext = path.extname(cv);
+        return `${pv}${!cv.startsWith("__MACOSX/") && !/ncc\.html$/i.test(cv) && !/\.ent$/i.test(ext) && !/\.dtd$/i.test(ext) && !/\.smil$/i.test(ext) ? `
+        <item
+            href="${path.relative("file:///" + path.dirname(rootfilePathDecoded), "file:///" + cv).replace(/\\/g, "/")}"
+            id="opf-zip-${ci}"
+            media-type="${getMediaTypeFromFileExtension(ext)}" />` : ""}`;
+    }, "");
+    const arrSmils: string[] = [];
+    const manifestItemsStr = aElems.reduce((pv, cv, _ci) => {
+        const href = cv.getAttribute("href");
+        if (!href) {
+            return pv;
+        }
+        if (!/\.smil(#.*)?$/i.test(href)) {
+            return pv;
+        }
+
+        const smil = href.replace(/(.+\.smil)(#.*)?$/i, "$1");
+        if (arrSmils.indexOf(smil) >= 0) {
+            return pv;
+        }
+        arrSmils.push(smil);
+
+        // const txt = cv.textContent ? cv.textContent.trim() : "";
+
+        return `${pv}${`
+            <item
+                href="${smil}"
+                id="opf-ncc-${arrSmils.length - 1}"
+                media-type="application/smil+xml" />`}`;
+    }, manifestItemsBaseStr);
+
+    const spineItemsStr = arrSmils.reduce((pv, _cv, ci) => {
+        return `${pv}${`
+            <itemref idref="opf-ncc-${ci}" />`}`;
+    }, "");
+
+    let playOrder = 0;
+    let pCount = 0;
+    const pageListStr = aElems.reduce((pv, cv, _ci) => {
+        const href = cv.getAttribute("href");
+        if (!href) {
+            return pv;
+        }
+        if (!/\.smil(#.*)?$/i.test(href)) {
+            return pv;
+        }
+        if (!cv.parentNode) {
+            return pv;
+        }
+        playOrder++;
+
+        const clazz = (cv.parentNode as Element).getAttribute("class");
+        if (!clazz || !clazz.startsWith("page")) {
+            return pv;
+        }
+
+        const txt = cv.textContent ? cv.textContent.trim() : "";
+
+        pCount++;
+        return `${pv}${`
+<pageTarget class="pagenum" id="ncx-p${pCount}" playOrder="${playOrder}" type="normal" value="${pCount}">
+<navLabel>
+<text>${txt ? txt : pCount}</text>
+</navLabel>
+<content src="${href}"/>
+</pageTarget>
+`}`;
+    }, "");
+
+    playOrder = 0;
+    pCount = 0;
+    const navMapStr = aElems.reduce((pv, cv, _ci) => {
+        const href = cv.getAttribute("href");
+        if (!href) {
+            return pv;
+        }
+        if (!/\.smil(#.*)?$/i.test(href)) {
+            return pv;
+        }
+        if (!cv.parentNode) {
+            return pv;
+        }
+        playOrder++;
+
+        const name = (cv.parentNode as Element).localName;
+        if (!name || !name.startsWith("h")) {
+            return pv;
+        }
+        const level = parseInt(name.substr(1), 10);
+
+        const txt = cv.textContent ? cv.textContent.trim() : "";
+
+        pCount++;
+
+        const inner = `<!-- h${level-1}_${pCount-1} -->`;
+        if (pv.indexOf(inner) >= 0) {
+            return pv.replace(inner, `
+<navPoint class="${name}" id="ncx-t${pCount}" playOrder="${playOrder}">
+<navLabel>
+<text>${txt ? txt : `_${pCount}`}</text>
+</navLabel>
+<content src="${href}"/>
+<!-- ${name}_${pCount} -->
+</navPoint>
+<!-- h${level-1}_${pCount} -->
+`);
+        } else {
+            return `${pv}${`
+<navPoint class="${name}" id="ncx-t${pCount}" playOrder="${playOrder}">
+<navLabel>
+<text>${txt ? txt : `_${pCount}`}</text>
+</navLabel>
+<content src="${href}"/>
+<!-- ${name}_${pCount} -->
+</navPoint>
+`}`;
+        }
+    }, "");
 
     const opfStr = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE package
@@ -178,46 +301,21 @@ xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
 <!-- item href="package.opf" id="opf" media-type="text/xml" />
 <item href="navigation.ncx" id="ncx" media-type="application/x-dtbncx+xml" / -->
 
-${zipEntriez.reduce((pv, cv, ci) => {
-    const ext = path.extname(cv);
-    return `${pv}${!cv.startsWith("__MACOSX/") && !/ncc\.html$/i.test(cv) && !/\.ent$/i.test(ext) && !/\.dtd$/i.test(ext) ? `
-    <item href="${path.relative("file:///" + path.dirname(rootfilePathDecoded), "file:///" + cv).replace(/\\/g, "/")}" id="opf-${ci}" media-type="${getMediaTypeFromFileExtension(ext)}" />` : ""}`;
-
-}, "")}
+${manifestItemsStr}
 </manifest>
 
 <spine>
-${zipEntriez.reduce((pv, cv, ci) => {
-    const ext = path.extname(cv);
-    return `${pv}${!cv.startsWith("__MACOSX/") && /\.smil$/i.test(ext) && !/master\.smil$/i.test(cv) ? `
-    <itemref idref="opf-${ci}" />` : ""}`;
-}, "")}
+${spineItemsStr}
 </spine>
 
 </package>`;
 
-    debug(opfStr);
+    // debug(opfStr);
     // if (process.env) {
     //     throw new Error("BREAK");
     // }
 
     const opf = getOpf_(opfStr, rootfilePathDecoded);
-
-// const bodyElem = nccDoc.getElementsByTagName("body")[0];
-// const firstH1Tag = bodyElem.getElementsByTagName("h1")[0];
-
-// await convertToJs(firstH1Tag, navPoints, playOrder, zip);
-
-// const headerTags = ["h1", "h2", "h3", "h4", "h5", "h6"];
-
-// const navPointPartial = convertListToTemplate(
-//     // TODO ANY!!
-//    nccObj.nccItems.filter((file: any) => headerTags.includes(file.tag)), // only header tags
-// );
-// const pageListPartial = covertToPageList(
-//     // TODO ANY!!
-//    nccObj.nccItems.filter((file: any) => !headerTags.includes(file.tag)), // non header tags
-// );
 
     const ncxStr = `<?xml version="1.0" encoding="UTF-8"?>
 <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
@@ -238,227 +336,22 @@ ${zipEntriez.reduce((pv, cv, ci) => {
 </docAuthor>
 
 <navMap id="navMap">
-
+${navMapStr}
 </navMap>
 
 <pageList id="pageList">
-
+${pageListStr}
 </pageList>
 
 </ncx>`;
+
+    // debug(ncxStr);
+    // if (process.env) {
+    //     throw new Error("BREAK");
+    // }
 
     const ncx = getNcx_(ncxStr, rootfilePathDecoded);
 
     return [opf, ncx];
 };
 
-//  // TODO ANY!!
-// const convertListToTemplate = (navPoints: any[]) => {
-//     let template = "";
-//     const navDataList = [];
-//     // const h1Tags = navPoints.filter(point => point.tag === 'h1');
-//      // TODO ANY!!
-//     const tempObj: any = {}; // to store last tag map
-//     for (const navPoint of navPoints) {
-//         if (navPoint.tag === "h1") {
-//             const temp = { ...navPoint, children: [] };
-//             tempObj.h1 = temp;
-//             navDataList.push(temp);
-//         }
-//         if (navPoint.tag === "h2") {
-//             const temp = { ...navPoint, children: [] };
-//             tempObj.h2 = temp;
-//             tempObj.h1.children.push(temp);
-//         }
-//         if (navPoint.tag === "h3") {
-//             const temp = { ...navPoint, children: [] };
-//             tempObj.h3 = temp;
-//             tempObj.h2.children.push(temp);
-//         }
-//         if (navPoint.tag === "h4") {
-//             const temp = { ...navPoint, children: [] };
-//             tempObj.h4 = temp;
-//             tempObj.h3.children.push(temp);
-//         }
-//         if (navPoint.tag === "h5") {
-//             const temp = { ...navPoint, children: [] };
-//             tempObj.h5 = temp;
-//             tempObj.h4.children.push(temp);
-//         }
-//         if (navPoint.tag === "h6") {
-//             const temp = { ...navPoint, children: [] };
-//             tempObj.h6 = temp;
-//             tempObj.h5.children.push(temp);
-//         }
-//     }
-//     for (const navPoint of navDataList) {
-//         template += convertPointToTemplate(navPoint);
-//     }
-
-//     return template;
-// };
-
-//  // TODO ANY!!
-// const convertPointToTemplate = (navPoint: any) => {
-//     let childNavPoint = "";
-//     if (navPoint.children && navPoint.children.length > 0) {
-//         for (const point of navPoint.children) {
-//             childNavPoint += convertPointToTemplate(point);
-//         }
-//     }
-//     const currentTagNum = navPoint.tag.split("")[1];
-//     return `<navPoint id="navPoint-${
-//         navPoint.playOrder
-//     }" playOrder="${
-//         navPoint.playOrder
-//     }" class="level-${currentTagNum}">
-//         <navLabel>
-//             <text>${navPoint.text}</text>
-//                 ${
-//                     navPoint.smilData.audioEl
-//                         ? `<audio id="${navPoint.smilData.audioEl.id}"
-//                         src="${navPoint.smilData.audioEl.src}"
-//                         clipBegin="${navPoint.smilData.audioEl.clipBegin}"
-//                         clipEnd="${navPoint.smilData.audioEl.clipEnd}" />`
-//                         : ""
-//                 }
-//         </navLabel>
-//         <content src="${navPoint.smilData.parSrc}"/>
-//         ${childNavPoint}
-//         </navPoint>
-//         `;
-// };
-
-//  // TODO ANY!!
-// const covertToPageList = (pageList: any[]) => {
-//     let template = "";
-//     // for (let i = 0; i < pageList.length; i++) {
-//     for (const page of pageList) {
-//         template += convertPointToPageTarget(page);
-//     }
-
-//     return template;
-// };
-
-//  // TODO ANY!!
-// const convertPointToPageTarget = (pageItem: any) => {
-//     return `<pageTarget id="pageTarget-${
-//         pageItem.playOrder
-//     }" playOrder="${pageItem.playOrder}" type="normal">
-//         <navLabel>
-//             <text>${pageItem.text}</text>
-//             ${
-//                 pageItem.smilData.audioEl
-//                     ? `<audio id="${pageItem.smilData.audioEl.id}"
-//                     src="${pageItem.smilData.audioEl.src}"
-//                     clipBegin="${pageItem.smilData.audioEl.clipBegin}"
-//                     clipEnd="${pageItem.smilData.audioEl.clipEnd}" />`
-//                     : ""
-//             }
-//         </navLabel>
-//         <content src="${pageItem.smilData.parSrc}" />
-//     </pageTarget>
-//     `;
-// };
-
-//  // TODO ANY!!
-// const getSrcSmilData = async (anchor: any, zip: IZip) => {
-//     const hrefAttr = anchor.getAttribute("href");
-//     const [link, elId] = hrefAttr.split("#");
-//     const smilStr = await loadFileStrFromZipPath(link, link, zip);
-//     if (!smilStr) {
-//         debug("!loadFileStrFromZipPath", smilStr);
-//         return null;
-//     }
-//     const smilDoc = new xmldom.DOMParser().parseFromString(smilStr, "application/xml");
-//     let smilEl = smilDoc.getElementById(elId);
-//     const smilObj: SmilTemplate = {
-//         audioEl: "",
-//         parSrc: "",
-//     };
-//     if (!smilEl) {
-//         return null;
-//     }
-//     if (smilEl.tagName !== "par") {
-//         smilEl = findParentParTag(smilEl);
-//         if (!smilEl) {
-//             return null;
-//         }
-//         const parId = smilEl.getAttribute("id");
-//         smilObj.parSrc = link + "#" + parId;
-//     } else {
-//         smilObj.parSrc = anchor.getAttribute("href");
-//     }
-
-//     const seq = smilEl.getElementsByTagName("seq")[0];
-//     if (seq) {
-//         const audios = smilEl.getElementsByTagName("audio");
-//         if (audios && audios.length > 0) {
-//             // smilObj.audioEl = serializer.serializeToString(audioInsidePar);
-//             let clipBegin = "";
-//             let clipEnd = "";
-//             let id = "";
-//             let src = "";
-//             for (let i = 0; i < audios.length; i++) {
-//                 if (i === 0) {
-//                     clipBegin = audios[i].getAttribute("clip-begin") || "";
-//                     src = audios[i].getAttribute("src") || "";
-//                     id = audios[i].getAttribute("id") || "";
-//                 }
-//                 if (i === audios.length - 1) {
-//                     clipEnd = audios[i].getAttribute("clip-end") || "";
-//                 }
-//             }
-
-//             smilObj.audioEl = {
-//                 clipBegin,
-//                 clipEnd,
-//                 id,
-//                 src,
-//             };
-//         }
-//     }
-
-//     return smilObj;
-// };
-
-//  // TODO ANY!!
-// const findParentParTag = (tag: any): any => {
-//     if (tag.tagName === "par") {
-//         return tag;
-//     }
-//     return findParentParTag(tag.parentNode);
-// };
-
-//  // TODO ANY!!
-// const getNextTag = (tag: any): any => {
-//     if (!tag.nextSibling) {
-//         return null;
-//     }
-
-//     if (tag.nextSibling.tagName) {
-//         return tag.nextSibling;
-//     }
-
-//     return getNextTag(tag.nextSibling);
-// };
-
-//  // TODO ANY!!
-// const convertToJs = async (tag: any, navPoints: any[], playOrder: any, zip: IZip) => {
-//     playOrder++;
-//     const anchor = tag.getElementsByTagName("a")[0];
-//     const smilData = await getSrcSmilData(anchor, zip);
-//     const tempObj: TempTemplate = {
-//         playOrder,
-//         smilData,
-//         tag: tag.tagName,
-//         text: anchor.textContent,
-//     };
-
-//     navPoints.push(tempObj);
-//     const nextTag = getNextTag(tag);
-
-//     if (nextTag) {
-//         await convertToJs(nextTag, navPoints, playOrder, zip);
-//     }
-// };
