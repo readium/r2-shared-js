@@ -88,6 +88,7 @@ test("JSON SERIALIZE: Publication.Context => string[1] collapse-array", (t) => {
 
 test("JSON DESERIALIZE: Publication.Context => string[]", (t) => {
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const json: any = {};
     json["@context"] = [contextStr1, contextStr2];
     logJSON(json);
@@ -107,6 +108,7 @@ test("JSON DESERIALIZE: Publication.Context => string[]", (t) => {
 
 test("JSON DESERIALIZE: Publication.Context => string[1]", (t) => {
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const json: any = {};
     json["@context"] = [contextStr1];
     logJSON(json);
@@ -123,6 +125,7 @@ test("JSON DESERIALIZE: Publication.Context => string[1]", (t) => {
 
 test("JSON DESERIALIZE: Publication.Context => string", (t) => {
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const json: any = {};
     json["@context"] = contextStr1;
     logJSON(json);

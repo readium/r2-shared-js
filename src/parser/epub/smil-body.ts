@@ -18,7 +18,7 @@ export class Body extends Seq {
 
     // XPATH ROOT: /smil:smil/smil:body
 
-    // tslint:disable-next-line:no-unused-variable
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore: TS6133 (is declared but its value is never read.)
-    private isBody: boolean = true;
+    private isBody = true;
 }

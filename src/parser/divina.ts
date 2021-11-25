@@ -24,6 +24,7 @@ import { zipHasEntry } from "../_utils/zipHasEntry";
 
 const debug = debug_("r2:shared#parser/divina");
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function absolutizeURLs(rootUrl: string, jsonObj: any) {
     traverseJsonObjects(jsonObj,
         (obj) => {
@@ -84,6 +85,9 @@ export async function DivinaParsePromise(filePath: string, isDivina?: Divinais, 
         if (!has) {
             const zipEntries = await zip.getEntries();
             for (const zipEntry of zipEntries) {
+                if (zipEntry.startsWith("__MACOSX/")) {
+                    continue;
+                }
                 debug(zipEntry);
             }
             return Promise.reject("Divina no manifest?!");
@@ -236,7 +240,7 @@ async function doRequest(u: string): Promise<Divinais | undefined> {
                         try {
                             const redirectRes = await doRequest(l);
                             resolve(redirectRes);
-                        } catch (err) {
+                        } catch (_err) {
                             resolve(undefined);
                             // reject(`HTTP Divina redirect, then fail ${u} ${err}`);
                         }
@@ -264,8 +268,8 @@ async function doRequest(u: string): Promise<Divinais | undefined> {
                         try {
                             const manJson = JSON.parse(responseBody);
                             if (manJson.metadata && manJson.metadata["@type"] &&
-                                (/http[s]?:\/\/schema\.org\/VisualArtwork$/.test(manJson.metadata["@type"]) ||
-                                /http[s]?:\/\/schema\.org\/ComicStory$/.test(manJson.metadata["@type"]))
+                                (/https?:\/\/schema\.org\/VisualArtwork$/.test(manJson.metadata["@type"]) ||
+                                /https?:\/\/schema\.org\/ComicStory$/.test(manJson.metadata["@type"]))
                             ) {
                                 resolve(Divinais.RemoteExploded);
                                 return;
@@ -302,10 +306,10 @@ export async function isDivinaPublication(urlOrPath: string): Promise<Divinais |
     }
 
     const fileName = path.basename(p);
-    const ext = path.extname(fileName).toLowerCase();
+    const ext = path.extname(fileName);
 
-    const dnva = /\.divina$/.test(ext);
-    const dnvaLcp = /\.lcpdivina$/.test(ext);
+    const dnva = /\.divina$/i.test(ext);
+    const dnvaLcp = /\.lcpdivina$/i.test(ext);
     if (dnva || dnvaLcp) {
         // return isHttp ? Divinais.RemotePacked : Divinais.LocalPacked;
         if (!isHttp) {
@@ -319,8 +323,8 @@ export async function isDivinaPublication(urlOrPath: string): Promise<Divinais |
             const manStr = fs.readFileSync(p, { encoding: "utf8" });
             const manJson = JSON.parse(manStr);
             if (manJson.metadata && manJson.metadata["@type"] &&
-                (/http[s]?:\/\/schema\.org\/VisualArtwork$/.test(manJson.metadata["@type"]) ||
-                /http[s]?:\/\/schema\.org\/ComicStory$/.test(manJson.metadata["@type"]))
+                (/https?:\/\/schema\.org\/VisualArtwork$/.test(manJson.metadata["@type"]) ||
+                /https?:\/\/schema\.org\/ComicStory$/.test(manJson.metadata["@type"]))
             ) {
                 return Divinais.LocalExploded;
             }

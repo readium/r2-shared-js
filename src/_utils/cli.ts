@@ -187,7 +187,7 @@ if (args[1]) {
             console.log(err);
             return;
         }
-    } else { //  if (ext === ".cbz")
+    } else {
         await dumpPublication(publication);
     }
 })();
@@ -205,6 +205,7 @@ function extractEPUB_ManifestJSON(pub: Publication, outDir: string, keys: string
     }
 
     if (keys) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         arrLinks.forEach((link: any) => {
             if (link.properties && link.properties.encrypted &&
                 link.properties.encrypted.scheme === "http://readium.org/2014/01/lcp") {
@@ -246,6 +247,7 @@ function extractEPUB_ManifestJSON(pub: Publication, outDir: string, keys: string
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     arrLinks.forEach((link: any) => {
         if (link.properties && link.properties.encrypted &&
             (link.properties.encrypted.algorithm === "http://www.idpf.org/2008/embedding" ||
@@ -287,7 +289,8 @@ async function extractEPUB_Check(zip: IZip, outDir: string) {
         for (const zipEntry of zipEntries) {
             if (zipEntry !== "mimetype" &&
                 !zipEntry.startsWith("META-INF/") &&
-                !zipEntry.endsWith(".opf") &&
+                !/\.opf$/i.test(zipEntry) &&
+                !/ncc\.html$/i.test(zipEntry) &&
                 zipEntry !== "publication.json" &&
                 zipEntry !== "license.lcpl" &&
                 !zipEntry.endsWith(".DS_Store") &&
@@ -404,6 +407,9 @@ async function extractEPUB_Link(pub: Publication, zip: IZip, outDir: string, lin
         console.log(`NOT IN ZIP (extractEPUB_Link): ${link.Href} --- ${hrefDecoded}`);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
+            if (zipEntry.startsWith("__MACOSX/")) {
+                continue;
+            }
             console.log(zipEntry);
         }
         return;

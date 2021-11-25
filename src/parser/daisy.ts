@@ -18,6 +18,7 @@ import { IZip } from "@r2-utils-js/_utils/zip/zip";
 import { zipLoadPromise } from "@r2-utils-js/_utils/zip/zipFactory";
 
 import { zipHasEntry } from "../_utils/zipHasEntry";
+import { convertNccToOpfAndNcx } from "./daisy-convert-ncc-to-opf-ncx";
 import {
     addIdentifier, addLanguage, addMediaOverlaySMIL, addOtherMetadata, addTitle,
     fillPublicationDate, fillSpineAndResource, fillSubject, fillTOC, findContributorInMeta, getNcx,
@@ -44,12 +45,13 @@ export async function isDaisyPublication(urlOrPath: string): Promise<DaisyBookis
         const url = new URL(urlOrPath);
         p = url.pathname;
         return undefined; // remote DAISY not supported
-    } else if (/\.daisy[23]?$/.test(path.extname(path.basename(p)).toLowerCase())) {
+    } else if (/\.daisy[23]?$/i.test(path.extname(path.basename(p)))) {
 
         return DaisyBookis.LocalPacked;
 
     } else if (fs.existsSync(path.join(urlOrPath, "package.opf")) ||
         fs.existsSync(path.join(urlOrPath, "Book.opf")) ||
+        fs.existsSync(path.join(urlOrPath, "ncc.html")) ||
         fs.existsSync(path.join(urlOrPath, "speechgen.opf"))
     ) {
         if (!fs.existsSync(path.join(urlOrPath, "META-INF", "container.xml"))) {
@@ -76,8 +78,9 @@ export async function isDaisyPublication(urlOrPath: string): Promise<DaisyBookis
             const entries = await zip.getEntries();
             const opfZipEntryPath = entries.find((entry) => {
                 // regexp fails?!
-                // return /[^/]+\.opf$/.test(entry);
-                return entry.endsWith(".opf"); // && entry.indexOf("/") < 0 && entry.indexOf("\\") < 0;
+                // return /[^/]+\.opf$/i.test(entry);
+                // && entry.indexOf("/") < 0 && entry.indexOf("\\") < 0;
+                return /ncc\.html$/i.test(entry) || /\.opf$/i.test(entry);
             });
             if (!opfZipEntryPath) {
                 return undefined;
@@ -89,29 +92,6 @@ export async function isDaisyPublication(urlOrPath: string): Promise<DaisyBookis
     }
     return undefined;
 }
-
-// const isFileValid = (files: string[]) => {
-//     // const keys = Object.keys(files);
-
-//     if (files.some((file) => file.match(/\.xml$/)) === false) {
-//         return [false, "No xml file found."];
-//     }
-
-//     if (files.some((file) => file.match(/\/ncc\.html$/))) {
-//         return [false, "DAISY 2 format is not supported."];
-//     }
-
-//     // if (files.some((file) => file.match(/\.mp3$/)) === false) {
-//     //   console.log("mp3");
-//     //   return [false];
-//     // }
-//     // if (files.some((file) => file.match(/\.smil$/)) === false) {
-//     //   console.log("smil");
-//     //   return [false];
-//     // }
-
-//     return [true];
-// };
 
 export async function DaisyParsePromise(filePath: string): Promise<Publication> {
 
@@ -150,13 +130,22 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
 
     // generic "text/xml" content type
     // manifest/item@media-type
-    const opfZipEntryPath = entries.find((entry) => {
+    let opfZipEntryPath = entries.find((entry) => {
         // regexp fails?!
-        // return /[^/]+\.opf$/.test(entry);
-        return entry.endsWith(".opf"); // && entry.indexOf("/") < 0 && entry.indexOf("\\") < 0;
+        // return /[^/]+\.opf$/i.test(entry);
+        // && entry.indexOf("/") < 0 && entry.indexOf("\\") < 0;
+        return /\.opf$/i.test(entry);
     });
+    let daisy2NccZipEntryPath: string | undefined;
     if (!opfZipEntryPath) {
-        return Promise.reject("OPF package XML file cannot be found.");
+        daisy2NccZipEntryPath = entries.find((entry) => {
+            return /ncc\.html$/i.test(entry);
+        });
+        opfZipEntryPath = daisy2NccZipEntryPath;
+    }
+
+    if (!opfZipEntryPath) {
+        return Promise.reject("DAISY3 OPF package XML file or DAISY2 NCC cannot be found.");
     }
 
     const rootfilePathDecoded = opfZipEntryPath; // || "package.opf";
@@ -164,7 +153,27 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
         return Promise.reject("?!rootfile.PathDecoded");
     }
 
-    const opf = await getOpf(zip, rootfilePathDecoded, opfZipEntryPath);
+    let opf: OPF | undefined;
+    let ncx: NCX | undefined;
+    if (daisy2NccZipEntryPath) { // same as opfZipEntryPath
+        [opf, ncx] = await convertNccToOpfAndNcx(zip, rootfilePathDecoded, opfZipEntryPath);
+    } else {
+        opf = await getOpf(zip, rootfilePathDecoded, opfZipEntryPath);
+        if (opf.Manifest) {
+            let ncxManItem = opf.Manifest.find((manifestItem) => {
+                return manifestItem.MediaType === "application/x-dtbncx+xml";
+            });
+            if (!ncxManItem) {
+                ncxManItem = opf.Manifest.find((manifestItem) => {
+                    return manifestItem.MediaType === "text/xml" &&
+                        manifestItem.Href && /\.ncx$/i.test(manifestItem.Href);
+                });
+            }
+            if (ncxManItem) {
+                ncx = await getNcx(ncxManItem, opf, zip);
+            }
+        }
+    }
 
     addLanguage(publication, opf);
 
@@ -179,22 +188,6 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
     findContributorInMeta(publication, undefined, opf);
 
     await fillSpineAndResource(publication, undefined, opf, zip, addLinkData);
-
-    let ncx: NCX | undefined;
-    if (opf.Manifest) {
-        let ncxManItem = opf.Manifest.find((manifestItem) => {
-            return manifestItem.MediaType === "application/x-dtbncx+xml";
-        });
-        if (!ncxManItem) {
-            ncxManItem = opf.Manifest.find((manifestItem) => {
-                return manifestItem.MediaType === "text/xml" &&
-                    manifestItem.Href && manifestItem.Href.endsWith(".ncx");
-            });
-        }
-        if (ncxManItem) {
-            ncx = await getNcx(ncxManItem, opf, zip);
-        }
-    }
 
     fillTOC(publication, opf, ncx);
 
@@ -211,19 +204,37 @@ const addLinkData = async (
 
     if (publication.Metadata?.AdditionalJSON) {
 
-        // dtb:multimediaContent ==> audio,text
-        const isFullTextAudio = publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText";
+        // TODO: textPartAudio / audioPartText?? audioOnly??
+        // https://www.daisy.org/z3986/specifications/Z39-86-2002.html#Type
+        // https://www.daisy.org/z3986/specifications/daisy_202.html
 
-        // dtb:multimediaContent ==> text
-        const isTextOnly = publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "textNCX";
+        const isFullTextAudio =
+            // dtb:multimediaContent ==> audio,text
+            publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText" ||
+            publication.Metadata.AdditionalJSON["ncc:multimediaType"] === "audioFullText";
 
-        // dtb:multimediaContent ==> audio
-        const isAudioOnly = publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioNCX";
+        const isAudioOnly =
+            // dtb:multimediaContent ==> audio
+            publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioNCX" ||
+            publication.Metadata.AdditionalJSON["ncc:multimediaType"] === "audioNcc";
+
+        const isTextOnly =
+            // dtb:multimediaContent ==> text
+            publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "textNCX" ||
+            publication.Metadata.AdditionalJSON["ncc:multimediaType"] === "textNcc";
 
         if (isFullTextAudio || isTextOnly || isAudioOnly) {
             await addMediaOverlaySMIL(linkItem, item, opf, zip);
 
             if (linkItem.MediaOverlays && !linkItem.MediaOverlays.initialized) {
+
+                // debug(
+                //     global.JSON.stringify(TaJsonSerialize(publication), null, 4),
+                //     global.JSON.stringify(linkItem, null, 4));
+
+                // if (process.env) {
+                //     throw new Error("BREAK");
+                // }
 
                 // mo.initialized true/false is automatically handled
                 await lazyLoadMediaOverlays(publication, linkItem.MediaOverlays);

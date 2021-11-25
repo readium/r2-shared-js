@@ -27,9 +27,9 @@ import { addCoverDimensions } from "./epub";
 export function isCBZPublication(filePath: string): boolean {
 
     const fileName = path.basename(filePath);
-    const ext = path.extname(fileName).toLowerCase();
+    const ext = path.extname(fileName);
 
-    const cbz = /\.cbz$/.test(ext);
+    const cbz = /\.cbz$/i.test(ext);
     return cbz;
 }
 
@@ -126,6 +126,9 @@ const comicRackMetadata = async (zip: IZip, entryName: string, publication: Publ
         console.log(`NOT IN ZIP: ${entryName} --- ${entryNameDecoded}`);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
+            if (zipEntry.startsWith("__MACOSX/")) {
+                continue;
+            }
             console.log(zipEntry);
         }
         return;

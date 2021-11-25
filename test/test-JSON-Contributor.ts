@@ -55,6 +55,7 @@ const checkContributor2Name = (t: ExecutionContext, obj: string | IStringMap) =>
     t.is((obj as IStringMap)[contributor2NameMapLang], contributor2NameMapVal);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const checkJsonContributor1 = (t: ExecutionContext, obj: any) => {
 
     checkType_Object(t, obj);
@@ -73,6 +74,7 @@ const checkJsonContributor1 = (t: ExecutionContext, obj: any) => {
     t.is(obj.role[1], contributor1RoleArr[1]);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const checkJsonContributor2 = (t: ExecutionContext, obj: any) => {
 
     checkType_Object(t, obj);
@@ -160,6 +162,7 @@ test("JSON SERIALIZE: Metadata.Imprint => Contributor[1] collapse-array", (t) =>
 
 test("JSON DESERIALIZE: Metadata.Imprint => Contributor[]", (t) => {
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const json: any = {};
     json.imprint = [
         { name: contributor1NameStr, identifier: contributor1Id, position: contributor1Pos, role: contributor1RoleArr },
@@ -179,6 +182,7 @@ test("JSON DESERIALIZE: Metadata.Imprint => Contributor[]", (t) => {
 
 test("JSON DESERIALIZE: Metadata.Imprint => Contributor[1]", (t) => {
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const json: any = {};
     json.imprint = [
         { name: contributor1NameStr, identifier: contributor1Id, position: contributor1Pos, role: contributor1RoleArr },
@@ -196,6 +200,7 @@ test("JSON DESERIALIZE: Metadata.Imprint => Contributor[1]", (t) => {
 
 test("JSON DESERIALIZE: Metadata.Imprint => Contributor", (t) => {
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const json: any = {};
     // tslint:disable-next-line:max-line-length
     json.imprint = { name: contributor1NameStr, identifier: contributor1Id, position: contributor1Pos, role: contributor1RoleArr };
@@ -212,6 +217,7 @@ test("JSON DESERIALIZE: Metadata.Imprint => Contributor", (t) => {
 
 test("JSON DESERIALIZE: Metadata.Imprint => Contributor NAME []", (t) => {
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const json: any = {};
     json.imprint = [contributor1NameStr, contributor2NameObj];
     logJSON(json);
@@ -231,6 +237,7 @@ test("JSON DESERIALIZE: Metadata.Imprint => Contributor NAME []", (t) => {
 
 test("JSON DESERIALIZE: Metadata.Imprint => Contributor NAME [1] A", (t) => {
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const json: any = {};
     json.imprint = [contributor1NameStr];
     logJSON(json);
@@ -247,6 +254,7 @@ test("JSON DESERIALIZE: Metadata.Imprint => Contributor NAME [1] A", (t) => {
 
 test("JSON DESERIALIZE: Metadata.Imprint => Contributor NAME [1] B", (t) => {
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const json: any = {};
     json.imprint = [contributor2NameObj];
     logJSON(json);
@@ -263,6 +271,7 @@ test("JSON DESERIALIZE: Metadata.Imprint => Contributor NAME [1] B", (t) => {
 
 test("JSON DESERIALIZE: Metadata.Imprint => Contributor NAME A", (t) => {
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const json: any = {};
     json.imprint = contributor1NameStr;
     logJSON(json);
@@ -279,6 +288,7 @@ test("JSON DESERIALIZE: Metadata.Imprint => Contributor NAME A", (t) => {
 
 test("JSON DESERIALIZE: Metadata.Imprint => Contributor NAME B", (t) => {
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const json: any = {};
     json.imprint = contributor2NameObj;
     logJSON(json);

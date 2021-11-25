@@ -101,7 +101,7 @@ export const fillPublicationDate = (publication: Publication, rootfile: Rootfile
                 if (mom.isValid()) {
                     publication.Metadata.PublicationDate = mom.toDate();
                 }
-            } catch (err) {
+            } catch (_err) {
                 debug("INVALID DATE/TIME? " + token);
             }
             return;
@@ -115,7 +115,7 @@ export const fillPublicationDate = (publication: Publication, rootfile: Rootfile
                     if (mom.isValid()) {
                         publication.Metadata.PublicationDate = mom.toDate();
                     }
-                } catch (err) {
+                } catch (_err) {
                     debug("INVALID DATE/TIME? " + token);
                 }
             }
@@ -441,7 +441,7 @@ export const fillSpineAndResource = async (
 
             const itemHrefDecoded = item.HrefDecoded;
             if (!itemHrefDecoded) {
-                debug("!? item.Href");
+                debug("!? item.Href", JSON.stringify(item, null, 4));
                 continue;
             }
             const zipPath = path.join(path.dirname(opf.ZipPath), itemHrefDecoded)
@@ -454,12 +454,12 @@ export const fillSpineAndResource = async (
 
                 linkItem.setHrefDecoded(zipPath);
 
-                await addLinkData(publication, rootfile, opf, zip, linkItem, item);
-
                 if (!publication.Resources) {
                     publication.Resources = [];
                 }
                 publication.Resources.push(linkItem);
+
+                await addLinkData(publication, rootfile, opf, zip, linkItem, item);
             }
         }
     }
@@ -714,6 +714,9 @@ export const getNcx = async (ncxManItem: Manifest, opf: OPF, zip: IZip): Promise
         debug(err);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
+            if (zipEntry.startsWith("__MACOSX/")) {
+                continue;
+            }
             debug(zipEntry);
         }
         return Promise.reject(err);
@@ -736,7 +739,11 @@ export const getNcx = async (ncxManItem: Manifest, opf: OPF, zip: IZip): Promise
         return Promise.reject(err);
     }
 
-    let ncxStr = ncxZipData.toString("utf8");
+    const ncxStr = ncxZipData.toString("utf8");
+    return getNcx_(ncxStr, ncxFilePath);
+};
+
+export const getNcx_ = (ncxStr: string, ncxFilePath: string): NCX => {
 
     const iStart = ncxStr.indexOf("<ncx");
     if (iStart >= 0) {
@@ -769,6 +776,9 @@ export const getOpf = async (zip: IZip, rootfilePathDecoded: string, rootfilePat
         debug(err);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
+            if (zipEntry.startsWith("__MACOSX/")) {
+                continue;
+            }
             debug(zipEntry);
         }
         return Promise.reject(err);
@@ -801,7 +811,11 @@ export const getOpf = async (zip: IZip, rootfilePathDecoded: string, rootfilePat
     // debug(`2) ${timeElapsed2[0]} seconds + ${timeElapsed2[1]} nanoseconds`);
     // timeBegin = process.hrtime();
 
-    let opfStr = opfZipData.toString("utf8");
+    const opfStr = opfZipData.toString("utf8");
+    return getOpf_(opfStr, rootfilePathDecoded);
+};
+
+export const getOpf_ = (opfStr: string, rootfilePathDecoded: string): OPF => {
 
     const iStart = opfStr.indexOf("<package");
     if (iStart >= 0) {
@@ -1245,6 +1259,9 @@ export const loadFileBufferFromZipPath = async (
         debug(`NOT IN ZIP (loadFileBufferFromZipPath): ${linkHref} --- ${linkHrefDecoded}`);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
+            if (zipEntry.startsWith("__MACOSX/")) {
+                continue;
+            }
             debug(zipEntry);
         }
         return undefined;
@@ -1433,9 +1450,12 @@ export const addMediaOverlaySMIL = async (link: Link, manItemSmil: Manifest, opf
 
             const has = await zipHasEntry(zip, smilFilePath, smilFilePath);
             if (!has) {
-                debug(`NOT IN ZIP (addMediaOverlay): ${smilFilePath}`);
+                debug(`NOT IN ZIP (addMediaOverlay): ${smilFilePath} -- ${opf.ZipPath}`);
                 const zipEntries = await zip.getEntries();
                 for (const zipEntry of zipEntries) {
+                    if (zipEntry.startsWith("__MACOSX/")) {
+                        continue;
+                    }
                     debug(zipEntry);
                 }
                 return;
@@ -1474,6 +1494,107 @@ export const addMediaOverlaySMIL = async (link: Link, manItemSmil: Manifest, opf
             // await lazyLoadMediaOverlays(publication, mo);
         }
     }
+};
+
+// export const flattenDaisy2SmilAudioSeq_ = (_smilPathInZip: string, smilXmlDoc: Document) => {
+
+//     // flatten seq inside par
+//     // (naive implementation, assumes contiguity of begin/end clips for same audio file)
+//     const pars = smilXmlDoc.getElementsByTagName("par");
+//     // tslint:disable-next-line: prefer-for-of
+//     for (let i = 0; i < pars.length; i++) {
+//         const par = pars[i];
+//         const seq = par.getElementsByTagName("seq")[0] as Element | undefined; // assumes one only (safe assumption)
+//         if (seq) {
+//             let audioInsidePar;
+//             const audios = seq.getElementsByTagName("audio");
+//             for (let j = 0; j < audios.length; j++) {
+//                 if (j === 0) {
+//                     audioInsidePar = audios[j];
+//                 }
+//                 if (audioInsidePar && j === audios.length - 1) {
+//                     const clipEnd = audios[j].getAttribute("clip-end") || "";
+//                     audioInsidePar.setAttribute("clip-end", clipEnd);
+//                 }
+//             }
+//             if (audioInsidePar) {
+//                 seq.removeChild(audioInsidePar);
+//                 par.removeChild(seq);
+//                 par.appendChild(audioInsidePar);
+//             }
+//         }
+//     }
+// };
+
+export const flattenDaisy2SmilAudioSeq = (_smilPathInZip: string, smilXmlDoc: Document) => {
+
+    let iClone = 0;
+
+    // factor out seq that's inside par
+    const pars = Array.from(smilXmlDoc.getElementsByTagName("par"));
+    for (const par of pars) {
+        const seq = par.getElementsByTagName("seq")[0] as Element | undefined; // assumes one only (safe assumption)
+        if (seq) {
+            const text = par.getElementsByTagName("text")[0] as Element | undefined; // assumes one only (safe assumption)
+
+            const audios = Array.from(seq.getElementsByTagName("audio"));
+            for (let j = 0; j < audios.length; j++) {
+                const audio = audios[j];
+
+                seq.removeChild(audio);
+
+                if (j === 0) {
+                    if (text) {
+                        if (text.insertAdjacentElement) {
+                            text.insertAdjacentElement("afterend", audio);
+                        } else if (text.parentNode) {
+                            text.parentNode.insertBefore(audio, text.nextElementSibling);
+                        }
+
+                        // hoist DAISY2 text ID to parent par
+                        const parId = par.getAttribute("id");
+                        if (!parId) {
+                            const txtId = text.getAttribute("id");
+                            if (txtId) {
+                                par.setAttribute("id", txtId);
+                                text.removeAttribute("id");
+                            }
+                        }
+                    } else {
+                        par.appendChild(audio);
+                    }
+                } else {
+                    const newPar = par.namespaceURI ?
+                        smilXmlDoc.createElementNS(par.namespaceURI, "par") :
+                        smilXmlDoc.createElement("par");
+                    iClone++;
+                    if (text) {
+                        const cloneText = text.cloneNode(false) as Element;
+                        const tId = cloneText.getAttribute("id");
+                        if (tId) {
+                            cloneText.removeAttribute("id");
+                        }
+                        // hoist DAISY2 text ID to parent par
+                        newPar.setAttribute("id", (tId ? tId : "id") + "r2__" + iClone);
+                        newPar.appendChild(cloneText);
+                    } else {
+                        newPar.setAttribute("id", "id" + "r2__" + iClone);
+                    }
+                    newPar.appendChild(audio);
+                    newPar.appendChild(smilXmlDoc.createTextNode("\n"));
+
+                    if (par.insertAdjacentElement) {
+                        par.insertAdjacentElement("afterend", newPar);
+                    } else if (par.parentNode) {
+                        par.parentNode.insertBefore(newPar, par.nextElementSibling);
+                    }
+                }
+            }
+            par.removeChild(seq);
+        }
+    }
+
+    // debug(smilPathInZip, new xmldom.XMLSerializer().serializeToString(smilXmlDoc));
 };
 
 // mo.initialized true/false is automatically handled
@@ -1521,6 +1642,9 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
         debug(err);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
+            if (zipEntry.startsWith("__MACOSX/")) {
+                continue;
+            }
             debug(zipEntry);
         }
         return Promise.reject(err);
@@ -1587,11 +1711,22 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
     }
 
     const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
+
+    const nccZipEntry = (await zip.getEntries()).find((entry) => {
+        return /ncc\.html$/i.test(entry);
+    });
+    if (nccZipEntry) {
+        flattenDaisy2SmilAudioSeq(mo.SmilPathInZip, smilXmlDoc);
+    }
+
     const smil = XML.deserialize<SMIL>(smilXmlDoc, SMIL);
     smil.ZipPath = mo.SmilPathInZip;
 
     mo.initialized = true;
     debug("PARSED SMIL: " + mo.SmilPathInZip);
+
+    // debug(mo.SmilPathInZip, new xmldom.XMLSerializer().serializeToString(smilXmlDoc));
+    // debug(JSON.stringify(smil, null, 4));
 
     // breakLength: 100  maxArrayLength: undefined
     // debug(util.inspect(smil,
@@ -1647,6 +1782,10 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
             } else if (smil.Body.CustomTest.indexOf("annotation") >= 0) {
                 mo.Role.push("annotation");
             }
+        } else if (smil.Body.SystemRequired) {
+            if (smil.Body.SystemRequired.indexOf("pagenumber-on") >= 0) {
+                mo.Role.push("pagebreak");
+            }
         }
         if (smil.Body.TextRef) {
             const smilBodyTextRefDecoded = smil.Body.TextRefDecoded;
@@ -1675,6 +1814,12 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
         }
     }
 
+    // debug(JSON.stringify(mo, null, 4));
+
+    // if ((process.env as NodeJS.ProcessEnv).BREAK) {
+    //     throw new Error("BREAK");
+    // }
+    // (process.env as NodeJS.ProcessEnv).BREAK = "break!";
     return;
 };
 
@@ -1758,6 +1903,13 @@ const addSeqToMediaOverlay = (
                     moc.Role = [];
                 }
                 moc.Role.push("annotation");
+            }
+        } else if (seq.SystemRequired) {
+            if (seq.SystemRequired.indexOf("pagenumber-on") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("pagebreak");
             }
         }
         if (seq.TextRef) {
@@ -1844,6 +1996,13 @@ const addSeqToMediaOverlay = (
                 }
                 moc.Role.push("annotation");
             }
+        } else if (par.SystemRequired) {
+            if (par.SystemRequired.indexOf("pagenumber-on") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("pagebreak");
+            }
         }
         if (par.Text && par.Text.Src) {
             const parTextSrcDcoded = par.Text.SrcDecoded;
@@ -1853,6 +2012,10 @@ const addSeqToMediaOverlay = (
                 const zipPath = path.join(path.dirname(smil.ZipPath), parTextSrcDcoded)
                     .replace(/\\/g, "/");
                 moc.Text = zipPath;
+            }
+
+            if (par.Text.ID) {
+                moc.TextID = par.Text.ID;
             }
         }
         if (par.Audio && par.Audio.Src) {
@@ -1876,6 +2039,10 @@ const addSeqToMediaOverlay = (
                     moc.Audio += end.toString();
                 }
             }
+
+            if (par.Audio.ID) {
+                moc.AudioID = par.Audio.ID;
+            }
         }
         if (par.Img && par.Img.Src) {
             const parImgSrcDcoded = par.Img.SrcDecoded;
@@ -1889,6 +2056,10 @@ const addSeqToMediaOverlay = (
             if (!par.Audio && !par.Text) {
                 moc.initialized = false;
                 doAdd = false;
+            }
+
+            if (par.Img.ID) {
+                moc.ImgID = par.Img.ID;
             }
         }
     }

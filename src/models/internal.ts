@@ -7,5 +7,6 @@
 
 export interface IInternal {
     Name: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Value: any;
 }

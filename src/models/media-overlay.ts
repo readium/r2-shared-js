@@ -17,6 +17,9 @@ export function timeStrToSeconds(timeStr: string): number {
         return 0;
     }
 
+    // Normal Play Time
+    timeStr = timeStr.replace("npt=", "");
+
     let hours = 0;
     let minutes = 0;
     let seconds = 0;
@@ -104,10 +107,13 @@ export class MediaOverlayNode {
 
     public SmilPathInZip: string | undefined; // URL already decodeURI()
 
-    public initialized: boolean = false;
+    public initialized = false;
 
     public ParID: string | undefined;
     public SeqID: string | undefined;
+    public TextID: string | undefined;
+    public AudioID: string | undefined;
+    public ImgID: string | undefined;
 
     public AudioClipBegin: number | undefined;
     public AudioClipEnd: number | undefined;

@@ -73,6 +73,9 @@ export const addCoverDimensions = async (publication: Publication, coverLink: Li
             debug(`NOT IN ZIP (addCoverDimensions): ${coverLink.Href} --- ${coverLinkHrefDecoded}`);
             const zipEntries = await zip.getEntries();
             for (const zipEntry of zipEntries) {
+                if (zipEntry.startsWith("__MACOSX/")) {
+                    continue;
+                }
                 debug(zipEntry);
             }
             return;
@@ -126,9 +129,9 @@ export function isEPUBlication(urlOrPath: string): EPUBis | undefined {
         return EPUBis.LocalExploded;
     }
     const fileName = path.basename(p);
-    const ext = path.extname(fileName).toLowerCase();
+    const ext = path.extname(fileName);
 
-    const epub = /\.epub[3]?$/.test(ext);
+    const epub = /\.epub3?$/i.test(ext);
     if (epub) {
         return http ? EPUBis.RemotePacked : EPUBis.LocalPacked;
     }
@@ -881,7 +884,10 @@ const fillPageListFromAdobePageMap = async (publication: Publication, zip: IZip,
     if (pages && pages.length) {
         // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < pages.length; i += 1) {
-            const page = pages.item(i)!;
+            const page = pages.item(i);
+            if (!page) {
+                continue;
+            }
 
             const link = new Link();
             const href = page.getAttribute("href");
@@ -959,6 +965,9 @@ const fillTOCFromNavDoc = async (publication: Publication, zip: IZip):
         debug(`NOT IN ZIP (fillTOCFromNavDoc): ${navLink.Href} --- ${navLinkHrefDecoded}`);
         const zipEntries = await zip.getEntries();
         for (const zipEntry of zipEntries) {
+            if (zipEntry.startsWith("__MACOSX/")) {
+                continue;
+            }
             debug(zipEntry);
         }
         return;
@@ -1219,6 +1228,9 @@ const findPropertiesInSpineForManifest = (linkEpub: Manifest, opf: OPF): string 
 //                 debug(`NOT IN ZIP (fillMediaOverlay): ${item.HrefDecoded} --- ${itemHrefDecoded}`);
 //                 const zipEntries = await zip.getEntries();
 //                 for (const zipEntry of zipEntries) {
+// if (zipEntry.startsWith("__MACOSX/")) {
+//     continue;
+// }
 //                     debug(zipEntry);
 //                 }
 //                 continue;
