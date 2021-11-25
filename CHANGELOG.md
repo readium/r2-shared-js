@@ -1,10 +1,30 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.53...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.54...develop
 
 Changes:
 * TODO
+
+# 1.0.54
+
+> Build environment: NodeJS `14.18.1`, NPM `6.14.15`
+
+Changes:
+* NPM package updates
+* NodeJS v16 minimum requirement (NPM 8)
+* DAISY 2 support (audio-only with TOC and sub-phrases, as well as full-text full-audio)
+* CLI utility to generate audio-only ReadiumWebPubManifest external JSON from DAISY audio book
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.54/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.54/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.54
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.53...v1.0.54
 
 # 1.0.53
 

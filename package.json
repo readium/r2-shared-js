@@ -1,6 +1,6 @@
 {
   "name": "r2-shared-js",
-  "version": "1.0.53",
+  "version": "1.0.54",
   "description": "Readium 2 'shared' for NodeJS (TypeScript)",
   "keywords": [
     "readium",
@@ -91,7 +91,7 @@
   "main": "dist/es6-es2015/src/index.js",
   "types": "dist/es6-es2015/src/index.d.js",
   "bin": {
-    "r2-shared-js-cli": "dist/es6-es2015/src/_utils/cli.js"
+    "r2-shared-js-cli": "dist/es8-es2017/src/_utils/cli.js"
   },
   "files": [
     "LICENSE",
