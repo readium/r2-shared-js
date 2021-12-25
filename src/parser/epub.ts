@@ -12,7 +12,7 @@ import { ISize } from "image-size/dist/types/interface";
 import * as moment from "moment";
 import * as path from "path";
 import { URL } from "url";
-import * as xmldom from "xmldom";
+import * as xmldom from "@xmldom/xmldom";
 import * as xpath from "xpath";
 
 import { MediaOverlayNode, timeStrToSeconds } from "@models/media-overlay";

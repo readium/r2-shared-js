@@ -8,7 +8,7 @@
 import * as mime from "mime-types";
 import * as path from "path";
 import * as slugify from "slugify";
-import * as xmldom from "xmldom";
+import * as xmldom from "@xmldom/xmldom";
 
 import { Metadata } from "@models/metadata";
 import { Contributor } from "@models/metadata-contributor";
