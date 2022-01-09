@@ -9,7 +9,7 @@ import * as debug_ from "debug";
 import * as mime from "mime-types";
 import * as moment from "moment";
 import * as path from "path";
-import * as xmldom from "xmldom";
+import * as xmldom from "@xmldom/xmldom";
 
 import { MediaOverlayNode, timeStrToSeconds } from "@models/media-overlay";
 import { DirectionEnum, MetadataSupportedKeys } from "@models/metadata";
