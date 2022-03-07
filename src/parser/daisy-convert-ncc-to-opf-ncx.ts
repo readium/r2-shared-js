@@ -35,9 +35,9 @@ const debug = debug_("r2:shared#parser/daisy-convert-to-epub");
 // "property": "\" ' -- ' == ' xxx < yyy > zzz < &"
 const decodeHtmlAttributeValue = (val: string) => {
     const decoded = he.decode(val, { isAttributeValue: true });
-    if (val !== decoded) {
-        console.log(`====== decodeHtmlAttributeValue [${val}] ==> [${decoded}]`);
-    }
+    // if (val !== decoded) {
+    //     console.log(`====== decodeHtmlAttributeValue [${val}] ==> [${decoded}]`);
+    // }
     return decoded;
 };
 // Example ncc.html text content:
@@ -50,9 +50,9 @@ const decodeHtmlAttributeValue = (val: string) => {
 // "property": "\"  \" ' -- ' == ' xxx < yyy > zzz < &"
 const decodeHtmlTextContent = (textContent: string) => {
     const decoded = he.decode(textContent);
-    if (textContent !== decoded) {
-        console.log(`====== decodeHtmlTextContent [${textContent}] ==> [${decoded}]`);
-    }
+    // if (textContent !== decoded) {
+    //     console.log(`====== decodeHtmlTextContent [${textContent}] ==> [${decoded}]`);
+    // }
     return decoded;
 };
 
