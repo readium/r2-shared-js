@@ -1,10 +1,28 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.55...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.56...develop
 
 Changes:
 * TODO
+
+# 1.0.56
+
+> Build environment: NodeJS `16.14.0`, NPM `8.5.3`
+
+Changes:
+* NPM package updates
+* Fixed HTML / XML decoding bug in DAISY parser
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.56/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.56/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.56
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.55...v1.0.56
 
 # 1.0.55
 
