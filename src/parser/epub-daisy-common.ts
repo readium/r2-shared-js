@@ -120,8 +120,21 @@ export const fillPublicationDate = (publication: Publication, rootfile: Rootfile
                 break;
             }
         }
-        if (!publishedDateStr && (!rootfile || isEpub3OrMore(rootfile, opf))) {
-            publishedDateStr = opfMetadataDateArray[0].Data;
+        // fallback 1: first date without explicit OPF "event" (EPUB2)
+        if (!publishedDateStr) {
+            for (const metaDate of opfMetadataDateArray) {
+                if (!metaDate.Event) {
+                    publishedDateStr = metaDate.Data;
+                    // <dc:date>1860</dc:date>
+                    break;
+                }
+            }
+        }
+        // fallback 2: first date in OPF XML (EPUB3)
+        if (!publishedDateStr) {
+            if (!rootfile || isEpub3OrMore(rootfile, opf)) {
+                publishedDateStr = opfMetadataDateArray[0].Data;
+            }
         }
     }
 

@@ -1,10 +1,28 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.57...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.58...develop
 
 Changes:
 * TODO
+
+# 1.0.58
+
+> Build environment: NodeJS `16.14.2`, NPM `8.5.5`
+
+Changes:
+* Fixed NPM package lockfile (was corrupted)
+* Added fallback for metadata published/modified date parsing (EPUB v2/3 and DAISY v2/3)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.58/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.58/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.58
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.57...v1.0.58
 
 # 1.0.57
 
