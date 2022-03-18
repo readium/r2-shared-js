@@ -9,7 +9,6 @@ import * as debug_ from "debug";
 import * as fs from "fs";
 import { imageSize } from "image-size";
 import { ISize } from "image-size/dist/types/interface";
-import * as moment from "moment";
 import * as path from "path";
 import { URL } from "url";
 import * as xmldom from "@xmldom/xmldom";
@@ -184,7 +183,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
     publication.Context = ["https://readium.org/webpub-manifest/context.jsonld"];
     publication.Metadata = new Metadata();
     publication.Metadata.RDFType = "http://schema.org/Book";
-    publication.Metadata.Modified = moment(Date.now()).toDate();
+    // publication.Metadata.Modified = moment(Date.now()).toDate();
 
     publication.AddToInternal("filename", path.basename(filePath));
 

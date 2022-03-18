@@ -18,6 +18,6 @@ export class MetaDate {
     @XmlXPathSelector("text()")
     public Data!: string;
 
-    @XmlXPathSelector("@event")
+    @XmlXPathSelector("@opf:event")
     public Event!: string;
 }

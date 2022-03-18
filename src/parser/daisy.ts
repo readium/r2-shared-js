@@ -7,7 +7,6 @@
 
 import * as debug_ from "debug";
 import * as fs from "fs";
-import * as moment from "moment";
 import * as path from "path";
 
 import { Metadata } from "@models/metadata";
@@ -113,7 +112,7 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
     publication.Context = ["https://readium.org/webpub-manifest/context.jsonld"];
     publication.Metadata = new Metadata();
     publication.Metadata.RDFType = "http://schema.org/Book";
-    publication.Metadata.Modified = moment(Date.now()).toDate();
+    // publication.Metadata.Modified = moment(Date.now()).toDate();
 
     publication.AddToInternal("filename", path.basename(filePath));
 

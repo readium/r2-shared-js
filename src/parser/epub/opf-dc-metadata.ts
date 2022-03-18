@@ -18,6 +18,7 @@ import { Title } from "./opf-title";
     dc2: "http://purl.org/dc/elements/1.0/",
     opf: "http://www.idpf.org/2007/opf",
     opf2: "http://openebook.org/namespaces/oeb-package/1.0/",
+    // dcterms: "http://purl.org/dc/terms/",
 })
 export class DCMetadata {
 

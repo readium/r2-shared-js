@@ -41,6 +41,7 @@ import { SMIL } from "./epub/smil";
 import { Par } from "./epub/smil-par";
 import { Seq } from "./epub/smil-seq";
 import { SeqOrPar } from "./epub/smil-seq-or-par";
+import { MetaDate } from "./epub/opf-date";
 
 const debug = debug_("r2:shared#parser/epub-daisy-common");
 
@@ -83,43 +84,67 @@ export const isEpub3OrMore = (rootfile: Rootfile, opf: OPF): boolean => {
 
 export const fillPublicationDate = (publication: Publication, rootfile: Rootfile | undefined, opf: OPF) => {
 
-    const opfMetadataDate =
-        opf.Metadata?.DCMetadata?.Date?.length ?
-            opf.Metadata.DCMetadata.Date :
-            (opf.Metadata?.Date?.length ?
-                opf.Metadata.Date :
-                undefined);
+    let publishedDateStr: string | undefined;
+    let modifiedDateStr: string | undefined;
 
-    if (opfMetadataDate) {
-
-        if ((!rootfile || isEpub3OrMore(rootfile, opf)) &&
-            opfMetadataDate[0] && opfMetadataDate[0].Data) {
-
-            const token = opfMetadataDate[0].Data;
-            try {
-                const mom = moment(token);
-                if (mom.isValid()) {
-                    publication.Metadata.PublicationDate = mom.toDate();
-                }
-            } catch (_err) {
-                debug("INVALID DATE/TIME? " + token);
+    if (opf.Metadata?.Meta?.length) {
+        for (const m of opf.Metadata.Meta) {
+            if (m.Name === "dcterms:modified" && m.Content) {
+                modifiedDateStr = m.Content;
+                break;
             }
-            return;
+            if (m.Property === "dcterms:modified" && m.Data) {
+                modifiedDateStr = m.Data;
+                break;
+            }
         }
+    }
 
-        opfMetadataDate.forEach((date) => {
-            if (date.Data && date.Event && date.Event.indexOf("publication") >= 0) {
-                const token = date.Data;
-                try {
-                    const mom = moment(token);
-                    if (mom.isValid()) {
-                        publication.Metadata.PublicationDate = mom.toDate();
-                    }
-                } catch (_err) {
-                    debug("INVALID DATE/TIME? " + token);
-                }
+    const opfMetadataDateArray = ([] as MetaDate[]).concat(
+        opf.Metadata?.DCMetadata?.Date?.length ? opf.Metadata.DCMetadata.Date : [],
+        opf.Metadata?.Date?.length ? opf.Metadata.Date : [],
+    );
+    if (opfMetadataDateArray?.length) {
+        for (const metaDate of opfMetadataDateArray) {
+            if (!modifiedDateStr &&
+                (metaDate.Event === "modification" || metaDate.Event === "ops-modification")) {
+                modifiedDateStr = metaDate.Data;
             }
-        });
+            if (!publishedDateStr &&
+                (metaDate.Event === "publication" || metaDate.Event === "ops-publication")) {
+                publishedDateStr = metaDate.Data;
+                // <dc:date opf:event="original-publication">1860</dc:date>
+                // <dc:date opf:event="ops-publication">2008-03-11</dc:date>
+            }
+            if (modifiedDateStr && publishedDateStr) {
+                break;
+            }
+        }
+        if (!publishedDateStr && (!rootfile || isEpub3OrMore(rootfile, opf))) {
+            publishedDateStr = opfMetadataDateArray[0].Data;
+        }
+    }
+
+    if (publishedDateStr) {
+        try {
+            const mom = moment(publishedDateStr);
+            if (mom.isValid()) {
+                publication.Metadata.PublicationDate = mom.toDate();
+            }
+        } catch (_err) {
+            debug("INVALID published DATE/TIME? " + publishedDateStr);
+        }
+    }
+
+    if (modifiedDateStr) {
+        try {
+            const mom = moment(modifiedDateStr);
+            if (mom.isValid()) {
+                publication.Metadata.Modified = mom.toDate();
+            }
+        } catch (_err) {
+            debug("INVALID modified DATE/TIME? " + modifiedDateStr);
+        }
     }
 };
 
