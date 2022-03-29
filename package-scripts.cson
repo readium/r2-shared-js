@@ -30,10 +30,10 @@
     (git pull || echo "pull") &&
     (git --no-pager status || echo status) &&
     ((rimraf "*" && echo rimrafOK) || echo rimrafNOK) &&
-    cpy ../r2-shared-js/package.json . &&
-    cpy ../r2-shared-js/package-lock.json . &&
-    cpy ../r2-shared-js/LICENSE . &&
-    cpy ../r2-shared-js/README.md . &&
+    cpy --flat ../r2-shared-js/package.json . &&
+    cpy --flat ../r2-shared-js/package-lock.json . &&
+    cpy --flat ../r2-shared-js/LICENSE . &&
+    cpy --flat ../r2-shared-js/README.md . &&
     cpy "./docs/" ../r2-shared-js-dist/ --cwd=../r2-shared-js/ &&
     cpy "./dist/" ../r2-shared-js-dist/ --cwd=../r2-shared-js/ &&
     (git add * || echo add) &&
