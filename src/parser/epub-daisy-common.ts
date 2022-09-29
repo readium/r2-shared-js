@@ -173,9 +173,11 @@ export const fillSubject = (publication: Publication, opf: OPF) => {
     if (opfMetadataSubject) {
         opfMetadataSubject.forEach((s) => {
             const sub = new Subject();
-            if (s.Lang) {
+
+            const xmlLang: string = s.Lang || opf.Lang;
+            if (xmlLang) {
                 sub.Name = {} as IStringMap;
-                sub.Name[s.Lang] = s.Data;
+                sub.Name[xmlLang.toLowerCase()] = s.Data;
             } else {
                 sub.Name = s.Data;
             }
@@ -260,10 +262,22 @@ export const addContributor = (
                 contributor.Name[BCP47_UNKNOWN_LANG] = cont.Data;
             }
         } else {
-            contributor.Name = cont.Data;
+            const xmlLang: string = cont.Lang || opf.Lang;
+            if (xmlLang) {
+                contributor.Name = {} as IStringMap;
+                contributor.Name[xmlLang.toLowerCase()] = cont.Data;
+            } else {
+                contributor.Name = cont.Data;
+            }
         }
     } else {
-        contributor.Name = cont.Data;
+        const xmlLang: string = cont.Lang || opf.Lang;
+        if (xmlLang) {
+            contributor.Name = {} as IStringMap;
+            contributor.Name[xmlLang.toLowerCase()] = cont.Data;
+        } else {
+            contributor.Name = cont.Data;
+        }
         role = cont.Role;
         if (!role && forcedRole) {
             role = forcedRole;
@@ -659,7 +673,13 @@ export const addTitle = (publication: Publication, rootfile: Rootfile | undefine
                 }
 
             } else {
-                publication.Metadata.Title = mainTitle.Data;
+                const xmlLang: string = mainTitle.Lang || opf.Lang;
+                if (xmlLang) {
+                    publication.Metadata.Title = {} as IStringMap;
+                    publication.Metadata.Title[xmlLang.toLowerCase()] = mainTitle.Data;
+                } else {
+                    publication.Metadata.Title = mainTitle.Data;
+                }
             }
         }
 
@@ -688,13 +708,25 @@ export const addTitle = (publication: Publication, rootfile: Rootfile | undefine
                 }
 
             } else {
-                publication.Metadata.SubTitle = subTitle.Data;
+                const xmlLang: string = subTitle.Lang || opf.Lang;
+                if (xmlLang) {
+                    publication.Metadata.SubTitle = {} as IStringMap;
+                    publication.Metadata.SubTitle[xmlLang.toLowerCase()] = subTitle.Data;
+                } else {
+                    publication.Metadata.SubTitle = subTitle.Data;
+                }
             }
         }
 
     } else {
         if (opfMetadataTitle) {
-            publication.Metadata.Title = opfMetadataTitle[0].Data;
+            const xmlLang: string = opfMetadataTitle[0].Lang || opf.Lang;
+            if (xmlLang) {
+                publication.Metadata.Title = {} as IStringMap;
+                publication.Metadata.Title[xmlLang.toLowerCase()] = opfMetadataTitle[0].Data;
+            } else {
+                publication.Metadata.Title = opfMetadataTitle[0].Data;
+            }
         }
     }
 };
@@ -1171,10 +1203,11 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
 
         if (AccessibilitySummarys.length === 1) {
             const tuple = AccessibilitySummarys[0];
-            if (tuple.metaTag.Lang) {
+            const xmlLang: string = tuple.metaTag.Lang || opf.Lang;
+            if (xmlLang) {
                 publication.Metadata.AccessibilitySummary = {} as IStringMap;
                 // tslint:disable-next-line: max-line-length
-                (publication.Metadata.AccessibilitySummary as IStringMap)[tuple.metaTag.Lang.toLowerCase()] = tuple.val;
+                (publication.Metadata.AccessibilitySummary as IStringMap)[xmlLang.toLowerCase()] = tuple.val;
             } else {
                 publication.Metadata.AccessibilitySummary = tuple.val;
             }
