@@ -1,14 +1,32 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.60...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.61...develop
 
 Changes:
 * TODO
 
+# 1.0.61
+
+> Build environment: NodeJS `16.17.0`, NPM `8.19.1`
+
+Changes:
+* Fix metadata multilingual parsing (xml:lang in package OPF): exception for RTL locales that convey direction, a11y:summary is not language sensitive (no translations) but can carry direction too
+* Fix incorrectly-generated "unknown" metadata in RWPM JSON (duplicate keys)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.61/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.61/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.61
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.60...v1.0.61
+
 # 1.0.60
 
-> Build environment: NodeJS `16.17.0n`, NPM `8.19.1`
+> Build environment: NodeJS `16.17.0`, NPM `8.19.1`
 
 Changes:
 * Fixed parsing of xml:lang in package OPF for metadata title, subtitle, contributors (authors, publishers, etc.), subjects, a11y-summary (see https://github.com/edrlab/thorium-reader-epub-tests/issues/18 )
