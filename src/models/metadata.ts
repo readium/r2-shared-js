@@ -37,8 +37,60 @@ export enum DirectionEnum {
 // [\n\s\S]+?^[ ]+@JsonProperty\(("[a-zA-Z]+")\)$
 // regexp replace all:
 // $1,
-// tslint:disable-next-line:max-line-length
-export const MetadataSupportedKeys = ["dcterms:modified", "accessMode", "accessibilityFeature", "accessibilityHazard", "accessibilitySummary", "accessModeSufficient", "accessibilityAPI", "accessibilityControl", "certifiedBy", "certifierCredential", "certifierReport", "conformsTo", "title", "subtitle", "identifier", "author", "translator", "editor", "artist", "illustrator", "letterer", "penciler", "colorist", "inker", "narrator", "contributor", "publisher", "imprint", "language", "modified", "published", "sortAs", "description", "readingProgression", "direction", "belongsTo", "duration", "numberOfPages", "rights", "rendition", "source", "subject"];
+// package OPF meta tag name or property (does not include dc:title etc. which are elements)
+export const MetadataSupportedKeys = [
+    "cover",
+    "dtb:totalTime",
+    "media:duration",
+    "media:narrator",
+    "media:active-class",
+    "media:playback-active-class",
+    "dcterms:modified",
+    "dcterms:creator",
+    "dcterms:contributor",
+    "schema:accessMode",
+    "schema:accessibilityFeature",
+    "schema:accessibilityHazard",
+    "schema:accessibilitySummary",
+    "schema:accessModeSufficient",
+    "schema:accessibilityAPI",
+    "schema:accessibilityControl",
+    "a11y:certifiedBy",
+    "a11y:certifierCredential",
+    "a11y:certifierReport",
+    "dcterms:conformsTo",
+    "title",
+    "subtitle",
+    "identifier",
+    "author",
+    "translator",
+    "editor",
+    "artist",
+    "illustrator",
+    "letterer",
+    "penciler",
+    "colorist",
+    "inker",
+    "narrator",
+    "contributor",
+    "publisher",
+    "imprint",
+    "language",
+    "modified",
+    "published",
+    "sortAs",
+    "description",
+    "readingProgression",
+    "direction",
+    "belongsTo",
+    "duration",
+    "numberOfPages",
+    "rights",
+    "rendition",
+    "source",
+    "subject",
+];
+
 
 // tslint:disable-next-line:max-line-length
 // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json

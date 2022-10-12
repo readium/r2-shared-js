@@ -175,7 +175,8 @@ export const fillSubject = (publication: Publication, opf: OPF) => {
             const sub = new Subject();
 
             const xmlLang: string = s.Lang || opf.Lang;
-            if (xmlLang) {
+            const isLangOverride = s.Lang && opf.Lang && s.Lang !== opf.Lang;
+            if (xmlLang && (isLangOverride || langStringIsRTL(xmlLang.toLowerCase()))) {
                 sub.Name = {} as IStringMap;
                 sub.Name[xmlLang.toLowerCase()] = s.Data;
             } else {
@@ -244,7 +245,7 @@ export const addContributor = (
 
             metaAlt.forEach((m) => {
                 if (m.Lang) {
-                    (contributor.Name as IStringMap)[m.Lang] = m.Data;
+                    (contributor.Name as IStringMap)[m.Lang.toLowerCase()] = m.Data;
                 }
             });
 
@@ -263,7 +264,8 @@ export const addContributor = (
             }
         } else {
             const xmlLang: string = cont.Lang || opf.Lang;
-            if (xmlLang) {
+            const isLangOverride = cont.Lang && opf.Lang && cont.Lang !== opf.Lang;
+            if (xmlLang && (isLangOverride || langStringIsRTL(xmlLang.toLowerCase()))) {
                 contributor.Name = {} as IStringMap;
                 contributor.Name[xmlLang.toLowerCase()] = cont.Data;
             } else {
@@ -272,7 +274,8 @@ export const addContributor = (
         }
     } else {
         const xmlLang: string = cont.Lang || opf.Lang;
-        if (xmlLang) {
+        const isLangOverride = cont.Lang && opf.Lang && cont.Lang !== opf.Lang;
+        if (xmlLang && (isLangOverride || langStringIsRTL(xmlLang.toLowerCase()))) {
             contributor.Name = {} as IStringMap;
             contributor.Name[xmlLang.toLowerCase()] = cont.Data;
         } else {
@@ -674,7 +677,8 @@ export const addTitle = (publication: Publication, rootfile: Rootfile | undefine
 
             } else {
                 const xmlLang: string = mainTitle.Lang || opf.Lang;
-                if (xmlLang) {
+                const isLangOverride = mainTitle.Lang && opf.Lang && mainTitle.Lang !== opf.Lang;
+                if (xmlLang && (isLangOverride || langStringIsRTL(xmlLang.toLowerCase()))) {
                     publication.Metadata.Title = {} as IStringMap;
                     publication.Metadata.Title[xmlLang.toLowerCase()] = mainTitle.Data;
                 } else {
@@ -709,7 +713,8 @@ export const addTitle = (publication: Publication, rootfile: Rootfile | undefine
 
             } else {
                 const xmlLang: string = subTitle.Lang || opf.Lang;
-                if (xmlLang) {
+                const isLangOverride = subTitle.Lang && opf.Lang && subTitle.Lang !== opf.Lang;
+                if (xmlLang && (isLangOverride || langStringIsRTL(xmlLang.toLowerCase()))) {
                     publication.Metadata.SubTitle = {} as IStringMap;
                     publication.Metadata.SubTitle[xmlLang.toLowerCase()] = subTitle.Data;
                 } else {
@@ -721,7 +726,8 @@ export const addTitle = (publication: Publication, rootfile: Rootfile | undefine
     } else {
         if (opfMetadataTitle) {
             const xmlLang: string = opfMetadataTitle[0].Lang || opf.Lang;
-            if (xmlLang) {
+            const isLangOverride = opfMetadataTitle[0].Lang && opf.Lang && opfMetadataTitle[0].Lang !== opf.Lang;
+            if (xmlLang && (isLangOverride || langStringIsRTL(xmlLang.toLowerCase()))) {
                 publication.Metadata.Title = {} as IStringMap;
                 publication.Metadata.Title[xmlLang.toLowerCase()] = opfMetadataTitle[0].Data;
             } else {
@@ -754,15 +760,18 @@ export const setPublicationDirection = (publication: Publication, opf: OPF) => {
         (!publication.Metadata.Direction || publication.Metadata.Direction === DirectionEnum.Auto)) {
 
         const lang = publication.Metadata.Language[0].toLowerCase();
-        if ((lang === "ar" || lang.startsWith("ar-") ||
-            lang === "he" || lang.startsWith("he-") ||
-            lang === "fa" || lang.startsWith("fa-")) ||
-            lang === "zh-Hant" ||
-            lang === "zh-TW") {
-
+        if (langStringIsRTL(lang)) {
             publication.Metadata.Direction = DirectionEnum.RTL;
         }
     }
+};
+
+export const langStringIsRTL = (lang: string): boolean => {
+    return lang === "ar" || lang.startsWith("ar-") ||
+        lang === "he" || lang.startsWith("he-") ||
+        lang === "fa" || lang.startsWith("fa-") ||
+        lang === "zh-Hant" ||
+        lang === "zh-TW";
 };
 
 export const getNcx = async (ncxManItem: Manifest, opf: OPF, zip: IZip): Promise<NCX> => {
@@ -1203,8 +1212,15 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
 
         if (AccessibilitySummarys.length === 1) {
             const tuple = AccessibilitySummarys[0];
+
+            // a11y:summary parsing => xml:lang ignored (unless RTL)
+            // https://github.com/w3c/publ-a11y/issues/94
+            // https://github.com/w3c/epub-specs/pull/2401#issuecomment-121326068
+            // https://www.w3.org/TR/epub-a11y-tech-11/#meta-005
+            // https://github.com/readium/architecture/blob/master/streamer/parser/a11y-metadata-parsing.md#accessibilitysummary
             const xmlLang: string = tuple.metaTag.Lang || opf.Lang;
-            if (xmlLang) {
+            const isLangOverride = tuple.metaTag.Lang && opf.Lang && tuple.metaTag.Lang !== opf.Lang;
+            if (xmlLang && (isLangOverride || langStringIsRTL(xmlLang.toLowerCase()))) {
                 publication.Metadata.AccessibilitySummary = {} as IStringMap;
                 // tslint:disable-next-line: max-line-length
                 (publication.Metadata.AccessibilitySummary as IStringMap)[xmlLang.toLowerCase()] = tuple.val;
@@ -1251,8 +1267,9 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
             } else if (metaTag.Property === "media:playback-active-class") {
                 metasPlaybackActiveClass.push(metaTag);
             } else {
+                // fallback, see MetadataSupportedKeys in metadata.ts
                 const key = metaTag.Name ? metaTag.Name : metaTag.Property;
-                if (key && !MetadataSupportedKeys.includes(key)) {
+                if (key && !metaTag.Refine && !MetadataSupportedKeys.includes(key)) {
 
                     if (!publication.Metadata.AdditionalJSON) {
                         publication.Metadata.AdditionalJSON = {};
