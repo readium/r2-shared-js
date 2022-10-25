@@ -210,7 +210,10 @@ const addLinkData = async (
         const isFullTextAudio =
             // dtb:multimediaContent ==> audio,text
             publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText" ||
-            publication.Metadata.AdditionalJSON["ncc:multimediaType"] === "audioFullText";
+            publication.Metadata.AdditionalJSON["ncc:multimediaType"] === "audioFullText" || (
+                !publication.Metadata.AdditionalJSON["dtb:multimediaType"] &&
+                !publication.Metadata.AdditionalJSON["ncc:multimediaType"]
+            );
 
         const isAudioOnly =
             // dtb:multimediaContent ==> audio

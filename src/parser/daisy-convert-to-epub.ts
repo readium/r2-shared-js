@@ -54,7 +54,10 @@ export const convertDaisyToReadiumWebPub = async (
         const isFullTextAudio = publication.Metadata?.AdditionalJSON &&
             // dtb:multimediaContent ==> audio,text
             (publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "audioFullText" ||
-            publication.Metadata.AdditionalJSON["ncc:multimediaType"] === "audioFullText");
+            publication.Metadata.AdditionalJSON["ncc:multimediaType"] === "audioFullText" || (
+                !publication.Metadata.AdditionalJSON["dtb:multimediaType"] &&
+                !publication.Metadata.AdditionalJSON["ncc:multimediaType"]
+            ));
 
         const isAudioOnly = publication.Metadata?.AdditionalJSON &&
             // dtb:multimediaContent ==> audio
