@@ -14,9 +14,25 @@ export class MetaLink {
 
     // XPATH ROOT: /opf:package/opf:metadata/opf:link
 
+    // TODO: remove unused attribute?
     @XmlXPathSelector("@property")
     public Property!: string;
 
+    @XmlXPathSelector("@rel")
+    public Rel!: string;
+
     @XmlXPathSelector("@href")
     public Href!: string;
+
+    @XmlXPathSelector("@properties")
+    public Properties!: string;
+
+    @XmlXPathSelector("@media-type")
+    public MediaType!: string;
+
+    @XmlXPathSelector("@refines")
+    public Refines!: string;
+
+    @XmlXPathSelector("@id")
+    public ID!: string;
 }

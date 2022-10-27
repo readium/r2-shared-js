@@ -1022,7 +1022,8 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
 
     if (opf.Metadata?.Link) {
         opf.Metadata.Link.forEach((metaLink) => {
-            if (metaLink.Property === "a11y:certifierCredential") {
+            if (metaLink.Property === "a11y:certifierCredential" ||
+                metaLink.Rel === "a11y:certifierCredential") {
                 let val = metaLink.Href;
                 if (!val) {
                     return; // continue
@@ -1035,7 +1036,8 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
                     publication.Metadata.CertifierCredential = [];
                 }
                 publication.Metadata.CertifierCredential.push(val);
-            } else if (metaLink.Property === "a11y:certifierReport") {
+            } else if (metaLink.Property === "a11y:certifierReport" ||
+                metaLink.Rel === "a11y:certifierReport") {
                 let val = metaLink.Href;
                 if (!val) {
                     return; // continue
@@ -1048,7 +1050,8 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
                     publication.Metadata.CertifierReport = [];
                 }
                 publication.Metadata.CertifierReport.push(val);
-            } else if (metaLink.Property === "dcterms:conformsTo") {
+            } else if (metaLink.Property === "dcterms:conformsTo" ||
+                metaLink.Rel === "dcterms:conformsTo") {
                 let val = metaLink.Href;
                 if (!val) {
                     return; // continue
@@ -1200,6 +1203,20 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
                     publication.Metadata.CertifierCredential = [];
                 }
                 publication.Metadata.CertifierCredential.push(val);
+            } else if (metaTag.Name === "dcterms:conformsTo" || // may be link in EPUB3
+                metaTag.Property === "dcterms:conformsTo") {
+                let val = metaTag.Property ? metaTag.Data : metaTag.Content;
+                if (!val) {
+                    return; // continue
+                }
+                val = val.trim();
+                if (!val) {
+                    return; // continue
+                }
+                if (!publication.Metadata.ConformsTo) {
+                    publication.Metadata.ConformsTo = [];
+                }
+                publication.Metadata.ConformsTo.push(val);
             }
         };
 

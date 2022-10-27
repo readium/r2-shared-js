@@ -245,10 +245,17 @@ export class Metadata implements IWithAdditionalJSON {
     @JsonProperty("conformsTo")
     @JsonConverter(JsonStringConverter)
     @JsonElementType(String)
-    public ConformsTo!: string[]; // link in EPUB3
+    public ConformsTo!: string[]; // link in EPUB3, or meta! (https://www.w3.org/TR/epub-a11y-11/)
     // http://www.idpf.org/epub/a11y/accessibility-20170105.html#wcag-a
     // http://www.idpf.org/epub/a11y/accessibility-20170105.html#wcag-aa
     // http://www.idpf.org/epub/a11y/accessibility-20170105.html#wcag-aaa
+    // EPUB Accessibility 1.1 - WCAG 2.0 Level A
+    // EPUB Accessibility 1.1 - WCAG 2.0 Level AA
+    // EPUB Accessibility 1.1 - WCAG 2.0 Level AAA
+    // EPUB Accessibility 1.1 - WCAG 2.1 Level A
+    // EPUB Accessibility 1.1 - WCAG 2.1 Level AA
+    // EPUB Accessibility 1.1 - WCAG 2.1 Level AAA
+
 
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/webpub-manifest/blob/0976680e25852b8a4c4802a052ba750ab3e89284/schema/metadata.schema.json#L11
