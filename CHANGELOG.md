@@ -1,10 +1,28 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.62...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.63...develop
 
 Changes:
 * TODO
+
+# 1.0.63
+
+> Build environment: NodeJS `16.18.0`, NPM `8.19.2`
+
+Changes:
+* Fixed EPUB OPF a11y metadata parsing (link rel attribute)
+* Added dual meta/link dcterms:conformsTo a11y metadata parsing
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.63/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.63/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.63
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.62...v1.0.63
 
 # 1.0.62
 
