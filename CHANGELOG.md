@@ -1,10 +1,27 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.63...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.64...develop
 
 Changes:
 * TODO
+
+# 1.0.64
+
+> Build environment: NodeJS `18.12.1`, NPM `9.1.1`
+
+Changes:
+* NPM package updates
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.64/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.64/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.64
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.63...v1.0.64
 
 # 1.0.63
 
