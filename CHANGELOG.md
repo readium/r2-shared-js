@@ -1,10 +1,27 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.64...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.65...develop
 
 Changes:
 * TODO
+
+# 1.0.65
+
+> Build environment: NodeJS `18.12.1`, NPM `9.1.2`
+
+Changes:
+* Fix: EPUB fixed-layout pre-paginated publications, parsing of spine items properties rendition-prefixed page-spread-left/center/right metadata.
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.65/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.65/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.65
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.64...v1.0.65
 
 # 1.0.64
 
