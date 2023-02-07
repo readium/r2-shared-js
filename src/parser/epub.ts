@@ -856,9 +856,8 @@ const fillEncryptionInfo =
 
             if (publication.Resources) {
                 publication.Resources.forEach((l) => {
-
                     const filePath = l.Href;
-                    if (filePath === encInfo.CipherData.CipherReference.URI) {
+                    if (filePath === tryDecodeURI(encInfo.CipherData.CipherReference.URI)) {
                         if (!l.Properties) {
                             l.Properties = new Properties();
                         }
@@ -870,7 +869,7 @@ const fillEncryptionInfo =
             if (publication.Spine) {
                 publication.Spine.forEach((l) => {
                     const filePath = l.Href;
-                    if (filePath === encInfo.CipherData.CipherReference.URI) {
+                    if (filePath === tryDecodeURI(encInfo.CipherData.CipherReference.URI)) {
                         if (!l.Properties) {
                             l.Properties = new Properties();
                         }
