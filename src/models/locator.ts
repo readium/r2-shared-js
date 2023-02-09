@@ -40,6 +40,10 @@ export interface LocatorText {
     // tslint:disable-next-line:max-line-length
     // https://github.com/readium/architecture/blob/f90b440dc3aa63c59981e3e46a7db7b8a545c613/schema/locator.schema.json#L50
     after?: string;
+
+    beforeRaw?: string;
+    highlightRaw?: string;
+    afterRaw?: string;
 }
 
 export interface LocatorLocations {
