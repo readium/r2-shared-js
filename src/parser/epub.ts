@@ -335,7 +335,13 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
         fillEncryptionInfo(publication, encryption, lcpl);
     }
 
-    await fillTOCFromNavDoc(publication, zip);
+    try {
+        await fillTOCFromNavDoc(publication, zip);
+    } catch (ex) {
+        // encrypted TOC?
+        publication.TOC = [];
+        console.log(ex);
+    }
 
     if (!publication.TOC || !publication.TOC.length) {
 
