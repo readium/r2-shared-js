@@ -325,9 +325,9 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
 
     findContributorInMeta(publication, rootfile, opf);
 
-    await fillSpineAndResource(publication, rootfile, opf, zip, addLinkData);
-
     await addRendition(publication, opf, zip);
+
+    await fillSpineAndResource(publication, rootfile, opf, zip, addLinkData);
 
     await addCoverRel(publication, rootfile, opf, zip);
 

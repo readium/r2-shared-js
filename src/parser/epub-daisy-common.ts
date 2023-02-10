@@ -16,7 +16,7 @@ import { DirectionEnum, MetadataSupportedKeys } from "@models/metadata";
 import { Contributor } from "@models/metadata-contributor";
 import { MediaOverlay } from "@models/metadata-media-overlay";
 import { IStringMap } from "@models/metadata-multilang";
-import { Properties } from "@models/metadata-properties";
+import { LayoutEnum, Properties } from "@models/metadata-properties";
 import { Subject } from "@models/metadata-subject";
 import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
@@ -470,7 +470,9 @@ export const fillSpineAndResource = async (
     if (opf.Spine && opf.Spine.Items && opf.Spine.Items.length) {
         for (const item of opf.Spine.Items) {
 
-            if (!item.Linear || item.Linear === "yes") {
+            if (!item.Linear || item.Linear === "yes" ||
+                (item.Linear === "no" && publication.Metadata?.Rendition?.Layout === LayoutEnum.Fixed) // stupid evil thing ... but unfortunately some "commercial-grade" FXL publications have linear=no on first spine item / cover document (image), which displays normally in iBooks / Apple Books.app because of their implementation choice (which sets an unfortunate precedent ... mind you, the EPUB specification is quite loose about processing / rendering requirements for linear=no, so we can't just blame reading system implementors and/or content authors!)
+            ) {
 
                 let linkItem: Link;
                 try {
