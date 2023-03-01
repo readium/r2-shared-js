@@ -42,6 +42,8 @@ import { Par } from "./epub/smil-par";
 import { Seq } from "./epub/smil-seq";
 import { SeqOrPar } from "./epub/smil-seq-or-par";
 import { MetaDate } from "./epub/opf-date";
+import { AccessibilityMetadata } from "@models/metadata-accessibility";
+import { AccessibilityCertification } from "@models/metadata-accessibility-certification";
 
 const debug = debug_("r2:shared#parser/epub-daisy-common");
 
@@ -1034,10 +1036,23 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
                 if (!val) {
                     return; // continue
                 }
+
+                // legacy
                 if (!publication.Metadata.CertifierCredential) {
                     publication.Metadata.CertifierCredential = [];
                 }
                 publication.Metadata.CertifierCredential.push(val);
+                // modern
+                if (!publication.Metadata.Accessibility) {
+                    publication.Metadata.Accessibility = {} as AccessibilityMetadata;
+                }
+                if (!publication.Metadata.Accessibility.Certification) {
+                    publication.Metadata.Accessibility.Certification = {} as AccessibilityCertification;
+                }
+                if (!publication.Metadata.Accessibility.Certification.Credential) {
+                    publication.Metadata.Accessibility.Certification.Credential = [];
+                }
+                publication.Metadata.Accessibility.Certification.Credential.push(val);
             } else if (metaLink.Property === "a11y:certifierReport" ||
                 metaLink.Rel === "a11y:certifierReport") {
                 let val = metaLink.Href;
@@ -1048,10 +1063,23 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
                 if (!val) {
                     return; // continue
                 }
+
+                // legacy
                 if (!publication.Metadata.CertifierReport) {
                     publication.Metadata.CertifierReport = [];
                 }
                 publication.Metadata.CertifierReport.push(val);
+                // modern
+                if (!publication.Metadata.Accessibility) {
+                    publication.Metadata.Accessibility = {} as AccessibilityMetadata;
+                }
+                if (!publication.Metadata.Accessibility.Certification) {
+                    publication.Metadata.Accessibility.Certification = {} as AccessibilityCertification;
+                }
+                if (!publication.Metadata.Accessibility.Certification.Report) {
+                    publication.Metadata.Accessibility.Certification.Report = [];
+                }
+                publication.Metadata.Accessibility.Certification.Report.push(val);
             } else if (metaLink.Property === "dcterms:conformsTo" ||
                 metaLink.Rel === "dcterms:conformsTo") {
                 let val = metaLink.Href;
@@ -1062,10 +1090,20 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
                 if (!val) {
                     return; // continue
                 }
+
+                // legacy
                 if (!publication.Metadata.ConformsTo) {
                     publication.Metadata.ConformsTo = [];
                 }
                 publication.Metadata.ConformsTo.push(val);
+                // modern
+                if (!publication.Metadata.Accessibility) {
+                    publication.Metadata.Accessibility = {} as AccessibilityMetadata;
+                }
+                if (!publication.Metadata.Accessibility.ConformsTo) {
+                    publication.Metadata.Accessibility.ConformsTo = [];
+                }
+                publication.Metadata.Accessibility.ConformsTo.push(val);
             }
         });
     }
@@ -1089,10 +1127,20 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
                 if (!val) {
                     return; // continue
                 }
+
+                // legacy
                 if (!publication.Metadata.AccessMode) {
                     publication.Metadata.AccessMode = [];
                 }
                 publication.Metadata.AccessMode.push(val);
+                // modern
+                if (!publication.Metadata.Accessibility) {
+                    publication.Metadata.Accessibility = {} as AccessibilityMetadata;
+                }
+                if (!publication.Metadata.Accessibility.AccessMode) {
+                    publication.Metadata.Accessibility.AccessMode = [];
+                }
+                publication.Metadata.Accessibility.AccessMode.push(val);
             } else if (metaTag.Name === "schema:accessibilityFeature" ||
                 metaTag.Property === "schema:accessibilityFeature") {
                 let val = metaTag.Property ? metaTag.Data : metaTag.Content;
@@ -1103,10 +1151,20 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
                 if (!val) {
                     return; // continue
                 }
+
+                // legacy
                 if (!publication.Metadata.AccessibilityFeature) {
                     publication.Metadata.AccessibilityFeature = [];
                 }
                 publication.Metadata.AccessibilityFeature.push(val);
+                // modern
+                if (!publication.Metadata.Accessibility) {
+                    publication.Metadata.Accessibility = {} as AccessibilityMetadata;
+                }
+                if (!publication.Metadata.Accessibility.Feature) {
+                    publication.Metadata.Accessibility.Feature = [];
+                }
+                publication.Metadata.Accessibility.Feature.push(val);
             } else if (metaTag.Name === "schema:accessibilityHazard" ||
                 metaTag.Property === "schema:accessibilityHazard") {
                 let val = metaTag.Property ? metaTag.Data : metaTag.Content;
@@ -1117,10 +1175,20 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
                 if (!val) {
                     return; // continue
                 }
+
+                // legacy
                 if (!publication.Metadata.AccessibilityHazard) {
                     publication.Metadata.AccessibilityHazard = [];
                 }
                 publication.Metadata.AccessibilityHazard.push(val);
+                // modern
+                if (!publication.Metadata.Accessibility) {
+                    publication.Metadata.Accessibility = {} as AccessibilityMetadata;
+                }
+                if (!publication.Metadata.Accessibility.Hazard) {
+                    publication.Metadata.Accessibility.Hazard = [];
+                }
+                publication.Metadata.Accessibility.Hazard.push(val);
             } else if (metaTag.Name === "schema:accessibilitySummary" ||
                 metaTag.Property === "schema:accessibilitySummary") {
                 let val = metaTag.Property ? metaTag.Data : metaTag.Content;
@@ -1145,10 +1213,22 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
                 if (!val) {
                     return; // continue
                 }
+
+                const del = DelinearizeAccessModeSufficient(val);
+
+                // legacy
                 if (!publication.Metadata.AccessModeSufficient) {
                     publication.Metadata.AccessModeSufficient = [];
                 }
-                publication.Metadata.AccessModeSufficient.push(DelinearizeAccessModeSufficient(val));
+                publication.Metadata.AccessModeSufficient.push(del);
+                // modern
+                if (!publication.Metadata.Accessibility) {
+                    publication.Metadata.Accessibility = {} as AccessibilityMetadata;
+                }
+                if (!publication.Metadata.Accessibility.AccessModeSufficient) {
+                    publication.Metadata.Accessibility.AccessModeSufficient = [];
+                }
+                publication.Metadata.Accessibility.AccessModeSufficient.push(del);
             } else if (metaTag.Name === "schema:accessibilityAPI" ||
                 metaTag.Property === "schema:accessibilityAPI") {
                 let val = metaTag.Property ? metaTag.Data : metaTag.Content;
@@ -1159,10 +1239,20 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
                 if (!val) {
                     return; // continue
                 }
+
+                // legacy
                 if (!publication.Metadata.AccessibilityAPI) {
                     publication.Metadata.AccessibilityAPI = [];
                 }
                 publication.Metadata.AccessibilityAPI.push(val);
+                // modern
+                // if (!publication.Metadata.Accessibility) {
+                //     publication.Metadata.Accessibility = {} as AccessibilityMetadata;
+                // }
+                // if (!publication.Metadata.Accessibility.API) {
+                //     publication.Metadata.Accessibility.API = [];
+                // }
+                // publication.Metadata.Accessibility.API.push(val);
             } else if (metaTag.Name === "schema:accessibilityControl" ||
                 metaTag.Property === "schema:accessibilityControl") {
                 let val = metaTag.Property ? metaTag.Data : metaTag.Content;
@@ -1173,10 +1263,20 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
                 if (!val) {
                     return; // continue
                 }
+
+                // legacy
                 if (!publication.Metadata.AccessibilityControl) {
                     publication.Metadata.AccessibilityControl = [];
                 }
                 publication.Metadata.AccessibilityControl.push(val);
+                // modern
+                // if (!publication.Metadata.Accessibility) {
+                //     publication.Metadata.Accessibility = {} as AccessibilityMetadata;
+                // }
+                // if (!publication.Metadata.Accessibility.Control) {
+                //     publication.Metadata.Accessibility.Control = [];
+                // }
+                // publication.Metadata.Accessibility.Control.push(val);
             } else if (metaTag.Name === "a11y:certifiedBy" ||
                 metaTag.Property === "a11y:certifiedBy") {
                 let val = metaTag.Property ? metaTag.Data : metaTag.Content;
@@ -1187,10 +1287,23 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
                 if (!val) {
                     return; // continue
                 }
+
+                // legacy
                 if (!publication.Metadata.CertifiedBy) {
                     publication.Metadata.CertifiedBy = [];
                 }
                 publication.Metadata.CertifiedBy.push(val);
+                // modern
+                if (!publication.Metadata.Accessibility) {
+                    publication.Metadata.Accessibility = {} as AccessibilityMetadata;
+                }
+                if (!publication.Metadata.Accessibility.Certification) {
+                    publication.Metadata.Accessibility.Certification = {} as AccessibilityCertification;
+                }
+                if (!publication.Metadata.Accessibility.Certification.CertifiedBy) {
+                    publication.Metadata.Accessibility.Certification.CertifiedBy = [];
+                }
+                publication.Metadata.Accessibility.Certification.CertifiedBy.push(val);
             } else if (metaTag.Name === "a11y:certifierCredential" || // may be link in EPUB3
                 metaTag.Property === "a11y:certifierCredential") {
                 let val = metaTag.Property ? metaTag.Data : metaTag.Content;
@@ -1201,10 +1314,23 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
                 if (!val) {
                     return; // continue
                 }
+
+                // legacy
                 if (!publication.Metadata.CertifierCredential) {
                     publication.Metadata.CertifierCredential = [];
                 }
                 publication.Metadata.CertifierCredential.push(val);
+                // modern
+                if (!publication.Metadata.Accessibility) {
+                    publication.Metadata.Accessibility = {} as AccessibilityMetadata;
+                }
+                if (!publication.Metadata.Accessibility.Certification) {
+                    publication.Metadata.Accessibility.Certification = {} as AccessibilityCertification;
+                }
+                if (!publication.Metadata.Accessibility.Certification.Credential) {
+                    publication.Metadata.Accessibility.Certification.Credential = [];
+                }
+                publication.Metadata.Accessibility.Certification.Credential.push(val);
             } else if (metaTag.Name === "dcterms:conformsTo" || // may be link in EPUB3
                 metaTag.Property === "dcterms:conformsTo") {
                 let val = metaTag.Property ? metaTag.Data : metaTag.Content;
@@ -1215,10 +1341,20 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
                 if (!val) {
                     return; // continue
                 }
+
+                // legacy
                 if (!publication.Metadata.ConformsTo) {
                     publication.Metadata.ConformsTo = [];
                 }
                 publication.Metadata.ConformsTo.push(val);
+                // modern
+                if (!publication.Metadata.Accessibility) {
+                    publication.Metadata.Accessibility = {} as AccessibilityMetadata;
+                }
+                if (!publication.Metadata.Accessibility.ConformsTo) {
+                    publication.Metadata.Accessibility.ConformsTo = [];
+                }
+                publication.Metadata.Accessibility.ConformsTo.push(val);
             }
         };
 
@@ -1240,15 +1376,29 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
             const xmlLang: string = tuple.metaTag.Lang || opf.Lang;
             const isLangOverride = tuple.metaTag.Lang && opf.Lang && tuple.metaTag.Lang !== opf.Lang;
             if (xmlLang && (isLangOverride || langStringIsRTL(xmlLang.toLowerCase()))) {
+
+                // legacy
                 publication.Metadata.AccessibilitySummary = {} as IStringMap;
                 // tslint:disable-next-line: max-line-length
                 (publication.Metadata.AccessibilitySummary as IStringMap)[xmlLang.toLowerCase()] = tuple.val;
+                // modern
+                if (!publication.Metadata.Accessibility) {
+                    publication.Metadata.Accessibility = {} as AccessibilityMetadata;
+                }
+                publication.Metadata.Accessibility.Summary = {} as IStringMap;
+                (publication.Metadata.Accessibility.Summary as IStringMap)[xmlLang.toLowerCase()] = tuple.val;
             } else {
+                // legacy
                 publication.Metadata.AccessibilitySummary = tuple.val;
+                // modern
+                if (!publication.Metadata.Accessibility) {
+                    publication.Metadata.Accessibility = {} as AccessibilityMetadata;
+                }
+                publication.Metadata.Accessibility.Summary = tuple.val;
             }
         } else if (AccessibilitySummarys.length) {
+            // legacy
             publication.Metadata.AccessibilitySummary = {} as IStringMap;
-
             AccessibilitySummarys.forEach((tuple) => {
                 // https://github.com/readium/architecture/blob/master/streamer/parser/metadata.md#title
                 const xmlLang: string = tuple.metaTag.Lang || opf.Lang;
@@ -1266,6 +1416,29 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
                     (publication.Metadata.AccessibilitySummary as IStringMap)[BCP47_UNKNOWN_LANG] = tuple.val;
                 }
             });
+            // modern
+            if (!publication.Metadata.Accessibility) {
+                publication.Metadata.Accessibility = {} as AccessibilityMetadata;
+            }
+            publication.Metadata.Accessibility.Summary = {} as IStringMap;
+            AccessibilitySummarys.forEach((tuple) => {
+                // https://github.com/readium/architecture/blob/master/streamer/parser/metadata.md#title
+                const xmlLang: string = tuple.metaTag.Lang || opf.Lang;
+                if (xmlLang) {
+                    // tslint:disable-next-line: max-line-length
+                    (publication.Metadata.Accessibility.Summary as IStringMap)[xmlLang.toLowerCase()] = tuple.val;
+                } else if (publication.Metadata.Language &&
+                    publication.Metadata.Language.length &&
+                    // tslint:disable-next-line: max-line-length
+                    !(publication.Metadata.Accessibility.Summary as IStringMap)[publication.Metadata.Language[0].toLowerCase()]) {
+                    // tslint:disable-next-line: max-line-length
+                    (publication.Metadata.Accessibility.Summary as IStringMap)[publication.Metadata.Language[0].toLowerCase()] = tuple.val;
+                } else {
+                    // tslint:disable-next-line: no-string-literal, max-line-length
+                    (publication.Metadata.Accessibility.Summary as IStringMap)[BCP47_UNKNOWN_LANG] = tuple.val;
+                }
+            });
+
         }
 
         const metasDuration: Metafield[] = [];

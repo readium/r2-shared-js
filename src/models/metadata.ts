@@ -21,6 +21,7 @@ import { IStringMap } from "./metadata-multilang";
 import { Properties } from "./metadata-properties";
 import { Subject } from "./metadata-subject";
 import { JsonSubjectConverter } from "./metadata-subject-json-converter";
+import { AccessibilityMetadata } from "./metadata-accessibility";
 
 // export interface IMeta {
 //     property: string;
@@ -102,6 +103,11 @@ export class Metadata implements IWithAdditionalJSON {
     // http://kb.daisy.org/publishing/docs/metadata/schema-org.html
     // http://kb.daisy.org/publishing/docs/metadata/evaluation.html
     // https://www.w3.org/wiki/WebSchemas/Accessibility
+
+    // tslint:disable-next-line:max-line-length
+    // https://github.com/readium/webpub-manifest/blob/03d7681cf1ff689bad76efaabc9c77423296a94c/schema/metadata.schema.json#L35-L37
+    @JsonProperty("accessibility")
+    public Accessibility!: AccessibilityMetadata;
 
     // schema:accessMode
     @JsonProperty("accessMode")
