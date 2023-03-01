@@ -1,10 +1,31 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.65...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.66...develop
 
 Changes:
 * TODO
+
+# 1.0.66
+
+> Build environment: NodeJS `18.14.2`, NPM `9.5.1`
+
+Changes:
+* NPM package updates
+* fix: encryption.xml with percent-encoded URIs (decode before compare with WebPubManifest already-decoded by package.opf XML-to-JSON converter)
+* fix: encrypted TOC is ignored
+* fix (workaround): linear=no in fixed layout publications is ignored, due to Apple iBooks / Books.app setting a precedent (authored FXL books with non-linear cover image as first spine item do exist, unfortunately this breaks spread left/right ordering if we apply the logical interpretation of linear=no :(
+* feat: added highlight text before/after raw (not normalised with whitespace collapse) in existing data structure (actual engine changes in navigator component)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.66/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.66/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.66
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.65...v1.0.66
 
 # 1.0.65
 
