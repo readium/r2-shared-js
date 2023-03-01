@@ -1,10 +1,27 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.66...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.67...develop
 
 Changes:
 * TODO
+
+# 1.0.67
+
+> Build environment: NodeJS `18.14.2`, NPM `9.5.1`
+
+Changes:
+* Fix: added support for new / modern accessibility metadata, whilst preserving support for legacy JSON structure (so as to not break existing consumers)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.67/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.67/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.67
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.66...v1.0.67
 
 # 1.0.66
 
