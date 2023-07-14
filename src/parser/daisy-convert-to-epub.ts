@@ -69,6 +69,16 @@ export const convertDaisyToReadiumWebPub = async (
             (publication.Metadata.AdditionalJSON["dtb:multimediaType"] === "textNCX" ||
             publication.Metadata.AdditionalJSON["ncc:multimediaType"] === "textNcc");
 
+        if (generateDaisyAudioManifestOnly) {
+            if (isTextOnly) {
+                debug("generateDaisyAudioManifestOnly FATAL! text-only publication?? ", publication.Metadata.AdditionalJSON["dtb:multimediaType"], publication.Metadata.AdditionalJSON["ncc:multimediaType"]);
+                return reject("generateDaisyAudioManifestOnly cannot process text-only publication");
+            }
+            if (!isAudioOnly || isFullTextAudio) {
+                debug("generateDaisyAudioManifestOnly WARNING! not audio-only publication?? ", publication.Metadata.AdditionalJSON["dtb:multimediaType"], publication.Metadata.AdditionalJSON["ncc:multimediaType"]);
+            }
+        }
+
         const zipInternal = publication.findFromInternal("zip");
         if (!zipInternal) {
             debug("No publication zip!?");
@@ -324,7 +334,12 @@ export const convertDaisyToReadiumWebPub = async (
 
                 let smilDoc = smilDocs[smilPathInZip];
                 if (!smilDoc) {
-                    const smilStr = await loadFileStrFromZipPath(smilPathInZip, smilPathInZip, zip);
+                    let smilStr = undefined;
+                    try {
+                        smilStr = await loadFileStrFromZipPath(smilPathInZip, smilPathInZip, zip);
+                    } catch (zipErr) {
+                        debug(zipErr);
+                    }
                     if (!smilStr) {
                         debug("!loadFileStrFromZipPath", smilPathInZip);
                         return Promise.reject("!loadFileStrFromZipPath " + smilPathInZip);
@@ -353,8 +368,19 @@ export const convertDaisyToReadiumWebPub = async (
             };
 
             const createHtmlFromSmilFile = async (smilPathInZip: string): Promise<string | undefined> => {
+                if (generateDaisyAudioManifestOnly) {
+                    return undefined;
+                }
 
-                const smilDoc = await loadOrGetCachedSmil(smilPathInZip);
+                let smilDoc = undefined;
+                try {
+                    smilDoc = await loadOrGetCachedSmil(smilPathInZip);
+                } catch (zipErr) {
+                    debug(zipErr);
+                }
+                if (!smilDoc) {
+                    return undefined;
+                }
 
                 const smilDocClone = smilDoc.cloneNode(true) as Document;
 
@@ -447,16 +473,14 @@ export const convertDaisyToReadiumWebPub = async (
 `;
                 const htmlFilePath = smilPathInZip.replace(/\.smil$/i, ".xhtml");
                 // const fileName = path.parse(href).name;
-                if (!generateDaisyAudioManifestOnly) {
-                    (zipfile as ZipFile).addBuffer(Buffer.from(htmlDoc), htmlFilePath);
-                }
+                (zipfile as ZipFile).addBuffer(Buffer.from(htmlDoc), htmlFilePath);
+
                 return htmlFilePath;
             };
 
             const audioOnlySmilHtmls: Link[] = [];
 
             if (publication.Spine) {
-
                 mediaOverlaysMap = {};
 
                 let previousLinkItem: Link | undefined;
@@ -514,9 +538,15 @@ export const convertDaisyToReadiumWebPub = async (
                         previousLinkItem = linkItem;
                     }
 
+                    // if (generateDaisyAudioManifestOnly) {
+                    //     continue;
+                    // }
+
                     let smilTextRef: string | undefined;
 
-                    if (isAudioOnly) {
+                    const isAudioOnly_ = isAudioOnly || (isFullTextAudio && generateDaisyAudioManifestOnly);
+
+                    if (isAudioOnly_) {
                         const audioOnlySmilHtmlHref =
                             linkItem.MediaOverlays.SmilPathInZip?.replace(/\.smil$/i, ".xhtml");
                         if (audioOnlySmilHtmlHref) {
@@ -527,7 +557,7 @@ export const convertDaisyToReadiumWebPub = async (
                     }
 
                     if (smilTextRef) {
-                        if (isAudioOnly && linkItem.MediaOverlays.SmilPathInZip) {
+                        if (isAudioOnly_ && linkItem.MediaOverlays.SmilPathInZip) {
                             await createHtmlFromSmilFile(linkItem.MediaOverlays.SmilPathInZip);
 
                             const smilHtml = new Link();
@@ -554,6 +584,7 @@ export const convertDaisyToReadiumWebPub = async (
             const resourcesToKeep: Link[] = [];
 
             const dtBooks: Link[] = [...audioOnlySmilHtmls];
+
             // reference copy! (not by value) so we can publication.Resources.push(...) safely within the loop
             // const resources = [...publication.Resources];
             // ... but we completely replace the array of Links, so this is fine:
@@ -563,8 +594,17 @@ export const convertDaisyToReadiumWebPub = async (
                     continue;
                 }
                 if (resLink.TypeLink === "text/css" || /\.css$/i.test(resLink.HrefDecoded)) {
+                    if (generateDaisyAudioManifestOnly) {
+                        debug("generateDaisyAudioManifestOnly => skip resource: ", resLink.HrefDecoded);
+                        continue;
+                    }
 
-                    let cssText = await loadFileStrFromZipPath(resLink.Href, resLink.HrefDecoded, zip);
+                    let cssText = undefined;
+                    try {
+                        cssText = await loadFileStrFromZipPath(resLink.Href, resLink.HrefDecoded, zip);
+                    } catch (zipErr) {
+                        debug(zipErr);
+                    }
                     if (!cssText) {
                         debug("!loadFileStrFromZipPath", resLink.HrefDecoded);
                         continue;
@@ -607,9 +647,7 @@ export const convertDaisyToReadiumWebPub = async (
                     // const cssOutputFilePath = path.join(outputDirPathExploded, newCssFilePath);
                     // ensureDirs(cssOutputFilePath);
                     // fs.writeFileSync(cssOutputFilePath, cssText);
-                    if (!generateDaisyAudioManifestOnly) {
-                        (zipfile as ZipFile).addBuffer(Buffer.from(cssText), resLink.HrefDecoded);
-                    }
+                    (zipfile as ZipFile).addBuffer(Buffer.from(cssText), resLink.HrefDecoded);
 
                     // const resLinkJson = TaJsonSerialize(resLink);
                     // // resLinkJson.href = newCssFilePath;
@@ -619,8 +657,17 @@ export const convertDaisyToReadiumWebPub = async (
                     resourcesToKeep.push(resLink);
 
                 } else if (resLink.TypeLink === "application/x-dtbook+xml" || /\.xml$/i.test(resLink.HrefDecoded)) {
+                    if (isAudioOnly || generateDaisyAudioManifestOnly) {
+                        debug("generateDaisyAudioManifestOnly or isAudioOnly => skip resource: ", resLink.HrefDecoded);
+                        continue;
+                    }
 
-                    let dtBookStr = await loadFileStrFromZipPath(resLink.Href, resLink.HrefDecoded, zip);
+                    let dtBookStr = undefined;
+                    try {
+                        dtBookStr = await loadFileStrFromZipPath(resLink.Href, resLink.HrefDecoded, zip);
+                    } catch (zipErr) {
+                        debug(zipErr);
+                    }
                     if (!dtBookStr) {
                         debug("!loadFileStrFromZipPath", dtBookStr);
                         continue;
@@ -760,9 +807,7 @@ ${cssHrefs.reduce((pv, cv) => {
                     // ensureDirs(xhtmlOutputFilePath);
                     // fs.writeFileSync(xhtmlOutputFilePath, dtbookNowXHTML);
                     // zipfile.addFile(xhtmlOutputFilePath, xhtmlFilePath);
-                    if (!generateDaisyAudioManifestOnly) {
-                        (zipfile as ZipFile).addBuffer(Buffer.from(dtbookNowXHTML), xhtmlFilePath);
-                    }
+                    (zipfile as ZipFile).addBuffer(Buffer.from(dtbookNowXHTML), xhtmlFilePath);
 
                     const resLinkJson = TaJsonSerialize(resLink);
                     // resLinkJson.href = xhtmlFilePath;
@@ -777,16 +822,19 @@ ${cssHrefs.reduce((pv, cv) => {
                     !/\.ncx$/i.test(resLink.HrefDecoded) &&
                     !/ncc\.html$/i.test(resLink.HrefDecoded)) {
 
-                    if (!generateDaisyAudioManifestOnly) {
-                        const buff = await loadFileBufferFromZipPath(resLink.Href, resLink.HrefDecoded, zip);
+                    // if (generateDaisyAudioManifestOnly) {
+                    //     debug("generateDaisyAudioManifestOnly => skip resource: ", resLink.HrefDecoded);
+                    //     continue;
+                    // }
 
-                        if (/\.html$/i.test(resLink.HrefDecoded)) {
-                            resLink.setHrefDecoded(resLink.HrefDecoded.replace(/\.html$/i, ".xhtml"));
-                        }
+                    const buff = generateDaisyAudioManifestOnly ? undefined : await loadFileBufferFromZipPath(resLink.Href, resLink.HrefDecoded, zip);
 
-                        if (buff) {
-                            (zipfile as ZipFile).addBuffer(buff, resLink.HrefDecoded);
-                        }
+                    if (/\.html$/i.test(resLink.HrefDecoded)) {
+                        resLink.setHrefDecoded(resLink.HrefDecoded.replace(/\.html$/i, ".xhtml"));
+                    }
+
+                    if (buff) {
+                        (zipfile as ZipFile).addBuffer(buff, resLink.HrefDecoded);
                     }
 
                     resourcesToKeep.push(resLink);
@@ -878,7 +926,7 @@ ${cssHrefs.reduce((pv, cv) => {
                     });
 
                     if (!dtBookLink) {
-                        debug("!!dtBookLink", JSON.stringify(dtBooks, null, 4));
+                        debug("!!dtBookLink", mediaOverlay.smilTextRef, JSON.stringify(dtBooks, null, 4));
                     } else if (dtBookLink.HrefDecoded && mediaOverlay.smilTextRef &&
                         // TODO: do we need to cover the case sensitivity edge case,
                         // and if so, what about the myriad of other HREF comparisons in this codebase??
@@ -918,9 +966,9 @@ ${cssHrefs.reduce((pv, cv) => {
                             moLink.Duration = dtBookLink.Duration;
                             dtBookLink.Alternate.push(moLink);
 
-                            const jsonObjMO = TaJsonSerialize(mediaOverlay.mo);
-                            const jsonStrMO = global.JSON.stringify(jsonObjMO, null, "  ");
                             if (!generateDaisyAudioManifestOnly) {
+                                const jsonObjMO = TaJsonSerialize(mediaOverlay.mo);
+                                const jsonStrMO = global.JSON.stringify(jsonObjMO, null, "  ");
                                 (zipfile as ZipFile).addBuffer(Buffer.from(jsonStrMO), moURL);
                             }
 
@@ -980,7 +1028,9 @@ ${cssHrefs.reduce((pv, cv) => {
                 if (!href) {
                     return;
                 }
-                if (isAudioOnly) {
+                const isAudioOnly_ = isAudioOnly || (isFullTextAudio && generateDaisyAudioManifestOnly);
+
+                if (isAudioOnly_) {
                     link.setHrefDecoded(href.replace(/\.smil(#.*)?$/i, ".xhtml$1"));
                     link.TypeLink = "application/xhtml+xml";
                     return;
@@ -995,7 +1045,15 @@ ${cssHrefs.reduce((pv, cv) => {
                     return;
                 }
 
-                const smilDoc = await loadOrGetCachedSmil(href);
+                let smilDoc = undefined;
+                try {
+                    smilDoc = await loadOrGetCachedSmil(href);
+                } catch (zipErr) {
+                    debug(zipErr);
+                }
+                if (!smilDoc) {
+                    return;
+                }
 
                 let targetEl = fragment ? smilDoc.getElementById(fragment) as Element : undefined;
                 if (!targetEl) {
@@ -1055,14 +1113,15 @@ ${cssHrefs.reduce((pv, cv) => {
                 await processLinks(publication.TOC);
             }
 
-            const jsonObj = TaJsonSerialize(publication);
-            const jsonStr = global.JSON.stringify(jsonObj, null, "  ");
             if (!generateDaisyAudioManifestOnly) {
+                const jsonObj = TaJsonSerialize(publication);
+                const jsonStr = global.JSON.stringify(jsonObj, null, "  ");
                 (zipfile as ZipFile).addBuffer(Buffer.from(jsonStr), "manifest.json");
             }
 
-            if (isAudioOnly) {
-                debug("DAISY audio only book => manifest-audio.json");
+            const isAudioOnly_ = isAudioOnly || (isFullTextAudio && generateDaisyAudioManifestOnly);
+            if (isAudioOnly_) {
+                debug("DAISY audio only book => manifest-audio.json" + (generateDaisyAudioManifestOnly ? " (generateDaisyAudioManifestOnly ***_manifest.json)" : ""));
 
                 const transformPublicationToAudioBook = async (pubAudio: Publication): Promise<Publication> => {
                     const pubJson = TaJsonSerialize(pubAudio);
@@ -1110,7 +1169,16 @@ ${cssHrefs.reduce((pv, cv) => {
                         }
 
                         const smilHref = href.replace(/\.xhtml(#.*)?$/i, ".smil$1");
-                        const smilDoc = await loadOrGetCachedSmil(smilHref);
+
+                        let smilDoc = undefined;
+                        try {
+                            smilDoc = await loadOrGetCachedSmil(smilHref);
+                        } catch (zipErr) {
+                            debug(zipErr);
+                        }
+                        if (!smilDoc) {
+                            return;
+                        }
 
                         let targetEl = fragment ? smilDoc.getElementById(fragment) as Element : undefined;
                         if (!targetEl) {
@@ -1206,7 +1274,16 @@ ${cssHrefs.reduce((pv, cv) => {
                                 debug("???- !spineLink.MediaOverlays?.SmilPathInZip");
                                 continue;
                             }
-                            const smilDoc = await loadOrGetCachedSmil(spineLink.MediaOverlays.SmilPathInZip);
+
+                            let smilDoc = undefined;
+                            try {
+                                smilDoc = await loadOrGetCachedSmil(spineLink.MediaOverlays.SmilPathInZip);
+                            } catch (zipErr) {
+                                debug(zipErr);
+                            }
+                            if (!smilDoc) {
+                                continue;
+                            }
 
                             const firstAudioElement = findFirstDescendantTextOrAudio(smilDoc.documentElement, true);
                             if (!firstAudioElement) {
@@ -1223,11 +1300,24 @@ ${cssHrefs.reduce((pv, cv) => {
                             link.Href = path.join(spineLink.MediaOverlays.SmilPathInZip, "..", src).replace(/\\/g, "/");
                             link.TypeLink = "audio/?";
                             if (audioPublication.Resources) {
-                                const resAudio = audioPublication.Resources.find((l) => {
-                                    return l.Href === src;
+                                const resAudioIndex = audioPublication.Resources.findIndex((l) => {
+                                    // return l.Href === src; // cannot assume SMIL in same folder as root publication manifest
+                                    return l.Href === path.join(spineLink.MediaOverlays!.SmilPathInZip!, "..", src).replace(/\\/g, "/");
                                 });
-                                if (resAudio?.TypeLink) {
-                                    link.TypeLink = resAudio.TypeLink;
+                                if (resAudioIndex >= 0) {
+                                    const resAudio = audioPublication.Resources[resAudioIndex];
+                                    if (resAudio.TypeLink) {
+                                        link.TypeLink = resAudio.TypeLink;
+                                    }
+                                    // we assume once inserted in spine, not needed in resources anymore
+                                    audioPublication.Resources.splice(resAudioIndex, 1);
+                                } else {
+                                    const resAudio = audioPublication.Spine.find((l) => {
+                                        return l.Href === link.Href;
+                                    });
+                                    if (resAudio?.TypeLink) {
+                                        link.TypeLink = resAudio.TypeLink;
+                                    }
                                 }
                             }
                             if (spineLink.MediaOverlays.duration) {
@@ -1249,6 +1339,7 @@ ${cssHrefs.reduce((pv, cv) => {
                         const outputManifestPath = path.join(outputDirPath, generateDaisyAudioManifestOnly + "_manifest.json");
                         ensureDirs(outputManifestPath);
                         fs.writeFileSync(outputManifestPath, jsonStrAudio, "utf8");
+                        debug("generateDaisyAudioManifestOnly OK: " + outputManifestPath);
                         resolve(outputManifestPath);
                     }
                 } catch (ero) {
