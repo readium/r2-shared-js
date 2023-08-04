@@ -341,8 +341,8 @@ export const convertDaisyToReadiumWebPub = async (
                         debug(zipErr);
                     }
                     if (!smilStr) {
-                        debug("!loadFileStrFromZipPath", smilPathInZip);
-                        return Promise.reject("!loadFileStrFromZipPath " + smilPathInZip);
+                        debug("!loadFileStrFromZipPath 1", smilPathInZip);
+                        return Promise.reject("!loadFileStrFromZipPath 1 " + smilPathInZip);
                     }
                     smilDoc = new xmldom.DOMParser().parseFromString(smilStr, "application/xml");
                     if (nccZipEntry) {
@@ -508,7 +508,7 @@ export const convertDaisyToReadiumWebPub = async (
 
                                 updateDurations(computedDur, linkItem);
                             } else {
-                                if (Math.round(linkItem.MediaOverlays.duration) !== Math.round(computedDur)) {
+                                if (linkItem.MediaOverlays.duration !== computedDur) {
                                     debug("linkItem.MediaOverlays.duration !== computedDur",
                                         linkItem.MediaOverlays.duration, computedDur);
                                 }
@@ -528,7 +528,7 @@ export const convertDaisyToReadiumWebPub = async (
 
                                     updateDurations(dur, previousLinkItem);
                                 } else {
-                                    if (Math.round(previousLinkItem.MediaOverlays.duration) !== Math.round(dur)) {
+                                    if (previousLinkItem.MediaOverlays.duration !== dur) {
                                         debug("previousLinkItem.MediaOverlays.duration !== dur",
                                             previousLinkItem.MediaOverlays.duration, dur);
                                     }
@@ -606,7 +606,7 @@ export const convertDaisyToReadiumWebPub = async (
                         debug(zipErr);
                     }
                     if (!cssText) {
-                        debug("!loadFileStrFromZipPath", resLink.HrefDecoded);
+                        debug("!loadFileStrFromZipPath 2", resLink.HrefDecoded);
                         continue;
                     }
 
@@ -669,7 +669,7 @@ export const convertDaisyToReadiumWebPub = async (
                         debug(zipErr);
                     }
                     if (!dtBookStr) {
-                        debug("!loadFileStrFromZipPath", dtBookStr);
+                        debug("!loadFileStrFromZipPath 3", dtBookStr);
                         continue;
                     }
                     dtBookStr = dtBookStr.replace(/xmlns=""/, " ");
@@ -1132,7 +1132,7 @@ ${cssHrefs.reduce((pv, cv) => {
                     }
                     audioPublication.Metadata.RDFType = "http://schema.org/Audiobook";
 
-                    const processLinkAudio = async (link: Link) => {
+                    const processLinkAudio = async (link: Link): Promise<boolean> => {
 
                         // ALTERNATE is the audio "label" for the link, not the link destination!!
                         // See addAlternateAudioLinkFromNCX()
@@ -1155,7 +1155,7 @@ ${cssHrefs.reduce((pv, cv) => {
                         // relative to publication root (package.opf / ReadiumWebPubManifest.json)
                         let href = link.HrefDecoded;
                         if (!href) {
-                            return;
+                            return !!link.Children;
                         }
 
                         let fragment: string | undefined;
@@ -1165,7 +1165,7 @@ ${cssHrefs.reduce((pv, cv) => {
                             fragment = arr[1].trim();
                         }
                         if (!href) {
-                            return;
+                            return !!link.Children;
                         }
 
                         const smilHref = href.replace(/\.xhtml(#.*)?$/i, ".smil$1");
@@ -1177,7 +1177,7 @@ ${cssHrefs.reduce((pv, cv) => {
                             debug(zipErr);
                         }
                         if (!smilDoc) {
-                            return;
+                            return !!link.Children;
                         }
 
                         let targetEl = fragment ? smilDoc.getElementById(fragment) as Element : undefined;
@@ -1191,7 +1191,7 @@ ${cssHrefs.reduce((pv, cv) => {
                         if (!targetEl) {
                             debug("==?? !targetEl1 ", href,
                                 new xmldom.XMLSerializer().serializeToString(smilDoc.documentElement));
-                            return;
+                                return !!link.Children;
                         }
                         const targetElOriginal = targetEl;
                         if (targetEl.nodeName !== "audio") {
@@ -1208,13 +1208,13 @@ ${cssHrefs.reduce((pv, cv) => {
                         if (!targetEl || targetEl.nodeName !== "audio") {
                             debug("==?? !targetEl2 ", href,
                                 new xmldom.XMLSerializer().serializeToString(targetElOriginal));
-                            return;
+                                return !!link.Children;
                         }
 
                         const src = targetEl.getAttribute("src");
                         if (!src) {
                             debug("==?? !src");
-                            return;
+                            return !!link.Children;
                         }
 
                         const clipBegin = targetEl.getAttribute("clipBegin") || targetEl.getAttribute("clip-begin");
@@ -1240,26 +1240,46 @@ ${cssHrefs.reduce((pv, cv) => {
                         if (mediaType) {
                             link.TypeLink = mediaType;
                         }
+
+                        return true;
                     };
 
-                    const processLinksAudio = async (links: Link[]) => {
-                        for (const link of links) {
-                            await processLinkAudio(link);
-                            if (link.Children) {
+                    const processLinksAudio = async (children: Link[]) => {
+
+                        for (let i = 0; i < children.length; i++) {
+                            const link = children[i];
+                            const keep = await processLinkAudio(link);
+                            if (!keep) {
+                                children.splice(i, 1);
+                                i--;
+                                debug("LINK DELETE TOC: ", link.Href, typeof link.Children);
+                            } else if (link.Children) {
                                 await processLinksAudio(link.Children);
                             }
                         }
                     };
 
                     if (audioPublication.PageList) {
-                        for (const link of audioPublication.PageList) {
-                            await processLinkAudio(link);
+                        for (let i = 0; i < audioPublication.PageList.length; i++) {
+                            const link = audioPublication.PageList[i];
+                            const keep = await processLinkAudio(link);
+                            if (!keep) {
+                                audioPublication.PageList.splice(i, 1);
+                                i--;
+                                debug("LINK DELETE page list: ", link.Href, typeof link.Children);
+                            }
                         }
                     }
 
                     if (audioPublication.Landmarks) {
-                        for (const link of audioPublication.Landmarks) {
-                            await processLinkAudio(link);
+                        for (let i = 0; i < audioPublication.Landmarks.length; i++) {
+                            const link = audioPublication.Landmarks[i];
+                            const keep = await processLinkAudio(link);
+                            if (!keep) {
+                                audioPublication.Landmarks.splice(i, 1);
+                                i--;
+                                debug("LINK DELETE landmarks: ", link.Href, typeof link.Children);
+                            }
                         }
                     }
 
