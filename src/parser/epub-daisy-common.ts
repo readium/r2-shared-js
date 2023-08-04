@@ -2020,15 +2020,25 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
 
     if (smil.Head?.Meta) {
         for (const m of smil.Head.Meta) {
-            if (m.Content && m.Name === "dtb:totalElapsedTime") {
+            if (!m.Content) {
+                continue;
+            }
+            if (m.Name === "dtb:totalElapsedTime" || m.Name === "ncc:totalElapsedTime") {
                 mo.totalElapsedTime = timeStrToSeconds(m.Content);
+            }
+            if (m.Name === "ncc:timeInThisSmil") {
+                mo.duration = timeStrToSeconds(m.Content);
             }
         }
     }
 
     if (smil.Body) {
         if (smil.Body.Duration) {
-            mo.duration = timeStrToSeconds(smil.Body.Duration);
+            const dur = timeStrToSeconds(smil.Body.Duration);
+            if (mo.duration && mo.duration !== dur) {
+                debug("SMIL DUR DIFF 1: " + dur + " != " + mo.duration);
+            }
+            mo.duration = dur;
         }
         if (smil.Body.EpubType) {
             const roles = parseSpaceSeparatedString(smil.Body.EpubType);
@@ -2083,7 +2093,11 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
 
             smil.Body.Children.forEach((seqChild) => {
                 if (getDur && seqChild.Duration) {
-                    mo.duration = timeStrToSeconds(seqChild.Duration);
+                    const dur = timeStrToSeconds(seqChild.Duration);
+                    if (mo.duration && mo.duration !== dur) {
+                        debug("SMIL DUR DIFF 2: " + dur + " != " + mo.duration);
+                    }
+                    mo.duration = dur;
                 }
                 if (!mo.Children) {
                     mo.Children = [];
