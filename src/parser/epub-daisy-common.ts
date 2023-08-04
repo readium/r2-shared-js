@@ -1482,8 +1482,10 @@ export const addOtherMetadata = (publication: Publication, rootfile: Rootfile | 
         }
 
         if (metasDuration.length) {
-            publication.Metadata.Duration = timeStrToSeconds(
-                metasDuration[0].Property ? metasDuration[0].Data : metasDuration[0].Content);
+            const dur = timeStrToSeconds(metasDuration[0].Property ? metasDuration[0].Data : metasDuration[0].Content);
+            if (dur !== 0) { // parsing failure?
+                publication.Metadata.Duration = dur;
+            }
         }
 
         if (metasNarrator.length) {
@@ -2027,7 +2029,10 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
                 mo.totalElapsedTime = timeStrToSeconds(m.Content);
             }
             if (m.Name === "ncc:timeInThisSmil") {
-                mo.duration = timeStrToSeconds(m.Content);
+                const dur = timeStrToSeconds(m.Content);
+                if (dur !== 0) { // parsing failure?
+                    mo.duration = dur;
+                }
             }
         }
     }
@@ -2035,10 +2040,12 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
     if (smil.Body) {
         if (smil.Body.Duration) {
             const dur = timeStrToSeconds(smil.Body.Duration);
-            if (mo.duration && mo.duration !== dur) {
-                debug("SMIL DUR DIFF 1: " + dur + " != " + mo.duration);
+            if (dur !== 0) { // parsing failure?
+                if (mo.duration && mo.duration !== dur) {
+                    debug("SMIL DUR DIFF 1: " + dur + " != " + mo.duration);
+                }
+                mo.duration = dur;
             }
-            mo.duration = dur;
         }
         if (smil.Body.EpubType) {
             const roles = parseSpaceSeparatedString(smil.Body.EpubType);
@@ -2094,10 +2101,12 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
             smil.Body.Children.forEach((seqChild) => {
                 if (getDur && seqChild.Duration) {
                     const dur = timeStrToSeconds(seqChild.Duration);
-                    if (mo.duration && mo.duration !== dur) {
-                        debug("SMIL DUR DIFF 2: " + dur + " != " + mo.duration);
+                    if (dur !== 0) { // parsing failure?
+                        if (mo.duration && mo.duration !== dur) {
+                            debug("SMIL DUR DIFF 2: " + dur + " != " + mo.duration);
+                        }
+                        mo.duration = dur;
                     }
-                    mo.duration = dur;
                 }
                 if (!mo.Children) {
                     mo.Children = [];
@@ -2130,7 +2139,10 @@ const addSeqToMediaOverlay = (
     let doAdd = true;
 
     if (seqChild.Duration) {
-        moc.duration = timeStrToSeconds(seqChild.Duration);
+        const dur = timeStrToSeconds(seqChild.Duration);
+        if (dur !== 0) { // parsing failure?
+            moc.duration = dur;
+        }
     }
 
     if (seqChild instanceof Seq) {

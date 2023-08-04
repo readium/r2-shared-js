@@ -607,7 +607,10 @@ const addMediaOverlay = async (link: Link, linkEpub: Manifest, opf: OPF, zip: IZ
     if (linkEpub.MediaOverlay) {
         const meta = findMetaByRefineAndProperty(opf, linkEpub.MediaOverlay, "media:duration");
         if (meta) {
-            link.Duration = timeStrToSeconds(meta.Data);
+            const dur = timeStrToSeconds(meta.Data);
+            if (dur !== 0) { // parsing failure?
+                link.Duration = dur;
+            }
         }
 
         const manItemSmil = opf.Manifest.find((mi) => {
