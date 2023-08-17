@@ -1,10 +1,28 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.69...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.70...develop
 
 Changes:
 * TODO
+
+# 1.0.70
+
+> Build environment: NodeJS `18.17.1`, NPM `9.8.1`
+
+Changes:
+* Fixes for DAISY 2.02 and 3.0 converter / audio-only audiobooks generator, removal of empty audio nodes (often page breaks)
+* NPM package updates
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.70/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.70/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.70
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.69...v1.0.70
 
 # 1.0.69
 
