@@ -1264,6 +1264,13 @@ ${cssHrefs.reduce((pv, cv) => {
                             }
                             if ((keep || keep === null) && link.Children) {
                                 await processLinksAudio(link.Children);
+                                if (link.Children.length === 0) {
+                                    delete (link as { Children: Link[] | undefined}).Children;
+                                    if (!link.Href) {
+                                        children.splice(i, 1);
+                                        i--;
+                                    }
+                                }
                             }
                         }
                     };
