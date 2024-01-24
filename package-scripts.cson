@@ -1,3 +1,7 @@
+  'postinstall': '
+    rimraf node_modules/@types/glob
+  '
+
   'cson2json': '
     sed -E "s/#ECMASCRIPT#/es5/g" package-scripts-build.cson > tmp-build.cson &&
     sed -E "s/#ECMASCRIPT#/es6-es2015/g" package-scripts-build.cson >> tmp-build.cson &&
