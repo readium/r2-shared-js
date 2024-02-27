@@ -10,6 +10,7 @@ import {
 } from "@r2-utils-js/_utils/xml-js-mapper";
 
 import { Audio } from "./smil-audio";
+import { Video } from "./smil-video";
 import { Img } from "./smil-img";
 import { SeqOrPar } from "./smil-seq-or-par";
 import { Text } from "./smil-text";
@@ -31,6 +32,10 @@ export class Par extends SeqOrPar {
     // @XmlXPathSelector("smil:audio | smil2:audio")
     @XmlXPathSelector("audio")
     public Audio!: Audio;
+
+    // @XmlXPathSelector("smil:video | smil2:video")
+    @XmlXPathSelector("video")
+    public Video!: Video;
 
     // @XmlXPathSelector("smil:img | smil2:img")
     @XmlXPathSelector("img")

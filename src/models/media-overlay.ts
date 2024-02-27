@@ -96,6 +96,9 @@ export class MediaOverlayNode {
     @JsonProperty("audio")
     public Audio!: string; // URL already decodeURI()
 
+    @JsonProperty("video")
+    public Video!: string; // URL already decodeURI()
+
     @JsonProperty("role")
     @JsonConverter(JsonStringConverter)
     @JsonElementType(String)
@@ -113,10 +116,14 @@ export class MediaOverlayNode {
     public SeqID: string | undefined;
     public TextID: string | undefined;
     public AudioID: string | undefined;
+    public VideoID: string | undefined;
     public ImgID: string | undefined;
 
     public AudioClipBegin: number | undefined;
     public AudioClipEnd: number | undefined;
+
+    public VideoClipBegin: number | undefined;
+    public VideoClipEnd: number | undefined;
 
     public duration: number | undefined;
     public totalElapsedTime: number | undefined;
