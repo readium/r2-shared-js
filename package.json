@@ -1,6 +1,6 @@
 {
   "name": "r2-shared-js",
-  "version": "1.0.71",
+  "version": "1.0.72",
   "description": "Readium 2 'shared' for NodeJS (TypeScript)",
   "keywords": [
     "readium",

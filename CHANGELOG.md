@@ -1,10 +1,27 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.71...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.72...develop
 
 Changes:
 * TODO
+
+# 1.0.72
+
+> Build environment: NodeJS `20.11.0`, NPM `10.4.0`
+
+Changes:
+* Support for video in EPUB3 Media Overlays model (non-standardized, for prototyping reading system MVP)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.72/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.72/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.72
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.71...v1.0.72
 
 # 1.0.71
 
