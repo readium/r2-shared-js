@@ -37,7 +37,8 @@ export function checkDate(t: ExecutionContext, d1: Date, d2: Date) {
 }
 
 // import { FunctionType } from "@r2-utils-js/_utils/xml-js-mapper";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
+// @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-function-type
 export function checkType(t: ExecutionContext, obj: any, clazz: Function) {
     t.is(typeof obj, "object"); // obj.constructor.name
     t.true(obj instanceof clazz);

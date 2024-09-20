@@ -120,6 +120,7 @@ export const convertNccToOpfAndNcx = async (
             }
             debug(zipEntry);
         }
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
@@ -128,6 +129,7 @@ export const convertNccToOpfAndNcx = async (
         nccZipStream_ = await zip.entryStreamPromise(rootfilePathDecoded);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
     const nccZipStream = nccZipStream_.stream;
@@ -137,6 +139,7 @@ export const convertNccToOpfAndNcx = async (
         nccZipData = await streamToBufferPromise(nccZipStream);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
@@ -146,7 +149,7 @@ export const convertNccToOpfAndNcx = async (
         // "application/xml",
         "text/html",
         // "application/xhtml+xml",
-    );
+    ) as unknown as Document;
 
     const metas = Array.from(nccDoc.getElementsByTagName("meta")).
         reduce((prevVal, curVal) => {

@@ -35,6 +35,7 @@ export class TransformerObfIDPF implements ITransformer {
         try {
             data = await streamToBufferPromise(stream.stream);
         } catch (err) {
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             return Promise.reject(err);
         }
 
@@ -42,6 +43,7 @@ export class TransformerObfIDPF implements ITransformer {
         try {
             buff = await this.transformBuffer(publication, link, data);
         } catch (err) {
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             return Promise.reject(err);
         }
 
@@ -86,6 +88,7 @@ export class TransformerObfIDPF implements ITransformer {
     //         sal = await this.transformStream(publication, link, stream, false, 0, 0);
     //     } catch (err) {
     //         console.log(err);
+    //         // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     //         return Promise.reject("WTF?");
     //     }
     //     return Promise.resolve(sal.length);
@@ -97,6 +100,7 @@ export class TransformerObfIDPF implements ITransformer {
     //         buff = await this.transformBuffer(publication, link, data);
     //     } catch (err) {
     //         console.log(err);
+    //         // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     //         return Promise.reject("WTF?");
     //     }
     //     return Promise.resolve(buff.length);

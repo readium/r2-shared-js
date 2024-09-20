@@ -51,6 +51,7 @@ export async function DivinaParsePromise(filePath: string, isDivina?: Divinais, 
     //     // TODO? r2-utils-js zip-ext.ts => variant for HTTP without directory listing? (no deterministic zip entries)
     //     const err = "Cannot load exploded remote EPUB (needs filesystem access to list directory contents).";
     //     debug(err);
+    //     // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     //     return Promise.reject(err);
     // }
 
@@ -72,10 +73,12 @@ export async function DivinaParsePromise(filePath: string, isDivina?: Divinais, 
     try {
         zip = await zipLoadPromise(filePathToLoad);
     } catch (err) {
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
     if (!zip.hasEntries()) {
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject("Divina zip empty");
     }
     if (isAnDivina === Divinais.LocalExploded ||
@@ -90,6 +93,7 @@ export async function DivinaParsePromise(filePath: string, isDivina?: Divinais, 
                 }
                 debug(zipEntry);
             }
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             return Promise.reject("Divina no manifest?!");
         }
     }
@@ -99,6 +103,7 @@ export async function DivinaParsePromise(filePath: string, isDivina?: Divinais, 
     //     entries = await zip.getEntries();
     // } catch (err) {
     //     console.log(err);
+    //     // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     //     return Promise.reject("Problem getting Divina zip entries");
     // }
     // for (const entryName of entries) {
@@ -119,6 +124,7 @@ export async function DivinaParsePromise(filePath: string, isDivina?: Divinais, 
         manifestZipStream_ = await zip.entryStreamPromise(entryName);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(`Problem streaming Divina zip entry?! ${entryName}`);
     }
     const manifestZipStream = manifestZipStream_.stream;
@@ -127,6 +133,7 @@ export async function DivinaParsePromise(filePath: string, isDivina?: Divinais, 
         manifestZipData = await streamToBufferPromise(manifestZipStream);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(`Problem buffering Divina zip entry?! ${entryName}`);
     }
 
@@ -163,6 +170,7 @@ export async function DivinaParsePromise(filePath: string, isDivina?: Divinais, 
         } catch (err) {
             if (hasLCP) {
                 debug(err);
+                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                 return Promise.reject(`Problem streaming Divina LCP zip entry?! ${entryName}`);
             } else {
                 debug("Divina no LCP.");
@@ -176,6 +184,7 @@ export async function DivinaParsePromise(filePath: string, isDivina?: Divinais, 
                 lcpZipData = await streamToBufferPromise(lcpZipStream);
             } catch (err) {
                 debug(err);
+                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                 return Promise.reject(`Problem buffering Divina LCP zip entry?! ${entryName}`);
             }
 
@@ -341,5 +350,6 @@ export async function isDivinaPublication(urlOrPath: string): Promise<Divinais |
     }
 
     return Promise.resolve(undefined);
+    // // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     // return Promise.reject("Cannot determine Divina type");
 }

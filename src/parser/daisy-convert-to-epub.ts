@@ -73,6 +73,7 @@ export const convertDaisyToReadiumWebPub = async (
         if (generateDaisyAudioManifestOnly) {
             if (isTextOnly) {
                 debug("generateDaisyAudioManifestOnly FATAL! text-only publication?? ", publication.Metadata.AdditionalJSON["dtb:multimediaType"], publication.Metadata.AdditionalJSON["ncc:multimediaType"]);
+                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                 return reject("generateDaisyAudioManifestOnly cannot process text-only publication");
             }
             if (!isAudioOnly || isFullTextAudio) {
@@ -83,6 +84,7 @@ export const convertDaisyToReadiumWebPub = async (
         const zipInternal = publication.findFromInternal("zip");
         if (!zipInternal) {
             debug("No publication zip!?");
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             return reject("No publication zip!?");
         }
         const zip = zipInternal.Value as IZip;
@@ -114,6 +116,7 @@ export const convertDaisyToReadiumWebPub = async (
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     .on("error", (e: any) => {
                         debug("ZIP error", e);
+                        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                         reject(e);
                     });
             }
@@ -343,9 +346,10 @@ export const convertDaisyToReadiumWebPub = async (
                     }
                     if (!smilStr) {
                         debug("!loadFileStrFromZipPath 1", smilPathInZip);
+                        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                         return Promise.reject("!loadFileStrFromZipPath 1 " + smilPathInZip);
                     }
-                    smilDoc = new xmldom.DOMParser().parseFromString(smilStr, "application/xml");
+                    smilDoc = new xmldom.DOMParser().parseFromString(smilStr, "application/xml") as unknown as Document;
                     if (nccZipEntry) {
                         flattenDaisy2SmilAudioSeq(smilPathInZip, smilDoc);
                     }
@@ -447,7 +451,7 @@ export const convertDaisyToReadiumWebPub = async (
                 }
 
                 const bodyContent = smilDocClone.getElementsByTagName("body")[0] as Element;
-                const bodyContentStr = new xmldom.XMLSerializer().serializeToString(bodyContent);
+                const bodyContentStr = new xmldom.XMLSerializer().serializeToString(bodyContent as unknown as xmldom.Element);
                 const contentStr = bodyContentStr
                     .replace("xmlns=\"http://www.w3.org/2001/SMIL20/\"", "")
                     .replace(/dur=/g, "data-dur=")
@@ -675,7 +679,7 @@ export const convertDaisyToReadiumWebPub = async (
                     }
                     dtBookStr = dtBookStr.replace(/xmlns=""/, " ");
                     dtBookStr = dtBookStr.replace(/<dtbook/, "<dtbook xmlns:epub=\"http://www.idpf.org/2007/ops\" ");
-                    const dtBookDoc = new xmldom.DOMParser().parseFromString(dtBookStr, "application/xml");
+                    const dtBookDoc = new xmldom.DOMParser().parseFromString(dtBookStr, "application/xml") as unknown as Document;
 
                     let title = dtBookDoc.getElementsByTagName("doctitle")[0]?.textContent;
                     if (title) {
@@ -782,7 +786,7 @@ export const convertDaisyToReadiumWebPub = async (
                     // (dtBookDoc as any).doctype = null;
                     // ...so we use regexp replace below
 
-                    const dtbookNowXHTML = new xmldom.XMLSerializer().serializeToString(dtBookDoc)
+                    const dtbookNowXHTML = new xmldom.XMLSerializer().serializeToString(dtBookDoc as unknown as xmldom.Document)
                         .replace(/xmlns="http:\/\/www\.daisy\.org\/z3986\/2005\/dtbook\/"/, "xmlns=\"http://www.w3.org/1999/xhtml\"")
                         .replace(/xmlns="http:\/\/www\.daisy\.org\/z3986\/2005\/dtbook\/"/g, " ")
                         .replace(/^([\s\S]*)<html/gm,
@@ -1191,7 +1195,7 @@ ${cssHrefs.reduce((pv, cv) => {
                         }
                         if (!targetEl) {
                             debug("==?? !targetEl1 ", href,
-                                new xmldom.XMLSerializer().serializeToString(smilDoc.documentElement));
+                                new xmldom.XMLSerializer().serializeToString(smilDoc.documentElement as unknown as xmldom.Element));
                                 return link.Children ? null : false;
                         }
                         const targetElOriginal = targetEl;
@@ -1208,7 +1212,7 @@ ${cssHrefs.reduce((pv, cv) => {
                         }
                         if (!targetEl || targetEl.nodeName !== "audio") {
                             debug("==?? !targetEl2 ", href,
-                                new xmldom.XMLSerializer().serializeToString(targetElOriginal));
+                                new xmldom.XMLSerializer().serializeToString(targetElOriginal as unknown as xmldom.Element));
                                 return link.Children ? null : false;
                         }
 
@@ -1406,6 +1410,7 @@ ${cssHrefs.reduce((pv, cv) => {
             if (!generateDaisyAudioManifestOnly) {
                 timeoutId = setTimeout(() => {
                     timeoutId = undefined;
+                    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                     reject("YAZL zip took too long!? " + outputZipPath);
                 }, 10000);
                 (zipfile as ZipFile).end();

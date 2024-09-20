@@ -39,10 +39,12 @@ export async function CbzParsePromise(filePath: string): Promise<Publication> {
     try {
         zip = await zipLoadPromise(filePath);
     } catch (err) {
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
     if (!zip.hasEntries()) {
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject("CBZ zip empty");
     }
 
@@ -62,6 +64,7 @@ export async function CbzParsePromise(filePath: string): Promise<Publication> {
         entries = await zip.getEntries();
     } catch (err) {
         console.log(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject("Problem getting CBZ zip entries");
     }
     if (entries) {
@@ -151,7 +154,7 @@ const comicRackMetadata = async (zip: IZip, entryName: string, publication: Publ
     }
 
     const comicXmlStr = comicZipData.toString("utf8");
-    const comicXmlDoc = new xmldom.DOMParser().parseFromString(comicXmlStr);
+    const comicXmlDoc = new xmldom.DOMParser().parseFromString(comicXmlStr, "application/xml") as unknown as Document;
 
     const comicMeta = XML.deserialize<ComicInfo>(comicXmlDoc, ComicInfo);
     comicMeta.ZipPath = entryNameDecoded;

@@ -448,6 +448,7 @@ export const findInManifestByID = async (
 
             const itemHrefDecoded = item.HrefDecoded;
             if (!itemHrefDecoded) {
+                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                 return Promise.reject("item.Href?!");
             }
             linkItem.setHrefDecoded(path.join(path.dirname(opf.ZipPath), itemHrefDecoded)
@@ -458,6 +459,7 @@ export const findInManifestByID = async (
             return linkItem;
         }
     }
+    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     return Promise.reject(`ID ${ID} not found`);
 };
 
@@ -781,12 +783,14 @@ export const langStringIsRTL = (lang: string): boolean => {
 export const getNcx = async (ncxManItem: Manifest, opf: OPF, zip: IZip): Promise<NCX> => {
 
     if (!opf.ZipPath) {
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject("?!!opf.ZipPath");
     }
 
     const dname = path.dirname(opf.ZipPath);
     const ncxManItemHrefDecoded = ncxManItem.HrefDecoded;
     if (!ncxManItemHrefDecoded) {
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject("?!ncxManItem.Href");
     }
     const ncxFilePath = path.join(dname, ncxManItemHrefDecoded).replace(/\\/g, "/");
@@ -802,6 +806,7 @@ export const getNcx = async (ncxManItem: Manifest, opf: OPF, zip: IZip): Promise
             }
             debug(zipEntry);
         }
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
@@ -810,6 +815,7 @@ export const getNcx = async (ncxManItem: Manifest, opf: OPF, zip: IZip): Promise
         ncxZipStream_ = await zip.entryStreamPromise(ncxFilePath);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
     const ncxZipStream = ncxZipStream_.stream;
@@ -819,6 +825,7 @@ export const getNcx = async (ncxManItem: Manifest, opf: OPF, zip: IZip): Promise
         ncxZipData = await streamToBufferPromise(ncxZipStream);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
@@ -839,7 +846,7 @@ export const getNcx_ = (ncxStr: string, ncxFilePath: string): NCX => {
         }
     }
 
-    const ncxDoc = new xmldom.DOMParser().parseFromString(ncxStr);
+    const ncxDoc = new xmldom.DOMParser().parseFromString(ncxStr, "application/xml") as unknown as Document;
     const ncx = XML.deserialize<NCX>(ncxDoc, NCX);
     ncx.ZipPath = ncxFilePath;
 
@@ -864,6 +871,7 @@ export const getOpf = async (zip: IZip, rootfilePathDecoded: string, rootfilePat
             }
             debug(zipEntry);
         }
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
@@ -872,6 +880,7 @@ export const getOpf = async (zip: IZip, rootfilePathDecoded: string, rootfilePat
         opfZipStream_ = await zip.entryStreamPromise(rootfilePathDecoded);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
     const opfZipStream = opfZipStream_.stream;
@@ -885,6 +894,7 @@ export const getOpf = async (zip: IZip, rootfilePathDecoded: string, rootfilePat
         opfZipData = await streamToBufferPromise(opfZipStream);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
@@ -919,7 +929,7 @@ export const getOpf_ = (opfStr: string, rootfilePathDecoded: string): OPF => {
     // (typically: many manifest items),
     // but it remains acceptable.
     // e.g. BasicTechnicalMathWithCalculus.epub with 2.5MB OPF!
-    const opfDoc = new xmldom.DOMParser().parseFromString(opfStr);
+    const opfDoc = new xmldom.DOMParser().parseFromString(opfStr, "application/xml") as unknown as Document;
 
     // const timeElapsed4 = process.hrtime(timeBegin);
     // debug(`4) ${timeElapsed4[0]} seconds + ${timeElapsed4[1]} nanoseconds`);
@@ -1521,11 +1531,13 @@ export const loadFileStrFromZipPath = async (
         zipData = await loadFileBufferFromZipPath(linkHref, linkHrefDecoded, zip);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
     if (zipData) {
         return zipData.toString("utf8");
     }
+    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     return Promise.reject("?!zipData loadFileStrFromZipPath()");
 };
 
@@ -1554,6 +1566,7 @@ export const loadFileBufferFromZipPath = async (
         zipStream_ = await zip.entryStreamPromise(linkHrefDecoded);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
     const zipStream = zipStream_.stream;
@@ -1563,6 +1576,7 @@ export const loadFileBufferFromZipPath = async (
         zipData = await streamToBufferPromise(zipStream);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
@@ -1876,7 +1890,7 @@ export const flattenDaisy2SmilAudioSeq = (_smilPathInZip: string, smilXmlDoc: Do
         }
     }
 
-    // debug(smilPathInZip, new xmldom.XMLSerializer().serializeToString(smilXmlDoc));
+    // debug(smilPathInZip, new xmldom.XMLSerializer().serializeToString(smilXmlDoc as unknown as xmldom.Document));
 };
 
 // mo.initialized true/false is automatically handled
@@ -1908,6 +1922,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
         if (!link) {
             const err = "Asset not declared in publication spine/resources! " + mo.SmilPathInZip;
             debug(err);
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             return Promise.reject(err);
         }
     }
@@ -1929,6 +1944,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
             }
             debug(zipEntry);
         }
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
@@ -1937,6 +1953,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
         smilZipStream_ = await zip.entryStreamPromise(mo.SmilPathInZip);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
@@ -1954,6 +1971,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
             );
         } catch (err) {
             debug(err);
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             return Promise.reject(err);
         }
         if (transformedStream) {
@@ -1965,6 +1983,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
         if (decryptFail) {
             const err = "Encryption scheme not supported.";
             debug(err);
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             return Promise.reject(err);
         }
     }
@@ -1976,6 +1995,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
         smilZipData = await streamToBufferPromise(smilZipStream);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
@@ -1992,7 +2012,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
         }
     }
 
-    const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
+    const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr, "application/xml") as unknown as Document;
 
     const nccZipEntry = (await zip.getEntries()).find((entry) => {
         return /ncc\.html$/i.test(entry);
@@ -2007,7 +2027,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
     mo.initialized = true;
     debug("PARSED SMIL: " + mo.SmilPathInZip);
 
-    // debug(mo.SmilPathInZip, new xmldom.XMLSerializer().serializeToString(smilXmlDoc));
+    // debug(mo.SmilPathInZip, new xmldom.XMLSerializer().serializeToString(smilXmlDoc as unknown as xmldom.Document));
     // debug(JSON.stringify(smil, null, 4));
 
     // breakLength: 100  maxArrayLength: undefined

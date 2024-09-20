@@ -576,6 +576,7 @@ async function extractEPUB_MediaOverlays(pub: Publication, _zip: IZip, outDir: s
                 // mo.initialized true/false is automatically handled
                 await lazyLoadMediaOverlays(pub, mo);
             } catch (err) {
+                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                 return Promise.reject(err);
             }
             const moJsonObj = TaJsonSerialize(mo);
@@ -682,6 +683,7 @@ async function dumpPublication(publication: Publication): Promise<void> {
                     // mo.initialized true/false is automatically handled
                     await lazyLoadMediaOverlays(publication, mo);
                 } catch (err) {
+                    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                     return Promise.reject(err);
                 }
                 // console.log(util.inspect(mo,
