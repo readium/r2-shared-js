@@ -1,10 +1,28 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.75...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.76...develop
 
 Changes:
 * TODO
+
+# 1.0.76
+
+> Build environment: NodeJS `22.11.0`, NPM `10.9.0`
+
+Changes:
+* NPM package updates
+* Fixed DAiSY 2.02 parsing of SMIL XML with multiple contiguous AUDIO inside SEQ inside PAR (next to TEXT)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.76/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.76/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.76
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.75...v1.0.76
 
 # 1.0.75
 
