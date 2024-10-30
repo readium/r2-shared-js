@@ -1824,73 +1824,120 @@ export const addMediaOverlaySMIL = async (link: Link, manItemSmil: Manifest, opf
 
 export const flattenDaisy2SmilAudioSeq = (_smilPathInZip: string, smilXmlDoc: Document) => {
 
-    let iClone = 0;
+    // const beforeXML = new xmldom.XMLSerializer().serializeToString(smilXmlDoc.documentElement as unknown as xmldom.Element);
+    // debug("beforeXML", _smilPathInZip, beforeXML);
+
+    // let iClone = 0;
 
     // factor out seq that's inside par
     const pars = Array.from(smilXmlDoc.getElementsByTagName("par"));
     for (const par of pars) {
         const seq = par.getElementsByTagName("seq")[0] as Element | undefined; // assumes one only (safe assumption)
-        if (seq) {
-            const text = par.getElementsByTagName("text")[0] as Element | undefined; // assumes one only (safe assumption)
+        if (!seq) {
+            continue;
+        }
 
-            const audios = Array.from(seq.getElementsByTagName("audio"));
-            for (let j = 0; j < audios.length; j++) {
-                const audio = audios[j];
+        // const text = par.getElementsByTagName("text")[0] as Element | undefined; // assumes one only (safe assumption)
 
+        let prevAudio: HTMLAudioElement | undefined = undefined;
+        const audios = Array.from(seq.getElementsByTagName("audio"));
+        for (let j = 0; j < audios.length; j++) {
+            const audio = audios[j];
+
+            if (prevAudio === undefined) {
                 seq.removeChild(audio);
-
-                if (j === 0) {
-                    if (text) {
-                        if (text.insertAdjacentElement) {
-                            text.insertAdjacentElement("afterend", audio);
-                        } else if (text.parentNode) {
-                            text.parentNode.insertBefore(audio, text.nextElementSibling);
+                par.appendChild(audio);
+                prevAudio = audio;
+            } else {
+                const prevSrc = prevAudio.getAttribute("src");
+                const thisSrc = audio.getAttribute("src");
+                if (thisSrc === prevSrc) {
+                    const prevCeAttr = prevAudio.getAttribute("clip-end");
+                    const thisCbAttr = audio.getAttribute("clip-begin");
+                    let contiguous = prevCeAttr && thisCbAttr && prevCeAttr === thisCbAttr;
+                    if (prevCeAttr && thisCbAttr && !contiguous) {
+                        const prevT = timeStrToSeconds(prevCeAttr);
+                        const thisT = timeStrToSeconds(thisCbAttr);
+                        if (prevT === thisT || Math.abs(prevT - thisT) <= 0.5) {
+                            // debug(Math.abs(prevT - thisT));
+                            contiguous = true;
                         }
-
-                        // hoist DAISY2 text ID to parent par
-                        const parId = par.getAttribute("id");
-                        if (!parId) {
-                            const txtId = text.getAttribute("id");
-                            if (txtId) {
-                                par.setAttribute("id", txtId);
-                                text.removeAttribute("id");
-                            }
+                    }
+                    if (contiguous) {
+                        const thisCeAttr = audio.getAttribute("clip-end");
+                        if (thisCeAttr) {
+                            prevAudio.setAttribute("clip-end", thisCeAttr);
+                        } else if (prevAudio.getAttribute("clip-end")) {
+                            prevAudio.removeAttribute("clip-end");
                         }
                     } else {
-                        par.appendChild(audio);
+                        debug("NCC SMIL AUDIO not contiguous!! ", thisSrc, prevCeAttr, thisCbAttr);
+                        // TODO: insert a new PAR that references the same TEXT but with different AUDIO (clip-begin/end) in order to reset the discontiguous sequence ... but that's a VERY! unlikely edge-case so low-priority until there is an actual SMIL structured this way.
                     }
                 } else {
-                    const newPar = par.namespaceURI ?
-                        smilXmlDoc.createElementNS(par.namespaceURI, "par") :
-                        smilXmlDoc.createElement("par");
-                    iClone++;
-                    if (text) {
-                        const cloneText = text.cloneNode(false) as Element;
-                        const tId = cloneText.getAttribute("id");
-                        if (tId) {
-                            cloneText.removeAttribute("id");
-                        }
-                        // hoist DAISY2 text ID to parent par
-                        newPar.setAttribute("id", (tId ? tId : "id") + "r2__" + iClone);
-                        newPar.appendChild(cloneText);
-                    } else {
-                        newPar.setAttribute("id", "id" + "r2__" + iClone);
-                    }
-                    newPar.appendChild(audio);
-                    newPar.appendChild(smilXmlDoc.createTextNode("\n"));
-
-                    if (par.insertAdjacentElement) {
-                        par.insertAdjacentElement("afterend", newPar);
-                    } else if (par.parentNode) {
-                        par.parentNode.insertBefore(newPar, par.nextElementSibling);
-                    }
+                    debug("NCC SMIL AUDIO thisSrc !== prevSrc!! ", thisSrc, prevSrc);
+                    // TODO: insert a new PAR that references the same TEXT but with different AUDIO (src) ... but that's a VERY! unlikely edge-case so low-priority until there is an actual SMIL structured this way.
+                    // seq.removeChild(audio);
+                    // par.appendChild(audio);
+                    // prevAudio = audio;
                 }
             }
-            par.removeChild(seq);
+
+            // if (j === 0) {
+            //     if (text) {
+            //         if (text.insertAdjacentElement) {
+            //             text.insertAdjacentHTML("afterend", "<!-- R2 AUDIO FLAT a -->");
+            //             text.insertAdjacentElement("afterend", audio);
+            //         } else if (text.parentNode) {
+            //             text.parentNode.insertBefore(smilXmlDoc.createComment("R2 AUDIO FLAT b"), text.nextElementSibling);
+            //             text.parentNode.insertBefore(audio, null); // text.nextElementSibling
+            //         }
+
+            //         // hoist DAISY2 text ID to parent par
+            //         const parId = par.getAttribute("id");
+            //         if (!parId) {
+            //             const txtId = text.getAttribute("id");
+            //             if (txtId) {
+            //                 par.setAttribute("id", txtId);
+            //                 text.removeAttribute("id");
+            //             }
+            //         }
+            //     } else {
+            //         par.appendChild(audio);
+            //     }
+            // }
+            // else {
+            //     const newPar = par.namespaceURI ?
+            //         smilXmlDoc.createElementNS(par.namespaceURI, "par") :
+            //         smilXmlDoc.createElement("par");
+            //     iClone++;
+            //     if (text) {
+            //         const cloneText = text.cloneNode(false) as Element;
+            //         const tId = cloneText.getAttribute("id");
+            //         if (tId) {
+            //             cloneText.removeAttribute("id");
+            //         }
+            //         // hoist DAISY2 text ID to parent par
+            //         newPar.setAttribute("id", (tId ? tId : "id") + "r2__" + iClone);
+            //         newPar.appendChild(cloneText);
+            //     } else {
+            //         newPar.setAttribute("id", "id" + "r2__" + iClone);
+            //     }
+            //     newPar.appendChild(audio);
+            //     newPar.appendChild(smilXmlDoc.createTextNode("\n"));
+
+            //     if (par.insertAdjacentElement) {
+            //         par.insertAdjacentElement("afterend", newPar);
+            //     } else if (par.parentNode) {
+            //         par.parentNode.insertBefore(newPar, par.nextElementSibling);
+            //     }
+            // }
         }
+        par.removeChild(seq);
     }
 
-    // debug(smilPathInZip, new xmldom.XMLSerializer().serializeToString(smilXmlDoc as unknown as xmldom.Document));
+    // const afterXML = new xmldom.XMLSerializer().serializeToString(smilXmlDoc.documentElement as unknown as xmldom.Element);
+    // debug("afterXML", _smilPathInZip, afterXML);
 };
 
 // mo.initialized true/false is automatically handled
