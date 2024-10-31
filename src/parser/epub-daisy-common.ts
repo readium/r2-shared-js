@@ -2149,6 +2149,14 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
         } else if (smil.Body.SystemRequired) {
             if (smil.Body.SystemRequired.indexOf("pagenumber-on") >= 0) {
                 mo.Role.push("pagebreak");
+            } else if (smil.Body.SystemRequired.indexOf("note-on") >= 0) {
+                mo.Role.push("note");
+            // } else if (smil.Body.SystemRequired.indexOf("footnote-on") >= 0) {
+            //     mo.Role.push("note");
+            // } else if (smil.Body.SystemRequired.indexOf("prodnote-on") >= 0) {
+            //     mo.Role.push("note");
+            } else if (smil.Body.SystemRequired.indexOf("sidebar-on") >= 0) {
+                mo.Role.push("sidebar");
             }
         }
         if (smil.Body.TextRef) {
@@ -2283,6 +2291,26 @@ const addSeqToMediaOverlay = (
                     moc.Role = [];
                 }
                 moc.Role.push("pagebreak");
+            } else if (seq.SystemRequired.indexOf("note-on") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("note");
+            // }  else if (seq.SystemRequired.indexOf("footnote-on") >= 0) {
+            //     if (!moc.Role) {
+            //         moc.Role = [];
+            //     }
+            //     moc.Role.push("note");
+            // } else if (seq.SystemRequired.indexOf("prodnote-on") >= 0) {
+            //     if (!moc.Role) {
+            //         moc.Role = [];
+            //     }
+            //     moc.Role.push("note");
+            } else if (seq.SystemRequired.indexOf("sidebar-on") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("sidebar");
             }
         }
         if (seq.TextRef) {
@@ -2375,6 +2403,26 @@ const addSeqToMediaOverlay = (
                     moc.Role = [];
                 }
                 moc.Role.push("pagebreak");
+            } else if (par.SystemRequired.indexOf("note-on") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("note");
+            // } else if (par.SystemRequired.indexOf("footnote-on") >= 0) {
+            //     if (!moc.Role) {
+            //         moc.Role = [];
+            //     }
+            //     moc.Role.push("note");
+            // } else if (par.SystemRequired.indexOf("prodnote-on") >= 0) {
+            //     if (!moc.Role) {
+            //         moc.Role = [];
+            //     }
+            //     moc.Role.push("note");
+            } else if (par.SystemRequired.indexOf("sidebar-on") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("sidebar");
             }
         }
         if (par.Text && par.Text.Src) {
