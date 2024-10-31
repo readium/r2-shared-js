@@ -6,6 +6,23 @@ Git diff:
 Changes:
 * TODO
 
+# 1.0.77
+
+> Build environment: NodeJS `22.11.0`, NPM `10.9.0`
+
+Changes:
+* Fixed DAiSY 2.02 parsing of SMIL XML with system-required skippables
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.77/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.77/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.77
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.76...v1.0.77
+
 # 1.0.76
 
 > Build environment: NodeJS `22.11.0`, NPM `10.9.0`
