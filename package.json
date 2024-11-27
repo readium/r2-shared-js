@@ -122,7 +122,7 @@
     "postbuild:all": "npm run afterdist",
     "clean": "rimraf ./dist && mkdirp ./dist",
     "lint": "npm run lint:all && npm run lint:typescript:full",
-    "lint:all": "eclint check \"**/*\" \"!**/*.node\" \"!.git/**/*\" \"!node_modules*/**/*\" \"!dist/**/*\" \"!ava-ts/**/*\" \"!misc/**/*\" \"!now/**/*\" \"!.vscode/**/*\" \"!.history/**/*\" \"!**/.DS_Store\" \"!**/*.epub\" \"!**/*.cbz\" \"!**/*.jpg\" \"!**/*.jpeg\" \"!**/*.png\" \"!**/*.log\"",
+    "lint:all": "eclint check \"**/*\" \"!**/*.node\" \"!.git/**/*\" \"!node_modules*/**/*\" \"!dist/**/*\" \"!ava-ts/**/*\" \"!misc/**/*\" \"!now/**/*\" \"!.vscode/**/*\" \"!.history/**/*\" \"!**/.DS_Store\" \"!**/*.epub\" \"!**/*.cbz\" \"!**/*.jpg\" \"!**/*.jpeg\" \"!**/*.png\" \"!**/*.log\" \"!**/*.flox/**/*\"",
     "lint:typescript:full": "eslint \"./src/**/*.ts\" \"./test/**/*.ts\"",
     "pretranspile:typescript": "npm run clean",
     "transpile:typescript": "tsc --pretty -p \"./tsconfig.json\"",
