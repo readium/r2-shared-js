@@ -1,10 +1,27 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.78...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.79...develop
 
 Changes:
 * TODO
+
+# 1.0.79
+
+> Build environment: NodeJS `22.11.0`, NPM `11.0.0`
+
+Changes:
+* fix: XML BOM removal before parse
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.79/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.79/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.79
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.78...v1.0.79
 
 # 1.0.78
 
