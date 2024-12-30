@@ -18,6 +18,7 @@ import { streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { XML } from "@r2-utils-js/_utils/xml-js-mapper";
 import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
 import { zipLoadPromise } from "@r2-utils-js/_utils/zip/zipFactory";
+import { removeUTF8BOM } from "@r2-utils-js/_utils/bom";
 
 import { tryDecodeURI } from "../_utils/decodeURI";
 import { zipHasEntry } from "../_utils/zipHasEntry";
@@ -153,7 +154,7 @@ const comicRackMetadata = async (zip: IZip, entryName: string, publication: Publ
         return;
     }
 
-    const comicXmlStr = comicZipData.toString("utf8");
+    const comicXmlStr = removeUTF8BOM(comicZipData.toString("utf8"));
     const comicXmlDoc = new xmldom.DOMParser().parseFromString(comicXmlStr, "application/xml") as unknown as Document;
 
     const comicMeta = XML.deserialize<ComicInfo>(comicXmlDoc, ComicInfo);

@@ -44,6 +44,7 @@ import { SeqOrPar } from "./epub/smil-seq-or-par";
 import { MetaDate } from "./epub/opf-date";
 import { AccessibilityMetadata } from "@models/metadata-accessibility";
 import { AccessibilityCertification } from "@models/metadata-accessibility-certification";
+import { removeUTF8BOM } from "@r2-utils-js/_utils/bom";
 
 const debug = debug_("r2:shared#parser/epub-daisy-common");
 
@@ -829,12 +830,11 @@ export const getNcx = async (ncxManItem: Manifest, opf: OPF, zip: IZip): Promise
         return Promise.reject(err);
     }
 
-    const ncxStr = ncxZipData.toString("utf8");
+    const ncxStr = removeUTF8BOM(ncxZipData.toString("utf8"));
     return getNcx_(ncxStr, ncxFilePath);
 };
 
 export const getNcx_ = (ncxStr: string, ncxFilePath: string): NCX => {
-
     const iStart = ncxStr.indexOf("<ncx");
     if (iStart >= 0) {
         const iEnd = ncxStr.indexOf(">", iStart);
@@ -904,7 +904,7 @@ export const getOpf = async (zip: IZip, rootfilePathDecoded: string, rootfilePat
     // debug(`2) ${timeElapsed2[0]} seconds + ${timeElapsed2[1]} nanoseconds`);
     // timeBegin = process.hrtime();
 
-    const opfStr = opfZipData.toString("utf8");
+    const opfStr = removeUTF8BOM(opfZipData.toString("utf8"));
     return getOpf_(opfStr, rootfilePathDecoded);
 };
 
@@ -2046,7 +2046,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
         return Promise.reject(err);
     }
 
-    let smilStr = smilZipData.toString("utf8");
+    let smilStr = removeUTF8BOM(smilZipData.toString("utf8"));
 
     const iStart = smilStr.indexOf("<smil");
     if (iStart >= 0) {

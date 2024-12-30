@@ -31,7 +31,7 @@ import { streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { XML } from "@r2-utils-js/_utils/xml-js-mapper";
 import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
 import { zipLoadPromise } from "@r2-utils-js/_utils/zip/zipFactory";
-
+import { removeUTF8BOM } from "@r2-utils-js/_utils/bom";
 import { tryDecodeURI } from "../_utils/decodeURI";
 import { zipHasEntry } from "../_utils/zipHasEntry";
 import {
@@ -265,7 +265,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
             return Promise.reject(err);
         }
 
-        const encryptionXmlStr = encryptionXmlZipData.toString("utf8");
+        const encryptionXmlStr = removeUTF8BOM(encryptionXmlZipData.toString("utf8"));
         const encryptionXmlDoc = new xmldom.DOMParser().parseFromString(encryptionXmlStr, "application/xml") as unknown as Document;
 
         encryption = XML.deserialize<Encryption>(encryptionXmlDoc, Encryption);
@@ -297,7 +297,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
         return Promise.reject(err);
     }
 
-    const containerXmlStr = containerXmlZipData.toString("utf8");
+    const containerXmlStr = removeUTF8BOM(containerXmlZipData.toString("utf8"));
     const containerXmlDoc = new xmldom.DOMParser().parseFromString(containerXmlStr, "application/xml") as unknown as Document;
 
     // debug(containerXmlDoc);
@@ -760,7 +760,7 @@ const addRendition = async (publication: Publication, opf: OPF, zip: IZip) => {
                     }
                     if (displayOptionsZipData) {
                         try {
-                            const displayOptionsStr = displayOptionsZipData.toString("utf8");
+                            const displayOptionsStr = removeUTF8BOM(displayOptionsZipData.toString("utf8"));
                             const displayOptionsDoc = new xmldom.DOMParser().parseFromString(displayOptionsStr, "application/xml") as unknown as Document;
 
                             const displayOptions = XML.deserialize<DisplayOptions>(displayOptionsDoc, DisplayOptions);
@@ -906,10 +906,11 @@ const fillPageListFromAdobePageMap = async (publication: Publication, zip: IZip,
     if (!l.HrefDecoded) {
         return;
     }
-    const pageMapContent = await loadFileStrFromZipPath(l.Href, l.HrefDecoded, zip);
+    let pageMapContent = await loadFileStrFromZipPath(l.Href, l.HrefDecoded, zip);
     if (!pageMapContent) {
         return;
     }
+    pageMapContent = removeUTF8BOM(pageMapContent);
     const pageMapXmlDoc = new xmldom.DOMParser().parseFromString(pageMapContent, "application/xml") as unknown as Document;
 
     const pages = pageMapXmlDoc.getElementsByTagName("page");
@@ -1024,7 +1025,7 @@ const fillTOCFromNavDoc = async (publication: Publication, zip: IZip):
         return Promise.reject(err);
     }
 
-    const navDocStr = navDocZipData.toString("utf8");
+    const navDocStr = removeUTF8BOM(navDocZipData.toString("utf8"));
     const navXmlDoc = new xmldom.DOMParser().parseFromString(navDocStr, "application/xml") as unknown as Document;
 
     const select = xpath.useNamespaces({

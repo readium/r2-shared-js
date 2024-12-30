@@ -14,6 +14,7 @@ import * as xmldom from "@xmldom/xmldom";
 import { timeStrToSeconds } from "@models/media-overlay";
 import { streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
+import { removeUTF8BOM } from "@r2-utils-js/_utils/bom";
 
 import { zipHasEntry } from "../_utils/zipHasEntry";
 import { getNcx_, getOpf_ } from "./epub-daisy-common"; // , loadFileStrFromZipPath
@@ -143,7 +144,7 @@ export const convertNccToOpfAndNcx = async (
         return Promise.reject(err);
     }
 
-    const nccStr = nccZipData.toString("utf8");
+    const nccStr = removeUTF8BOM(nccZipData.toString("utf8"));
     const nccDoc = new xmldom.DOMParser().parseFromString(
         nccStr,
         // "application/xml",
@@ -400,4 +401,3 @@ ${pageListStr}
 
     return [opf, ncx];
 };
-

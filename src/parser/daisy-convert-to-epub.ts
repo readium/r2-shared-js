@@ -20,7 +20,7 @@ import { Publication } from "@models/publication";
 import { Link } from "@models/publication-link";
 import { TaJsonDeserialize, TaJsonSerialize } from "@r2-lcp-js/serializable";
 import { IZip } from "@r2-utils-js/_utils/zip/zip";
-
+import { removeUTF8BOM } from "@r2-utils-js/_utils/bom";
 import {
     flattenDaisy2SmilAudioSeq, lazyLoadMediaOverlays, loadFileBufferFromZipPath,
     loadFileStrFromZipPath, updateDurations,
@@ -349,7 +349,7 @@ export const convertDaisyToReadiumWebPub = async (
                         // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                         return Promise.reject("!loadFileStrFromZipPath 1 " + smilPathInZip);
                     }
-                    smilDoc = new xmldom.DOMParser().parseFromString(smilStr, "application/xml") as unknown as Document;
+                    smilDoc = new xmldom.DOMParser().parseFromString(removeUTF8BOM(smilStr), "application/xml") as unknown as Document;
                     if (nccZipEntry) {
                         flattenDaisy2SmilAudioSeq(smilPathInZip, smilDoc);
                     }
@@ -677,6 +677,7 @@ export const convertDaisyToReadiumWebPub = async (
                         debug("!loadFileStrFromZipPath 3", dtBookStr);
                         continue;
                     }
+                    dtBookStr = removeUTF8BOM(dtBookStr);
                     dtBookStr = dtBookStr.replace(/xmlns=""/, " ");
                     dtBookStr = dtBookStr.replace(/<dtbook/, "<dtbook xmlns:epub=\"http://www.idpf.org/2007/ops\" ");
                     const dtBookDoc = new xmldom.DOMParser().parseFromString(dtBookStr, "application/xml") as unknown as Document;
