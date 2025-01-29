@@ -408,7 +408,7 @@ async function extractEPUB_ProcessKeys(pub: Publication, keys: string[] | undefi
         //     // Certificate has not been signed by CA
         //     CERTIFICATE_SIGNATURE_INVALID = 102,
         //     // License has been issued by an expired certificate
-        //     LICENSE_SIGNATURE_DATE_INVALID = 111,
+        //     LICENSE_CERTIFICATE_DATE_INVALID (was LICENSE_SIGNATURE_DATE_INVALID) = 111,
         //     // License signature does not match
         //     LICENSE_SIGNATURE_INVALID = 112,
         //     // The drm context is invalid
