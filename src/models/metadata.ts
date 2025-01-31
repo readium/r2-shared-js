@@ -158,7 +158,7 @@ export class Metadata implements IWithAdditionalJSON {
     // 'longDescription',
     // 'MathML',
     // 'none',
-    // 'printPageNumbers',
+    // 'printPageNumbers', 'pageBreakMarkers', 'pageNavigation'
     // 'readingOrder',
     // 'rubyAnnotations',
     // 'signLanguage',
