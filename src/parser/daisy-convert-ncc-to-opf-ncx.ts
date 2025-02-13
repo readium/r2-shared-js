@@ -144,13 +144,42 @@ export const convertNccToOpfAndNcx = async (
         return Promise.reject(err);
     }
 
-    const nccStr = removeUTF8BOM(nccZipData.toString("utf8"));
-    const nccDoc = new xmldom.DOMParser().parseFromString(
-        nccStr,
-        // "application/xml",
-        "text/html",
-        // "application/xhtml+xml",
-    ) as unknown as Document;
+    let nccStr = removeUTF8BOM(nccZipData.toString("utf8"));
+
+    // https://github.com/readium/r2-shared-js/commit/a83c8d6b56edb97bc2acc6889347274888feaecb#diff-ac9dbda3443005fb662618cf819db718d98b2361d98a4c39d574a6e5ddc3bda2
+    let nccDoc: Document | undefined;
+    try {
+        nccDoc = new xmldom.DOMParser().parseFromString(
+            nccStr,
+            // "application/xml",
+            "text/html",
+            // "application/xhtml+xml",
+        ) as unknown as Document;
+    } catch (err1) {
+        console.log("xmldom.DOMParser().parseFromString text/html ERROR1, attempting DOCTYPE fix...");
+        console.log(err1);
+        // <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" []>
+        // console.log(nccStr.substring(0, 600));
+        nccStr = nccStr.replace(/(<!DOCTYPE\s+[^>]+\s*)\[\s*\]\s*>/, "$1>");
+        // console.log(nccStr.substring(0, 600));
+        try {
+            nccDoc = new xmldom.DOMParser().parseFromString(
+                nccStr,
+                // "application/xml",
+                "text/html",
+                // "application/xhtml+xml",
+            ) as unknown as Document;
+        } catch (err2) {
+            console.log("xmldom.DOMParser().parseFromString text/html ERROR2, fallback to application/xml...");
+            console.log(err2);
+            nccDoc = new xmldom.DOMParser().parseFromString(
+                nccStr,
+                "application/xml",
+                // "text/html",
+                // "application/xhtml+xml",
+            ) as unknown as Document;
+        }
+    }
 
     const metas = Array.from(nccDoc.getElementsByTagName("meta")).
         reduce((prevVal, curVal) => {
