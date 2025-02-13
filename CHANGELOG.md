@@ -1,10 +1,28 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.80...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.81...develop
 
 Changes:
 * TODO
+
+# 1.0.81
+
+> Build environment: NodeJS `22.12.0`, NPM `11.1.0`
+
+Changes:
+* NPM package updates
+* Fix: XML parsing NCC.html workaround for the workaround with DTD doctype suffix [] (see https://github.com/readium/r2-shared-js/commit/a83c8d6b56edb97bc2acc6889347274888feaecb )
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.81/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.81/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.81
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.80...v1.0.81
 
 # 1.0.80
 
