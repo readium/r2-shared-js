@@ -63,6 +63,7 @@ export async function isDaisyPublication(urlOrPath: string): Promise<DaisyBookis
             zip = await zipLoadPromise(urlOrPath);
         } catch (err) {
             debug(err);
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             return Promise.reject(err);
         }
 
@@ -101,10 +102,12 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
         zip = await zipLoadPromise(filePath);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
     if (!zip.hasEntries()) {
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject("Daisy zip empty");
     }
 
@@ -144,11 +147,13 @@ export async function DaisyParsePromise(filePath: string): Promise<Publication> 
     }
 
     if (!opfZipEntryPath) {
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject("DAISY3 OPF package XML file or DAISY2 NCC cannot be found.");
     }
 
     const rootfilePathDecoded = opfZipEntryPath; // || "package.opf";
     if (!rootfilePathDecoded) {
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject("?!rootfile.PathDecoded");
     }
 

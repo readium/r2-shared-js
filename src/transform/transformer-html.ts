@@ -74,6 +74,7 @@ export class TransformerHTML implements ITransformer {
         try {
             data = await streamToBufferPromise(stream.stream);
         } catch (err) {
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             return Promise.reject(err);
         }
 
@@ -81,6 +82,7 @@ export class TransformerHTML implements ITransformer {
         try {
             buff = await this.transformBuffer(publication, link, url, data, sessionInfo);
         } catch (err) {
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             return Promise.reject(err);
         }
 

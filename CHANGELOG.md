@@ -1,10 +1,133 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.74...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.81...develop
 
 Changes:
 * TODO
+
+# 1.0.81
+
+> Build environment: NodeJS `22.12.0`, NPM `11.1.0`
+
+Changes:
+* NPM package updates
+* Fix: XML parsing NCC.html workaround for the workaround with DTD doctype suffix [] (see https://github.com/readium/r2-shared-js/commit/a83c8d6b56edb97bc2acc6889347274888feaecb )
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.81/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.81/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.81
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.80...v1.0.81
+
+# 1.0.80
+
+> Build environment: NodeJS `22.12.0`, NPM `11.0.0`
+
+Changes:
+* NPM package updates
+* Updated Flox/Nix (dev)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.80/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.80/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.80
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.79...v1.0.80
+
+# 1.0.79
+
+> Build environment: NodeJS `22.11.0`, NPM `11.0.0`
+
+Changes:
+* fix: XML BOM removal before parse
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.79/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.79/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.79
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.78...v1.0.79
+
+# 1.0.78
+
+> Build environment: NodeJS `22.11.0`, NPM `11.0.0`
+
+Changes:
+* NPM package updates
+* Flox/Nix support (dev)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.78/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.78/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.78
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.77...v1.0.78
+
+# 1.0.77
+
+> Build environment: NodeJS `22.11.0`, NPM `10.9.0`
+
+Changes:
+* Fixed DAiSY 2.02 parsing of SMIL XML with system-required skippables
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.77/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.77/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.77
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.76...v1.0.77
+
+# 1.0.76
+
+> Build environment: NodeJS `22.11.0`, NPM `10.9.0`
+
+Changes:
+* NPM package updates
+* Fixed DAiSY 2.02 parsing of SMIL XML with multiple contiguous AUDIO inside SEQ inside PAR (next to TEXT)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.76/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.76/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.76
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.75...v1.0.76
+
+# 1.0.75
+
+> Build environment: NodeJS `20.17.0`, NPM `10.8.3`
+
+Changes:
+* NPM package updates
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.75/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.75/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.75
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.74...v1.0.75
 
 # 1.0.74
 

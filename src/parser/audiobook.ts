@@ -48,6 +48,7 @@ export async function AudioBookParsePromise(filePath: string, isAudio?: AudioBoo
     //     // TODO? r2-utils-js zip-ext.ts => variant for HTTP without directory listing? (no deterministic zip entries)
     //     const err = "Cannot load exploded remote EPUB (needs filesystem access to list directory contents).";
     //     debug(err);
+    //     // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     //     return Promise.reject(err);
     // }
 
@@ -69,10 +70,12 @@ export async function AudioBookParsePromise(filePath: string, isAudio?: AudioBoo
     try {
         zip = await zipLoadPromise(filePathToLoad);
     } catch (err) {
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
     if (!zip.hasEntries()) {
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject("AudioBook zip empty");
     }
     if (isAnAudioBook === AudioBookis.LocalExploded ||
@@ -87,6 +90,7 @@ export async function AudioBookParsePromise(filePath: string, isAudio?: AudioBoo
                 }
                 debug(zipEntry);
             }
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             return Promise.reject("AudioBook no manifest?!");
         }
     }
@@ -96,6 +100,7 @@ export async function AudioBookParsePromise(filePath: string, isAudio?: AudioBoo
     //     entries = await zip.getEntries();
     // } catch (err) {
     //     console.log(err);
+    //     // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     //     return Promise.reject("Problem getting AudioBook zip entries");
     // }
     // for (const entryName of entries) {
@@ -116,6 +121,7 @@ export async function AudioBookParsePromise(filePath: string, isAudio?: AudioBoo
         manifestZipStream_ = await zip.entryStreamPromise(entryName);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(`Problem streaming AudioBook zip entry?! ${entryName}`);
     }
     const manifestZipStream = manifestZipStream_.stream;
@@ -124,6 +130,7 @@ export async function AudioBookParsePromise(filePath: string, isAudio?: AudioBoo
         manifestZipData = await streamToBufferPromise(manifestZipStream);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(`Problem buffering AudioBook zip entry?! ${entryName}`);
     }
 
@@ -160,6 +167,7 @@ export async function AudioBookParsePromise(filePath: string, isAudio?: AudioBoo
         } catch (err) {
             if (hasLCP) {
                 debug(err);
+                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                 return Promise.reject(`Problem streaming AudioBook LCP zip entry?! ${entryName}`);
             } else {
                 debug("Audiobook no LCP.");
@@ -173,6 +181,7 @@ export async function AudioBookParsePromise(filePath: string, isAudio?: AudioBoo
                 lcpZipData = await streamToBufferPromise(lcpZipStream);
             } catch (err) {
                 debug(err);
+                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                 return Promise.reject(`Problem buffering AudioBook LCP zip entry?! ${entryName}`);
             }
 
@@ -222,6 +231,7 @@ async function doRequest(u: string): Promise<AudioBookis> {
         debug(JSON.stringify(options));
         (secure ? https : http).request(options, (res) => {
             if (!res) {
+                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                 reject(`HTTP no response ${u}`);
                 return;
             }
@@ -238,10 +248,12 @@ async function doRequest(u: string): Promise<AudioBookis> {
                             const redirectRes = await doRequest(l);
                             resolve(redirectRes);
                         } catch (err) {
+                            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                             reject(`HTTP audiobook redirect, then fail ${u} ${err}`);
                         }
                     });
                 } else {
+                    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                     reject(`HTTP audiobook redirect without location?! ${u}`);
                 }
                 return;
@@ -268,10 +280,12 @@ async function doRequest(u: string): Promise<AudioBookis> {
                                 resolve(AudioBookis.RemoteExploded);
                                 return;
                             } else {
+                                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                                 reject(`HTTP JSON not audiobook ${u}`);
                             }
                         } catch (ex) {
                             debug(ex);
+                            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                             reject(`HTTP audiobook invalid JSON?! ${u} ${ex}`);
                         }
                     });
@@ -279,9 +293,11 @@ async function doRequest(u: string): Promise<AudioBookis> {
                     return;
                 }
             }
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             reject(`Not HTTP audiobook type ${u}`);
         }).on("error", (err) => {
             debug(err);
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             reject(`HTTP error ${u} ${err}`);
         }).end();
     });
@@ -330,5 +346,6 @@ export async function isAudioBookPublication(urlOrPath: string): Promise<AudioBo
         return doRequest(urlOrPath);
     }
 
+    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     return Promise.reject("Cannot determine audiobook type");
 }

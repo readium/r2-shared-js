@@ -44,6 +44,7 @@ import { SeqOrPar } from "./epub/smil-seq-or-par";
 import { MetaDate } from "./epub/opf-date";
 import { AccessibilityMetadata } from "@models/metadata-accessibility";
 import { AccessibilityCertification } from "@models/metadata-accessibility-certification";
+import { removeUTF8BOM } from "@r2-utils-js/_utils/bom";
 
 const debug = debug_("r2:shared#parser/epub-daisy-common");
 
@@ -448,6 +449,7 @@ export const findInManifestByID = async (
 
             const itemHrefDecoded = item.HrefDecoded;
             if (!itemHrefDecoded) {
+                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                 return Promise.reject("item.Href?!");
             }
             linkItem.setHrefDecoded(path.join(path.dirname(opf.ZipPath), itemHrefDecoded)
@@ -458,6 +460,7 @@ export const findInManifestByID = async (
             return linkItem;
         }
     }
+    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     return Promise.reject(`ID ${ID} not found`);
 };
 
@@ -781,12 +784,14 @@ export const langStringIsRTL = (lang: string): boolean => {
 export const getNcx = async (ncxManItem: Manifest, opf: OPF, zip: IZip): Promise<NCX> => {
 
     if (!opf.ZipPath) {
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject("?!!opf.ZipPath");
     }
 
     const dname = path.dirname(opf.ZipPath);
     const ncxManItemHrefDecoded = ncxManItem.HrefDecoded;
     if (!ncxManItemHrefDecoded) {
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject("?!ncxManItem.Href");
     }
     const ncxFilePath = path.join(dname, ncxManItemHrefDecoded).replace(/\\/g, "/");
@@ -802,6 +807,7 @@ export const getNcx = async (ncxManItem: Manifest, opf: OPF, zip: IZip): Promise
             }
             debug(zipEntry);
         }
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
@@ -810,6 +816,7 @@ export const getNcx = async (ncxManItem: Manifest, opf: OPF, zip: IZip): Promise
         ncxZipStream_ = await zip.entryStreamPromise(ncxFilePath);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
     const ncxZipStream = ncxZipStream_.stream;
@@ -819,15 +826,15 @@ export const getNcx = async (ncxManItem: Manifest, opf: OPF, zip: IZip): Promise
         ncxZipData = await streamToBufferPromise(ncxZipStream);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
-    const ncxStr = ncxZipData.toString("utf8");
+    const ncxStr = removeUTF8BOM(ncxZipData.toString("utf8"));
     return getNcx_(ncxStr, ncxFilePath);
 };
 
 export const getNcx_ = (ncxStr: string, ncxFilePath: string): NCX => {
-
     const iStart = ncxStr.indexOf("<ncx");
     if (iStart >= 0) {
         const iEnd = ncxStr.indexOf(">", iStart);
@@ -839,7 +846,7 @@ export const getNcx_ = (ncxStr: string, ncxFilePath: string): NCX => {
         }
     }
 
-    const ncxDoc = new xmldom.DOMParser().parseFromString(ncxStr);
+    const ncxDoc = new xmldom.DOMParser().parseFromString(ncxStr, "application/xml") as unknown as Document;
     const ncx = XML.deserialize<NCX>(ncxDoc, NCX);
     ncx.ZipPath = ncxFilePath;
 
@@ -864,6 +871,7 @@ export const getOpf = async (zip: IZip, rootfilePathDecoded: string, rootfilePat
             }
             debug(zipEntry);
         }
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
@@ -872,6 +880,7 @@ export const getOpf = async (zip: IZip, rootfilePathDecoded: string, rootfilePat
         opfZipStream_ = await zip.entryStreamPromise(rootfilePathDecoded);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
     const opfZipStream = opfZipStream_.stream;
@@ -885,6 +894,7 @@ export const getOpf = async (zip: IZip, rootfilePathDecoded: string, rootfilePat
         opfZipData = await streamToBufferPromise(opfZipStream);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
@@ -894,7 +904,7 @@ export const getOpf = async (zip: IZip, rootfilePathDecoded: string, rootfilePat
     // debug(`2) ${timeElapsed2[0]} seconds + ${timeElapsed2[1]} nanoseconds`);
     // timeBegin = process.hrtime();
 
-    const opfStr = opfZipData.toString("utf8");
+    const opfStr = removeUTF8BOM(opfZipData.toString("utf8"));
     return getOpf_(opfStr, rootfilePathDecoded);
 };
 
@@ -919,7 +929,7 @@ export const getOpf_ = (opfStr: string, rootfilePathDecoded: string): OPF => {
     // (typically: many manifest items),
     // but it remains acceptable.
     // e.g. BasicTechnicalMathWithCalculus.epub with 2.5MB OPF!
-    const opfDoc = new xmldom.DOMParser().parseFromString(opfStr);
+    const opfDoc = new xmldom.DOMParser().parseFromString(opfStr, "application/xml") as unknown as Document;
 
     // const timeElapsed4 = process.hrtime(timeBegin);
     // debug(`4) ${timeElapsed4[0]} seconds + ${timeElapsed4[1]} nanoseconds`);
@@ -1521,11 +1531,13 @@ export const loadFileStrFromZipPath = async (
         zipData = await loadFileBufferFromZipPath(linkHref, linkHrefDecoded, zip);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
     if (zipData) {
         return zipData.toString("utf8");
     }
+    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     return Promise.reject("?!zipData loadFileStrFromZipPath()");
 };
 
@@ -1554,6 +1566,7 @@ export const loadFileBufferFromZipPath = async (
         zipStream_ = await zip.entryStreamPromise(linkHrefDecoded);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
     const zipStream = zipStream_.stream;
@@ -1563,6 +1576,7 @@ export const loadFileBufferFromZipPath = async (
         zipData = await streamToBufferPromise(zipStream);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
@@ -1810,73 +1824,120 @@ export const addMediaOverlaySMIL = async (link: Link, manItemSmil: Manifest, opf
 
 export const flattenDaisy2SmilAudioSeq = (_smilPathInZip: string, smilXmlDoc: Document) => {
 
-    let iClone = 0;
+    // const beforeXML = new xmldom.XMLSerializer().serializeToString(smilXmlDoc.documentElement as unknown as xmldom.Element);
+    // debug("beforeXML", _smilPathInZip, beforeXML);
+
+    // let iClone = 0;
 
     // factor out seq that's inside par
     const pars = Array.from(smilXmlDoc.getElementsByTagName("par"));
     for (const par of pars) {
         const seq = par.getElementsByTagName("seq")[0] as Element | undefined; // assumes one only (safe assumption)
-        if (seq) {
-            const text = par.getElementsByTagName("text")[0] as Element | undefined; // assumes one only (safe assumption)
+        if (!seq) {
+            continue;
+        }
 
-            const audios = Array.from(seq.getElementsByTagName("audio"));
-            for (let j = 0; j < audios.length; j++) {
-                const audio = audios[j];
+        // const text = par.getElementsByTagName("text")[0] as Element | undefined; // assumes one only (safe assumption)
 
+        let prevAudio: HTMLAudioElement | undefined = undefined;
+        const audios = Array.from(seq.getElementsByTagName("audio"));
+        for (let j = 0; j < audios.length; j++) {
+            const audio = audios[j];
+
+            if (prevAudio === undefined) {
                 seq.removeChild(audio);
-
-                if (j === 0) {
-                    if (text) {
-                        if (text.insertAdjacentElement) {
-                            text.insertAdjacentElement("afterend", audio);
-                        } else if (text.parentNode) {
-                            text.parentNode.insertBefore(audio, text.nextElementSibling);
+                par.appendChild(audio);
+                prevAudio = audio;
+            } else {
+                const prevSrc = prevAudio.getAttribute("src");
+                const thisSrc = audio.getAttribute("src");
+                if (thisSrc === prevSrc) {
+                    const prevCeAttr = prevAudio.getAttribute("clip-end");
+                    const thisCbAttr = audio.getAttribute("clip-begin");
+                    let contiguous = prevCeAttr && thisCbAttr && prevCeAttr === thisCbAttr;
+                    if (prevCeAttr && thisCbAttr && !contiguous) {
+                        const prevT = timeStrToSeconds(prevCeAttr);
+                        const thisT = timeStrToSeconds(thisCbAttr);
+                        if (prevT === thisT || Math.abs(prevT - thisT) <= 0.5) {
+                            // debug(Math.abs(prevT - thisT));
+                            contiguous = true;
                         }
-
-                        // hoist DAISY2 text ID to parent par
-                        const parId = par.getAttribute("id");
-                        if (!parId) {
-                            const txtId = text.getAttribute("id");
-                            if (txtId) {
-                                par.setAttribute("id", txtId);
-                                text.removeAttribute("id");
-                            }
+                    }
+                    if (contiguous) {
+                        const thisCeAttr = audio.getAttribute("clip-end");
+                        if (thisCeAttr) {
+                            prevAudio.setAttribute("clip-end", thisCeAttr);
+                        } else if (prevAudio.getAttribute("clip-end")) {
+                            prevAudio.removeAttribute("clip-end");
                         }
                     } else {
-                        par.appendChild(audio);
+                        debug("NCC SMIL AUDIO not contiguous!! ", thisSrc, prevCeAttr, thisCbAttr);
+                        // TODO: insert a new PAR that references the same TEXT but with different AUDIO (clip-begin/end) in order to reset the discontiguous sequence ... but that's a VERY! unlikely edge-case so low-priority until there is an actual SMIL structured this way.
                     }
                 } else {
-                    const newPar = par.namespaceURI ?
-                        smilXmlDoc.createElementNS(par.namespaceURI, "par") :
-                        smilXmlDoc.createElement("par");
-                    iClone++;
-                    if (text) {
-                        const cloneText = text.cloneNode(false) as Element;
-                        const tId = cloneText.getAttribute("id");
-                        if (tId) {
-                            cloneText.removeAttribute("id");
-                        }
-                        // hoist DAISY2 text ID to parent par
-                        newPar.setAttribute("id", (tId ? tId : "id") + "r2__" + iClone);
-                        newPar.appendChild(cloneText);
-                    } else {
-                        newPar.setAttribute("id", "id" + "r2__" + iClone);
-                    }
-                    newPar.appendChild(audio);
-                    newPar.appendChild(smilXmlDoc.createTextNode("\n"));
-
-                    if (par.insertAdjacentElement) {
-                        par.insertAdjacentElement("afterend", newPar);
-                    } else if (par.parentNode) {
-                        par.parentNode.insertBefore(newPar, par.nextElementSibling);
-                    }
+                    debug("NCC SMIL AUDIO thisSrc !== prevSrc!! ", thisSrc, prevSrc);
+                    // TODO: insert a new PAR that references the same TEXT but with different AUDIO (src) ... but that's a VERY! unlikely edge-case so low-priority until there is an actual SMIL structured this way.
+                    // seq.removeChild(audio);
+                    // par.appendChild(audio);
+                    // prevAudio = audio;
                 }
             }
-            par.removeChild(seq);
+
+            // if (j === 0) {
+            //     if (text) {
+            //         if (text.insertAdjacentElement) {
+            //             text.insertAdjacentHTML("afterend", "<!-- R2 AUDIO FLAT a -->");
+            //             text.insertAdjacentElement("afterend", audio);
+            //         } else if (text.parentNode) {
+            //             text.parentNode.insertBefore(smilXmlDoc.createComment("R2 AUDIO FLAT b"), text.nextElementSibling);
+            //             text.parentNode.insertBefore(audio, null); // text.nextElementSibling
+            //         }
+
+            //         // hoist DAISY2 text ID to parent par
+            //         const parId = par.getAttribute("id");
+            //         if (!parId) {
+            //             const txtId = text.getAttribute("id");
+            //             if (txtId) {
+            //                 par.setAttribute("id", txtId);
+            //                 text.removeAttribute("id");
+            //             }
+            //         }
+            //     } else {
+            //         par.appendChild(audio);
+            //     }
+            // }
+            // else {
+            //     const newPar = par.namespaceURI ?
+            //         smilXmlDoc.createElementNS(par.namespaceURI, "par") :
+            //         smilXmlDoc.createElement("par");
+            //     iClone++;
+            //     if (text) {
+            //         const cloneText = text.cloneNode(false) as Element;
+            //         const tId = cloneText.getAttribute("id");
+            //         if (tId) {
+            //             cloneText.removeAttribute("id");
+            //         }
+            //         // hoist DAISY2 text ID to parent par
+            //         newPar.setAttribute("id", (tId ? tId : "id") + "r2__" + iClone);
+            //         newPar.appendChild(cloneText);
+            //     } else {
+            //         newPar.setAttribute("id", "id" + "r2__" + iClone);
+            //     }
+            //     newPar.appendChild(audio);
+            //     newPar.appendChild(smilXmlDoc.createTextNode("\n"));
+
+            //     if (par.insertAdjacentElement) {
+            //         par.insertAdjacentElement("afterend", newPar);
+            //     } else if (par.parentNode) {
+            //         par.parentNode.insertBefore(newPar, par.nextElementSibling);
+            //     }
+            // }
         }
+        par.removeChild(seq);
     }
 
-    // debug(smilPathInZip, new xmldom.XMLSerializer().serializeToString(smilXmlDoc));
+    // const afterXML = new xmldom.XMLSerializer().serializeToString(smilXmlDoc.documentElement as unknown as xmldom.Element);
+    // debug("afterXML", _smilPathInZip, afterXML);
 };
 
 // mo.initialized true/false is automatically handled
@@ -1908,6 +1969,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
         if (!link) {
             const err = "Asset not declared in publication spine/resources! " + mo.SmilPathInZip;
             debug(err);
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             return Promise.reject(err);
         }
     }
@@ -1929,6 +1991,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
             }
             debug(zipEntry);
         }
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
@@ -1937,6 +2000,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
         smilZipStream_ = await zip.entryStreamPromise(mo.SmilPathInZip);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
@@ -1954,6 +2018,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
             );
         } catch (err) {
             debug(err);
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             return Promise.reject(err);
         }
         if (transformedStream) {
@@ -1965,6 +2030,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
         if (decryptFail) {
             const err = "Encryption scheme not supported.";
             debug(err);
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             return Promise.reject(err);
         }
     }
@@ -1976,10 +2042,11 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
         smilZipData = await streamToBufferPromise(smilZipStream);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
-    let smilStr = smilZipData.toString("utf8");
+    let smilStr = removeUTF8BOM(smilZipData.toString("utf8"));
 
     const iStart = smilStr.indexOf("<smil");
     if (iStart >= 0) {
@@ -1992,7 +2059,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
         }
     }
 
-    const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr);
+    const smilXmlDoc = new xmldom.DOMParser().parseFromString(smilStr, "application/xml") as unknown as Document;
 
     const nccZipEntry = (await zip.getEntries()).find((entry) => {
         return /ncc\.html$/i.test(entry);
@@ -2007,7 +2074,7 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
     mo.initialized = true;
     debug("PARSED SMIL: " + mo.SmilPathInZip);
 
-    // debug(mo.SmilPathInZip, new xmldom.XMLSerializer().serializeToString(smilXmlDoc));
+    // debug(mo.SmilPathInZip, new xmldom.XMLSerializer().serializeToString(smilXmlDoc as unknown as xmldom.Document));
     // debug(JSON.stringify(smil, null, 4));
 
     // breakLength: 100  maxArrayLength: undefined
@@ -2082,6 +2149,14 @@ export const lazyLoadMediaOverlays = async (publication: Publication, mo: MediaO
         } else if (smil.Body.SystemRequired) {
             if (smil.Body.SystemRequired.indexOf("pagenumber-on") >= 0) {
                 mo.Role.push("pagebreak");
+            } else if (smil.Body.SystemRequired.indexOf("note-on") >= 0) {
+                mo.Role.push("note");
+            // } else if (smil.Body.SystemRequired.indexOf("footnote-on") >= 0) {
+            //     mo.Role.push("note");
+            // } else if (smil.Body.SystemRequired.indexOf("prodnote-on") >= 0) {
+            //     mo.Role.push("note");
+            } else if (smil.Body.SystemRequired.indexOf("sidebar-on") >= 0) {
+                mo.Role.push("sidebar");
             }
         }
         if (smil.Body.TextRef) {
@@ -2216,6 +2291,26 @@ const addSeqToMediaOverlay = (
                     moc.Role = [];
                 }
                 moc.Role.push("pagebreak");
+            } else if (seq.SystemRequired.indexOf("note-on") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("note");
+            // }  else if (seq.SystemRequired.indexOf("footnote-on") >= 0) {
+            //     if (!moc.Role) {
+            //         moc.Role = [];
+            //     }
+            //     moc.Role.push("note");
+            // } else if (seq.SystemRequired.indexOf("prodnote-on") >= 0) {
+            //     if (!moc.Role) {
+            //         moc.Role = [];
+            //     }
+            //     moc.Role.push("note");
+            } else if (seq.SystemRequired.indexOf("sidebar-on") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("sidebar");
             }
         }
         if (seq.TextRef) {
@@ -2308,6 +2403,26 @@ const addSeqToMediaOverlay = (
                     moc.Role = [];
                 }
                 moc.Role.push("pagebreak");
+            } else if (par.SystemRequired.indexOf("note-on") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("note");
+            // } else if (par.SystemRequired.indexOf("footnote-on") >= 0) {
+            //     if (!moc.Role) {
+            //         moc.Role = [];
+            //     }
+            //     moc.Role.push("note");
+            // } else if (par.SystemRequired.indexOf("prodnote-on") >= 0) {
+            //     if (!moc.Role) {
+            //         moc.Role = [];
+            //     }
+            //     moc.Role.push("note");
+            } else if (par.SystemRequired.indexOf("sidebar-on") >= 0) {
+                if (!moc.Role) {
+                    moc.Role = [];
+                }
+                moc.Role.push("sidebar");
             }
         }
         if (par.Text && par.Text.Src) {

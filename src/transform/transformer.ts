@@ -96,6 +96,7 @@ export class Transformers {
     //     if (transformer && transformedData) {
     //         return transformedData;
     //     }
+    //     // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     //     return Promise.reject("transformers fail (buffer)");
     // }
 
@@ -164,6 +165,7 @@ export class Transformers {
         }
         // ----
 
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return atLeastOne ? Promise.reject("transformers fail") : Promise.resolve(stream);
     }
 }

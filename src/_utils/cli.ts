@@ -408,7 +408,7 @@ async function extractEPUB_ProcessKeys(pub: Publication, keys: string[] | undefi
         //     // Certificate has not been signed by CA
         //     CERTIFICATE_SIGNATURE_INVALID = 102,
         //     // License has been issued by an expired certificate
-        //     LICENSE_SIGNATURE_DATE_INVALID = 111,
+        //     LICENSE_CERTIFICATE_DATE_INVALID (was LICENSE_SIGNATURE_DATE_INVALID) = 111,
         //     // License signature does not match
         //     LICENSE_SIGNATURE_INVALID = 112,
         //     // The drm context is invalid
@@ -576,6 +576,7 @@ async function extractEPUB_MediaOverlays(pub: Publication, _zip: IZip, outDir: s
                 // mo.initialized true/false is automatically handled
                 await lazyLoadMediaOverlays(pub, mo);
             } catch (err) {
+                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                 return Promise.reject(err);
             }
             const moJsonObj = TaJsonSerialize(mo);
@@ -685,6 +686,7 @@ async function dumpPublication(publication: Publication): Promise<void> {
                     // mo.initialized true/false is automatically handled
                     await lazyLoadMediaOverlays(publication, mo);
                 } catch (err) {
+                    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                     return Promise.reject(err);
                 }
                 // console.log(util.inspect(mo,

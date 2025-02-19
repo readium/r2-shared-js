@@ -31,7 +31,7 @@ import { streamToBufferPromise } from "@r2-utils-js/_utils/stream/BufferUtils";
 import { XML } from "@r2-utils-js/_utils/xml-js-mapper";
 import { IStreamAndLength, IZip } from "@r2-utils-js/_utils/zip/zip";
 import { zipLoadPromise } from "@r2-utils-js/_utils/zip/zipFactory";
-
+import { removeUTF8BOM } from "@r2-utils-js/_utils/bom";
 import { tryDecodeURI } from "../_utils/decodeURI";
 import { zipHasEntry } from "../_utils/zipHasEntry";
 import {
@@ -155,6 +155,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
     //     // TODO? r2-utils-js zip-ext.ts => variant for HTTP without directory listing? (no deterministic zip entries)
     //     const err = "Cannot load exploded remote EPUB (needs filesystem access to list directory contents).";
     //     debug(err);
+    //     // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     //     return Promise.reject(err);
     // }
 
@@ -172,10 +173,12 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
         zip = await zipLoadPromise(filePathToLoad);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
     if (!zip.hasEntries()) {
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject("EPUB zip empty");
     }
 
@@ -199,6 +202,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
             lcplZipStream_ = await zip.entryStreamPromise(lcplZipPath);
         } catch (err) {
             debug(err);
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             return Promise.reject(err);
         }
         const lcplZipStream = lcplZipStream_.stream;
@@ -208,6 +212,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
             lcplZipData = await streamToBufferPromise(lcplZipStream);
         } catch (err) {
             debug(err);
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             return Promise.reject(err);
         }
 
@@ -246,6 +251,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
             encryptionXmlZipStream_ = await zip.entryStreamPromise(encZipPath);
         } catch (err) {
             debug(err);
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             return Promise.reject(err);
         }
         const encryptionXmlZipStream = encryptionXmlZipStream_.stream;
@@ -255,11 +261,12 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
             encryptionXmlZipData = await streamToBufferPromise(encryptionXmlZipStream);
         } catch (err) {
             debug(err);
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             return Promise.reject(err);
         }
 
-        const encryptionXmlStr = encryptionXmlZipData.toString("utf8");
-        const encryptionXmlDoc = new xmldom.DOMParser().parseFromString(encryptionXmlStr);
+        const encryptionXmlStr = removeUTF8BOM(encryptionXmlZipData.toString("utf8"));
+        const encryptionXmlDoc = new xmldom.DOMParser().parseFromString(encryptionXmlStr, "application/xml") as unknown as Document;
 
         encryption = XML.deserialize<Encryption>(encryptionXmlDoc, Encryption);
         encryption.ZipPath = encZipPath;
@@ -276,6 +283,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
         containerXmlZipStream_ = await zip.entryStreamPromise(containerZipPath);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
     const containerXmlZipStream = containerXmlZipStream_.stream;
@@ -285,11 +293,12 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
         containerXmlZipData = await streamToBufferPromise(containerXmlZipStream);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
-    const containerXmlStr = containerXmlZipData.toString("utf8");
-    const containerXmlDoc = new xmldom.DOMParser().parseFromString(containerXmlStr);
+    const containerXmlStr = removeUTF8BOM(containerXmlZipData.toString("utf8"));
+    const containerXmlDoc = new xmldom.DOMParser().parseFromString(containerXmlStr, "application/xml") as unknown as Document;
 
     // debug(containerXmlDoc);
     // debug(containerXmlStr);
@@ -306,6 +315,7 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
 
     const rootfilePathDecoded = rootfile.PathDecoded;
     if (!rootfilePathDecoded) {
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject("?!rootfile.PathDecoded");
     }
 
@@ -400,6 +410,7 @@ export async function getAllMediaOverlays(publication: Publication): Promise<Med
                     // mo.initialized true/false is automatically handled
                     await lazyLoadMediaOverlays(publication, mo);
                 } catch (err) {
+                    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                     return Promise.reject(err);
                 }
             }
@@ -424,6 +435,7 @@ export async function getMediaOverlay(publication: Publication, spineHref: strin
                     // mo.initialized true/false is automatically handled
                     await lazyLoadMediaOverlays(publication, mo);
                 } catch (err) {
+                    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                     return Promise.reject(err);
                 }
             }
@@ -431,6 +443,7 @@ export async function getMediaOverlay(publication: Publication, spineHref: strin
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     return Promise.reject(`No Media Overlays ${spineHref}`);
 }
 
@@ -747,8 +760,8 @@ const addRendition = async (publication: Publication, opf: OPF, zip: IZip) => {
                     }
                     if (displayOptionsZipData) {
                         try {
-                            const displayOptionsStr = displayOptionsZipData.toString("utf8");
-                            const displayOptionsDoc = new xmldom.DOMParser().parseFromString(displayOptionsStr);
+                            const displayOptionsStr = removeUTF8BOM(displayOptionsZipData.toString("utf8"));
+                            const displayOptionsDoc = new xmldom.DOMParser().parseFromString(displayOptionsStr, "application/xml") as unknown as Document;
 
                             const displayOptions = XML.deserialize<DisplayOptions>(displayOptionsDoc, DisplayOptions);
                             displayOptions.ZipPath = displayOptionsZipPath;
@@ -893,11 +906,12 @@ const fillPageListFromAdobePageMap = async (publication: Publication, zip: IZip,
     if (!l.HrefDecoded) {
         return;
     }
-    const pageMapContent = await loadFileStrFromZipPath(l.Href, l.HrefDecoded, zip);
+    let pageMapContent = await loadFileStrFromZipPath(l.Href, l.HrefDecoded, zip);
     if (!pageMapContent) {
         return;
     }
-    const pageMapXmlDoc = new xmldom.DOMParser().parseFromString(pageMapContent);
+    pageMapContent = removeUTF8BOM(pageMapContent);
+    const pageMapXmlDoc = new xmldom.DOMParser().parseFromString(pageMapContent, "application/xml") as unknown as Document;
 
     const pages = pageMapXmlDoc.getElementsByTagName("page");
     if (pages && pages.length) {
@@ -997,6 +1011,7 @@ const fillTOCFromNavDoc = async (publication: Publication, zip: IZip):
         navDocZipStream_ = await zip.entryStreamPromise(navLinkHrefDecoded);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
     const navDocZipStream = navDocZipStream_.stream;
@@ -1006,11 +1021,12 @@ const fillTOCFromNavDoc = async (publication: Publication, zip: IZip):
         navDocZipData = await streamToBufferPromise(navDocZipStream);
     } catch (err) {
         debug(err);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         return Promise.reject(err);
     }
 
-    const navDocStr = navDocZipData.toString("utf8");
-    const navXmlDoc = new xmldom.DOMParser().parseFromString(navDocStr);
+    const navDocStr = removeUTF8BOM(navDocZipData.toString("utf8"));
+    const navXmlDoc = new xmldom.DOMParser().parseFromString(navDocStr, "application/xml") as unknown as Document;
 
     const select = xpath.useNamespaces({
         epub: "http://www.idpf.org/2007/ops",

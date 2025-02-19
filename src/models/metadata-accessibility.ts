@@ -117,7 +117,7 @@ export class AccessibilityMetadata {
     // 'longDescription',
     // 'MathML',
     // 'none',
-    // 'printPageNumbers',
+    // 'printPageNumbers', 'pageBreakMarkers', 'pageNavigation'
     // 'readingOrder',
     // 'rubyAnnotations',
     // 'signLanguage',

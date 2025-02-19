@@ -29,5 +29,6 @@ export async function PublicationParsePromise(filePath: string): Promise<Publica
                         (await isDaisyPublication(filePath) ? DaisyParsePromise(filePath) :
                             // tslint:disable-next-line: no-conditional-assignment max-line-length
                             (isAudio = await isAudioBookPublication(filePath)) ? AudioBookParsePromise(filePath, isAudio) :
+                                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                                 Promise.reject(`Unrecognized publication type ${filePath}`))))));
 }
