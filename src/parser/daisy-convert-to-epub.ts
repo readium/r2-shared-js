@@ -680,6 +680,10 @@ export const convertDaisyToReadiumWebPub = async (
                     dtBookStr = removeUTF8BOM(dtBookStr);
                     dtBookStr = dtBookStr.replace(/xmlns=""/, " ");
                     dtBookStr = dtBookStr.replace(/<dtbook/, "<dtbook xmlns:epub=\"http://www.idpf.org/2007/ops\" ");
+                    // <?xml version="1.0" encoding="UTF-8"?>
+                    // <?xml-stylesheet type="text/css" href="daisy.css" media="screen" ?>
+                    // <?xml-stylesheet type="text/xsl" href="daisyTransform.xsl" media="screen" ?>
+                    // <!DOCTYPE dtbook PUBLIC "-//NISO//DTD dtbook 2005-3//EN" "http://www.daisy.org/z3986/2005/dtbook-2005-3.dtd">
                     const dtBookDoc = new xmldom.DOMParser().parseFromString(dtBookStr, "application/xml") as unknown as Document;
 
                     let title = dtBookDoc.getElementsByTagName("doctitle")[0]?.textContent;
@@ -769,6 +773,13 @@ export const convertDaisyToReadiumWebPub = async (
                             cssHrefs.push(href);
                         }
                     }
+                    for (const stylesheet of stylesheets) {
+                        if (typeof stylesheet.remove === "function") {
+                            stylesheet.remove();
+                        } else if (stylesheet.parentNode) {
+                            stylesheet.parentNode.removeChild(stylesheet);
+                        }
+                    }
 
                     const smilRefs = select("//*[@smilref]", dtBookDoc) as Element[];
                     for (const smilRef of smilRefs) {
@@ -790,23 +801,26 @@ export const convertDaisyToReadiumWebPub = async (
                     const dtbookNowXHTML = new xmldom.XMLSerializer().serializeToString(dtBookDoc as unknown as xmldom.Document)
                         .replace(/xmlns="http:\/\/www\.daisy\.org\/z3986\/2005\/dtbook\/"/, "xmlns=\"http://www.w3.org/1999/xhtml\"")
                         .replace(/xmlns="http:\/\/www\.daisy\.org\/z3986\/2005\/dtbook\/"/g, " ")
-                        .replace(/^([\s\S]*)<html/gm,
+                        .replace(/^([\s\S]*)<html/m,
                             `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html `)
-                        .replace(/<head([\s\S]*?)>/gm,
+                        .replace(/<head([\s\S]*?)>/m,
                             `
 <head$1>
 <meta charset="UTF-8" />
 ${title ? `<title>${title}</title>` : ""}
 `)
-                        .replace(/<\/head[\s\S]*?>/gm,
+                        .replace(/<\/head[\s\S]*?>/m,
                             `
 ${cssHrefs.reduce((pv, cv) => {
                                 return pv + "\n" + `<link rel="stylesheet" type="text/css" href="${cv}" />`;
                             }, "")}
 </head>
 `);
+
+                    // console.log(dtbookNowXHTML.substring(0, 5000));
+
                     const xhtmlFilePath = resLink.HrefDecoded.replace(/\.([^\.]+)$/i, ".xhtml");
 
                     // const xhtmlOutputFilePath = path.join(outputDirPathExploded, xhtmlFilePath);
