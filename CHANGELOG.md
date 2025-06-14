@@ -1,10 +1,27 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.82...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.83...develop
 
 Changes:
 * TODO
+
+# 1.0.83
+
+> Build environment: NodeJS `22.14.0`, NPM `11.4.2`
+
+Changes:
+* NPM package updates
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.83/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.83/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.83
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.82...v1.0.83
 
 # 1.0.82
 
