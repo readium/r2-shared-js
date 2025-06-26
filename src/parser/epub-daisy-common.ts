@@ -776,9 +776,7 @@ export const setPublicationDirection = (publication: Publication, opf: OPF) => {
 export const langStringIsRTL = (lang: string): boolean => {
     return lang === "ar" || lang.startsWith("ar-") ||
         lang === "he" || lang.startsWith("he-") ||
-        lang === "fa" || lang.startsWith("fa-") ||
-        lang === "zh-Hant" ||
-        lang === "zh-TW";
+        lang === "fa" || lang.startsWith("fa-");
 };
 
 export const getNcx = async (ncxManItem: Manifest, opf: OPF, zip: IZip): Promise<NCX> => {
