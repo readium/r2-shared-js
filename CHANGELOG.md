@@ -1,10 +1,27 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.83...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.84...develop
 
 Changes:
 * TODO
+
+# 1.0.84
+
+> Build environment: NodeJS `22.14.0`, NPM `11.4.2`
+
+Changes:
+* Fixed Chinese RTL error
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.84/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.84/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.84`
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.83...v1.0.84
 
 # 1.0.83
 
