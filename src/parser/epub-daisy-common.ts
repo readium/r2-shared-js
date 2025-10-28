@@ -1711,6 +1711,9 @@ const fillPageListFromNCX = (publication: Publication, ncx: NCX) => {
             link.setHrefDecoded(zipPath);
 
             link.Title = pageTarget.NavLabel?.Text;
+            if (!link.Title) {
+                return;
+            }
 
             addAlternateAudioLinkFromNCX(ncx, link, pageTarget.NavLabel);
 

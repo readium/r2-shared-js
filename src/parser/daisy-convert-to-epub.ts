@@ -686,11 +686,11 @@ export const convertDaisyToReadiumWebPub = async (
                     // <!DOCTYPE dtbook PUBLIC "-//NISO//DTD dtbook 2005-3//EN" "http://www.daisy.org/z3986/2005/dtbook-2005-3.dtd">
                     const dtBookDoc = new xmldom.DOMParser().parseFromString(dtBookStr, "application/xml") as unknown as Document;
 
-                    let title = dtBookDoc.getElementsByTagName("doctitle")[0]?.textContent;
+                    let title: string | undefined = dtBookDoc.getElementsByTagName("doctitle")[0]?.textContent;
                     if (title) {
                         title = title.trim();
                         if (!title.length) {
-                            title = null;
+                            title = undefined;
                         }
                     }
 

@@ -375,7 +375,14 @@ export async function EpubParsePromise(filePath: string): Promise<Publication> {
             return item.TypeLink === "application/oebps-page-map+xml";
         });
         if (pageMapLink) {
-            await fillPageListFromAdobePageMap(publication, zip, pageMapLink);
+            if (pageMapLink.Properties?.Encrypted) {
+                debug("page.xml application/oebps-page-map+xml ENCRYPTED?! (cannot parse page list)");
+            }
+            try {
+                await fillPageListFromAdobePageMap(publication, zip, pageMapLink);
+            } catch (e) {
+                debug(e);
+            }
         }
     }
 
@@ -925,7 +932,7 @@ const fillPageListFromAdobePageMap = async (publication: Publication, zip: IZip,
             const link = new Link();
             const href = page.getAttribute("href");
             const title = page.getAttribute("name");
-            if (href === null || title === null) {
+            if (!href || !title) {
                 continue;
             }
 
@@ -1056,7 +1063,7 @@ const fillTOCFromNavDoc = async (publication: Publication, zip: IZip):
                             }
                             case "page-list": {
                                 publication.PageList = [];
-                                fillTOCFromNavDocWithOL(select, olElem, publication.PageList, navLinkHrefDecoded);
+                                fillTOCFromNavDocWithOL(select, olElem, publication.PageList, navLinkHrefDecoded, true);
                                 break;
                             }
                             case "landmarks": {
@@ -1099,7 +1106,8 @@ const fillTOCFromNavDocWithOL = (
     select: xpath.XPathSelect,
     olElems: Element[],
     children: Link[],
-    navDocPath: string) => {
+    navDocPath: string,
+    requireTitle: boolean = false) => {
 
     olElems.forEach((olElem: Element) => {
 
@@ -1109,7 +1117,6 @@ const fillTOCFromNavDocWithOL = (
             liElems.forEach((liElem) => {
 
                 const link = new Link();
-                children.push(link);
 
                 const aElems = select("xhtml:a", liElem) as Element[];
                 if (aElems && aElems.length > 0) {
@@ -1154,6 +1161,10 @@ const fillTOCFromNavDocWithOL = (
                     if (liFirstChild && liFirstChild.length && liFirstChild[0].textContent) {
                         link.Title = liFirstChild[0].textContent.trim();
                     }
+                }
+
+                if (!requireTitle || !!link.Title) {
+                    children.push(link);
                 }
 
                 const olElemsNext = select("xhtml:ol", liElem) as Element[];
