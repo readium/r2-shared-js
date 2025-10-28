@@ -1,10 +1,28 @@
 # Next
 
 Git diff:
-* https://github.com/readium/r2-shared-js/compare/v1.0.84...develop
+* https://github.com/readium/r2-shared-js/compare/v1.0.85...develop
 
 Changes:
 * TODO
+
+# 1.0.85
+
+> Build environment: NodeJS `22.20.0`, NPM `11.6.2`
+
+Changes:
+* NPM package updates
+* Fix: handling of encrypted pages.xml pagemap (empty page list of page breaks)
+
+Git revision info:
+* https://unpkg.com/r2-shared-js@1.0.85/dist/gitrev.json
+* https://github.com/edrlab/r2-shared-js-dist/blob/v1.0.85/dist/gitrev.json
+
+Git commit history:
+* https://github.com/readium/r2-shared-js/commits/v1.0.85`
+
+Git diff:
+* https://github.com/readium/r2-shared-js/compare/v1.0.84...v1.0.85
 
 # 1.0.84
 
